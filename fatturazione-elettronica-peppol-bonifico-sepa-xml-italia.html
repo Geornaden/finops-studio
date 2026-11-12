@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generatore Flussi Bonifici SEPA XML CBI (pain.001) da Excel/CSV &amp; Fatturazione Elettronica Peppol UE 2026 | FinOps Studio</title>
+  <meta name="description" content="Converti file Excel, CSV o JSON in distinte bonifici multipli SEPA XML ISO 20022 (pain.001.001.09 / SDD pain.008) per Intesa Sanpaolo Inbiz, UniCredit, Banco BPM e BPER, e fatture elettroniche europee Peppol BIS 3.0 (EN 16931) senza canone mensile." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/fatturazione-elettronica-peppol-bonifico-sepa-xml-italia.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "FinOps Studio — Generatore SEPA XML (pain.001/pain.008) & Peppol BIS 3.0 API Italia",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Cloud API, Web, n8n, Make, MCP",
+        "url": "https://geornaden.github.io/finops-studio/fatturazione-elettronica-peppol-bonifico-sepa-xml-italia.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.02",
+          "priceCurrency": "USD",
+          "description": "$0/mese di abbonamento — pagamento a consumo ($0.02 per riga SEPA, $0.05 per fattura Peppol EN 16931)"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Come convertire un foglio Excel o CSV di stipendi e fornitori in un flusso SEPA XML per Inbiz Intesa Sanpaolo o UniCredit?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Con l'API FinOps Studio SEPA XML invii un array JSON o CSV con nome beneficiario, IBAN (con verifica matematica ISO 13616 MOD-97), importo in euro, causale e indirizzo strutturato 2026 (<TwnNm> e <Ctry>). Ottieni istantaneamente il tracciato ISO 20022 pain.001.001.09 o pain.001.001.03 pronto per l'upload massivo su portali home banking corporate e CBI."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Perché la banca scarta la distinta SEPA XML con errore BE04 nel 2026?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Le regole EPC SEPA 2026 vietano le righe di indirizzo non strutturate (<AdrLine>) nei tracciati pain.001.001.09 e pain.008.001.08, richiedendo tag strutturati come città (<TwnNm>), codice postale (<PstCd>) e paese ISO (<Ctry>). Il nostro generatore applica automaticamente la struttura conforme eliminando gli scarti BE04."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Come emettere fatture elettroniche europee Peppol BIS 3.0 (EN 16931) verso clienti B2B in Germania, Belgio, Francia o verso NSO?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Mentre il formato FatturaPA è nazionale per lo SdI italiano, i clienti B2B e B2G in Belgio, Germania (XRechnung), Francia (Factur-X) e sulla rete europea Peppol/NSO richiedono tracciati XML conformi allo standard europeo EN 16931 (UBL 2.1 Peppol BIS Billing 3.0). FinOps Studio genera l'XML certificabile a $0.05 per fattura, con canone mensile zero."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-iban-routing-number-pain002-validator.html">Verifica IBAN &amp; Errori SEPA Gratis</a>
+        <a href="./index.html">Tutte le 10 API Bancarie</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apri API su Apify ($0/mese) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">🇮🇹 Italia &amp; UE 2026 &bull; Bonifici Multipli SEPA XML (pain.001 / SDD pain.008) &amp; Peppol BIS 3.0</span>
+      <h1>Da Excel/CSV a Distinte Bonifici SEPA XML &amp; Fatture Elettroniche Europee Peppol — Zero Canone Mensile</h1>
+      <p>Automatizza il caricamento di <strong>stipendi, fornitori e RIBA/SDD SEPA (<code>pain.001.001.09</code> &amp; <code>pain.008.001.08</code>)</strong> su <strong>Intesa Sanpaolo Inbiz, UniCredit, Banco BPM, BPER, MPS e Qonto</strong>, ed emetti tracciati <strong>EN 16931 Peppol BIS 3.0 / XRechnung / Factur-X</strong> per i tuoi clienti esteri UE a partire da <strong>$0,02 per disposizione</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Genera Flusso SEPA XML Cloud &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Genera XML Peppol UE (EN 16931) &rarr;</a>
+        <a class="btn btn-outline" href="./free-iban-routing-number-pain002-validator.html">Controllo IBAN MOD-97 Gratuito</a>
+      </div>
+    </section>
+
+    <div class="grid-3">
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">1. Bonifici Multipli &amp; Stipendi SEPA (pain.001)</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Trasforma elenchi paghe o scadenziari fornitori da TeamSystem, Zucchetti, Fatture in Cloud, Odoo, SAP o Excel in file XML ISO 20022 con calcolo <code>CtrlSum</code> al centesimo e indirizzi strutturati EPC 2026 (zero scarti <code>BE04</code>).</p>
+        <a href="./sepa-xml-generator.html">Vedi esempio tracciato SEPA XML &rarr;</a>
+      </div>
+
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">2. Fatturazione B2B Estero UE (Peppol / EN 16931)</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Esporti in Belgio, Germania, Francia o Paesi Bassi? Genera istantaneamente XML <strong>Peppol BIS Billing 3.0 (UBL 2.1)</strong>, <strong>XRechnung 3.0</strong> e <strong>Factur-X</strong> richiesti dai nuovi obblighi europei B2B 2026.</p>
+        <a href="./eu-einvoice-xml-generator.html">Vedi esempio XML Peppol EN 16931 &rarr;</a>
+      </div>
+
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">3. Decodifica Esiti Scarto Banca (pain.002)</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">La banca ha rifiutato una distinta con codici criptici come <code>AC04</code>, <code>AM04</code>, <code>BE04</code>, <code>MD01</code> o <code>RC01</code>? Converti i file di esito <code>pain.002</code> in report chiari per l'ufficio amministrativo o lo studio commercialista.</p>
+        <a href="./iso20022-pain002-decoder.html">Apri Decoder Esiti pain.002 &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Confronto Prezzi per PMI e Studi Commercialisti -->
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Perché PMI, CFO e Commercialisti scelgono FinOps Studio rispetto ai software a canone?</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);color:var(--muted);text-align:left;">
+              <th style="padding:10px;">Esigenza Amministrativa</th>
+              <th style="padding:10px;">Software Gestionali / SaaS Tradizionali</th>
+              <th style="padding:10px;">FinOps Studio Cloud API</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px;"><strong>Distinta mensile 100 bonifici stipendi/fornitori</strong></td>
+              <td style="padding:10px;">€25 – €60 / mese (€300–€720/anno fissi)</td>
+              <td style="padding:10px;"><strong style="color:#34d399;">$0 / mese</strong> (~$2,03 per l'intera distinta da 100 righe!)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px;"><strong>Fatture Elettroniche Europee Peppol / XRechnung</strong></td>
+              <td style="padding:10px;">€100 – €400 / mese + costo attivazione</td>
+              <td style="padding:10px;"><strong style="color:#34d399;">$0 / mese</strong> ($0,05 per singola fattura XML generata)</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;"><strong>Automazione con n8n, Make, Python o AI (MCP)</strong></td>
+              <td style="padding:10px;">Connettori enterprise bloccati o manuali</td>
+              <td style="padding:10px;"><strong style="color:#38bdf8;">API REST &amp; Server MCP Ufficiale inclusi</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Esempio API -->
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Esempio Rapido REST API (cURL / n8n / Gestionale ERP)</h2>
+      <p style="color:var(--muted);font-size:0.9rem;">Genera una distinta bonifici SEPA <code>pain.001.001.09</code> conforme alle regole indirizzi strutturati 2026 con una singola chiamata HTTPS:</p>
+      <pre class="code-box">curl -X POST "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items?token=IL_TUO_TOKEN_APIFY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messageType": "pain.001.001.09",
+    "initiatingPartyName": "Rossi Meccanica S.r.l.",
+    "debtorName": "Rossi Meccanica S.r.l.",
+    "debtorIban": "IT60X0542811101000000123456",
+    "debtorBic": "BCITITMM",
+    "debtorAddress": { "streetName": "Via Torino 45", "postCode": "20123", "townName": "Milano", "country": "IT" },
+    "executionDate": "2026-11-16",
+    "transactions": [
+      {
+        "endToEndId": "FATT-2026-0891",
+        "creditorName": "Bianchi Forniture S.p.A.",
+        "creditorIban": "IT40S0300203280424972536816",
+        "amount": 1450.50,
+        "currency": "EUR",
+        "remittanceInfo": "Saldo Fattura 891/2026",
+        "creditorAddress": { "townName": "Torino", "postCode": "10121", "country": "IT" }
+      }
+    ]
+  }'</pre>
+      <div class="hero-actions" style="margin-top:14px;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Prova Gratis su Apify Store &rarr;</a>
+        <a class="btn btn-outline" href="./workflows/n8n-sheets-to-sepa-xml.json" download>Scarica Template n8n (Google Sheets &rarr; SEPA XML)</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio (Tutte le 10 API)</a> &bull;
+      <a href="./sepa-xml-generator.html">SEPA XML</a> &bull;
+      <a href="./eu-einvoice-xml-generator.html">Peppol E-Invoice</a> &bull;
+      <a href="./free-iban-routing-number-pain002-validator.html">Verifica IBAN</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>
