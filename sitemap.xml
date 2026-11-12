@@ -100,4 +100,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/netsuite-odoo-sap-sepa-xml-bai2-nacha-automation.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
 </urlset>

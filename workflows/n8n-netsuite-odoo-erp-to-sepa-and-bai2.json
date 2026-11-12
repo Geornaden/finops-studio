@@ -1,0 +1,39 @@
+{
+  "name": "NetSuite / Odoo Approved Vendor Bills to SEPA pain.001.001.09 & NACHA ACH",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "erp-approved-payment-batch"
+      },
+      "name": "ERP Approved Payment Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_APIFY_API_TOKEN" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      },
+      "name": "Generate 2026 SEPA XML via FinOps Studio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 300]
+    }
+  ],
+  "connections": {
+    "ERP Approved Payment Webhook": {
+      "main": [[{ "node": "Generate 2026 SEPA XML via FinOps Studio", "type": "main", "index": 0 }]]
+    }
+  }
+}
