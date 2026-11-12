@@ -1,0 +1,26 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Geornaden/finops-studio",
+  "title": "FinOps Studio — Banking, Payroll & E-Invoicing",
+  "description": "SEPA XML, Peppol/XRechnung, NACHA ACH, BAI2, DATEV, ABA, BACS, CPA-005 & Positive Pay APIs",
+  "version": "1.2.0",
+  "websiteUrl": "https://geornaden.github.io/finops-studio/",
+  "repository": {
+    "url": "https://github.com/Geornaden/finops-studio",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser,finops_studio/uk-bacs-standard18-generator,finops_studio/canada-cpa005-eft-generator,finops_studio/us-positive-pay-check-generator",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Bearer <YOUR_APIFY_API_TOKEN>",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
