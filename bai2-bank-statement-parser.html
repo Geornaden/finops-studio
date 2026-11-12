@@ -8,6 +8,7 @@
   <link rel="canonical" href="https://geornaden.github.io/finops-studio/bai2-bank-statement-parser.html" />
   <link rel="stylesheet" href="./styles.css" />
   <script type="application/ld+json">[{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Corporate BAI2 Bank Statement Parser to JSON & CSV API","applicationCategory":"FinanceApplication","operatingSystem":"Web, REST API, n8n, Make, MCP","url":"https://geornaden.github.io/finops-studio/bai2-bank-statement-parser.html","description":"Convert cryptic BAI2 cash-management bank statements (records 01, 02, 03, 16, 88, 49, 98, 99) from J.P. Morgan, BofA CashPro, Wells Fargo, and HSBCnet into structured JSON and CSV.","offers":{"@type":"Offer","price":"0.02","priceCurrency":"USD","description":"Free browser preview; $0.02–$0.05 pay-per-event bulk API on Apify Store."}},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How are multi-line 88 continuation records handled?","acceptedAnswer":{"@type":"Answer","text":"All consecutive 88 continuation lines are automatically stitched onto their parent 03 account summary or 16 transaction detail record so wire/ACH invoice references stay intact."}},{"@type":"Question","name":"Does it handle non-2-decimal currencies like JPY or KWD?","acceptedAnswer":{"@type":"Answer","text":"Yes. Implied decimals automatically adjust for 0-decimal (JPY, KRW), 2-decimal (USD, EUR, GBP, AUD), and 3-decimal (KWD, BHD, OMR) accounts."}}]}]</script>
+  <script src="./telemetry-beacon.js" defer></script>
 </head>
 <body>
   

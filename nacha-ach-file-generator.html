@@ -8,6 +8,7 @@
   <link rel="canonical" href="https://geornaden.github.io/finops-studio/nacha-ach-file-generator.html" />
   <link rel="stylesheet" href="./styles.css" />
   <script type="application/ld+json">[{"@context":"https://schema.org","@type":"SoftwareApplication","name":"US NACHA ACH File Generator, ABA Routing Validator & Parser API (.ach)","applicationCategory":"FinanceApplication","operatingSystem":"Web, REST API, n8n, Make, MCP","url":"https://geornaden.github.io/finops-studio/nacha-ach-file-generator.html","description":"Generate strict 94-character block-10 padded US NACHA .ach direct deposit payroll and vendor payment files with 10-point ABA routing checksums, or parse raw ACH files to JSON.","offers":{"@type":"Offer","price":"0.02","priceCurrency":"USD","description":"Free browser preview; $0.02–$0.05 pay-per-event bulk API on Apify Store."}},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does ABA routing checksum validation prevent ACH return fees?","acceptedAnswer":{"@type":"Answer","text":"Every 9-digit routing number is checked against the Federal Reserve 10-point weighted checksum formula (3-7-1 weights mod 10 = 0) before the batch is created."}},{"@type":"Question","name":"Does it pad files with 9999... blocking lines?","acceptedAnswer":{"@type":"Answer","text":"Yes. Every generated NACHA file includes exact Record 1, 5, 6, 8, and 9 headers/controls plus automatic block-factor-10 9999... padding lines."}}]}]</script>
+  <script src="./telemetry-beacon.js" defer></script>
 </head>
 <body>
   

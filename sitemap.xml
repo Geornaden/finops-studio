@@ -70,4 +70,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/uk-bacs-standard-18-file-generator.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
 </urlset>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UK BACS Standard 18 Payment File Generator API (Barclays, Lloyds, NatWest, HSBC) | FinOps Studio</title>
+  <meta name="description" content="Convert CSV spreadsheets or JSON into strict 100-character UK BACS Standard 18 Direct Credit & Direct Debit files (VOL1/HDR1/UHL1/CONTRA/UTL1) for Barclays.net, Lloyds, NatWest Bankline, and HSBCnet." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/uk-bacs-standard-18-file-generator.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html">All Banking APIs</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud Suite on Apify &rarr;</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <section class="hero">
+      <span class="pill">United Kingdom GBP Payroll &amp; Supplier Payments &bull; Standard 18</span>
+      <h1>100-Character UK BACS Standard 18 Bank File Generator</h1>
+      <p>Turn payroll &amp; supplier spreadsheets into ready-to-upload UK BACS Standard 18 files with automatic Julian dates (bYYDDD), 6-digit UK Sort Code validation, CONTRA balancing, and UTL1 integer-pence totals.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Use FinOps Studio Cloud API &rarr;</a>
+        <a class="btn btn-outline" href="./index.html#sandbox">Explore Sample Files</a>
+      </div>
+    </section>
+    <section>
+      <div class="faq-item">
+        <h4>Compatible with Barclays.net, Lloyds Commercial, NatWest Bankline &amp; HSBCnet UK</h4>
+        <p>Generates exact 100-character fixed-width records including <code>VOL1</code>, <code>HDR1/HDR2</code>, <code>UHL1</code>, Direct Credit (<code>99</code>) &amp; Direct Debit (<code>01/17/18</code>) rows, self-balancing <code>CONTRA</code> entry, and <code>EOF1/EOF2/UTL1</code> control trailers.</p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="container"><a href="./index.html">&larr; FinOps Studio</a> &bull; <a href="https://apify.com/finops_studio">Apify Store</a></div>
+  </footer>
+</body>
+</html>
