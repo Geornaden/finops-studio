@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canadian CPA-005 (1464-Byte) EFT Direct Deposit File Generator API (RBC, TD, BMO, Scotiabank) | FinOps Studio</title>
+  <meta name="description" content="Convert CSV spreadsheets or JSON into strict 1464-character Payments Canada CPA-005 EFT Direct Deposit & PAD files for RBC Express, TD Commercial Banking, BMO, Scotiabank ScotiaConnect, and CIBC." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/canada-cpa-005-eft-file-generator.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html">All Banking APIs</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud Suite on Apify &rarr;</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <section class="hero">
+      <span class="pill">Payments Canada Standard 005 &bull; 1464-Byte EFT Format</span>
+      <h1>Canadian CPA-005 EFT Direct Deposit &amp; Vendor Payment File Generator</h1>
+      <p>Convert employee payroll &amp; supplier CAD spreadsheets into strict 1464-character CPA-005 files (Record A Header, 6&times;240-byte Record C Segments, Record Z Trailer) for RBC Express, TD, BMO, Scotiabank, and CIBC.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Use FinOps Studio Cloud API &rarr;</a>
+        <a class="btn btn-outline" href="./index.html#sandbox">Explore Sample Files</a>
+      </div>
+    </section>
+    <section>
+      <div class="faq-item">
+        <h4>Why do RBC Express, TD Commercial, and ScotiaConnect reject standard CSVs?</h4>
+        <p>Canadian EFT clearing requires exact <strong>1464-character logical records</strong> packing up to six 240-character payment segments per line, <code>0YYDDD</code> Julian dates, and 9-digit <code>0IIITTTTT</code> Institution + Branch Transit routing codes.</p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="container"><a href="./index.html">&larr; FinOps Studio</a> &bull; <a href="https://apify.com/finops_studio">Apify Store</a></div>
+  </footer>
+</body>
+</html>

@@ -30,6 +30,8 @@
   else if (p.includes('datev-buchungsstapel')) hit('page_datev');
   else if (p.includes('aba-cemtex')) hit('page_aba');
   else if (p.includes('pain002')) hit('page_pain002');
+  else if (p.includes('uk-bacs')) hit('page_uk_bacs');
+  else if (p.includes('canada-cpa')) hit('page_canada_cpa');
   else hit('page_seo_guides');
 
   // 2. Delegated click tracking across tabs, preview, download, cURL, workflows, and Apify Store CTAs

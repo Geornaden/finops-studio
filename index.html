@@ -161,6 +161,30 @@
           <a class="btn btn-outline" href="./iso20022-pain002-decoder.html">Specs &amp; Demo</a>
         </div>
       </article>
+
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">100-Char Standard 18</span><span class="tag">Barclays / HSBC / Lloyds / NatWest</span><span class="tag">GBP Payroll</span><span class="tag">HMRC RTI Hash</span></div>
+          <h3><a href="./uk-bacs-standard-18-file-generator.html" style="color:var(--text)">UK BACS Standard 18 File Generator (VOL1/HDR1/UHL1 + Contra + UTL1)</a></h3>
+          <p>Generate exact 100-character UK BACS Direct Credit (Code 99) and Direct Debit files with Julian `bYYDDD` dates, Sort Code + Account validation, and optional balancing CONTRA rows.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Production API &rarr;</a>
+          <a class="btn btn-outline" href="./uk-bacs-standard-18-file-generator.html">Specs &amp; Guide</a>
+        </div>
+      </article>
+
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">1464-Byte CPA-005</span><span class="tag">RBC / TD / BMO / Scotiabank</span><span class="tag">CAD &amp; USD</span><span class="tag">6 Segments/Record</span></div>
+          <h3><a href="./canada-cpa-005-eft-file-generator.html" style="color:var(--text)">Canadian CPA Standard 005 (1464-Byte) EFT Direct Deposit Generator</a></h3>
+          <p>Build strict 1,464-character Payments Canada Standard 005 EFT payroll and vendor files (`A` Header, packed 6-per-line `C` Credit records, `Z` Trailer) with `0YYYDDD` Julian dates.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/canada-cpa005-eft-generator" target="_blank" rel="noopener">Production API &rarr;</a>
+          <a class="btn btn-outline" href="./canada-cpa-005-eft-file-generator.html">Specs &amp; Guide</a>
+        </div>
+      </article>
     
   </div>
     
@@ -200,11 +224,11 @@
   </div>
   <div class="sandbox-card" style="margin-top:10px;">
     <h3 style="margin-top:0;">Unified AI Agent MCP Server Configuration (Claude, Cursor, Windsurf)</h3>
-    <p style="color:var(--muted);font-size:0.93rem;">Add all 7 deterministic financial tools to your MCP client so LLMs never hallucinate bank checksums or fixed-width columns:</p>
+    <p style="color:var(--muted);font-size:0.93rem;">Add all 9 deterministic financial tools to your MCP client so LLMs never hallucinate bank checksums or fixed-width columns:</p>
     <pre class="code-box" style="min-height:130px;">{
   "mcpServers": {
     "finops-studio": {
-      "url": "https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser",
+      "url": "https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser,finops_studio/uk-bacs-standard18-generator,finops_studio/canada-cpa005-eft-generator",
       "headers": {
         "Authorization": "Bearer YOUR_APIFY_API_TOKEN"
       }
@@ -219,12 +243,12 @@
       <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
         <div><strong>FinOps Studio</strong> — Deterministic Banking, Treasury &amp; E-Invoicing File APIs on <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>.</div>
         <div style="display:flex;gap:14px;flex-wrap:wrap;">
-          <a href="./sepa-xml-generator.html">SEPA</a><a href="./eu-einvoice-xml-generator.html">EINVOICE</a><a href="./nacha-ach-file-generator.html">NACHA</a><a href="./bai2-bank-statement-parser.html">BAI2</a><a href="./datev-buchungsstapel-generator.html">DATEV</a><a href="./aba-cemtex-file-generator.html">ABA</a><a href="./iso20022-pain002-decoder.html">PAIN002</a>
+          <a href="./sepa-xml-generator.html">SEPA</a><a href="./eu-einvoice-xml-generator.html">EINVOICE</a><a href="./nacha-ach-file-generator.html">NACHA</a><a href="./bai2-bank-statement-parser.html">BAI2</a><a href="./datev-buchungsstapel-generator.html">DATEV</a><a href="./aba-cemtex-file-generator.html">ABA</a><a href="./iso20022-pain002-decoder.html">PAIN002</a><a href="./uk-bacs-standard-18-file-generator.html">UK BACS</a><a href="./canada-cpa-005-eft-file-generator.html">CA CPA-005</a>
           <a href="./sitemap.xml">Sitemap</a>
           <a href="./llms.txt">llms.txt</a>
         </div>
       </div>
-      <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;font-size:0.82rem;"><strong>Regional &amp; Bank Guides:</strong> <a href="./convert-excel-csv-to-nacha-ach-chase-bofa-wells-fargo.html">US Chase/BofA ACH</a> &bull; <a href="./fix-sepa-pain001-2026-structured-address-rejection.html">2026 SEPA BE04 Fix</a> &bull; <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">🇩🇪 DATEV &amp; XRechnung</a> &bull; <a href="./facturation-electronique-2026-peppol-factur-x-xml.html">🇫🇷 Factur-X &amp; Peppol 2026</a> &bull; <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">🇳🇱🇧🇪 SEPA &amp; Peppol NL/BE</a></div>
+      <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;font-size:0.82rem;"><strong>Regional &amp; Bank Guides:</strong> <a href="./convert-excel-csv-to-nacha-ach-chase-bofa-wells-fargo.html">🇺🇸 US Chase/BofA ACH</a> &bull; <a href="./uk-bacs-standard-18-file-generator.html">🇬🇧 UK BACS Standard 18</a> &bull; <a href="./canada-cpa-005-eft-file-generator.html">🇨🇦 Canada CPA-005 EFT</a> &bull; <a href="./fix-sepa-pain001-2026-structured-address-rejection.html">🇪🇺 2026 SEPA BE04 Fix</a> &bull; <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">🇩🇪 DATEV &amp; XRechnung</a> &bull; <a href="./facturation-electronique-2026-peppol-factur-x-xml.html">🇫🇷 Factur-X &amp; Peppol 2026</a> &bull; <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">🇳🇱🇧🇪 SEPA &amp; Peppol NL/BE</a></div>
       <p style="margin-top:12px;color:#64748b;">Disclaimer: FinOps Studio tools are technical file-formatting, parsing, and mathematical checksum utilities provided "as-is", not legal, tax, or financial advice. Always verify totals and recipient identifiers inside your banking portal before authorizing transfers.</p>
     </div>
   </footer>
