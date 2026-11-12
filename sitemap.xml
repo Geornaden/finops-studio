@@ -60,4 +60,14 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/facturation-electronique-2026-peppol-factur-x-xml.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/sepa-xml-pain001-peppol-belgie-nederland.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
 </urlset>
