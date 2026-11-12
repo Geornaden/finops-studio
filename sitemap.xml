@@ -90,4 +90,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/free-iban-routing-number-pain002-validator.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+  </url>
 </urlset>

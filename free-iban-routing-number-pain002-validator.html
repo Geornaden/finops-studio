@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free IBAN MOD-97 Checksum, US ABA Routing Number &amp; ISO 20022 Rejection Code Checker | FinOps Studio</title>
+  <meta name="description" content="Instant free browser checker for European IBAN (ISO 13616 MOD-97), US 9-digit ABA Routing Numbers (MOD-10), and ISO 20022 pain.002 bank rejection codes (BE04, AC04, AM04, MD01, RC01)." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-iban-routing-number-pain002-validator.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html">All 10 Banking APIs</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs ($0/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">100% Free Pre-Flight Bank Checksum &amp; Rejection Code Lookup</span>
+      <h1>Instant IBAN, US ABA Routing &amp; ISO 20022 Error Code Checker</h1>
+      <p>Verify single bank numbers or decode cryptic bank rejection codes right in your browser—then automate full 1,000-row SEPA XML, NACHA ACH, and Positive Pay batches via our $0/month Cloud APIs.</p>
+    </section>
+
+    <div class="grid-3">
+      <!-- 1. IBAN Checker -->
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">1. European IBAN Checksum (MOD-97)</h3>
+        <input id="inp-iban" type="text" value="DE89370400440532013000" style="width:100%;padding:10px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);margin-bottom:10px;" />
+        <button onclick="checkIban()" class="btn btn-primary" type="button" style="width:100%;">Check IBAN</button>
+        <div id="out-iban" style="margin-top:12px;font-size:0.9rem;color:var(--muted);"></div>
+      </div>
+
+      <!-- 2. US ABA Routing Checker -->
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">2. US ABA Routing Checksum (MOD-10)</h3>
+        <input id="inp-aba" type="text" value="021000021" style="width:100%;padding:10px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);margin-bottom:10px;" />
+        <button onclick="checkAba()" class="btn btn-primary" type="button" style="width:100%;">Check US Routing #</button>
+        <div id="out-aba" style="margin-top:12px;font-size:0.9rem;color:var(--muted);"></div>
+      </div>
+
+      <!-- 3. ISO 20022 Rejection Lookup -->
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">3. ISO 20022 Bank Error Lookup</h3>
+        <input id="inp-code" type="text" value="BE04" placeholder="e.g. BE04, AC04, AM04, MD01" style="width:100%;padding:10px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);margin-bottom:10px;" />
+        <button onclick="checkCode()" class="btn btn-primary" type="button" style="width:100%;">Decode Error Code</button>
+        <div id="out-code" style="margin-top:12px;font-size:0.9rem;color:var(--muted);"></div>
+      </div>
+    </div>
+
+    <div class="sandbox-card" style="margin-top:24px;text-align:center;">
+      <h3 style="margin-top:0;">Need to Validate &amp; Generate 50 to 50,000 Rows Automatically?</h3>
+      <p style="color:var(--muted);max-width:680px;margin:8px auto 16px;">Convert full Excel/CSV payrolls and vendor runs into bank-ready <strong>SEPA XML (pain.001.001.09)</strong>, <strong>US NACHA ACH (.ach)</strong>, <strong>EU Peppol/XRechnung XML</strong>, <strong>German DATEV CSV</strong>, and <strong>Positive Pay</strong> files for pennies per row ($0/month subscription).</p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Bulk SEPA XML API &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank" rel="noopener">Bulk US NACHA ACH API &rarr;</a>
+        <a class="btn btn-outline" href="./index.html">View All 10 Banking Tools</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container"><a href="./index.html">&larr; FinOps Studio</a> &bull; <a href="https://apify.com/finops_studio">Apify Store</a></div>
+  </footer>
+
+  <script>
+    function checkIban() {
+      const s = document.getElementById('inp-iban').value.replace(/\s+/g, '').toUpperCase();
+      const el = document.getElementById('out-iban');
+      if (!/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(s)) {
+        el.innerHTML = '<span style="color:#f87171;">&#10007; Invalid IBAN structure or length.</span>';
+        return;
+      }
+      const rearranged = s.slice(4) + s.slice(0, 4);
+      const numeric = rearranged.replace(/[A-Z]/g, (ch) => String(ch.charCodeAt(0) - 55));
+      let rem = 0;
+      for (const ch of numeric) rem = (rem * 10 + Number(ch)) % 97;
+      el.innerHTML = rem === 1
+        ? `<span style="color:#34d399;">&#10003; Valid ISO 13616 MOD-97 IBAN (${s.slice(0,2)})!</span> <br/><a href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank">Generate Bulk SEPA XML &rarr;</a>`
+        : '<span style="color:#f87171;">&#10007; Failed MOD-97 Checksum — Bank will reject this IBAN!</span>';
+    }
+
+    function checkAba() {
+      const d = document.getElementById('inp-aba').value.replace(/\D/g, '');
+      const el = document.getElementById('out-aba');
+      if (d.length !== 9) {
+        el.innerHTML = '<span style="color:#f87171;">&#10007; US ABA Routing Number must be exactly 9 digits.</span>';
+        return;
+      }
+      const sum = 3 * (Number(d[0]) + Number(d[3]) + Number(d[6])) +
+                  7 * (Number(d[1]) + Number(d[4]) + Number(d[7])) +
+                  1 * (Number(d[2]) + Number(d[5]) + Number(d[8]));
+      el.innerHTML = sum > 0 && sum % 10 === 0
+        ? `<span style="color:#34d399;">&#10003; Valid 9-Digit Federal Reserve ABA Checksum!</span> <br/><a href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank">Generate Bulk NACHA .ACH &rarr;</a>`
+        : '<span style="color:#f87171;">&#10007; Failed ABA MOD-10 Checksum — Invalid Routing Number!</span>';
+    }
+
+    const CODES = {
+      AC01: 'Incorrect Account Number — IBAN or account number is invalid.',
+      AC04: 'Closed Account Number — Recipient bank account has been closed.',
+      AC06: 'Blocked Account — Account is frozen or blocked for debits/credits.',
+      AG01: 'Transaction Forbidden — Payment type (e.g. Direct Debit) disallowed on this account.',
+      AM04: 'Insufficient Funds — Debtor account balance cannot cover batch or item.',
+      BE01: 'Inconsistent With End Customer — Payee name does not match account holder (Verification of Payee).',
+      BE04: 'Missing Creditor Address — 2026 EPC SEPA rule requires structured <TwnNm> & <Ctry> tags instead of unstructured address lines!',
+      FF01: 'Invalid File Format — XML schema or fixed-width character length failed bank gateway validation.',
+      MD01: 'No Mandate — SEPA Direct Debit rejected because valid signed mandate ID is missing or expired.',
+      MD06: 'Refund Request By End Customer — Direct Debit chargeback requested within 8 weeks.',
+      MS03: 'Not Specified Reason Agent Generated — Bank compliance or technical filter held payment.',
+      RC01: 'Bank Identifier Incorrect — BIC / SWIFT or routing code is invalid.',
+      RR04: 'Regulatory Reason — Sanctions, AML, or cross-border regulatory block.'
+    };
+
+    function checkCode() {
+      const c = document.getElementById('inp-code').value.trim().toUpperCase();
+      const el = document.getElementById('out-code');
+      if (CODES[c]) {
+        el.innerHTML = `<span style="color:#38bdf8;font-weight:700;">${c}:</span> ${CODES[c]} <br/><a href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank">Fix in 2026 SEPA Generator &rarr;</a>`;
+      } else {
+        el.innerHTML = `Code <strong>${c || '?'}</strong>: Decode full pain.002 XML files (40+ ISO codes) via our Cloud Decoder API.`;
+      }
+    }
+
+    checkIban();
+    checkAba();
+    checkCode();
+  </script>
+</body>
+</html>
