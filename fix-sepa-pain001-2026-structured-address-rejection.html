@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Fix 2026 SEPA XML pain.001 BE04 Structured Postal Address Bank Rejections | FinOps Studio</title>
+  <meta name="description" content="Why European banks reject legacy pain.001.001.03 unstructured AdrLine XML files in 2026—and how to convert CSV/Excel batches to EPC-compliant pain.001.001.09 & pain.008.001.08." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/fix-sepa-pain001-2026-structured-address-rejection.html" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html">All 7 Banking Tools</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generate Compliant 2026 SEPA XML on Apify Store →</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <section class="hero">
+      <span class="pill">FinOps Studio Technical Implementation Guide</span>
+      <h1>Fix 2026 SEPA XML Bank Rejections (BE04 Structured Address Mandate)</h1>
+      <p>Why European banks reject legacy pain.001.001.03 unstructured AdrLine XML files in 2026—and how to convert CSV/Excel batches to EPC-compliant pain.001.001.09 & pain.008.001.08.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generate Compliant 2026 SEPA XML on Apify Store →</a>
+        <a class="btn btn-outline" href="./index.html#sandbox">View Sample Input &amp; Output</a>
+      </div>
+    </section>
+    <section>
+      <div class="faq-item">
+        <h4>Why did Deutsche Bank, BNP Paribas, ING, or Revolut reject our SEPA XML batch with code BE04?</h4>
+        <p>Under the 2026 European Payments Council (EPC) rulebook update, unstructured <code>&lt;AdrLine&gt;</code> tags inside legacy <code>pain.001.001.03</code> and <code>pain.008.001.02</code> files trigger compliance errors when <code>&lt;Ctry&gt;</code> and <code>&lt;TwnNm&gt;</code> are missing. Switching to <strong>pain.001.001.09</strong> (Credit Transfers) and <strong>pain.008.001.08</strong> (Direct Debits) with structured Town Name and ISO Country elements resolves BE04 rejections immediately.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What else causes bulk SEPA batch rejections?</h4>
+        <p>Floating-point rounding mismatches in <code>&lt;CtrlSum&gt;</code> (Code <code>AM09</code>), invalid IBAN MOD-97 check digits (Code <code>AC01</code>), and unescaped characters like <code>&amp;</code> or umlauts (Code <code>FF01</code>). FinOps Studio checks every IBAN mathematically and computes integer-cent sums automatically.</p>
+      </div></section>
+  </main>
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; Back to FinOps Studio Suite</a> &bull; <a href="https://apify.com/finops_studio">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>
