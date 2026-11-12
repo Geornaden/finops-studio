@@ -1,0 +1,39 @@
+{
+  "name": "FinOps Studio — Google Sheets Payroll/AP to SEPA pain.001.001.09 XML",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Manual or Schedule Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_APIFY_API_TOKEN" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"schema\": \"pain.001.001.09\",\n  \"initiatingPartyName\": \"Acme Europe GmbH\",\n  \"initiatingPartyIban\": \"DE89370400440532013000\",\n  \"initiatingPartyBic\": \"COBADEFFXXX\",\n  \"initiatingPartyCountry\": \"DE\",\n  \"initiatingPartyCity\": \"Berlin\",\n  \"transactions\": [\n    {\n      \"name\": \"Mueller & Soehne KG\",\n      \"iban\": \"DE89370400440532013000\",\n      \"amount\": \"1250.50\",\n      \"remittanceInfo\": \"INV-2026-001\",\n      \"country\": \"DE\",\n      \"city\": \"Munich\"\n    }\n  ]\n}"
+      },
+      "id": "2",
+      "name": "Generate 2026 SEPA XML (FinOps Studio)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 300]
+    }
+  ],
+  "connections": {
+    "Manual or Schedule Trigger": {
+      "main": [[{ "node": "Generate 2026 SEPA XML (FinOps Studio)", "type": "main", "index": 0 }]]
+    }
+  }
+}

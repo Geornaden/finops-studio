@@ -1,0 +1,63 @@
+{
+  "name": "FinOps Studio — Daily Bank SFTP BAI2 Reconciliation + ISO pain.002 Rejection Alerts",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Daily Treasury SFTP Poll",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/finops_studio~bai2-bank-statement-parser/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_APIFY_API_TOKEN" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}"
+      },
+      "id": "2",
+      "name": "Parse Corporate BAI2 Statement to JSON/CSV",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/finops_studio~iso20022-pain002-status-parser/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_APIFY_API_TOKEN" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"onlyRejectedOrExceptions\": true\n}"
+      },
+      "id": "3",
+      "name": "Decode ISO 20022 pain.002 Bank Rejections",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 420]
+    }
+  ],
+  "connections": {
+    "Daily Treasury SFTP Poll": {
+      "main": [
+        [
+          { "node": "Parse Corporate BAI2 Statement to JSON/CSV", "type": "main", "index": 0 },
+          { "node": "Decode ISO 20022 pain.002 Bank Rejections", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  }
+}

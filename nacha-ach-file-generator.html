@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>US NACHA ACH File Generator, ABA Routing Validator & Parser API (.ach) | FinOps Studio</title>
+  <meta name="description" content="Generate strict 94-character block-10 padded US NACHA .ach direct deposit payroll and vendor payment files with 10-point ABA routing checksums, or parse raw ACH files to JSON." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/nacha-ach-file-generator.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"SoftwareApplication","name":"US NACHA ACH File Generator, ABA Routing Validator & Parser API (.ach)","applicationCategory":"FinanceApplication","operatingSystem":"Web, REST API, n8n, Make, MCP","url":"https://geornaden.github.io/finops-studio/nacha-ach-file-generator.html","description":"Generate strict 94-character block-10 padded US NACHA .ach direct deposit payroll and vendor payment files with 10-point ABA routing checksums, or parse raw ACH files to JSON.","offers":{"@type":"Offer","price":"0.02","priceCurrency":"USD","description":"Free browser preview; $0.02–$0.05 pay-per-event bulk API on Apify Store."}},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does ABA routing checksum validation prevent ACH return fees?","acceptedAnswer":{"@type":"Answer","text":"Every 9-digit routing number is checked against the Federal Reserve 10-point weighted checksum formula (3-7-1 weights mod 10 = 0) before the batch is created."}},{"@type":"Question","name":"Does it pad files with 9999... blocking lines?","acceptedAnswer":{"@type":"Answer","text":"Yes. Every generated NACHA file includes exact Record 1, 5, 6, 8, and 9 headers/controls plus automatic block-factor-10 9999... padding lines."}}]}]</script>
+</head>
+<body>
+  
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./index.html#sandbox">Live Sandbox</a>
+        <a href="./index.html#suite">7 Banking APIs</a>
+        <a href="./index.html#workflows">n8n &amp; MCP</a>
+        <a href="./llms.txt">llms.txt</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Apify Store &rarr;</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <section class="hero" style="padding-bottom:20px;">
+      <div class="tag-row" style="justify-content:center;margin-bottom:12px;">
+        <span class="tag">94-Char NACHA</span><span class="tag">ABA Checksum</span><span class="tag">PPD / CCD / WEB</span><span class="tag">Two-Way Parser</span>
+      </div>
+      <h1>94-Character US NACHA ACH File Generator & Parser (PPD, CCD, WEB)</h1>
+      <p>Create bank-compliant US Direct Deposit & Vendor ACH batches for Chase, Bank of America CashPro, Wells Fargo CEO, CitiDirect, and SVB—or parse raw .ach files into JSON.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank" rel="noopener">Use Production Cloud API on Apify &rarr;</a>
+        <a class="btn btn-outline" href="./index.html#suite">View All 7 FinOps Tools</a>
+      </div>
+    </section>
+    
+  <section id="sandbox" class="sandbox-card">
+    <div id="tool-tabs" class="tabs" role="tablist" aria-label="Financial File Tools"></div>
+    <div class="sandbox-grid">
+      <div>
+        <div class="pane-label">
+          <span>Input Payload (JSON / BAI2 / XML — Editable)</span>
+          <span>100% Client-Side Browser Preview</span>
+        </div>
+        <textarea id="sandbox-input" class="code-box" spellcheck="false" aria-label="Tool Input"></textarea>
+      </div>
+      <div>
+        <div class="pane-label">
+          <span>Generated Bank File / Decoded Output</span>
+          <span id="sandbox-status" class="status-chip status-ok">READY</span>
+        </div>
+        <pre id="sandbox-output" class="code-box"></pre>
+      </div>
+    </div>
+    <div id="upsell-banner" class="upsell-banner">
+      <span><strong>Bulk Batch Detected:</strong> Free browser preview processes the first 3 rows locally. Run unlimited 500+ row payroll/AP batches via cloud API!</span>
+      <a id="upsell-link" class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Run Unlimited Batch on Apify &rarr;</a>
+    </div>
+    <div class="sandbox-bar">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button id="btn-run-preview" type="button" class="btn btn-primary">&#9654; Run Instant Preview (Free &le;3 Rows)</button>
+        <button id="btn-download-preview" type="button" class="btn btn-outline">&#8681; Download Sample Output</button>
+        <button id="btn-copy-curl" type="button" class="btn btn-outline">Copy REST API cURL</button>
+      </div>
+      <a id="btn-open-store" class="btn btn-outline" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Bulk Cloud API, n8n &amp; MCP &rarr;</a>
+    </div>
+  </section>
+  <script type="module">
+    import { initSandbox } from './app.js';
+    initSandbox('nacha');
+  </script>
+    <section>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      
+        <div class="faq-item">
+          <h4>How does ABA routing checksum validation prevent ACH return fees?</h4>
+          <p>Every 9-digit routing number is checked against the Federal Reserve 10-point weighted checksum formula (3-7-1 weights mod 10 = 0) before the batch is created.</p>
+        </div>
+      
+        <div class="faq-item">
+          <h4>Does it pad files with 9999... blocking lines?</h4>
+          <p>Yes. Every generated NACHA file includes exact Record 1, 5, 6, 8, and 9 headers/controls plus automatic block-factor-10 9999... padding lines.</p>
+        </div>
+      
+    </section>
+    
+  <h2 id="suite" class="section-title">Complete 7-Tool Financial File Automation Suite</h2>
+  <p class="section-sub">Zero-LLM deterministic engines with exact integer-cent math—built for CFOs, accounting firms, ERP integrators, and AI agents.</p>
+  <div class="grid-3">
+    
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">pain.001.001.09</span><span class="tag">pain.008.001.08</span><span class="tag">IBAN MOD-97</span><span class="tag">2026 EPC Address Rule</span></div>
+          <h3><a href="./sepa-xml-generator.html" style="color:var(--text)">2026 SEPA XML Generator & IBAN Checksum Validator (pain.001 & pain.008)</a></h3>
+          <p>Generate bank-ready European bulk payouts & SEPA Direct Debits with mathematical IBAN MOD-97 verification, exact integer-cent CtrlSum, and automatic German/French diacritic sanitization.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Production API &rarr;</a>
+          <a class="btn btn-outline" href="./sepa-xml-generator.html">Specs &amp; Demo</a>
+        </div>
+      </article>
+    
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">Peppol BIS 3.0</span><span class="tag">XRechnung 3.0</span><span class="tag">Factur-X / ZUGFeRD</span><span class="tag">EN 16931</span></div>
+          <h3><a href="./eu-einvoice-xml-generator.html" style="color:var(--text)">Mandatory 2026 EU E-Invoice XML Generator (Peppol, XRechnung & Factur-X)</a></h3>
+          <p>Built for Belgium 2026 Peppol B2B, Germany XRechnung/ZUGFeRD B2B, and France Factur-X mandates with strict BR-CO-10..16 cent-exact VAT bucket summation.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Production API &rarr;</a>
+          <a class="btn btn-outline" href="./eu-einvoice-xml-generator.html">Specs &amp; Demo</a>
+        </div>
+      </article>
+    
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">94-Char NACHA</span><span class="tag">ABA Checksum</span><span class="tag">PPD / CCD / WEB</span><span class="tag">Two-Way Parser</span></div>
+          <h3><a href="./nacha-ach-file-generator.html" style="color:var(--text)">94-Character US NACHA ACH File Generator & Parser (PPD, CCD, WEB)</a></h3>
+          <p>Create bank-compliant US Direct Deposit & Vendor ACH batches for Chase, Bank of America CashPro, Wells Fargo CEO, CitiDirect, and SVB—or parse raw .ach files into JSON.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank" rel="noopener">Production API &rarr;</a>
+          <a class="btn btn-outline" href="./nacha-ach-file-generator.html">Specs &amp; Demo</a>
+        </div>
+      </article>
+    
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">BAI2 Treasury</span><span class="tag">88 Continuation Stitching</span><span class="tag">Multi-Currency</span><span class="tag">CSV + JSON</span></div>
+          <h3><a href="./bai2-bank-statement-parser.html" style="color:var(--text)">Corporate BAI2 Treasury Bank Statement Parser to Clean JSON & CSV</a></h3>
+          <p>Automatically stitches multi-line 88 remittance continuations, formats implied decimals across USD/EUR/JPY/KWD, and maps 40+ BAI Type Codes to signed credits & debits.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/bai2-bank-statement-parser" target="_blank" rel="noopener">Production API &rarr;</a>
+          <a class="btn btn-outline" href="./bai2-bank-statement-parser.html">Specs &amp; Demo</a>
+        </div>
+      </article>
+    
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">EXTF v700</span><span class="tag">SKR03 & SKR04</span><span class="tag">Steuerberater Ready</span><span class="tag">Stripe/Shopify to DATEV</span></div>
+          <h3><a href="./datev-buchungsstapel-generator.html" style="color:var(--text)">German DATEV EXTF v700 Buchungsstapel CSV Generator (SKR03 & SKR04)</a></h3>
+          <p>Generates the exact two-row DATEV EXTF v700 metadata header, DDMM Belegdatum, German comma decimals, Soll/Haben indicators, and automatic 19%/7%/0% VAT account mappings.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/datev-buchungsstapel-generator" target="_blank" rel="noopener">Production API &rarr;</a>
+          <a class="btn btn-outline" href="./datev-buchungsstapel-generator.html">Specs &amp; Demo</a>
+        </div>
+      </article>
+    
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">120-Char BECS .ABA</span><span class="tag">CBA / NAB / WBC / ANZ</span><span class="tag">BSB Validation</span><span class="tag">Self-Balancing</span></div>
+          <h3><a href="./aba-cemtex-file-generator.html" style="color:var(--text)">120-Character Australian ABA Direct Entry File Generator (CBA, NAB, Westpac, ANZ)</a></h3>
+          <p>Build ready-to-upload Australian payroll (Code 53) and supplier (Code 50) .aba files with optional self-balancing debit records required by CommBiz and NAB Connect.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener">Production API &rarr;</a>
+          <a class="btn btn-outline" href="./aba-cemtex-file-generator.html">Specs &amp; Demo</a>
+        </div>
+      </article>
+    
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">pain.002.001.10</span><span class="tag">40+ ISO Reason Codes</span><span class="tag">Plain-English Fixes</span><span class="tag">Exception Alerts</span></div>
+          <h3><a href="./iso20022-pain002-decoder.html" style="color:var(--text)">ISO 20022 pain.002 Bank Rejection Decoder (AC04, AM04, BE01, BE04, MD01)</a></h3>
+          <p>Turn raw XML bank rejection logs from EBICS/SFTP gateways into clear Slack, Jira, or ERP alerts explaining exactly why a payment failed and how to fix it.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/iso20022-pain002-status-parser" target="_blank" rel="noopener">Production API &rarr;</a>
+          <a class="btn btn-outline" href="./iso20022-pain002-decoder.html">Specs &amp; Demo</a>
+        </div>
+      </article>
+    
+  </div>
+  </main>
+  
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div><strong>FinOps Studio</strong> — Deterministic Banking, Treasury &amp; E-Invoicing File APIs on <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>.</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="./sepa-xml-generator.html">SEPA</a><a href="./eu-einvoice-xml-generator.html">EINVOICE</a><a href="./nacha-ach-file-generator.html">NACHA</a><a href="./bai2-bank-statement-parser.html">BAI2</a><a href="./datev-buchungsstapel-generator.html">DATEV</a><a href="./aba-cemtex-file-generator.html">ABA</a><a href="./iso20022-pain002-decoder.html">PAIN002</a>
+          <a href="./sitemap.xml">Sitemap</a>
+          <a href="./llms.txt">llms.txt</a>
+        </div>
+      </div>
+      <p style="margin-top:12px;color:#64748b;">Disclaimer: FinOps Studio tools are technical file-formatting, parsing, and mathematical checksum utilities provided "as-is", not legal, tax, or financial advice. Always verify totals and recipient identifiers inside your banking portal before authorizing transfers.</p>
+    </div>
+  </footer>
+</body>
+</html>

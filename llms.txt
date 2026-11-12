@@ -1,0 +1,41 @@
+# FinOps Studio — Banking, Treasury & E-Invoicing File Automation APIs & MCP Suite
+
+> Deterministic, zero-hallucination financial file generators, checksum validators, and parsers for CFOs, accountants, ERP integrators, n8n/Make workflows, and AI agents (Model Context Protocol / MCP). Hosted on Apify Cloud (`https://apify.com/finops_studio`) with browser-local previews at `https://geornaden.github.io/finops-studio/`.
+
+## Unified MCP Server Endpoint (Claude Desktop, Cursor, Windsurf, OpenAI Agents)
+- Full 7-Tool FinOps MCP URL: `https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser`
+
+## Production API & Store Tools (`finops_studio`)
+
+1. [SEPA XML Generator & IBAN Validator (`pain.001` & `pain.008`)](https://apify.com/finops_studio/sepa-xml-generator): Converts CSV/Excel/JSON into 2026 EPC structured-address ISO 20022 `pain.001.001.09` / `pain.001.001.03` Credit Transfers and `pain.008.001.08` / `pain.008.001.02` Direct Debits with ISO 13616 MOD-97 IBAN verification and integer-cent `CtrlSum`.
+   - Web Landing & Free Preview: https://geornaden.github.io/finops-studio/sepa-xml-generator.html
+   - Synchronous REST API: `POST https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items`
+
+2. [EU E-Invoice XML Generator (`Peppol BIS 3.0`, `XRechnung 3.0` & `Factur-X / ZUGFeRD`)](https://apify.com/finops_studio/eu-einvoice-xml-generator): Generates mandatory 2026 EN 16931 European B2B/B2G e-invoices in OASIS UBL 2.1 (`peppol-ubl-3.0`, `xrechnung-3.0-ubl`) and UN/CEFACT CII (`facturx-cii-en16931`) with BR-CO-10..16 cent-exact VAT summation.
+   - Web Landing & Free Preview: https://geornaden.github.io/finops-studio/eu-einvoice-xml-generator.html
+   - Synchronous REST API: `POST https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items`
+
+3. [US NACHA ACH File Generator, ABA Routing Validator & Parser (`PPD`, `CCD`, `WEB`)](https://apify.com/finops_studio/nacha-ach-file-generator): Generates strict 94-character block-10 padded US `.ach` bank files for payroll direct deposit and vendor payouts with 10-point ABA routing checksums, or parses `.ach` files to JSON.
+   - Web Landing & Free Preview: https://geornaden.github.io/finops-studio/nacha-ach-file-generator.html
+   - Synchronous REST API: `POST https://api.apify.com/v2/acts/finops_studio~nacha-ach-file-generator/run-sync-get-dataset-items`
+
+4. [Corporate `BAI2` Bank Statement Parser to JSON & CSV](https://apify.com/finops_studio/bai2-bank-statement-parser): Parses Bank Administration Institute (`BAI2`) corporate treasury statements (`01/02/03/16/88/49/98/99`) from J.P. Morgan, BofA CashPro, Wells Fargo CEO, CitiDirect, and HSBCnet into multi-currency implied-decimal JSON and CSV.
+   - Web Landing & Free Preview: https://geornaden.github.io/finops-studio/bai2-bank-statement-parser.html
+   - Synchronous REST API: `POST https://api.apify.com/v2/acts/finops_studio~bai2-bank-statement-parser/run-sync-get-dataset-items`
+
+5. [German `DATEV Buchungsstapel` EXTF v700 CSV Generator (`SKR03` & `SKR04`)](https://apify.com/finops_studio/datev-buchungsstapel-generator): Converts Stripe payouts, Shopify orders, or invoice JSON/CSV into official DATEV EXTF v700 semicolon `Buchungsstapel` files for *DATEV Kanzlei-Rechnungswesen* and *Unternehmen online*.
+   - Web Landing & Free Preview: https://geornaden.github.io/finops-studio/datev-buchungsstapel-generator.html
+   - Synchronous REST API: `POST https://api.apify.com/v2/acts/finops_studio~datev-buchungsstapel-generator/run-sync-get-dataset-items`
+
+6. [Australian `ABA` Direct Entry Bank File Generator (BECS / Cemtex)](https://apify.com/finops_studio/aba-cemtex-file-generator): Generates strict 120-character Australian `.aba` bulk payroll & supplier files for CommBank (CBA CommBiz), NAB Connect, Westpac Live, ANZ, and Macquarie with BSB validation and self-balancing entries.
+   - Web Landing & Free Preview: https://geornaden.github.io/finops-studio/aba-cemtex-file-generator.html
+   - Synchronous REST API: `POST https://api.apify.com/v2/acts/finops_studio~aba-cemtex-file-generator/run-sync-get-dataset-items`
+
+7. [ISO 20022 `pain.002` Bank Payment Status & Rejection Code Decoder](https://apify.com/finops_studio/iso20022-pain002-status-parser): Decodes `pain.002.001.03` & `pain.002.001.10` (`CstmrPmtStsRpt`) XML bank status files and 40+ ISO rejection codes (`AC04`, `AM04`, `BE01`, `BE04`, `MD01`, `MD06`, `RR04`) into plain-English JSON & CSV with remediation playbooks.
+   - Web Landing & Free Preview: https://geornaden.github.io/finops-studio/iso20022-pain002-decoder.html
+   - Synchronous REST API: `POST https://api.apify.com/v2/acts/finops_studio~iso20022-pain002-status-parser/run-sync-get-dataset-items`
+
+## Ready-to-Import n8n Automation Templates
+- [Google Sheets / Webhook to SEPA XML](https://geornaden.github.io/finops-studio/workflows/n8n-sheets-to-sepa-xml.json)
+- [Stripe Paid Invoice to Peppol E-Invoice + German DATEV CSV](https://geornaden.github.io/finops-studio/workflows/n8n-stripe-to-datev-and-einvoice.json)
+- [Daily SFTP BAI2 Treasury Parser + pain.002 Slack Rejection Alert](https://geornaden.github.io/finops-studio/workflows/n8n-bank-sftp-bai2-and-pain002-alerts.json)
