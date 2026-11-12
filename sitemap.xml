@@ -95,4 +95,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.92</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/quickbooks-xero-csv-to-sepa-nacha-positive-pay.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
 </urlset>

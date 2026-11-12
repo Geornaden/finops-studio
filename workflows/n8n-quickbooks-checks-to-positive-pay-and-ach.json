@@ -1,0 +1,40 @@
+{
+  "name": "QuickBooks / ERP Check Register to Bank Positive Pay & NACHA ACH",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "days", "daysInterval": 1 }]
+        }
+      },
+      "name": "Daily 4PM Check & Vendor Run",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/finops_studio~us-positive-pay-check-generator/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_APIFY_API_TOKEN" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"bankProfile\": \"BOFA_CASHPRO_80\",\n  \"accountNumber\": \"004819203912\",\n  \"companyName\": \"YOUR COMPANY LLC\",\n  \"checks\": [\n    { \"checkNumber\": \"10501\", \"issueDate\": \"2026-11-12\", \"amount\": \"1850.00\", \"payeeName\": \"ACME VENDOR\", \"status\": \"ISSUE\" }\n  ]\n}"
+      },
+      "name": "Generate 80-Char Payee Positive Pay File",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 300]
+    }
+  ],
+  "connections": {
+    "Daily 4PM Check & Vendor Run": {
+      "main": [[{ "node": "Generate 80-Char Payee Positive Pay File", "type": "main", "index": 0 }]]
+    }
+  }
+}
