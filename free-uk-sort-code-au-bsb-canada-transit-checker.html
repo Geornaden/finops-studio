@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free UK Sort Code, Australian BSB &amp; Canadian CPA-005 EFT Transit Converter | FinOps Studio</title>
+  <meta name="description" content="Instant free browser validator &amp; formatter for UK 6-digit Sort Codes (BACS Standard 18), Australian 6-digit BSB bank/state codes (.ABA Direct Entry), and Canadian 0YYYXXXXX CPA-005 EFT routing numbers." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-uk-sort-code-au-bsb-canada-transit-checker.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Free UK Sort Code, Australian BSB & Canadian CPA-005 EFT Routing Checker",
+        "url": "https://geornaden.github.io/finops-studio/free-uk-sort-code-au-bsb-canada-transit-checker.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do you convert a Canadian paper check transit and institution number to CPA-005 electronic EFT format?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Paper checks show 5-digit Branch Transit followed by 3-digit Institution ID (XXXXX-YYY). Electronic CPA-005 1464-byte EFT files require a 9-digit routing string starting with a leading zero, followed by the 3-digit Institution ID, then the 5-digit Branch Transit (0YYYXXXXX). For example, 12345-003 (RBC) becomes 000312345."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What do the 6 digits of an Australian BSB number mean in an ABA Direct Entry file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In Australian 120-character ABA (Cemtex) files, the BSB is formatted as XXX-XXX (7 characters including hyphen). Digits 1-2 identify the parent bank (06 CBA, 08 NAB, 03 Westpac, 01 ANZ), Digit 3 identifies the state (2 NSW/ACT, 3 VIC, 4 QLD, 5 SA/NT, 6 WA, 7 TAS), and Digits 4-6 identify the branch."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How are UK Sort Codes and Account Numbers formatted in BACS Standard 18?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "UK BACS Standard 18 100-character detail records strip hyphens from the 6-digit Sort Code (positions 1-6) and zero-pad the 8-digit Account Number (positions 7-14)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-iban-routing-number-pain002-validator.html">EU IBAN &amp; US ABA Checker</a>
+        <a href="./index.html">All 10 Banking APIs</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs ($0/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">100% Free UK, Australia &amp; Canada Payroll Pre-Flight Validator</span>
+      <h1>Instant UK Sort Code, Australian BSB &amp; Canadian CPA-005 Transit Checker</h1>
+      <p>Verify single bank codes, decode bank/state prefixes, and convert paper check MICR numbers into electronic upload formats right in your browser—then generate full <strong>UK BACS Standard 18</strong>, <strong>Australian .ABA</strong>, and <strong>Canadian 1464-byte CPA-005 EFT</strong> payroll files for pennies per row ($0/month).</p>
+    </section>
+
+    <div class="grid-3">
+      <!-- 1. UK Sort Code + Account Number Checker -->
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">1. 🇬🇧 UK Sort Code &amp; Account (BACS)</h3>
+        <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">6-Digit Sort Code</label>
+        <input id="inp-uk-sc" type="text" value="20-00-00" placeholder="e.g. 20-00-00 or 040004" style="width:100%;padding:10px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);margin-bottom:8px;" />
+        <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">8-Digit Account Number</label>
+        <input id="inp-uk-acc" type="text" value="55779911" placeholder="e.g. 55779911" style="width:100%;padding:10px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);margin-bottom:10px;" />
+        <button onclick="checkUk()" class="btn btn-primary" type="button" style="width:100%;">Check UK BACS Format</button>
+        <div id="out-uk" style="margin-top:12px;font-size:0.88rem;color:var(--muted);line-height:1.5;"></div>
+      </div>
+
+      <!-- 2. Australian BSB + Account Decoder -->
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">2. 🇦🇺 Australian BSB &amp; Account (.ABA)</h3>
+        <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">6-Digit BSB Code</label>
+        <input id="inp-au-bsb" type="text" value="062-000" placeholder="e.g. 062-000 or 083170" style="width:100%;padding:10px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);margin-bottom:8px;" />
+        <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Account Number (5–9 Digits)</label>
+        <input id="inp-au-acc" type="text" value="12345678" placeholder="e.g. 12345678" style="width:100%;padding:10px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);margin-bottom:10px;" />
+        <button onclick="checkAu()" class="btn btn-primary" type="button" style="width:100%;">Decode BSB Bank &amp; State</button>
+        <div id="out-au" style="margin-top:12px;font-size:0.88rem;color:var(--muted);line-height:1.5;"></div>
+      </div>
+
+      <!-- 3. Canadian CPA-005 Transit + Institution Converter -->
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">3. 🇨🇦 Canada Transit &harr; CPA-005 EFT</h3>
+        <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Paper Check (XXXXX-YYY) or Electronic (0YYYXXXXX)</label>
+        <input id="inp-ca-rt" type="text" value="12345-003" placeholder="e.g. 12345-003 or 000312345" style="width:100%;padding:10px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);margin-bottom:8px;" />
+        <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Payee Account Number (7–12 Digits)</label>
+        <input id="inp-ca-acc" type="text" value="1002345" placeholder="e.g. 1002345" style="width:100%;padding:10px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);margin-bottom:10px;" />
+        <button onclick="checkCa()" class="btn btn-primary" type="button" style="width:100%;">Convert to CPA-005 Routing</button>
+        <div id="out-ca" style="margin-top:12px;font-size:0.88rem;color:var(--muted);line-height:1.5;"></div>
+      </div>
+    </div>
+
+    <!-- Bulk Automation Callout -->
+    <div class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Stop Formatting Fixed-Width Payroll Files by Hand</h2>
+      <p style="color:var(--muted);">One misplaced space in a 100-character <strong>UK BACS Standard 18</strong> line, a 120-character <strong>Australian Cemtex (.aba)</strong> record, or a 1464-byte <strong>Canadian CPA-005 EFT</strong> block causes instant bank portal rejection. Automate 10 to 50,000 payroll/vendor rows via REST API, Python, n8n, or Claude MCP for <strong>$0/month + $0.02/row</strong>:</p>
+      <div class="hero-actions" style="margin-top:16px;">
+        <a class="btn btn-primary" href="./uk-bacs-standard-18-file-generator.html">🇬🇧 UK BACS Standard 18 API &rarr;</a>
+        <a class="btn btn-primary" href="./aba-cemtex-file-generator.html">🇦🇺 Australian .ABA Direct Entry API &rarr;</a>
+        <a class="btn btn-primary" href="./canada-cpa-005-eft-file-generator.html">🇨🇦 Canada CPA-005 1464-Byte API &rarr;</a>
+        <a class="btn btn-outline" href="./free-iban-routing-number-pain002-validator.html">🇪🇺🇺🇸 Free IBAN &amp; US ABA Checker</a>
+      </div>
+    </div>
+
+    <!-- Reference Cheat-Sheet Table for Search Traffic -->
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Quick Reference: UK, Australia &amp; Canada Electronic Bank File Specifications</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);color:var(--muted);text-align:left;">
+              <th style="padding:10px;">Country &amp; Standard</th>
+              <th style="padding:10px;">Record Width</th>
+              <th style="padding:10px;">Routing / Branch Field Rule</th>
+              <th style="padding:10px;">Major Supported Banks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px;"><strong>🇬🇧 UK BACS Standard 18</strong></td>
+              <td style="padding:10px;"><code>100 chars</code> fixed (`VOL1`/`HDR1`/`UHL1`)</td>
+              <td style="padding:10px;">6-digit Sort Code (no hyphens) + 8-digit zero-padded Account</td>
+              <td style="padding:10px;">Barclays, HSBC, Lloyds, NatWest, RBS, Santander, Revolut, Wise</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px;"><strong>🇦🇺 Australia ABA (Cemtex)</strong></td>
+              <td style="padding:10px;"><code>120 chars</code> fixed (`0` header, `1` detail, `7` total)</td>
+              <td style="padding:10px;">7-char hyphenated BSB (`XXX-XXX`) + right-aligned 9-char Account</td>
+              <td style="padding:10px;">Commonwealth Bank (CBA), NAB, Westpac, ANZ, Macquarie, Bendigo</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;"><strong>🇨🇦 Canada CPA Standard 005</strong></td>
+              <td style="padding:10px;"><code>1464 bytes</code> (`A` header, `C`/`D` 6-segment rows, `Z` trailer)</td>
+              <td style="padding:10px;">9-digit `0` + 3-digit Institution + 5-digit Branch (`0YYYXXXXX`)</td>
+              <td style="padding:10px;">RBC (`003`), TD (`004`), BMO (`001`), Scotiabank (`002`), CIBC (`010`), Desjardins (`815`)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; All 10 FinOps Studio Banking APIs</a> &bull;
+      <a href="./free-iban-routing-number-pain002-validator.html">Free IBAN / US ABA / pain.002 Checker</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+
+  <script>
+    const UK_EXACT = {
+      '040004': 'Monzo Bank',
+      '040075': 'Revolut',
+      '608371': 'Starling Bank',
+      '231470': 'Wise (TransferWise)',
+      '236972': 'Tide / ClearBank',
+      '040605': 'ClearBank'
+    };
+    const UK_PREFIX2 = {
+      '20': 'Barclays Bank UK',
+      '40': 'HSBC UK Bank',
+      '30': 'Lloyds Bank',
+      '77': 'Lloyds / TSB Group',
+      '11': 'Halifax (Lloyds Banking Group)',
+      '60': 'NatWest (National Westminster Bank)',
+      '50': 'NatWest',
+      '56': 'NatWest',
+      '83': 'Royal Bank of Scotland (RBS)',
+      '80': 'Bank of Scotland',
+      '09': 'Santander UK',
+      '07': 'Nationwide Building Society',
+      '08': 'Co-operative Bank',
+      '05': 'Virgin Money / Clydesdale Bank',
+      '82': 'Virgin Money (Yorkshire / Clydesdale)'
+    };
+
+    function checkUk() {
+      const sc = document.getElementById('inp-uk-sc').value.replace(/\D/g, '');
+      const accRaw = document.getElementById('inp-uk-acc').value.replace(/\D/g, '');
+      const el = document.getElementById('out-uk');
+      if (sc.length !== 6) {
+        el.innerHTML = '<span style="color:#f87171;">&#10007; UK Sort Code must contain exactly 6 digits (e.g. 20-00-00).</span>';
+        return;
+      }
+      if (accRaw.length < 6 || accRaw.length > 8) {
+        el.innerHTML = '<span style="color:#f87171;">&#10007; UK Account Number must be 6 to 8 digits (auto-padded to 8 for BACS).</span>';
+        return;
+      }
+      const paddedAcc = accRaw.padStart(8, '0');
+      const formattedSc = `${sc.slice(0,2)}-${sc.slice(2,4)}-${sc.slice(4,6)}`;
+      const bank = UK_EXACT[sc] || UK_PREFIX2[sc.slice(0, 2)] || 'UK Clearing / Payment Institution';
+      el.innerHTML = `
+        <span style="color:#34d399;font-weight:700;">&#10003; Valid BACS Standard 18 Format!</span><br/>
+        <strong>Detected Clearing Group:</strong> ${bank}<br/>
+        <strong>Display Sort Code:</strong> <code>${formattedSc}</code><br/>
+        <strong>BACS Cols 1–14:</strong> <code>${sc}${paddedAcc}</code><br/>
+        <a href="./uk-bacs-standard-18-file-generator.html">Generate 100-Char BACS File &rarr;</a>
+      `;
+    }
+
+    const AU_BANKS = {
+      '01': 'ANZ (Australia and New Zealand Banking Group)',
+      '03': 'Westpac Banking Corporation',
+      '73': 'Westpac Banking Corporation',
+      '06': 'Commonwealth Bank of Australia (CBA)',
+      '76': 'Commonwealth Bank of Australia (CBA)',
+      '08': 'National Australia Bank (NAB)',
+      '11': 'St.George Bank',
+      '12': 'Bank of Queensland (BOQ)',
+      '19': 'BankSA',
+      '30': 'Bankwest',
+      '48': 'Suncorp-Metway Bank',
+      '63': 'Bendigo and Adelaide Bank',
+      '67': 'Macquarie Bank',
+      '80': 'Cuscal / Credit Union Settlement',
+      '92': 'ING Australia'
+    };
+    const AU_STATES = {
+      '2': 'NSW / ACT (New South Wales & Australian Capital Territory)',
+      '3': 'VIC (Victoria)',
+      '4': 'QLD (Queensland)',
+      '5': 'SA / NT (South Australia & Northern Territory)',
+      '6': 'WA (Western Australia)',
+      '7': 'TAS (Tasmania)'
+    };
+
+    function checkAu() {
+      const bsb = document.getElementById('inp-au-bsb').value.replace(/\D/g, '');
+      const acc = document.getElementById('inp-au-acc').value.replace(/[^0-9A-Za-z -]/g, '').trim();
+      const el = document.getElementById('out-au');
+      if (bsb.length !== 6) {
+        el.innerHTML = '<span style="color:#f87171;">&#10007; Australian BSB must be exactly 6 digits (formatted XXX-XXX in ABA files).</span>';
+        return;
+      }
+      const digitsOnlyAcc = acc.replace(/\D/g, '');
+      if (digitsOnlyAcc.length < 5 || digitsOnlyAcc.length > 9) {
+        el.innerHTML = '<span style="color:#f87171;">&#10007; Australian ABA Account Number must be 5 to 9 digits (max 9 chars in Cemtex cols 9–17).</span>';
+        return;
+      }
+      const bsbFmt = `${bsb.slice(0,3)}-${bsb.slice(3,6)}`;
+      const bank = AU_BANKS[bsb.slice(0,2)] || 'Australian ADI / Financial Institution';
+      const state = AU_STATES[bsb[2]] || 'National / Digital Branch';
+      el.innerHTML = `
+        <span style="color:#34d399;font-weight:700;">&#10003; Valid ABA Direct Entry BSB!</span><br/>
+        <strong>Institution (${bsb.slice(0,2)}):</strong> ${bank}<br/>
+        <strong>State Digit (${bsb[2]}):</strong> ${state}<br/>
+        <strong>ABA Cols 2–17:</strong> <code>${bsbFmt}${digitsOnlyAcc.padStart(9, ' ')}</code><br/>
+        <a href="./aba-cemtex-file-generator.html">Generate 120-Char .ABA File &rarr;</a>
+      `;
+    }
+
+    const CA_BANKS = {
+      '001': 'Bank of Montreal (BMO)',
+      '002': 'Scotiabank (Bank of Nova Scotia)',
+      '003': 'RBC Royal Bank of Canada',
+      '004': 'TD Canada Trust',
+      '006': 'National Bank of Canada',
+      '010': 'CIBC (Canadian Imperial Bank of Commerce)',
+      '016': 'HSBC Bank Canada (now RBC)',
+      '030': 'Canadian Western Bank (CWB)',
+      '039': 'Laurentian Bank of Canada',
+      '219': 'ATB Financial',
+      '614': 'Tangerine Bank',
+      '809': 'Central 1 Credit Union (BC)',
+      '815': 'Mouvement Desjardins (Quebec)',
+      '828': 'Central 1 Credit Union (Ontario)',
+      '829': 'Desjardins (Ontario)',
+      '837': 'Meridian / Credit Union Central'
+    };
+
+    function checkCa() {
+      const raw = document.getElementById('inp-ca-rt').value.trim();
+      const acc = document.getElementById('inp-ca-acc').value.replace(/\D/g, '');
+      const el = document.getElementById('out-ca');
+
+      let transit = '';
+      let inst = '';
+      const digits = raw.replace(/\D/g, '');
+
+      if (/^\d{5}\s*-\s*\d{3}$/.test(raw)) {
+        const parts = raw.split('-').map((s) => s.trim());
+        transit = parts[0];
+        inst = parts[1];
+      } else if (digits.length === 9 && digits[0] === '0') {
+        inst = digits.slice(1, 4);
+        transit = digits.slice(4, 9);
+      } else if (digits.length === 8) {
+        transit = digits.slice(0, 5);
+        inst = digits.slice(5, 8);
+      } else {
+        el.innerHTML = '<span style="color:#f87171;">&#10007; Enter either Paper Check format <code>XXXXX-YYY</code> (5-digit Transit + 3-digit Institution) or 9-digit CPA-005 format <code>0YYYXXXXX</code>.</span>';
+        return;
+      }
+
+      if (acc.length < 5 || acc.length > 12) {
+        el.innerHTML = '<span style="color:#f87171;">&#10007; Canadian Payee Account Number must be 5 to 12 digits (padded to 12 chars in CPA-005).</span>';
+        return;
+      }
+
+      const cpaRouting = `0${inst}${transit}`;
+      const bank = CA_BANKS[inst] || `Canadian Financial Institution #${inst}`;
+      el.innerHTML = `
+        <span style="color:#34d399;font-weight:700;">&#10003; Valid CPA-005 Electronic Routing!</span><br/>
+        <strong>Institution (${inst}):</strong> ${bank}<br/>
+        <strong>Paper MICR Format:</strong> <code>${transit}-${inst}</code><br/>
+        <strong>9-Digit CPA-005 Routing:</strong> <code style="color:#38bdf8;font-weight:700;">${cpaRouting}</code><br/>
+        <a href="./canada-cpa-005-eft-file-generator.html">Generate 1464-Byte CPA-005 File &rarr;</a>
+      `;
+    }
+
+    checkUk();
+    checkAu();
+    checkCa();
+  </script>
+</body>
+</html>

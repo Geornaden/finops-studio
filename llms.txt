@@ -45,6 +45,9 @@
 
 ## Free Browser Checkers & Ready-to-Import n8n Templates
 - [Free Instant IBAN MOD-97, US ABA Routing & ISO 20022 Error Code Checker](https://geornaden.github.io/finops-studio/free-iban-routing-number-pain002-validator.html)
+- [Free Instant UK Sort Code (BACS), Australian BSB (.ABA) & Canadian CPA-005 EFT Routing Converter](https://geornaden.github.io/finops-studio/free-uk-sort-code-au-bsb-canada-transit-checker.html)
+- [QuickBooks & Xero Checks/Bills to Positive Pay + US NACHA ACH](https://geornaden.github.io/finops-studio/workflows/n8n-quickbooks-checks-to-positive-pay-and-ach.json)
+- [NetSuite / Odoo / SAP ERP SFTP to SEPA XML & BAI2 Reconciliation](https://geornaden.github.io/finops-studio/workflows/n8n-netsuite-odoo-erp-to-sepa-and-bai2.json)
 - [Google Sheets / Webhook to SEPA XML](https://geornaden.github.io/finops-studio/workflows/n8n-sheets-to-sepa-xml.json)
 - [Stripe Paid Invoice to Peppol E-Invoice + German DATEV CSV](https://geornaden.github.io/finops-studio/workflows/n8n-stripe-to-datev-and-einvoice.json)
 - [Daily SFTP BAI2 Treasury Parser + pain.002 Slack Rejection Alert](https://geornaden.github.io/finops-studio/workflows/n8n-bank-sftp-bai2-and-pain002-alerts.json)
