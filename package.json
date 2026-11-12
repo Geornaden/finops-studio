@@ -1,0 +1,35 @@
+{
+  "name": "finops-studio",
+  "version": "1.2.0",
+  "type": "module",
+  "description": "Official CLI & MCP configuration helper for FinOps Studio Banking, Payroll, Treasury & E-Invoice Cloud APIs (SEPA XML, Peppol/XRechnung, NACHA ACH, BAI2, DATEV, ABA, BACS, CPA-005, Positive Pay)",
+  "bin": {
+    "finops-studio": "./bin/finops.mjs"
+  },
+  "keywords": [
+    "sepa-xml",
+    "pain001",
+    "iso20022",
+    "peppol",
+    "xrechnung",
+    "factur-x",
+    "nacha",
+    "ach",
+    "bai2",
+    "datev",
+    "bacs",
+    "cpa-005",
+    "positive-pay",
+    "mcp",
+    "mcp-server",
+    "fintech"
+  ],
+  "homepage": "https://geornaden.github.io/finops-studio/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Geornaden/finops-studio.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
