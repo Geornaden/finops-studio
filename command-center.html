@@ -79,13 +79,13 @@
       </div>
       <div class="kpi-card">
         <div class="kpi-label">5. Winning Competition?</div>
-        <div class="kpi-val" style="color:#38bdf8;">#1 in All 9</div>
+        <div class="kpi-val" style="color:#38bdf8;">#1 in All 10</div>
         <div class="kpi-sub">0 direct Apify Store rivals</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">6. Products Built</div>
-        <div id="kpi-products" class="kpi-val">9 Tools</div>
-        <div class="kpi-sub">UK BACS + Canada CPA-005 added!</div>
+        <div id="kpi-products" class="kpi-val">10 Tools</div>
+        <div class="kpi-sub">UK BACS + CA CPA-005 + US Positive Pay!</div>
       </div>
     </div>
 
@@ -233,6 +233,7 @@
       ['page_pain002', 'Bank Rejection Decoder Page'],
       ['page_uk_bacs', 'UK BACS Standard 18 Page'],
       ['page_canada_cpa', 'Canadian CPA-005 EFT Page'],
+      ['page_positive_pay', 'US Bank Positive Pay Page'],
       ['page_seo_guides', 'Google Search Guides (DE / FR / NL / US)']
     ];
 
@@ -258,7 +259,7 @@
       { num: 7, name: 'ISO 20022 pain.002 Error Decoder', market: 'Global Banking', slug: 'finops_studio~iso20022-pain002-status-parser', rivals: '0 Competitors (#1)' },
       { num: 8, name: 'UK BACS Standard 18 Generator (NEW!)', market: 'United Kingdom (GBP)', slug: 'finops_studio~uk-bacs-standard18-generator', rivals: '0 Competitors (#1)' },
       { num: 9, name: 'Canadian CPA-005 EFT Generator (NEW!)', market: 'Canada (RBC/TD/BMO)', slug: 'finops_studio~canada-cpa005-eft-generator', rivals: '0 Competitors (#1)' },
-      { num: 10, name: 'Swiss QR-Bill (QR-Rechnung) Engine', market: 'Switzerland (CHF/EUR)', slug: null, rivals: '0 Competitors (Next R&D)' }
+      { num: 10, name: 'US Bank Positive Pay Check Generator (NEW!)', market: 'US (Chase/BofA/Wells Fargo/PNC)', slug: 'finops_studio~us-positive-pay-check-generator', rivals: '0 Competitors (#1)' }
     ];
 
     async function getCount(key) {
@@ -364,7 +365,7 @@
 
       document.getElementById('portfolio-tbody').innerHTML = rowsHtml.join('');
       document.getElementById('kpi-apify-runs').textContent = `${sumUsers} / ${sumRuns}`;
-      document.getElementById('kpi-apify-sub').textContent = `${publicCount} public today + ${9 - publicCount} queued`;
+      document.getElementById('kpi-apify-sub').textContent = `${publicCount} public today + ${10 - publicCount} queued`;
       document.getElementById('last-sync').textContent = `Live • Updated ${new Date().toLocaleTimeString()}`;
     }
 

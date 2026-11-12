@@ -185,6 +185,18 @@
           <a class="btn btn-outline" href="./canada-cpa-005-eft-file-generator.html">Specs &amp; Guide</a>
         </div>
       </article>
+
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">80-Char Fixed-Width &amp; CSV</span><span class="tag">Chase / BofA CashPro / Wells Fargo</span><span class="tag">Payee Positive Pay</span><span class="tag">Check Fraud Defense</span></div>
+          <h3><a href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html" style="color:var(--text)">US Bank Positive Pay &amp; Payee Positive Pay File Generator (Chase, BofA, Wells Fargo, PNC)</a></h3>
+          <p>Convert QuickBooks, NetSuite, Xero, or CSV check registers into upload-ready 80-character CashPro, Wells Fargo CEO ARP, PNC PINACLE, and Chase Payee Positive Pay files.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/us-positive-pay-check-generator" target="_blank" rel="noopener">Production API &rarr;</a>
+          <a class="btn btn-outline" href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">Specs &amp; Guide</a>
+        </div>
+      </article>
     
   </div>
     
@@ -224,11 +236,11 @@
   </div>
   <div class="sandbox-card" style="margin-top:10px;">
     <h3 style="margin-top:0;">Unified AI Agent MCP Server Configuration (Claude, Cursor, Windsurf)</h3>
-    <p style="color:var(--muted);font-size:0.93rem;">Add all 9 deterministic financial tools to your MCP client so LLMs never hallucinate bank checksums or fixed-width columns:</p>
+    <p style="color:var(--muted);font-size:0.93rem;">Add all 10 deterministic financial tools to your MCP client so LLMs never hallucinate bank checksums or fixed-width columns:</p>
     <pre class="code-box" style="min-height:130px;">{
   "mcpServers": {
     "finops-studio": {
-      "url": "https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser,finops_studio/uk-bacs-standard18-generator,finops_studio/canada-cpa005-eft-generator",
+      "url": "https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser,finops_studio/uk-bacs-standard18-generator,finops_studio/canada-cpa005-eft-generator,finops_studio/us-positive-pay-check-generator",
       "headers": {
         "Authorization": "Bearer YOUR_APIFY_API_TOKEN"
       }
@@ -243,12 +255,12 @@
       <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
         <div><strong>FinOps Studio</strong> — Deterministic Banking, Treasury &amp; E-Invoicing File APIs on <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>.</div>
         <div style="display:flex;gap:14px;flex-wrap:wrap;">
-          <a href="./sepa-xml-generator.html">SEPA</a><a href="./eu-einvoice-xml-generator.html">EINVOICE</a><a href="./nacha-ach-file-generator.html">NACHA</a><a href="./bai2-bank-statement-parser.html">BAI2</a><a href="./datev-buchungsstapel-generator.html">DATEV</a><a href="./aba-cemtex-file-generator.html">ABA</a><a href="./iso20022-pain002-decoder.html">PAIN002</a><a href="./uk-bacs-standard-18-file-generator.html">UK BACS</a><a href="./canada-cpa-005-eft-file-generator.html">CA CPA-005</a>
+          <a href="./sepa-xml-generator.html">SEPA</a><a href="./eu-einvoice-xml-generator.html">EINVOICE</a><a href="./nacha-ach-file-generator.html">NACHA</a><a href="./bai2-bank-statement-parser.html">BAI2</a><a href="./datev-buchungsstapel-generator.html">DATEV</a><a href="./aba-cemtex-file-generator.html">ABA</a><a href="./iso20022-pain002-decoder.html">PAIN002</a><a href="./uk-bacs-standard-18-file-generator.html">UK BACS</a><a href="./canada-cpa-005-eft-file-generator.html">CA CPA-005</a><a href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">POSITIVE PAY</a>
           <a href="./sitemap.xml">Sitemap</a>
           <a href="./llms.txt">llms.txt</a>
         </div>
       </div>
-      <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;font-size:0.82rem;"><strong>Regional &amp; Bank Guides:</strong> <a href="./convert-excel-csv-to-nacha-ach-chase-bofa-wells-fargo.html">🇺🇸 US Chase/BofA ACH</a> &bull; <a href="./uk-bacs-standard-18-file-generator.html">🇬🇧 UK BACS Standard 18</a> &bull; <a href="./canada-cpa-005-eft-file-generator.html">🇨🇦 Canada CPA-005 EFT</a> &bull; <a href="./fix-sepa-pain001-2026-structured-address-rejection.html">🇪🇺 2026 SEPA BE04 Fix</a> &bull; <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">🇩🇪 DATEV &amp; XRechnung</a> &bull; <a href="./facturation-electronique-2026-peppol-factur-x-xml.html">🇫🇷 Factur-X &amp; Peppol 2026</a> &bull; <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">🇳🇱🇧🇪 SEPA &amp; Peppol NL/BE</a></div>
+      <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;font-size:0.82rem;"><strong>Regional &amp; Bank Guides:</strong> <a href="./convert-excel-csv-to-nacha-ach-chase-bofa-wells-fargo.html">🇺🇸 US Chase/BofA ACH</a> &bull; <a href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">🇺🇸 US Check Positive Pay</a> &bull; <a href="./uk-bacs-standard-18-file-generator.html">🇬🇧 UK BACS Standard 18</a> &bull; <a href="./canada-cpa-005-eft-file-generator.html">🇨🇦 Canada CPA-005 EFT</a> &bull; <a href="./fix-sepa-pain001-2026-structured-address-rejection.html">🇪🇺 2026 SEPA BE04 Fix</a> &bull; <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">🇩🇪 DATEV &amp; XRechnung</a> &bull; <a href="./facturation-electronique-2026-peppol-factur-x-xml.html">🇫🇷 Factur-X &amp; Peppol 2026</a> &bull; <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">🇳🇱🇧🇪 SEPA &amp; Peppol NL/BE</a></div>
       <p style="margin-top:12px;color:#64748b;">Disclaimer: FinOps Studio tools are technical file-formatting, parsing, and mathematical checksum utilities provided "as-is", not legal, tax, or financial advice. Always verify totals and recipient identifiers inside your banking portal before authorizing transfers.</p>
     </div>
   </footer>

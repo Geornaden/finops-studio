@@ -32,6 +32,7 @@
   else if (p.includes('pain002')) hit('page_pain002');
   else if (p.includes('uk-bacs')) hit('page_uk_bacs');
   else if (p.includes('canada-cpa')) hit('page_canada_cpa');
+  else if (p.includes('positive-pay')) hit('page_positive_pay');
   else hit('page_seo_guides');
 
   // 2. Delegated click tracking across tabs, preview, download, cURL, workflows, and Apify Store CTAs
