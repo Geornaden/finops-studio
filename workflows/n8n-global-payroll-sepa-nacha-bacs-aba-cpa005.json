@@ -1,0 +1,225 @@
+{
+  "name": "Global Multi-Country Payroll Router (US NACHA, EU SEPA, UK BACS, AU ABA, CA CPA-005)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 2
+            }
+          ]
+        }
+      },
+      "name": "Bi-Weekly Global Payroll Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 420]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": false },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.countryGroup }}",
+                    "rightValue": "US",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "US_NACHA"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": false },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.countryGroup }}",
+                    "rightValue": "EU",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "EU_SEPA"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": false },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.countryGroup }}",
+                    "rightValue": "GB",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "GB_BACS"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": false },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.countryGroup }}",
+                    "rightValue": "AU",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "AU_ABA"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": false },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.countryGroup }}",
+                    "rightValue": "CA",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CA_CPA005"
+            }
+          ]
+        }
+      },
+      "name": "Route Payroll Batch by Country",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [460, 420]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/finops_studio~nacha-ach-file-generator/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_APIFY_API_TOKEN" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"mode\": \"generate\",\n  \"secCode\": \"PPD\",\n  \"immediateDestination\": \"021000021\",\n  \"immediateDestinationName\": \"JPMORGAN CHASE\",\n  \"immediateOrigin\": \"1943829104\",\n  \"immediateOriginName\": \"GLOBAL TECH US INC\",\n  \"companyName\": \"GLOBAL TECH US\",\n  \"companyId\": \"1943829104\",\n  \"companyEntryDescription\": \"PAYROLL\",\n  \"originatingDfiId\": \"02100002\",\n  \"effectiveEntryDate\": \"261120\",\n  \"entries\": [\n    {\n      \"transactionCode\": \"22\",\n      \"routingNumber\": \"021000021\",\n      \"accountNumber\": \"482910384\",\n      \"amount\": 4250.00,\n      \"individualId\": \"EMP-US-101\",\n      \"individualName\": \"JORDAN TAYLOR\"\n    }\n  ]\n}"
+      },
+      "name": "US -> 94-Char NACHA ACH Generator",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 140]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_APIFY_API_TOKEN" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"schemaVersion\": \"pain.001.001.09\",\n  \"initiatingPartyName\": \"Global Tech Europe GmbH\",\n  \"debtorName\": \"Global Tech Europe GmbH\",\n  \"debtorIban\": \"DE89370400440532013000\",\n  \"debtorBic\": \"COBADEFFXXX\",\n  \"categoryPurpose\": \"SALA\",\n  \"transactions\": [\n    {\n      \"name\": \"Lukas Weber\",\n      \"iban\": \"NL91ABNA0417164300\",\n      \"amount\": 3850.00,\n      \"remittanceInfo\": \"SALARY NOV 2026\",\n      \"country\": \"NL\",\n      \"townName\": \"Amsterdam\",\n      \"streetName\": \"Keizersgracht\",\n      \"buildingNumber\": \"120\",\n      \"postCode\": \"1015 CW\"\n    }\n  ]\n}"
+      },
+      "name": "EU -> ISO 20022 SEPA pain.001.001.09 XML",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 280]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/finops_studio~uk-bacs-standard18-generator/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_APIFY_API_TOKEN" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"serviceUserNumber\": \"123456\",\n  \"originatorName\": \"GLOBAL TECH UK LTD\",\n  \"originatorSortCode\": \"20-00-00\",\n  \"originatorAccountNumber\": \"12345678\",\n  \"processingDate\": \"2026-11-20\",\n  \"includeHeaders\": true,\n  \"transactions\": [\n    {\n      \"name\": \"OLIVER WRIGHT\",\n      \"sortCode\": \"40-05-15\",\n      \"accountNumber\": \"87654321\",\n      \"amount\": 3400.00,\n      \"transactionCode\": \"99\",\n      \"reference\": \"PAYROLL NOV26\"\n    }\n  ]\n}"
+      },
+      "name": "GB -> 100-Char UK BACS Standard 18",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 420]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/finops_studio~aba-cemtex-file-generator/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_APIFY_API_TOKEN" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"financialInstitution\": \"CBA\",\n  \"userName\": \"GLOBAL TECH PTY LTD\",\n  \"apcaUserId\": \"301500\",\n  \"description\": \"PAYROLL\",\n  \"processingDate\": \"2026-11-20\",\n  \"traceBsb\": \"062-000\",\n  \"traceAccount\": \"10492837\",\n  \"remitterName\": \"GLOBAL TECH AU\",\n  \"includeSelfBalancingRow\": true,\n  \"transactions\": [\n    {\n      \"bsb\": \"082-088\",\n      \"accountNumber\": \"59201847\",\n      \"transactionCode\": \"53\",\n      \"amount\": 4650.00,\n      \"accountTitle\": \"LIAM O CONNOR\",\n      \"lodgementReference\": \"SALARY NOV 2026\"\n    }\n  ]\n}"
+      },
+      "name": "AU -> 120-Char Australian ABA Cemtex",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 560]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/finops_studio~canada-cpa005-eft-generator/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer YOUR_APIFY_API_TOKEN" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"originatorId\": \"GLOBTECHCA\",\n  \"originatorShortName\": \"GLOBAL TECH CA\",\n  \"originatorLongName\": \"GLOBAL TECH CANADA INC\",\n  \"destinationDataCentre\": \"00300\",\n  \"fileCreationNumber\": \"0021\",\n  \"returnInstitution\": \"003\",\n  \"returnTransit\": \"00012\",\n  \"returnAccount\": \"1004589\",\n  \"dueDate\": \"2026-11-20\",\n  \"transactions\": [\n    {\n      \"name\": \"SOPHIE TREMBLAY\",\n      \"institution\": \"004\",\n      \"transit\": \"10202\",\n      \"accountNumber\": \"7748392\",\n      \"amount\": 3950.00,\n      \"cpaCode\": \"200\",\n      \"crossReference\": \"EMP-CA-204\"\n    }\n  ]\n}"
+      },
+      "name": "CA -> 1464-Byte Canada CPA-005 EFT",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 700]
+    }
+  ],
+  "connections": {
+    "Bi-Weekly Global Payroll Trigger": {
+      "main": [
+        [
+          {
+            "node": "Route Payroll Batch by Country",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Payroll Batch by Country": {
+      "main": [
+        [{ "node": "US -> 94-Char NACHA ACH Generator", "type": "main", "index": 0 }],
+        [{ "node": "EU -> ISO 20022 SEPA pain.001.001.09 XML", "type": "main", "index": 0 }],
+        [{ "node": "GB -> 100-Char UK BACS Standard 18", "type": "main", "index": 0 }],
+        [{ "node": "AU -> 120-Char Australian ABA Cemtex", "type": "main", "index": 0 }],
+        [{ "node": "CA -> 1464-Byte Canada CPA-005 EFT", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}

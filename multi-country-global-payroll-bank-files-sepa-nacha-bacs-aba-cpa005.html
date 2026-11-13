@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Country Global Payroll Bank File API &amp; n8n Router (US NACHA, EU SEPA XML, UK BACS, AU ABA, Canada CPA-005) | FinOps Studio</title>
+  <meta name="description" content="Automate multi-entity global payroll &amp; contractor bank files across 5 domestic clearing rails from one CSV, HRIS, or n8n workflow: US NACHA (94-char), EU SEPA XML (pain.001.001.09), UK BACS Standard 18 (100-char), Australia ABA (120-char) &amp; Canada CPA-005 (1464-byte) at $0/month." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Multi-Country Global Payroll Bank File Automation: US NACHA ACH, EU SEPA XML, UK BACS Standard 18, Australia ABA & Canada CPA-005",
+        "url": "https://geornaden.github.io/finops-studio/multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Engineering and CFO architecture guide to routing global HRIS payroll exports (Workday, BambooHR, Personio, HiBob, Rippling, NetSuite) into domestic commercial bank clearing files across the US, Europe, UK, Australia, and Canada at $0/month fixed cost."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How can a multi-entity company generate domestic payroll bank files for the US, EU, UK, Australia, and Canada from one workflow?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Export approved net pay rows from your HRIS or ERP, group employees by subsidiary country (US, EU/EEA/CH, GB, AU, CA), and POST each country array to FinOps Studio's 5 deterministic cloud APIs (or import our ready-made n8n Global Payroll Router JSON). Each endpoint enforces local routing checksums and returns exact bank-uploadable files: 94-char NACHA ACH, ISO 20022 pain.001.001.09 SEPA XML, 100-char UK BACS Standard 18, 120-char Australian .ABA, and 1,464-byte Canadian CPA-005."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How much does multi-country bank file generation cost compared to enterprise treasury middleware or EOR payout fees?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Enterprise treasury workstations and multi-country bank formatters typically charge $1,500 to $4,000/month in SaaS seat licenses, while payment aggregators charge $5 to $25+ per international contractor payout. FinOps Studio charges $0/month subscription and just $0.02 per employee row (+ $0.03 per batch start), so generating domestic bank files for 250 global employees across 5 countries costs $5.15 per payroll cycle."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./workflows/n8n-global-payroll-sepa-nacha-bacs-aba-cpa005.json" download>Download n8n Router</a>
+        <a href="./for-accounting-firms-payroll-bureaus-and-fintechs.html">Payroll Bureau ROI</a>
+        <a href="./free-bank-file-format-detector-line-length-auditor.html">Free Format Auditor</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open All 9 Live Store APIs &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127757; 5 Live Public Payroll Clearing APIs + Ready-to-Import n8n Blueprint &bull; $0/Month Fixed Cost</span>
+      <h1>Multi-Country Global Payroll Bank File Router: <code>NACHA</code> + <code>SEPA XML</code> + <code>UK BACS</code> + <code>AU ABA</code> + <code>Canada CPA-005</code></h1>
+      <p>Built for multi-entity CFOs, remote-first finance teams, EOR platforms, and international payroll bureaus exporting from <strong>Workday</strong>, <strong>BambooHR</strong>, <strong>HiBob</strong>, <strong>Personio</strong>, <strong>Deel</strong>, or <strong>NetSuite</strong>. Route global employee CSV batches directly into native domestic commercial bank clearing files across <strong>45+ countries</strong>—without $2,500/mo treasury middleware or FX payout markups.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="./workflows/n8n-global-payroll-sepa-nacha-bacs-aba-cpa005.json" download>&#11015; Download Ready-to-Import n8n Global Payroll JSON</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Explore Live Store APIs ($0.02/row) &rarr;</a>
+        <a class="btn btn-outline" href="./free-bank-file-format-detector-line-length-auditor.html">Test Output Widths Free</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <h2 style="margin-top:0;">5 Live Domestic Bank Clearing Engines (Zero Monthly Subscription)</h2>
+      <p style="color:var(--muted);font-size:0.9rem;">Every country's commercial banking rail uses an incompatible physical record structure and check-digit math. All 5 FinOps Studio payroll engines are live on Apify Store and ranked <code>#1</code> on the Official MCP Registry:</p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;margin-top:10px;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Jurisdiction</th>
+              <th style="padding:10px;">Domestic Clearing Standard</th>
+              <th style="padding:10px;">Physical Line Spec &amp; Checksums</th>
+              <th style="padding:10px;">Major Commercial Portals</th>
+              <th style="padding:10px;">Live Cloud API</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127482;&#127480; United States</strong></td>
+              <td style="padding:10px;"><code>NACHA ACH</code> (<code>PPD</code> Payroll / <code>CCD</code> Contractor)</td>
+              <td style="padding:10px;">Exact <strong>94 chars/line</strong>, Block-10 <code>9999...</code> padding, 10-pt ABA MOD-10 routing hash</td>
+              <td style="padding:10px;">Chase Access, BofA CashPro, Wells Fargo CEO, SVB, CitiDirect</td>
+              <td style="padding:10px;"><a href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank" rel="noopener"><code>nacha-ach-file-generator</code> &rarr;</a></td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127466;&#127482; Europe (40+ SEPA)</strong></td>
+              <td style="padding:10px;"><code>ISO 20022 pain.001.001.09</code> (<code>SALA</code> Category)</td>
+              <td style="padding:10px;">UTF-8 XML, ISO 13616 MOD-97 IBAN check, <strong>Nov 2026 EPC Structured Addresses</strong>, integer-cent <code>CtrlSum</code></td>
+              <td style="padding:10px;">Deutsche Bank, BNP Paribas, ING, Rabobank, Santander, UniCredit, UBS</td>
+              <td style="padding:10px;"><a href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener"><code>sepa-xml-generator</code> &rarr;</a></td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127468;&#127463; United Kingdom</strong></td>
+              <td style="padding:10px;"><code>BACS Standard 18</code> Direct Credit (Code <code>99</code>)</td>
+              <td style="padding:10px;">Exact <strong>100 chars/line</strong>, <code>VOL1</code>/<code>HDR1</code>/<code>UHL1</code>/<code>CONTRA</code>/<code>UTL1</code>, <code>bYYDDD</code> Julian date</td>
+              <td style="padding:10px;">Barclays.net, HSBCnet, Lloyds Commercial, NatWest Bankline</td>
+              <td style="padding:10px;"><a href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener"><code>uk-bacs-standard18-generator</code> &rarr;</a></td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127462;&#127482; Australia</strong></td>
+              <td style="padding:10px;"><code>ABA Cemtex</code> (AusPayNet BECS Code <code>53</code> Pay)</td>
+              <td style="padding:10px;">Exact <strong>120 chars/line</strong>, Record <code>0</code> / <code>1</code> / <code>7</code> net-total, optional self-balancing debit row (Code <code>13</code>)</td>
+              <td style="padding:10px;">CBA CommBiz, NAB Connect, Westpac Live, ANZ Transactive, Macquarie</td>
+              <td style="padding:10px;"><a href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener"><code>aba-cemtex-file-generator</code> &rarr;</a></td>
+            </tr>
+            <tr>
+              <td style="padding:10px;"><strong>&#127464;&#127462; Canada</strong></td>
+              <td style="padding:10px;"><code>Payments Canada CPA-005</code> (Code <code>200</code> Payroll)</td>
+              <td style="padding:10px;">Exact <strong>1,464 chars/line</strong> (<code>24 + 6&times;240</code> packed segments), <code>0YYYXXXXX</code> routing, <code>0YYDDD</code> Julian date</td>
+              <td style="padding:10px;">RBC Express, TD Web Business, BMO, ScotiaConnect, CIBC CMO, Desjardins</td>
+              <td style="padding:10px;"><a href="https://apify.com/finops_studio/canada-cpa005-eft-generator" target="_blank" rel="noopener"><code>canada-cpa005-eft-generator</code> &rarr;</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <span class="tag">Interactive Multi-Entity Treasury Cost Calculator</span>
+      <h2 style="margin:10px 0 8px;">Estimate Your Monthly Multi-Country Payroll File Cost</h2>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0;">Adjust your headcount per region and payroll frequency below to compare pay-per-use API generation against legacy multi-country bank middleware ($1,800/mo):</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px;">
+        <label style="font-size:0.82rem;color:var(--muted);">US Employees (NACHA)
+          <input id="cntUs" type="number" min="0" max="50000" value="80" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;" />
+        </label>
+        <label style="font-size:0.82rem;color:var(--muted);">EU Employees (SEPA XML)
+          <input id="cntEu" type="number" min="0" max="50000" value="60" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;" />
+        </label>
+        <label style="font-size:0.82rem;color:var(--muted);">UK Employees (BACS 18)
+          <input id="cntGb" type="number" min="0" max="50000" value="35" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;" />
+        </label>
+        <label style="font-size:0.82rem;color:var(--muted);">AU Employees (.ABA)
+          <input id="cntAu" type="number" min="0" max="50000" value="20" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;" />
+        </label>
+        <label style="font-size:0.82rem;color:var(--muted);">CA Employees (CPA-005)
+          <input id="cntCa" type="number" min="0" max="50000" value="25" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;" />
+        </label>
+        <label style="font-size:0.82rem;color:var(--muted);">Pay Runs / Month
+          <select id="runsPerMo" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;">
+            <option value="1">1x Monthly</option>
+            <option value="2" selected>2x Semi-Monthly / Bi-Weekly</option>
+            <option value="4">4x Weekly Contractors</option>
+          </select>
+        </label>
+      </div>
+      <div id="calcSummary" style="margin-top:16px;padding:14px 16px;border-radius:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center;">
+        <div>
+          <div style="font-size:0.82rem;color:var(--muted);">Estimated Total FinOps Studio Monthly Spend</div>
+          <div id="finopsTotal" style="font-size:1.45rem;font-weight:700;color:#34d399;">$9.10 / month</div>
+        </div>
+        <div>
+          <div style="font-size:0.82rem;color:var(--muted);">Annual Savings vs. $1,800/mo Treasury Middleware</div>
+          <div id="annualSavings" style="font-size:1.25rem;font-weight:700;color:#f8fafc;">$21,490.80 / year saved (99.5%)</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">n8n Workflow Architecture</span>
+        <h3 style="margin:10px 0 8px;">Import 1-Click 5-Country n8n Payroll Router</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Our downloadable <code>n8n</code> JSON template connects a scheduled HRIS trigger to a 5-branch country switch (<code>US_NACHA</code>, <code>EU_SEPA</code>, <code>GB_BACS</code>, <code>AU_ABA</code>, <code>CA_CPA005</code>), pre-configured with verified HTTP POST schemas for all 5 live Apify Store Actors:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:210px;">[Bi-Weekly Payroll Trigger / Webhook]
+              │
+   [Switch: $json.countryGroup]
+    ├── "US" ──► POST finops_studio~nacha-ach-file-generator    (94-char .ach)
+    ├── "EU" ──► POST finops_studio~sepa-xml-generator          (pain.001.001.09 .xml)
+    ├── "GB" ──► POST finops_studio~uk-bacs-standard18-generator (100-char .txt)
+    ├── "AU" ──► POST finops_studio~aba-cemtex-file-generator   (120-char .aba)
+    └── "CA" ──► POST finops_studio~canada-cpa005-eft-generator (1464-char .eft)</pre>
+        <div style="margin-top:12px;">
+          <a class="btn btn-primary" href="./workflows/n8n-global-payroll-sepa-nacha-bacs-aba-cpa005.json" download>Download n8n-global-payroll-sepa-nacha-bacs-aba-cpa005.json</a>
+        </div>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Model Context Protocol (MCP) — Claude / Cursor / Agents</span>
+        <h3 style="margin:10px 0 8px;">Unified 5-Country Payroll MCP Configuration</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Equip AI finance ops agents with all 5 live payroll file generators in a single zero-hallucination MCP server block:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:210px;">{
+  "mcpServers": {
+    "finops-global-payroll": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/nacha-ach-file-generator,finops_studio/sepa-xml-generator,finops_studio/uk-bacs-standard18-generator,finops_studio/aba-cemtex-file-generator,finops_studio/canada-cpa005-eft-generator",
+      "headers": {
+        "Authorization": "Bearer YOUR_APIFY_API_TOKEN"
+      }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Country-Specific Bank Portal Deep-Dive Guides</h2>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <a class="btn btn-outline" href="./convert-excel-csv-to-nacha-ach-chase-bofa-wells-fargo.html">&#127482;&#127480; US Chase / BofA / Wells Fargo NACHA Guide</a>
+        <a class="btn btn-outline" href="./fix-sepa-pain001-2026-structured-address-rejection.html">&#127466;&#127482; 2026 EPC SEPA Structured Address Guide</a>
+        <a class="btn btn-outline" href="./sage-xero-csv-to-uk-bacs-standard-18-barclays-hsbc-lloyds-natwest.html">&#127468;&#127463; UK Barclays / HSBC / Lloyds BACS 18 Guide</a>
+        <a class="btn btn-outline" href="./xero-myob-csv-to-australian-aba-commbiz-nab-westpac-anz.html">&#127462;&#127482; Australia CommBiz / NAB / Westpac .ABA Guide</a>
+        <a class="btn btn-outline" href="./csv-to-canada-cpa-005-eft-rbc-td-bmo-scotiabank.html">&#127464;&#127462; Canada RBC / TD / BMO CPA-005 Guide</a>
+        <a class="btn btn-outline" href="./iso20022-pain002-rejection-codes-ac04-am04-be04-md01-rc01-guide.html">&#128270; ISO 20022 pain.002 Rejection Decoder</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./free-iban-routing-number-pain002-validator.html">Free IBAN/ABA Checker</a> &bull; <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Free UK/AU/CA Routing Checker</a></div>
+      <div><a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Apify Storefront &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var ids = ['cntUs', 'cntEu', 'cntGb', 'cntAu', 'cntCa', 'runsPerMo'];
+      function recalc() {
+        var counts = [
+          parseInt(document.getElementById('cntUs').value, 10) || 0,
+          parseInt(document.getElementById('cntEu').value, 10) || 0,
+          parseInt(document.getElementById('cntGb').value, 10) || 0,
+          parseInt(document.getElementById('cntAu').value, 10) || 0,
+          parseInt(document.getElementById('cntCa').value, 10) || 0
+        ];
+        var runs = parseInt(document.getElementById('runsPerMo').value, 10) || 1;
+        var activeCountries = counts.filter(function (n) { return n > 0; }).length;
+        var totalRows = counts.reduce(function (a, b) { return a + b; }, 0);
+        var perCycle = (totalRows * 0.02) + (activeCountries * 0.03);
+        var monthly = perCycle * runs;
+        var legacyMonthly = 1800;
+        var annualSaved = Math.max(0, (legacyMonthly - monthly) * 12);
+        var pct = legacyMonthly > 0 ? Math.max(0, ((legacyMonthly - monthly) / legacyMonthly) * 100) : 0;
+        document.getElementById('finopsTotal').textContent = '$' + monthly.toFixed(2) + ' / month (' + (totalRows * runs) + ' employee payouts)';
+        document.getElementById('annualSavings').textContent = '$' + annualSaved.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' / year saved (' + pct.toFixed(1) + '%)';
+      }
+      ids.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', recalc);
+          el.addEventListener('change', recalc);
+        }
+      });
+      recalc();
+    })();
+  </script>
+</body>
+</html>

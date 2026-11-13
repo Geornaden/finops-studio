@@ -84,6 +84,7 @@ Give **Claude Desktop**, **Cursor**, **Windsurf**, or any MCP-compatible AI agen
 ---
 
 ## Ready-to-Import `n8n` & `Make.com` Workflow Blueprints + Python/Node.js Cookbook
+- [`workflows/n8n-global-payroll-sepa-nacha-bacs-aba-cpa005.json`](./workflows/n8n-global-payroll-sepa-nacha-bacs-aba-cpa005.json) — **5-Country Global Payroll Router** (`US` NACHA ACH, `EU` SEPA XML, `GB` BACS Standard 18, `AU` ABA Cemtex, `CA` CPA-005 EFT) + [Architecture Guide](https://geornaden.github.io/finops-studio/multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html)
 - [`cookbook/`](./cookbook) — Zero-dependency Python 3 & Node.js 20+ client scripts (`csv_to_sepa_pain001.mjs`, `payroll_csv_to_nacha_ach.py`, `bai2_to_json_and_csv.py`, `stripe_to_datev_skr04.py`)
 - [`workflows/make-sheets-airtable-to-sepa-nacha-datev.json`](./workflows/make-sheets-airtable-to-sepa-nacha-datev.json) — Make.com Scenario Blueprint (Google Sheets / Airtable → SEPA XML)
 - [`workflows/n8n-quickbooks-checks-to-positive-pay-and-ach.json`](./workflows/n8n-quickbooks-checks-to-positive-pay-and-ach.json) — QuickBooks / Xero → US Positive Pay + NACHA ACH

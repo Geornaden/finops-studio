@@ -54,6 +54,8 @@
     - Docs: https://geornaden.github.io/finops-studio/fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html
 
 ## Free Browser Checkers & Ready-to-Import n8n Templates
+- [Multi-Country Global Payroll Bank File Router (US NACHA, EU SEPA XML, UK BACS 18, Australia ABA, Canada CPA-005) & Cost Estimator](https://geornaden.github.io/finops-studio/multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html)
+- [n8n 5-Country Global Payroll Router Blueprint JSON](https://geornaden.github.io/finops-studio/workflows/n8n-global-payroll-sepa-nacha-bacs-aba-cpa005.json)
 - [B2B Pricing, Multi-Client CPA/Payroll Guide & Interactive ROI Calculator](https://geornaden.github.io/finops-studio/for-accounting-firms-payroll-bureaus-and-fintechs.html)
 - [Free Instant Bank File Format Detector & Fixed-Width / XML Line-Length Auditor](https://geornaden.github.io/finops-studio/free-bank-file-format-detector-line-length-auditor.html)
 - [Free Instant Peppol EndpointID EAS Lookup, EU VAT Checker & German XRechnung Leitweg-ID Calculator](https://geornaden.github.io/finops-studio/free-eu-vat-peppol-endpoint-id-validator.html)
