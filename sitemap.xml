@@ -205,4 +205,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/nacha-ach-return-codes-r01-r02-r03-r10-r29-sec-codes-guide.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.91</priority>
+  </url>
 </urlset>

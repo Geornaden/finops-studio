@@ -107,7 +107,7 @@ Give **Claude Desktop**, **Cursor**, **Windsurf**, or any MCP-compatible AI agen
 - **Ireland, Portugal & Luxembourg (`IE`/`PT`/`LU` — BOI, AIB, Millennium bcp, Spuerkeess, MultiLine SEPA & Peppol):** [Guide](https://geornaden.github.io/finops-studio/ireland-portugal-luxembourg-sepa-xml-pain001-peppol-api.html)
 - **Italy (`IT` — Bonifici CBI SEPA XML & Peppol UE):** [Guide](https://geornaden.github.io/finops-studio/fatturazione-elettronica-peppol-bonifico-sepa-xml-italia.html)
 - **Poland (`PL` — KSeF 2026 Exporter Peppol & Przelewy SEPA):** [Guide](https://geornaden.github.io/finops-studio/ksef-2026-peppol-efaktura-przelewy-sepa-xml-polska.html)
-- **US Chase / BofA / Wells Fargo NACHA ACH:** [Guide](https://geornaden.github.io/finops-studio/convert-excel-csv-to-nacha-ach-chase-bofa-wells-fargo.html)
+- **US Chase / BofA / Wells Fargo NACHA ACH:** [CSV to ACH Guide](https://geornaden.github.io/finops-studio/convert-excel-csv-to-nacha-ach-chase-bofa-wells-fargo.html) • [R01–R85 Return & NOC Codes + Record 6 Slicer](https://geornaden.github.io/finops-studio/nacha-ach-return-codes-r01-r02-r03-r10-r29-sec-codes-guide.html)
 - **US Bank Check Positive Pay (CashPro / CEO / Chase):** [Guide](https://geornaden.github.io/finops-studio/us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html)
 - **2026 EPC SEPA `BE04` Structured Address Mandate:** [Guide](https://geornaden.github.io/finops-studio/fix-sepa-pain001-2026-structured-address-rejection.html)
 - **UK BACS Standard 18 (Barclays / HSBC / Lloyds / NatWest):** [Guide](https://geornaden.github.io/finops-studio/uk-bacs-standard-18-file-generator.html)

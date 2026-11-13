@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NACHA ACH Return Codes (R01–R85: R01, R02, R03, R10, R29), NOC (C01–C07) &amp; 94-Char Record 6 Inspector | FinOps Studio</title>
+  <meta name="description" content="Searchable US NACHA ACH Return Reason Codes (R01 Insufficient Funds, R02 Closed, R03 No Account, R10 Unauthorized, R13 Bad ABA, R29 Corporate Debit Block), NOC C01–C07 &amp; SEC Codes (PPD, CCD, CTX, WEB) + 94-Char ACH Generator &amp; Parser API." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/nacha-ach-return-codes-r01-r02-r03-r10-r29-sec-codes-guide.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "US NACHA ACH Return Reason Codes (R01–R85), NOC Codes (C01–C07) & 94-Character Entry Detail Inspector",
+        "url": "https://geornaden.github.io/finops-studio/nacha-ach-return-codes-r01-r02-r03-r10-r29-sec-codes-guide.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Complete US treasury, payroll, and SaaS billing reference for Nacha ACH Return Reason Codes, Notification of Change (NOC) deadlines, Standard Entry Class (PPD/CCD/WEB) rules, and 94-character .ach file generation."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the difference between ACH Return Code R10 and R29?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "R10 (Customer Advises Originator is Not Known or Not Authorized, 60-calendar-day return window) applies to consumer SEC codes such as PPD or WEB and counts toward Nacha's strict 0.5% Unauthorized Return Rate threshold. R29 (Corporate Customer Advises Not Authorized, 2-banking-day return window) occurs on B2B CCD or CTX debits—most often because the corporate customer's bank has an ACH Debit Filter/Block and needs your 10-digit ACH Company ID added to their allowlist."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How quickly must an Originator act on an ACH Notification of Change (NOC C01–C07)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under Nacha Operating Rules, when an RDFI sends a Notification of Change (COR batch, such as C01 Incorrect Account Number, C02 Incorrect Routing Number, or C05 Incorrect Transaction Code 22 vs 32), the Originator must update stored bank details within 6 banking days or prior to initiating the next live entry, whichever is later."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How can I prevent R04, R13, and batch file rejections before uploading an .ach file to Chase, BofA CashPro, or Wells Fargo CEO?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Use the FinOps Studio 94-Character US NACHA ACH File Generator & Parser API (finops_studio/nacha-ach-file-generator on Apify Store or via MCP). It mathematically verifies every 9-digit ABA routing number using the 10-point [3,7,1] MOD-10 algorithm, enforces exact 94-character fixed-width columns, pads files to a multiple of 10 lines with 9999... records, and reconciles Batch (8) and File (9) entry hashes at $0/month + $0.02 per entry."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./nacha-ach-file-generator.html">NACHA Sandbox</a>
+        <a href="./convert-excel-csv-to-nacha-ach-chase-bofa-wells-fargo.html">CSV &rarr; ACH Guide</a>
+        <a href="./free-iban-routing-number-pain002-validator.html">ABA MOD-10 Checker</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank" rel="noopener">Launch Live NACHA API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127482;&#127480; US Treasury, Payroll &amp; SaaS Billing Reference &bull; Live 94-Char ACH API &bull; $0/Month</span>
+      <h1>Complete <code>NACHA ACH</code> Return Codes (<code>R01</code>–<code>R85</code>), <code>NOC (C01–C07)</code> &amp; Record <code>6</code> Inspector</h1>
+      <p>Diagnose ACH returns and Notifications of Change from <strong>J.P. Morgan Chase</strong>, <strong>BofA CashPro</strong>, <strong>Wells Fargo CEO</strong>, <strong>Silicon Valley Bank</strong>, <strong>CitiDirect</strong>, <strong>Stripe</strong>, and <strong>Dwolla</strong>—and generate or parse strict 94-character <code>.ach</code> files with mathematical ABA MOD-10 routing verification.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank" rel="noopener">Generate / Parse .ACH Files ($0.02/entry) &rarr;</a>
+        <a class="btn btn-outline" href="./nacha-ach-file-generator.html">Open 94-Char NACHA Sandbox</a>
+        <a class="btn btn-outline" href="./cookbook/payroll_csv_to_nacha_ach.py" download>Download Python ACH Script</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <h2 style="margin:0;">Searchable NACHA Return, NOC &amp; SEC Code Directory</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline ach-filter" data-cat="ALL" style="padding:6px 12px;font-size:0.8rem;">All (28)</button>
+          <button type="button" class="btn btn-outline ach-filter" data-cat="RETURN" style="padding:6px 12px;font-size:0.8rem;">Returns (R01–R85)</button>
+          <button type="button" class="btn btn-outline ach-filter" data-cat="NOC" style="padding:6px 12px;font-size:0.8rem;">NOC Changes (C01–C07)</button>
+          <button type="button" class="btn btn-outline ach-filter" data-cat="SEC" style="padding:6px 12px;font-size:0.8rem;">SEC Classes (PPD/CCD/WEB)</button>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <input id="achSearch" type="search" placeholder="Search code or symptom (e.g. R01, R02, R03, R10, R13, R29, C01, C05, CCD, debit block, routing)..." style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.92rem;" />
+      </div>
+      <div style="overflow-x:auto;margin-top:14px;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Code</th>
+              <th style="padding:10px;">Window / Rule</th>
+              <th style="padding:10px;">Official Nacha Meaning</th>
+              <th style="padding:10px;">Actionable Ops &amp; Engineering Fix</th>
+            </tr>
+          </thead>
+          <tbody id="achTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <span class="tag">100% Local Browser 94-Column Slicer</span>
+      <h2 style="margin:10px 0 8px;">Instant 94-Character NACHA <code>Record 6</code> Entry Detail &amp; ABA Checksum Inspector</h2>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0;">Paste any 94-character <code>6...</code> Entry Detail line from your <code>.ach</code> file to audit exact NACHA column positions (<code>01</code>–<code>94</code>), Transaction Code (<code>22</code>/<code>27</code>/<code>32</code>/<code>37</code>), and 9-digit RDFI ABA MOD-10 check digit:</p>
+      <input id="rec6Input" type="text" value="622021000021449012398        0000245000EMP-101        SARAH JENKINS           0021000020000001" spellcheck="false" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#34d399;font-family:monospace;font-size:0.82rem;" />
+      <pre id="rec6Out" class="code-box" style="margin-top:12px;min-height:190px;font-size:0.8rem;"></pre>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">Two-Way Cloud API: Generate OR Parse .ACH</span>
+        <h3 style="margin:10px 0 8px;">Generate 94-Char NACHA Batch via REST API</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Supports <code>PPD</code> (payroll), <code>CCD</code> (B2B vendor/AR), and <code>WEB</code> with automatic Block-10 <code>9999...</code> padding and ABA MOD-10 validation:</p>
+        <pre class="code-box" style="font-size:0.77rem;min-height:205px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~nacha-ach-file-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "mode": "generate",
+    "secCode": "CCD",
+    "immediateDestination": "021000021",
+    "immediateDestinationName": "JPMORGAN CHASE",
+    "immediateOrigin": "1943829104",
+    "immediateOriginName": "ACME CORP",
+    "companyName": "ACME CORP",
+    "companyId": "1943829104",
+    "companyEntryDescription": "VENDOR PAY",
+    "originatingDfiId": "02100002",
+    "effectiveEntryDate": "261118",
+    "entries": [
+      { "transactionCode": "22", "routingNumber": "121000358", "accountNumber": "883104921", "amount": 4850.00, "individualId": "INV-904", "individualName": "PACIFIC SUPPLY LLC" }
+    ]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Official MCP Server (#1 Global Rank)</span>
+        <h3 style="margin:10px 0 8px;">Claude / Cursor NACHA Payroll &amp; AP Agent</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Published on <code>registry.modelcontextprotocol.io</code> as <code>io.github.Geornaden/nacha-ach-payroll-generator-mcp</code>:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:205px;">{
+  "mcpServers": {
+    "nacha-ach-generator": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/nacha-ach-file-generator",
+      "headers": {
+        "Authorization": "Bearer YOUR_APIFY_API_TOKEN"
+      }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">US Check Positive Pay</a> &bull; <a href="./bai2-type-codes-165-195-475-jpmorgan-bofa-wells-fargo-citi.html">BAI2 Type Codes</a></div>
+      <div><a href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank" rel="noopener">Open NACHA ACH API on Apify Store &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var ITEMS = [
+        { code: 'R01', cat: 'RETURN', win: '2 Banking Days (Admin/NSF)', name: 'Insufficient Funds', fix: 'Available balance < debit amount. Nacha permits max 2 re-initiations within 180 days using ENTRY DESC = RETRY PYMT.' },
+        { code: 'R02', cat: 'RETURN', win: '2 Banking Days', name: 'Account Closed', fix: 'Stop automated retries immediately. Request updated bank routing & account details from customer or employee.' },
+        { code: 'R03', cat: 'RETURN', win: '2 Banking Days', name: 'No Account / Unable to Locate Account', fix: 'Account number does not match any open checking/savings account at RDFI (often a typo or virtual card number). Do not retry.' },
+        { code: 'R04', cat: 'RETURN', win: '2 Banking Days', name: 'Invalid Account Number Structure', fix: 'Account number contains invalid characters/check digits or exceeds 17 chars. Sanitize dashes/spaces pre-flight.' },
+        { code: 'R05', cat: 'RETURN', win: '60 Calendar Days (Unauth)', name: 'Unauthorized Debit to Consumer Account Using Corporate SEC Code', fix: 'CRITICAL: A B2B CCD/CTX debit hit a personal consumer account without written authorization. Switch consumer debits to WEB/PPD.' },
+        { code: 'R07', cat: 'RETURN', win: '60 Calendar Days (Unauth)', name: 'Authorization Revoked by Customer', fix: 'Consumer revoked standing debit mandate with their bank. Halt recurring billing immediately; counts toward 0.5% Unauth threshold.' },
+        { code: 'R08', cat: 'RETURN', win: '2 Banking Days', name: 'Payment Stopped', fix: 'Receiver placed a stop-payment order on this specific debit. Do not re-initiate without new authorization.' },
+        { code: 'R09', cat: 'RETURN', win: '2 Banking Days', name: 'Uncollected Funds', fix: 'Ledger balance covers debit, but deposited checks have not cleared float. Eligible for RETRY PYMT after 3–5 business days.' },
+        { code: 'R10', cat: 'RETURN', win: '60 Calendar Days (Unauth)', name: 'Customer Advises Originator Not Known / Not Authorized', fix: 'Consumer signed WSUD dispute. Counts toward Nacha 0.5% Unauthorized Return Rate limit; verify mandate & descriptor clarity.' },
+        { code: 'R13', cat: 'RETURN', win: '2 Banking Days', name: 'Invalid ACH Routing Number', fix: '9-digit RDFI routing number is not a valid ACH participant or failed ABA MOD-10 check (or is a wire-only ABA like 026009593).' },
+        { code: 'R16', cat: 'RETURN', win: '2 Banking Days', name: 'Account Frozen / Entry Returned Per OFAC', fix: 'Account frozen by legal order, fraud lock, or OFAC compliance. Do not retry; contact counterparty.' },
+        { code: 'R20', cat: 'RETURN', win: '2 Banking Days', name: 'Non-Transaction Account', fix: 'Target account is a passbook, CD, or restricted money-market account blocking ACH debits.' },
+        { code: 'R23', cat: 'RETURN', win: '2 Banking Days', name: 'Credit Entry Refused by Receiver', fix: 'Receiver rejected incoming credit (e.g., wrong invoice amount or closed receivable).' },
+        { code: 'R24', cat: 'RETURN', win: '2 Banking Days', name: 'Duplicate Entry', fix: 'Duplicate trace number, amount, and effective date detected. Ensure unique idempotency keys per batch.' },
+        { code: 'R29', cat: 'RETURN', win: '2 Banking Days (B2B)', name: 'Corporate Customer Advises Not Authorized', fix: 'MOST COMMON B2B FAILURE: Customer corporate bank has an ACH Debit Block/Filter. Send customer your 10-digit Company ID (Record 5 Cols 41–50) to allowlist before retrying.' },
+        { code: 'R31', cat: 'RETURN', win: '60 Calendar Days (B2B)', name: 'Permissible Return Entry (CCD and CTX Only)', fix: 'RDFI and ODFI agreed to late corporate return.' },
+        { code: 'R85', cat: 'RETURN', win: 'IAT International', name: 'Incorrectly Coded Outbound International Payment', fix: 'Cross-border funding requires IAT SEC code with full originator/beneficiary street addresses, not domestic PPD/CCD.' },
+        { code: 'C01', cat: 'NOC', win: 'Update within 6 Banking Days', name: 'Incorrect DFI Account Number', fix: 'Entry posted, but RDFI returned corrected Account Number in Addenda 98. Update database within 6 banking days.' },
+        { code: 'C02', cat: 'NOC', win: 'Update within 6 Banking Days', name: 'Incorrect Routing / Transit Number', fix: 'Bank merger/branch change: replace stored 9-digit ABA routing number with corrected value from Addenda 98.' },
+        { code: 'C03', cat: 'NOC', win: 'Update within 6 Banking Days', name: 'Incorrect Routing Number AND Incorrect Account Number', fix: 'Update both 9-digit ABA routing and DFI account number before next payroll/billing cycle.' },
+        { code: 'C05', cat: 'NOC', win: 'Update within 6 Banking Days', name: 'Incorrect Transaction Code (Checking vs. Savings)', fix: 'Switch Record 6 Transaction Code between Checking (22 Credit / 27 Debit) and Savings (32 Credit / 37 Debit).' },
+        { code: 'C06', cat: 'NOC', win: 'Update within 6 Banking Days', name: 'Incorrect Account Number AND Incorrect Transaction Code', fix: 'Update both account number and Checking/Savings transaction code.' },
+        { code: 'C07', cat: 'NOC', win: 'Update within 6 Banking Days', name: 'Incorrect Transit/Routing, Account Number & Transaction Code', fix: 'Update all three bank coordinates from NOC Addenda 98.' },
+        { code: 'PPD', cat: 'SEC', win: 'Consumer Credit / Debit', name: 'Prearranged Payment and Deposit Entry', fix: 'Standard for W-2 Employee Payroll Direct Deposit (Code 22/32) and standing written consumer direct debits (Code 27/37).' },
+        { code: 'CCD', cat: 'SEC', win: 'Corporate B2B', name: 'Corporate Credit or Debit Entry', fix: 'Standard for 1099 LLC/Corp vendor AP payouts, B2B SaaS invoice collection, and intercompany treasury sweeps.' },
+        { code: 'CTX', cat: 'SEC', win: 'Corporate EDI 820', name: 'Corporate Trade Exchange', fix: 'B2B batch payment carrying up to 9,999 Addenda 05 records with ANSI X12 820 invoice remittance lines.' },
+        { code: 'WEB', cat: 'SEC', win: 'Internet / Mobile Consumer', name: 'Internet-Initiated / Mobile Entry', fix: 'Required for online checkout or SaaS portal consumer ACH debits; Nacha mandates commercially reasonable account validation on first use.' },
+        { code: 'IAT', cat: 'SEC', win: 'Cross-Border ACH', name: 'International ACH Transaction', fix: 'Required whenever funding or settlement crosses outside US territorial jurisdiction (OFAC screening mandatory).' }
+      ];
+
+      var activeCat = 'ALL';
+      var tbody = document.getElementById('achTableBody');
+      var searchEl = document.getElementById('achSearch');
+
+      function render() {
+        var q = (searchEl.value || '').trim().toLowerCase();
+        var filtered = ITEMS.filter(function (it) {
+          if (activeCat !== 'ALL' && it.cat !== activeCat) return false;
+          if (!q) return true;
+          return (
+            it.code.toLowerCase().indexOf(q) !== -1 ||
+            it.name.toLowerCase().indexOf(q) !== -1 ||
+            it.fix.toLowerCase().indexOf(q) !== -1 ||
+            it.win.toLowerCase().indexOf(q) !== -1
+          );
+        });
+        tbody.innerHTML = filtered.map(function (r) {
+          var color = r.cat === 'RETURN' ? '#f87171' : (r.cat === 'NOC' ? '#fbbf24' : '#34d399');
+          return '<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">' +
+            '<td style="padding:10px;font-family:monospace;font-weight:700;color:' + color + ';">' + r.code + '</td>' +
+            '<td style="padding:10px;font-size:0.8rem;color:#38bdf8;">' + r.win + '</td>' +
+            '<td style="padding:10px;"><strong>' + r.name + '</strong></td>' +
+            '<td style="padding:10px;color:var(--muted);">' + r.fix + '</td>' +
+            '</tr>';
+        }).join('');
+      }
+
+      document.querySelectorAll('.ach-filter').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          activeCat = btn.getAttribute('data-cat') || 'ALL';
+          render();
+        });
+      });
+      searchEl.addEventListener('input', render);
+      render();
+
+      var TX_MAP = {
+        '22': 'Checking Automated Deposit (Credit)',
+        '23': 'Checking Prenote Credit ($0.00)',
+        '27': 'Checking Automated Payment (Debit)',
+        '28': 'Checking Prenote Debit ($0.00)',
+        '32': 'Savings Automated Deposit (Credit)',
+        '33': 'Savings Prenote Credit ($0.00)',
+        '37': 'Savings Automated Payment (Debit)',
+        '38': 'Savings Prenote Debit ($0.00)'
+      };
+
+      function inspectRec6() {
+        var line = document.getElementById('rec6Input').value || '';
+        var len = line.length;
+        if (!line.startsWith('6') || len < 80) {
+          document.getElementById('rec6Out').textContent = JSON.stringify({
+            validWidth: len === 94,
+            actualLength: len,
+            error: 'Paste a NACHA Record Type 6 line (exact 94 characters starting with "6").'
+          }, null, 2);
+          return;
+        }
+        var txCode = line.slice(1, 3);
+        var rdfi8 = line.slice(3, 11);
+        var checkDigit = line.slice(11, 12);
+        var fullAba = rdfi8 + checkDigit;
+        var weights = [3, 7, 1, 3, 7, 1, 3, 7, 1];
+        var sum = 0;
+        var digitsOk = /^[0-9]{9}$/.test(fullAba);
+        if (digitsOk) {
+          for (var i = 0; i < 9; i++) sum += Number(fullAba[i]) * weights[i];
+        }
+        var abaMod10Valid = digitsOk && sum > 0 && (sum % 10 === 0);
+        var acct = line.slice(12, 29).trim();
+        var cents = parseInt(line.slice(29, 39), 10) || 0;
+        var indivId = line.slice(39, 54).trim();
+        var indivName = line.slice(54, 76).trim();
+        var discData = line.slice(76, 78);
+        var addendaInd = line.slice(78, 79);
+        var traceNum = line.slice(79, 94);
+
+        document.getElementById('rec6Out').textContent = JSON.stringify({
+          exact94Chars: len === 94,
+          actualLineLength: len,
+          recordType_col01: '6 (Entry Detail)',
+          transactionCode_cols02_03: txCode + ' — ' + (TX_MAP[txCode] || 'Custom ACH Transaction Code'),
+          rdfiRoutingNumber_cols04_12: fullAba,
+          abaMod10ChecksumValid: abaMod10Valid,
+          dfiAccountNumber_cols13_29: acct,
+          amountUSD_cols30_39: '$' + (cents / 100).toFixed(2),
+          individualId_cols40_54: indivId,
+          individualName_cols55_76: indivName,
+          discretionaryData_cols77_78: discData,
+          addendaIndicator_col79: addendaInd === '1' ? '1 (Addenda Attached)' : '0 (No Addenda)',
+          traceNumber_cols80_94: traceNum
+        }, null, 2);
+      }
+
+      document.getElementById('rec6Input').addEventListener('input', inspectRec6);
+      inspectRec6();
+    })();
+  </script>
+</body>
+</html>
