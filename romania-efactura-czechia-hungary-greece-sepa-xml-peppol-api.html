@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Romania (RO e-Factura UBL), Czechia, Hungary &amp; Greece SEPA XML (pain.001) &amp; Peppol API | FinOps Studio</title>
+  <meta name="description" content="Generate 2026 EPC structured-address ISO 20022 SEPA XML (pain.001.001.09) &amp; EN 16931 UBL 2.1 e-invoices (Peppol BIS 3.0, XRechnung &amp; Romania RO e-Factura base UBL) for Romania, Czechia, Hungary &amp; Greece via $0/mo REST API &amp; MCP." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/romania-efactura-czechia-hungary-greece-sepa-xml-peppol-api.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Corporate SEPA XML (pain.001.001.09) & EN 16931 UBL / Peppol E-Invoicing Guide for Romania, Czechia, Hungary & Greece",
+        "url": "https://geornaden.github.io/finops-studio/romania-efactura-czechia-hungary-greece-sepa-xml-peppol-api.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Developer and CFO integration guide for generating 2026 EPC structured-address SEPA Credit Transfer XML and EN 16931 Peppol / XRechnung UBL 2.1 e-invoices across Romania (Banca Transilvania, BCR, BRD), Czechia (ČSOB, KB, Česká spořitelna), Hungary (OTP, K&H), and Greece (Eurobank, Alpha Bank, NBG, Piraeus)."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can Czech, Hungarian, and Romanian companies generate EUR SEPA pain.001.001.09 XML batches for Eurozone supplier payments?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Romania, Czechia, and Hungary are full SEPA-zone participants for EUR credit transfers. Corporate banking portals such as Banca Transilvania, BCR, ČSOB, Komerční banka, Česká spořitelna, OTP Bank, and K&H accept ISO 20022 pain.001 XML files with EUR corporate IBANs and November 2026 structured creditor postal addresses."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do Central & Southeastern EU exporters issue compliant Peppol BIS 3.0 and XRechnung 3.0 e-invoices to Western European customers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Exporters, IT nearshoring firms, and manufacturers in Romania, Czechia, Hungary, and Greece use the FinOps Studio EU E-Invoice XML Generator API (finops_studio/eu-einvoice-xml-generator) to generate EN 16931 OASIS UBL 2.1 XML (Peppol BIS 3.0 and German XRechnung 3.0) with Country VAT EndpointIDs (9947 RO, 9928 CZ, 9910 HU, 9933 GR) and Intra-Community Reverse Charge (Category K, 0% VAT)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./sepa-xml-generator.html">SEPA XML Sandbox</a>
+        <a href="./eu-einvoice-xml-generator.html">Peppol / UBL Sandbox</a>
+        <a href="./free-eu-vat-peppol-endpoint-id-validator.html">Peppol VAT Checker</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Launch Live SEPA API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127479;&#127476; &#127464;&#127487; &#127469;&#127482; &#127468;&#127479; Central &amp; Southeastern EU Treasury &amp; Peppol APIs &bull; $0/Month</span>
+      <h1>Corporate <code>SEPA XML (pain.001)</code> &amp; <code>EN 16931 Peppol / UBL</code> API for Romania, Czechia, Hungary &amp; Greece</h1>
+      <p>Automate EUR bulk supplier transfers, shared-service payroll batches, and cross-border EU B2B/B2G <strong>Peppol BIS 3.0</strong> &amp; <strong>XRechnung 3.0</strong> e-invoices for enterprises in <strong>Romania</strong> (Banca Transilvania, BCR, BRD, ING RO), <strong>Czechia</strong> (&Ccaron;SOB, KB, &Ccaron;esk&aacute; spo&rcaron;itelna), <strong>Hungary</strong> (OTP, K&amp;H, Erste HU), and <strong>Greece</strong> (Eurobank, Alpha Bank, NBG, Piraeus).</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Run SEPA XML API ($0.02/tx) &rarr;</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Run Peppol / UBL E-Invoice API ($0.05/inv) &rarr;</a>
+        <a class="btn btn-outline" href="./fix-sepa-pain001-2026-structured-address-rejection.html">2026 EPC BE04 Guide</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <h2 style="margin-top:0;">Regional IBAN Specs, Corporate Portals &amp; Peppol EAS Codes (<code>RO</code> / <code>CZ</code> / <code>HU</code> / <code>GR</code>)</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;margin-top:10px;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Country</th>
+              <th style="padding:10px;">IBAN Length &amp; Verified Sample</th>
+              <th style="padding:10px;">Major Corporate Banking Gateways</th>
+              <th style="padding:10px;">Peppol / EN 16931 E-Invoice Standard</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127479;&#127476; Romania (<code>RO</code>)</strong></td>
+              <td style="padding:10px;font-family:monospace;">24 chars: RO49AAAA1B31007593840000</td>
+              <td style="padding:10px;"><strong>Banca Transilvania</strong> (<code>BTRLRO22</code>), <strong>BCR</strong> (<code>RNCBROBU</code>), <strong>BRD</strong> (<code>BRDEROBU</code>), ING Romania, Raiffeisen RO</td>
+              <td style="padding:10px;"><code>9947</code> (RO CIF/VAT) &mdash; EN 16931 UBL 2.1 (<em>RO e-Factura</em> / EU Peppol Exports)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127464;&#127487; Czechia (<code>CZ</code>)</strong></td>
+              <td style="padding:10px;font-family:monospace;">24 chars: CZ6508000000192000145399</td>
+              <td style="padding:10px;"><strong>&Ccaron;SOB CEB</strong> (<code>CEKOCZPP</code>), <strong>&Ccaron;esk&aacute; spo&rcaron;itelna George Business</strong> (<code>GIBACZPX</code>), <strong>Komer&ccaron;n&iacute; banka</strong> (<code>KOMBCZPP</code>)</td>
+              <td style="padding:10px;"><code>9928</code> (CZ DI&Ccaron;) &mdash; Peppol BIS 3.0 &amp; German XRechnung 3.0 for DACH exports</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127469;&#127482; Hungary (<code>HU</code>)</strong></td>
+              <td style="padding:10px;font-family:monospace;">28 chars: HU42117730161111101800000000</td>
+              <td style="padding:10px;"><strong>OTP Electra / Direkt</strong> (<code>OTPVHUHB</code>), <strong>K&amp;H e-bank</strong> (<code>OKHBHUHB</code>), Erste Corporate, UniCredit HU</td>
+              <td style="padding:10px;"><code>9910</code> (HU EU VAT) &mdash; Cross-border Peppol BIS 3.0 UBL 2.1 alongside domestic NAV</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;"><strong>&#127468;&#127479; Greece (<code>GR</code>)</strong></td>
+              <td style="padding:10px;font-family:monospace;">27 chars: GR1601101250000000012300695</td>
+              <td style="padding:10px;"><strong>NBG</strong> (<code>ETHNGRAA</code>), <strong>Eurobank</strong> (<code>ERBKGRAA</code>), <strong>Alpha Bank</strong> (<code>CRBAGRAA</code>), <strong>Piraeus e-banking</strong> (<code>PIRBGRAA</code>)</td>
+              <td style="padding:10px;"><code>9933</code> (EL AFM/VAT) &mdash; Mandatory Greek B2G Peppol BIS 3.0 (GSIS) &amp; EU B2B</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <span class="tag">100% Local Browser Pre-Flight Check</span>
+      <h2 style="margin:10px 0 8px;">Instant <code>RO</code> / <code>CZ</code> / <code>HU</code> / <code>GR</code> IBAN MOD-97 &amp; Diacritic Transliteration Preview</h2>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0;">Central &amp; Southeastern European names contain characters (<code>&abreve;</code>, <code>&scedil;</code>, <code>&tcedil;</code>, <code>&rcaron;</code>, <code>&ccaron;</code>, <code>&odblac;</code>, Greek script) that trigger <code>FF01</code> XML schema rejections if unescaped. Test your IBAN and supplier name below:</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px;">
+        <input id="ceeIban" type="text" value="RO49AAAA1B31007593840000" placeholder="RO, CZ, HU, or GR IBAN" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-family:monospace;" />
+        <input id="ceeName" type="text" value="Dvořák &amp; Ștefănescu Tech s.r.o." placeholder="Beneficiary Legal Name" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;" />
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+        <button type="button" class="btn btn-outline cee-preset" data-iban="RO49AAAA1B31007593840000" data-name="Ștefănescu Cloud SRL">Romania (24)</button>
+        <button type="button" class="btn btn-outline cee-preset" data-iban="CZ6508000000192000145399" data-name="Dvořák Řešení s.r.o.">Czechia (24)</button>
+        <button type="button" class="btn btn-outline cee-preset" data-iban="HU42117730161111101800000000" data-name="Győri Szoftver Kft.">Hungary (28)</button>
+        <button type="button" class="btn btn-outline cee-preset" data-iban="GR1601101250000000012300695" data-name="Aegean Maritime AE">Greece (27)</button>
+      </div>
+      <div id="ceeResult" style="margin-top:12px;padding:12px 14px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);font-size:0.86rem;"></div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">EUR SEPA pain.001.001.09 REST API</span>
+        <h3 style="margin:10px 0 8px;">Generate Multi-Country EUR Supplier Payout XML</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Automatically transliterates diacritics to EPC Latin character set, validates MOD-97 IBANs, and formats 2026 structured addresses:</p>
+        <pre class="code-box" style="font-size:0.77rem;min-height:220px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "schemaVersion": "pain.001.001.09",
+    "initiatingPartyName": "Danube Shared Services SRL",
+    "debtorName": "Danube Shared Services SRL",
+    "debtorIban": "RO49AAAA1B31007593840000",
+    "debtorBic": "BTRLRO22XXX",
+    "transactions": [
+      {
+        "name": "Dvorak Engineering s.r.o.",
+        "iban": "CZ6508000000192000145399",
+        "amount": 5240.00,
+        "remittanceInfo": "INV-CZ-2026-310",
+        "country": "CZ",
+        "townName": "Praha",
+        "streetName": "Karlinske namesti",
+        "buildingNumber": "8",
+        "postCode": "186 00"
+      },
+      {
+        "name": "Aegean Cloud Services AE",
+        "iban": "GR1601101250000000012300695",
+        "amount": 3180.00,
+        "remittanceInfo": "INV-GR-2026-092",
+        "country": "GR",
+        "townName": "Athina",
+        "streetName": "Leoforos Vasilissis Sofias",
+        "buildingNumber": "44",
+        "postCode": "115 28"
+      }
+    ]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">EN 16931 Peppol BIS 3.0 &amp; XRechnung API</span>
+        <h3 style="margin:10px 0 8px;">Issue Intra-EU Reverse-Charge E-Invoice</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Ideal for nearshoring IT &amp; manufacturing exporters in Bucharest, Prague, Budapest, or Athens billing German, Benelux, or Nordic buyers:</p>
+        <pre class="code-box" style="font-size:0.77rem;min-height:220px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "profile": "PEPPOL_BIS_30",
+    "invoiceNumber": "RO-EXP-2026-771",
+    "issueDate": "2026-11-13",
+    "dueDate": "2026-12-13",
+    "currency": "EUR",
+    "buyerReference": "PO-DE-44910",
+    "seller": {
+      "name": "Cluj Software Engineering SRL",
+      "vatId": "RO12345678",
+      "endpointId": "RO12345678",
+      "endpointScheme": "9947",
+      "country": "RO",
+      "city": "Cluj-Napoca",
+      "postalCode": "400001",
+      "street": "Strada Memorandumului 12"
+    },
+    "buyer": {
+      "name": "Bavaria Mobility GmbH",
+      "vatId": "DE123456789",
+      "endpointId": "DE123456789",
+      "endpointScheme": "9930",
+      "country": "DE",
+      "city": "Munich",
+      "postalCode": "80331",
+      "street": "Maximilianstrasse 20"
+    },
+    "lines": [
+      { "description": "Dedicated Cloud DevOps Sprint Nov 2026", "quantity": 1, "unitPrice": 8400.00, "vatRate": 0, "vatCategory": "K" }
+    ]
+  }'</pre>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./ksef-2026-peppol-efaktura-przelewy-sepa-xml-polska.html">Poland KSeF &amp; SEPA</a> &bull; <a href="./sepa-xml-peppol-ehf-finvoice-austria-nordics.html">Austria &amp; Nordics Guide</a></div>
+      <div><a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Apify Storefront &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var LENS = { RO: 24, CZ: 24, HU: 28, GR: 27 };
+      var ibanEl = document.getElementById('ceeIban');
+      var nameEl = document.getElementById('ceeName');
+      var outEl = document.getElementById('ceeResult');
+
+      function sanitizeEpc(str) {
+        return (str || '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/&/g, '+')
+          .replace(/[^A-Za-z0-9/\-?:().,'+ ]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .slice(0, 70);
+      }
+
+      function runCheck() {
+        var clean = (ibanEl.value || '').replace(/\s+/g, '').toUpperCase();
+        var safeName = sanitizeEpc(nameEl.value);
+        var cc = clean.slice(0, 2);
+        var expected = LENS[cc];
+        if (expected && clean.length !== expected) {
+          outEl.style.background = 'rgba(248,113,113,0.12)';
+          outEl.style.borderColor = 'rgba(248,113,113,0.35)';
+          outEl.textContent = 'Invalid length for ' + cc + ': got ' + clean.length + ' chars, expected ' + expected + ' chars.';
+          return;
+        }
+        if (!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{10,30}$/.test(clean)) {
+          outEl.style.background = 'rgba(248,113,113,0.12)';
+          outEl.style.borderColor = 'rgba(248,113,113,0.35)';
+          outEl.textContent = 'Enter a valid IBAN format.';
+          return;
+        }
+        var rearr = clean.slice(4) + clean.slice(0, 4);
+        var expanded = rearr.replace(/[A-Z]/g, function (ch) { return String(ch.charCodeAt(0) - 55); });
+        var rem = 0;
+        for (var i = 0; i < expanded.length; i++) rem = (rem * 10 + Number(expanded[i])) % 97;
+        if (rem === 1) {
+          outEl.style.background = 'rgba(16,185,129,0.1)';
+          outEl.style.borderColor = 'rgba(16,185,129,0.3)';
+          outEl.innerHTML = '<strong style="color:#34d399;">&#10003; VALID ISO 13616 MOD-97 IBAN</strong> (<code>' + clean + '</code>, ' + clean.length + ' chars) &bull; EPC Safe Creditor Name: <code>' + safeName + '</code>';
+        } else {
+          outEl.style.background = 'rgba(248,113,113,0.12)';
+          outEl.style.borderColor = 'rgba(248,113,113,0.35)';
+          outEl.innerHTML = '<strong style="color:#f87171;">&#10007; FAILED MOD-97 CHECKSUM</strong> (remainder ' + rem + ' &ne; 1).';
+        }
+      }
+
+      document.querySelectorAll('.cee-preset').forEach(function (b) {
+        b.addEventListener('click', function () {
+          ibanEl.value = b.getAttribute('data-iban') || '';
+          nameEl.value = b.getAttribute('data-name') || '';
+          runCheck();
+        });
+      });
+      ibanEl.addEventListener('input', runCheck);
+      nameEl.addEventListener('input', runCheck);
+      runCheck();
+    })();
+  </script>
+</body>
+</html>

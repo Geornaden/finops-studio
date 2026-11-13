@@ -105,6 +105,7 @@ Give **Claude Desktop**, **Cursor**, **Windsurf**, or any MCP-compatible AI agen
 - **Spanish AEB Norma 43 (`Cuaderno 43`) Bank Statement Parser:** [Guide](https://geornaden.github.io/finops-studio/spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html)
 - **Austria & Nordics (`AT`/`NO`/`SE`/`DK`/`FI` — EHF 3.0, NemHandel, Peppol & SEPA):** [Guide](https://geornaden.github.io/finops-studio/sepa-xml-peppol-ehf-finvoice-austria-nordics.html)
 - **Ireland, Portugal & Luxembourg (`IE`/`PT`/`LU` — BOI, AIB, Millennium bcp, Spuerkeess, MultiLine SEPA & Peppol):** [Guide](https://geornaden.github.io/finops-studio/ireland-portugal-luxembourg-sepa-xml-pain001-peppol-api.html)
+- **Romania, Czechia, Hungary & Greece (`RO`/`CZ`/`HU`/`GR` — RO e-Factura UBL, Peppol BIS 3.0 & SEPA):** [Guide](https://geornaden.github.io/finops-studio/romania-efactura-czechia-hungary-greece-sepa-xml-peppol-api.html)
 - **Italy (`IT` — Bonifici CBI SEPA XML & Peppol UE):** [Guide](https://geornaden.github.io/finops-studio/fatturazione-elettronica-peppol-bonifico-sepa-xml-italia.html)
 - **Poland (`PL` — KSeF 2026 Exporter Peppol & Przelewy SEPA):** [Guide](https://geornaden.github.io/finops-studio/ksef-2026-peppol-efaktura-przelewy-sepa-xml-polska.html)
 - **US Chase / BofA / Wells Fargo NACHA ACH:** [CSV to ACH Guide](https://geornaden.github.io/finops-studio/convert-excel-csv-to-nacha-ach-chase-bofa-wells-fargo.html) • [R01–R85 Return & NOC Codes + Record 6 Slicer](https://geornaden.github.io/finops-studio/nacha-ach-return-codes-r01-r02-r03-r10-r29-sec-codes-guide.html)
