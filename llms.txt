@@ -50,6 +50,7 @@
     - Docs: https://geornaden.github.io/finops-studio/fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html
 
 ## Free Browser Checkers & Ready-to-Import n8n Templates
+- [B2B Pricing, Multi-Client CPA/Payroll Guide & Interactive ROI Calculator](https://geornaden.github.io/finops-studio/for-accounting-firms-payroll-bureaus-and-fintechs.html)
 - [Free Instant Bank File Format Detector & Fixed-Width / XML Line-Length Auditor](https://geornaden.github.io/finops-studio/free-bank-file-format-detector-line-length-auditor.html)
 - [Free Instant IBAN MOD-97, US ABA Routing & ISO 20022 Error Code Checker](https://geornaden.github.io/finops-studio/free-iban-routing-number-pain002-validator.html)
 - [Free Instant UK Sort Code (BACS), Australian BSB (.ABA) & Canadian CPA-005 EFT Routing Converter](https://geornaden.github.io/finops-studio/free-uk-sort-code-au-bsb-canada-transit-checker.html)

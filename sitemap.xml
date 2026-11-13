@@ -150,4 +150,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.89</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/for-accounting-firms-payroll-bureaus-and-fintechs.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+  </url>
 </urlset>
