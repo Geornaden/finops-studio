@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spanish AEB Norma 43 (Cuaderno 43) Bank Statement Parser to JSON &amp; CSV API (CaixaBank, BBVA, Santander) | FinOps Studio</title>
+  <meta name="description" content="Convierta extractos bancarios AEB Norma 43 (.n43 / Cuaderno 43) de CaixaBank, BBVA, Santander, Sabadell y Bankinter en JSON y CSV con cálculo automático de IBAN ES y auditoría exacta de saldos (Registro 33)." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Spanish AEB Norma 43 (Cuaderno 43) Bank Statement Parser API",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Cloud API, Web, n8n, Make, Python, MCP",
+        "url": "https://geornaden.github.io/finops-studio/spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.02",
+          "priceCurrency": "USD",
+          "description": "$0/month subscription — $0.02 per parsed Norma 43 bank movement"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "¿Cómo convertir un fichero bancario Norma 43 (.n43 / Cuaderno 43) a Excel CSV o JSON automáticamente?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Envía el contenido de 80 columnas del extracto AEB Norma 43 (registros 11, 22, 23, 24, 33 y 88) a nuestra API REST o servidor MCP. El motor calcula automáticamente los dígitos de control CCC y el código IBAN español completo (ESkk...), une los conceptos complementarios (registro 23), verifica matemáticamente el saldo final al céntimo (registro 33) y devuelve JSON limpio y CSV UTF-8."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why is the Spanish IBAN missing in raw AEB Norma 43 Record 11 files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Legacy 80-character AEB Cuaderno 43 Record 11 headers store only the 4-digit bank code, 4-digit branch code, and 10-digit account number (omitting the 2 Bank of Spain MOD-11 CCC check digits and the ES IBAN prefix). FinOps Studio computes both the 2 CCC check digits and the full 24-character ISO 13616 ES IBAN deterministically so ERPs like Odoo, Holded, NetSuite, and SAP match the bank account automatically."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./facturacion-electronica-2026-peppol-sepa-xml-espana.html">SEPA Cuaderno 34 &amp; Peppol ES</a>
+        <a href="./index.html">All 11 Banking APIs</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs ($0/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">🇪🇸 España Tesorería &amp; ERP &bull; AEB Norma 43 (Cuaderno 43) &rarr; JSON &amp; CSV &bull; 0 Competidores</span>
+      <h1>Parser de Extractos Bancarios AEB Norma 43 (`.n43` / Cuaderno 43) a JSON y CSV — Sin Cuota Mensual</h1>
+      <p>Transforme ficheros diarios de 80 caracteres de <strong>CaixaBankNow Empresas, BBVA Net Cash, Banco Santander, Banco Sabadell, Bankinter y Abanca</strong> en filas limpias <strong>JSON y CSV UTF-8</strong> listas para <strong>Odoo, Holded, Sage Despachos, A3ERP, NetSuite, SAP o Postgres</strong> — con cálculo matemático de <strong>IBAN `ES`</strong> y conciliación exacta del Registro `33` por solo <strong>$0,02 / movimiento</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Abrir en Apify Store ($0/mes) &rarr;</a>
+        <a class="btn btn-outline" href="./facturacion-electronica-2026-peppol-sepa-xml-espana.html">Remesas SEPA Cuaderno 34 &amp; Peppol</a>
+        <a class="btn btn-outline" href="./bai2-bank-statement-parser.html">US/Global BAI2 Parser</a>
+      </div>
+    </section>
+
+    <div class="grid-3">
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">1. Cálculo Automático de DC + IBAN `ES`</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">La cabecera `11` del Cuaderno 43 solo incluye Entidad (4), Oficina (4) y Cuenta (10) sin dígitos de control. Calculamos matemáticamente los 2 dígitos <strong>MOD-11 del Banco de España</strong> y el <strong>IBAN `ES` de 24 caracteres</strong>.</p>
+      </div>
+
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">2. Auditoría al Céntimo (Registro `33` y `88`)</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Verifica en céntimos enteros que <code>Saldo Inicial + Total Haber - Total Debe = Saldo Final</code>, validando el número exacto de apuntes y el registro de fin de archivo `88`.</p>
+      </div>
+
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">3. Fusión de Conceptos `23` y Divisas `24`</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Une automáticamente hasta 5 registros complementarios `23` (10 campos de texto) por apunte, traduce los códigos de <strong>Concepto Común AEB (`01`–`99`)</strong> y extrae divisas originales (`24`).</p>
+      </div>
+    </div>
+
+    <!-- Sample Input -> Output Preview -->
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Ejemplo Real: Fichero Norma 43 (80 Columnas) &rarr; Salida JSON Conciliada</h2>
+      <p style="color:var(--muted);font-size:0.9rem;">Entrada `.n43` descargada de banca empresas (CaixaBank `2100`):</p>
+      <pre class="code-box">112100041802000513322611102611122000000015000009783IBERIA LOGISTICA SL          
+22    0418261111261111040012000000002450500000451201FAC20260891 B2B CLIENTE MADR
+2301COBRO FACTURA 2026-0891               DISTRIBUCIONES NORTE SA               
+22    0418261112261112030151000000000380250000451202RECIBO LUZ  ENDESA ENERGIA  
+2301RECIBO DOMICILIADO SEPA CORE          SUMINISTRO ELECTRICO NAVE MADRID      
+3321000418020005133200001000000000380250000100000000245050200000001707025978    
+88999999999999999999000006                                                      </pre>
+
+      <p style="color:var(--muted);font-size:0.9rem;margin-top:16px;">Respuesta JSON estructurada (además de `NORMA43_TRANSACTIONS.csv` listo para ERP):</p>
+      <pre class="code-box">{
+  "status": "VALID",
+  "accountCount": 1,
+  "totalTransactions": 2,
+  "allBalancesReconciled": true,
+  "accounts": [
+    {
+      "bankCode": "2100",
+      "bankName": "CaixaBank",
+      "iban": "ES9121000418450200051332",
+      "holderName": "IBERIA LOGISTICA SL",
+      "currency": "EUR",
+      "openingBalance": "15000.00",
+      "closingBalance": "17070.25",
+      "reconciliation": {
+        "reconciled": true,
+        "debitCount": 1,
+        "debitTotal": "380.25",
+        "creditCount": 1,
+        "creditTotal": "2450.50"
+      },
+      "transactions": [
+        {
+          "operationDate": "2026-11-11",
+          "type": "CREDIT",
+          "amount": "2450.50",
+          "commonConceptLabel": "Giros / Transferencias / Nóminas SEPA (Transfers / Payroll)",
+          "reference1": "FAC20260891",
+          "description": "COBRO FACTURA 2026-0891 | DISTRIBUCIONES NORTE SA"
+        }
+      ]
+    }
+  ]
+}</pre>
+      <div class="hero-actions" style="margin-top:14px;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Ejecutar Parser en la Nube &rarr;</a>
+        <a class="btn btn-outline" href="./make-zapier-power-automate-sepa-xml-nacha-peppol.html">Automatizar con n8n / Make / Zapier</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio (Todas las APIs Bancarias)</a> &bull;
+      <a href="./facturacion-electronica-2026-peppol-sepa-xml-espana.html">SEPA Cuaderno 34 &amp; Peppol España</a> &bull;
+      <a href="./bai2-bank-statement-parser.html">BAI2 Statement Parser</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>

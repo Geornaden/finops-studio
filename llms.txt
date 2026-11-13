@@ -43,6 +43,9 @@
 10. [US Bank Payee Positive Pay Check Fraud File Generator (Chase, BofA CashPro, Wells Fargo CEO, PNC)](https://apify.com/finops_studio/us-positive-pay-check-generator): Generates exact 80-character fixed-width and CSV Payee Positive Pay check-issue/void files from QuickBooks, NetSuite, Xero, or CSV check registers. ($0/mo + $0.02/check)
     - Docs: https://geornaden.github.io/finops-studio/us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html
 
+11. [Spanish AEB Norma 43 (`Cuaderno 43`) Corporate Bank Statement Parser to JSON & CSV](https://apify.com/finops_studio/spanish-aeb-norma43-parser): Parses 80-character Spanish `.n43` / `.c43` corporate bank statements (CaixaBank, BBVA, Santander, Sabadell, Bankinter) into JSON & UTF-8 CSV with automatic Bank of Spain MOD-11 `DC` + ISO 13616 `ES` IBAN calculation and cent-exact Record `33` balance audit. ($0/mo + $0.02/tx)
+    - Docs: https://geornaden.github.io/finops-studio/spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html
+
 ## Free Browser Checkers & Ready-to-Import n8n Templates
 - [Free Instant IBAN MOD-97, US ABA Routing & ISO 20022 Error Code Checker](https://geornaden.github.io/finops-studio/free-iban-routing-number-pain002-validator.html)
 - [Free Instant UK Sort Code (BACS), Australian BSB (.ABA) & Canadian CPA-005 EFT Routing Converter](https://geornaden.github.io/finops-studio/free-uk-sort-code-au-bsb-canada-transit-checker.html)

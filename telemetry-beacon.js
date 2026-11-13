@@ -80,7 +80,8 @@
   else if (p.includes('uk-bacs')) hit('page_uk_bacs');
   else if (p.includes('canada-cpa')) hit('page_canada_cpa');
   else if (p.includes('positive-pay')) hit('page_positive_pay');
-  else if (p.includes('free-iban') || p.includes('checker')) hit('page_free_checker');
+  else if (p.includes('norma-43') || p.includes('cuaderno-43')) hit('page_norma43');
+  else if (p.includes('free-') || p.includes('checker') || p.includes('validator')) hit('page_free_checker');
   else hit('page_seo_guides');
 
   // 2. Delegated click tracking across tabs, preview, download, cURL, workflows, and Apify Store CTAs
