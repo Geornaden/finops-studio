@@ -55,3 +55,4 @@
 - [Polish Corporate Banking & KSeF Export Guide: Przelewy SEPA XML (pain.001) & E-Faktura UE Peppol / XRechnung](https://geornaden.github.io/finops-studio/ksef-2026-peppol-efaktura-przelewy-sepa-xml-polska.html)
 - [Make.com, Zapier & Microsoft Power Automate No-Code Blueprints](https://geornaden.github.io/finops-studio/make-zapier-power-automate-sepa-xml-nacha-peppol.html)
 - [Make.com Scenario Blueprint JSON (Google Sheets / Airtable -> SEPA XML)](https://geornaden.github.io/finops-studio/workflows/make-sheets-airtable-to-sepa-nacha-datev.json)
+- [Python 3 & Node.js 20+ Banking File API Cookbook (SEPA XML, NACHA ACH, BAI2, DATEV)](https://geornaden.github.io/finops-studio/python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html)

@@ -80,7 +80,11 @@ Give **Claude Desktop**, **Cursor**, **Windsurf**, or any MCP-compatible AI agen
 
 ---
 
-## Ready-to-Import `n8n` Workflow Blueprints
+## Ready-to-Import `n8n` & `Make.com` Workflow Blueprints + Python/Node.js Cookbook
+- [`cookbook/`](./cookbook) — Zero-dependency Python 3 & Node.js 20+ client scripts (`csv_to_sepa_pain001.mjs`, `payroll_csv_to_nacha_ach.py`, `bai2_to_json_and_csv.py`, `stripe_to_datev_skr04.py`)
+- [`workflows/make-sheets-airtable-to-sepa-nacha-datev.json`](./workflows/make-sheets-airtable-to-sepa-nacha-datev.json) — Make.com Scenario Blueprint (Google Sheets / Airtable → SEPA XML)
+- [`workflows/n8n-quickbooks-checks-to-positive-pay-and-ach.json`](./workflows/n8n-quickbooks-checks-to-positive-pay-and-ach.json) — QuickBooks / Xero → US Positive Pay + NACHA ACH
+- [`workflows/n8n-netsuite-odoo-erp-to-sepa-and-bai2.json`](./workflows/n8n-netsuite-odoo-erp-to-sepa-and-bai2.json) — NetSuite / Odoo / SAP SFTP → SEPA XML + BAI2 Reconciliation
 - [`workflows/n8n-sheets-to-sepa-xml.json`](./workflows/n8n-sheets-to-sepa-xml.json) — Google Sheets / ERP → 2026 ISO 20022 SEPA XML
 - [`workflows/n8n-stripe-to-datev-and-einvoice.json`](./workflows/n8n-stripe-to-datev-and-einvoice.json) — Paid Stripe Invoice → EN 16931 Peppol XML + German DATEV EXTF CSV
 - [`workflows/n8n-bank-sftp-bai2-and-pain002-alerts.json`](./workflows/n8n-bank-sftp-bai2-and-pain002-alerts.json) — Daily Bank SFTP BAI2 Reconciliation + Slack `pain.002` Rejection Fixes

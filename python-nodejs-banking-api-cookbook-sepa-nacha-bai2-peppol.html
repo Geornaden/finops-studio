@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python &amp; Node.js Banking File API Cookbook: SEPA XML, NACHA ACH, BAI2, Peppol &amp; DATEV | FinOps Studio</title>
+  <meta name="description" content="Zero-dependency Python 3 and Node.js 20+ copy-paste code recipes to generate ISO 20022 SEPA XML (pain.001), US NACHA ACH (.ach), Peppol EN 16931 XML, German DATEV EXTF CSV, and parse corporate BAI2 statements." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Python & Node.js Banking File API Cookbook: Generate SEPA XML, NACHA ACH, Peppol XML, DATEV CSV & Parse BAI2",
+        "url": "https://geornaden.github.io/finops-studio/python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I generate a 2026 structured-address ISO 20022 SEPA XML (pain.001.001.09) file in Python or Node.js without fragile XML libraries?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Send a single JSON POST request to FinOps Studio's synchronous SEPA XML endpoint using standard Python urllib/requests or Node.js fetch. Every IBAN is verified with ISO 13616 MOD-97 math, CtrlSum is summed in exact integer cents, and 2026 EPC structured address tags (<TwnNm>, <Ctry>) are applied automatically."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I parse a corporate BAI2 bank statement into JSON or Pandas / Postgres in Python?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "POST the raw BAI2 text (records 01/02/03/16/88/49/98/99) to finops_studio~bai2-bank-statement-parser on Apify Cloud. It reconciles trailer control totals, merges 88 continuation lines, and returns clean account summaries and transaction objects ready for Pandas or SQL insertion."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="https://github.com/Geornaden/finops-studio/tree/main/cookbook" target="_blank" rel="noopener">GitHub /cookbook</a>
+        <a href="./index.html">All 10 Banking APIs</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Get Free API Token ($0/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">Developer SDK Cookbook &bull; Python 3 &bull; Node.js 20+ &bull; CLI (`npx`) &bull; Zero Dependencies</span>
+      <h1>Python &amp; Node.js Recipes for Bank-Grade SEPA XML, NACHA `.ach`, BAI2, Peppol &amp; DATEV</h1>
+      <p>Stop maintaining brittle fixed-width column offsets, floating-point `CtrlSum` bugs, and annual ISO 20022 / EPC schema migrations inside your app codebase. Drop these 35-line standard-library scripts into your backend, Airflow DAG, or cron job for <strong>$0/month + $0.02/row</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs on Apify &rarr;</a>
+        <a class="btn btn-outline" href="./cookbook/csv_to_sepa_pain001.mjs" download>csv_to_sepa_pain001.mjs &darr;</a>
+        <a class="btn btn-outline" href="./cookbook/payroll_csv_to_nacha_ach.py" download>payroll_csv_to_nacha_ach.py &darr;</a>
+        <a class="btn btn-outline" href="./cookbook/bai2_to_json_and_csv.py" download>bai2_to_json_and_csv.py &darr;</a>
+        <a class="btn btn-outline" href="./cookbook/stripe_to_datev_skr04.py" download>stripe_to_datev_skr04.py &darr;</a>
+      </div>
+    </section>
+
+    <!-- Recipe 1: Node.js SEPA XML -->
+    <section class="sandbox-card" style="margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <h2 style="margin:0;">1. Node.js 20+ — Generate 2026 ISO 20022 SEPA XML (`pain.001.001.09`)</h2>
+        <a class="btn btn-outline" href="./cookbook/csv_to_sepa_pain001.mjs" download>Download .mjs</a>
+      </div>
+      <p style="color:var(--muted);font-size:0.9rem;">Validates every European IBAN via MOD-97, enforces 2026 EPC structured addresses (eliminating `BE04` bank rejections), and outputs ready-to-upload XML:</p>
+      <pre class="code-box">const res = await fetch(
+  `https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items?token=${process.env.APIFY_TOKEN}`,
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      messageType: 'pain.001.001.09',
+      initiatingPartyName: 'Acme Europe GmbH',
+      debtorName: 'Acme Europe GmbH',
+      debtorIban: 'DE89370400440532013000',
+      debtorBic: 'COBADEFFXXX',
+      debtorAddress: { townName: 'Berlin', postCode: '10117', country: 'DE' },
+      executionDate: '2026-11-16',
+      transactions: [
+        {
+          endToEndId: 'INV-2026-4410',
+          creditorName: 'Nordic Cloud AB',
+          creditorIban: 'NL91ABNA0417164300',
+          amount: 2450.75,
+          currency: 'EUR',
+          remittanceInfo: 'Invoice 4410 Cloud Hosting',
+          creditorAddress: { townName: 'Amsterdam', postCode: '1012', country: 'NL' }
+        }
+      ]
+    })
+  }
+);
+const [{ xmlContent }] = await res.json();</pre>
+    </section>
+
+    <!-- Recipe 2: Python US NACHA ACH -->
+    <section class="sandbox-card" style="margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <h2 style="margin:0;">2. Python 3 — Generate 94-Character US NACHA Direct Deposit (`.ach`)</h2>
+        <a class="btn btn-outline" href="./cookbook/payroll_csv_to_nacha_ach.py" download>Download .py</a>
+      </div>
+      <p style="color:var(--muted);font-size:0.9rem;">Verifies 9-digit Federal Reserve ABA routing checksums (`3-7-1` MOD-10), computes entry hashes, and pads final output to strict `9999...` block-of-10 lines for Chase, BofA, Wells Fargo, Citi, and Silicon Valley Bank:</p>
+      <pre class="code-box">import json, os, urllib.request
+
+url = f"https://api.apify.com/v2/acts/finops_studio~nacha-ach-file-generator/run-sync-get-dataset-items?token={os.environ['APIFY_TOKEN']}"
+payload = {
+    "immediateDestination": "021000021",
+    "immediateDestinationName": "JPMORGAN CHASE",
+    "immediateOrigin": "1999999999",
+    "immediateOriginName": "ACME CORP INC",
+    "companyName": "ACME CORP",
+    "companyIdentification": "1999999999",
+    "standardEntryClassCode": "PPD",
+    "companyEntryDescription": "PAYROLL",
+    "effectiveEntryDate": "261116",
+    "originatingDfiIdentification": "02100002",
+    "entries": [{
+        "transactionCode": "22",
+        "receivingDfiRouting": "026009593",
+        "receivingAccountNumber": "9876543210",
+        "amount": 3250.00,
+        "individualId": "EMP-1042",
+        "individualName": "JANE DOE"
+    }]
+}
+req = urllib.request.Request(url, json.dumps(payload).encode(), {"Content-Type": "application/json"})
+items = json.loads(urllib.request.urlopen(req).read())
+open("payroll.ach", "w").write(items[0]["achContent"])</pre>
+    </section>
+
+    <!-- Recipe 3 & 4 Grid -->
+    <div class="grid-3">
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">3. Python — Parse Corporate `BAI2` to JSON/SQL</h3>
+        <p style="color:var(--muted);font-size:0.89rem;">Unwrap `88` continuation lines and verify `49/98/99` control totals from JPMorgan, BofA CashPro, and Wells Fargo CEO statements before loading into Postgres or Snowflake.</p>
+        <a href="./cookbook/bai2_to_json_and_csv.py" download>Download bai2_to_json_and_csv.py &rarr;</a>
+      </div>
+
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">4. Python — Stripe/Shopify &rarr; German `DATEV` CSV</h3>
+        <p style="color:var(--muted);font-size:0.89rem;">Generate certified `EXTF` v700 semicolon `Buchungsstapel` files (`SKR03` / `SKR04`) ready for German Steuerberater import in DATEV Rechnungswesen.</p>
+        <a href="./cookbook/stripe_to_datev_skr04.py" download>Download stripe_to_datev_skr04.py &rarr;</a>
+      </div>
+
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">5. Instant Terminal CLI (`npx`)</h3>
+        <p style="color:var(--muted);font-size:0.89rem;">Run any of our 10 financial tools straight from CI/CD or terminal without installing a package:</p>
+        <code>npx github:Geornaden/finops-studio sepa payload.json</code><br/><br/>
+        <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Explore All 10 Cloud APIs &rarr;</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio (All 10 Banking APIs)</a> &bull;
+      <a href="./make-zapier-power-automate-sepa-xml-nacha-peppol.html">Make / Zapier / Power Automate</a> &bull;
+      <a href="https://github.com/Geornaden/finops-studio/tree/main/cookbook" target="_blank" rel="noopener">GitHub Cookbook</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>
