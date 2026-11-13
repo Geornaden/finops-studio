@@ -200,4 +200,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.89</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/datev-bu-schluessel-skr03-skr04-tabelle-buchungsstapel-api.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
 </urlset>

@@ -112,7 +112,7 @@ Give **Claude Desktop**, **Cursor**, **Windsurf**, or any MCP-compatible AI agen
 - **2026 EPC SEPA `BE04` Structured Address Mandate:** [Guide](https://geornaden.github.io/finops-studio/fix-sepa-pain001-2026-structured-address-rejection.html)
 - **UK BACS Standard 18 (Barclays / HSBC / Lloyds / NatWest):** [Guide](https://geornaden.github.io/finops-studio/uk-bacs-standard-18-file-generator.html)
 - **Canada CPA-005 1464-Byte EFT (RBC / TD / BMO / Scotiabank):** [Guide](https://geornaden.github.io/finops-studio/canada-cpa-005-eft-file-generator.html)
-- **Germany (`DE`):** [Stripe & Shopify zu DATEV Buchungsstapel & XRechnung](https://geornaden.github.io/finops-studio/stripe-shopify-zu-datev-buchungsstapel-konvertieren.html)
+- **Germany (`DE`):** [Stripe & Shopify zu DATEV Buchungsstapel & XRechnung](https://geornaden.github.io/finops-studio/stripe-shopify-zu-datev-buchungsstapel-konvertieren.html) • [DATEV BU-Schlüssel & SKR03/SKR04 Tabelle](https://geornaden.github.io/finops-studio/datev-bu-schluessel-skr03-skr04-tabelle-buchungsstapel-api.html)
 - **France (`FR`):** [Facturation Électronique 2026 — Peppol BIS 3.0 & Factur-X](https://geornaden.github.io/finops-studio/facturation-electronique-2026-peppol-factur-x-xml.html)
 - **Belgium & Netherlands (`NL`/`BE`):** [SEPA XML & Peppol E-Facturatie 2026](https://geornaden.github.io/finops-studio/sepa-xml-pain001-peppol-belgie-nederland.html)
 - **Spain (`ES`):** [Facturación Electrónica 2026 Peppol & SEPA XML](https://geornaden.github.io/finops-studio/facturacion-electronica-2026-peppol-sepa-xml-espana.html)

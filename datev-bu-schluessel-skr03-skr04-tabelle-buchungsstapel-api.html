@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DATEV BU-Schl&uuml;ssel Tabelle (2, 3, 7, 8, 9, 11, 40, 94) &amp; SKR03 / SKR04 Konten-Finder + EXTF v700 API | FinOps Studio</title>
+  <meta name="description" content="Interaktive DATEV BU-Schl&uuml;ssel Tabelle 2026 &amp; SKR03 vs. SKR04 Erl&ouml;skonten-Rechner (8400/4400 19% USt, 8300/4300 7%, Innergemeinschaftliche Lieferung, Reverse Charge &sect;13b) + EXTF v700 Buchungsstapel CSV API ab 0 &euro;/Monat." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/datev-bu-schluessel-skr03-skr04-tabelle-buchungsstapel-api.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "inLanguage": "de-DE",
+        "headline": "DATEV BU-Schlüssel Tabelle 2026 & SKR03 / SKR04 Konten-Finder für automatisierte EXTF v700 Buchungsstapel",
+        "url": "https://geornaden.github.io/finops-studio/datev-bu-schluessel-skr03-skr04-tabelle-buchungsstapel-api.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Praxisleitfaden für Steuerberater, Bilanzbuchhalter und E-Commerce/SaaS-Entwickler zu DATEV Steuerschlüsseln (BU-Schlüssel), Automatik-Erlöskonten in SKR03 und SKR04 sowie der API-Erzeugung von DATEV EXTF v700 Buchungsstapeln."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Wann lässt man den DATEV BU-Schlüssel leer und wann setzt man BU 3, 8 oder 9?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Bei DATEV-Automatikkonten (z. B. Erlöse 8400 im SKR03 bzw. 4400 im SKR04 für 19 % USt oder 8300/4300 für 7 % USt) berechnet DATEV Rechnungswesen die Steuer automatisch — das Feld BU-Schlüssel bleibt leer (oder BU 40 zur Aufhebung der Automatik). Auf nicht-automatischen Sachkonten erzwingt BU 3 (19 % USt), BU 2 (7 % USt), BU 9 (19 % Vorsteuer) bzw. BU 8 (7 % Vorsteuer) den korrekten Steuerabzug."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Wie erzeuge ich aus Stripe, Shopify, PayPal oder ERP-Rechnungen eine fehlerfreie DATEV EXTF v700 Buchungsstapel-CSV?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Über die FinOps Studio DATEV Buchungsstapel Generator API (finops_studio/datev-buchungsstapel-generator im Apify Store oder per MCP). Die Engine erzeugt den exakten 31-spaltigen EXTF-700-Header (Formatkategorie 21, Version 13), Komma-Dezimaltrennzeichen, TTMM-Belegdatum, Soll/Haben-Kennzeichen und SKR03/SKR04-Kontierung für $0/Monat Grundgebühr + $0.02 pro Buchungssatz."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./datev-buchungsstapel-generator.html">DATEV Live-Sandbox</a>
+        <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">Stripe/Shopify Guide</a>
+        <a href="./free-eu-vat-peppol-endpoint-id-validator.html">USt-IdNr. &amp; Leitweg-ID</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/datev-buchungsstapel-generator" target="_blank" rel="noopener">DATEV Cloud API starten &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127465;&#127466; Steuerberater- &amp; Entwickler-Referenz 2026 &bull; Live EXTF v700 API &bull; 0 &euro;/Monat Fixkosten</span>
+      <h1><code>DATEV BU-Schl&uuml;ssel</code> Tabelle &amp; <code>SKR03 / SKR04</code> Konten-Finder (+ EXTF v700 API)</h1>
+      <p>Durchsuchbare Kurzreferenz f&uuml;r <strong>Steuerkanzleien</strong>, <strong>Bilanzbuchhalter</strong>, <strong>SaaS-Startups</strong> und <strong>E-Commerce-H&auml;ndler</strong>: Finden Sie sofort den passenden DATEV Buchungsschl&uuml;ssel (<code>BU 2</code>, <code>3</code>, <code>7</code>, <code>8</code>, <code>9</code>, <code>11</code>, <code>40</code>, <code>94</code>) sowie die exakten <strong>SKR03- und SKR04-Gegenkonten</strong> &mdash; und generieren Sie fertige <code>EXTF_Buchungsstapel.csv</code> Dateien per REST API, Python, n8n oder MCP.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/datev-buchungsstapel-generator" target="_blank" rel="noopener">DATEV Buchungsstapel API nutzen ($0.02/Buchung) &rarr;</a>
+        <a class="btn btn-outline" href="./datev-buchungsstapel-generator.html">EXTF v700 Muster im Browser pr&uuml;fen</a>
+        <a class="btn btn-outline" href="./workflows/n8n-stripe-to-datev-and-einvoice.json" download>n8n Stripe &rarr; DATEV JSON laden</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <h2 style="margin:0;">Interaktive DATEV Steuerschl&uuml;ssel (<code>BU-Schl&uuml;ssel</code>) &amp; <code>SKR03 / SKR04</code> Matrix</h2>
+        <input id="datevSearch" type="search" placeholder="Suche nach BU-Schlüssel, Steuersatz oder Konto (z. B. 19%, 8400, 4400, Reverse Charge, EU, OSS)..." style="min-width:300px;flex:1;max-width:460px;padding:9px 13px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.88rem;" />
+      </div>
+      <div style="overflow-x:auto;margin-top:14px;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">BU-Code</th>
+              <th style="padding:10px;">Steuersachverhalt</th>
+              <th style="padding:10px;">SKR03 Konto</th>
+              <th style="padding:10px;">SKR04 Konto</th>
+              <th style="padding:10px;">Praxis-Hinweis f&uuml;r EXTF v700 Import</th>
+            </tr>
+          </thead>
+          <tbody id="datevBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">REST API / Python / Make.com / n8n</span>
+        <h3 style="margin:10px 0 8px;">EXTF v700 Buchungsstapel per HTTP POST erzeugen</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Erstellt den normgerechten DATEV-Header (<code>&quot;EXTF&quot;;700;21;&quot;Buchungsstapel&quot;;13...</code>), Komma-Betr&auml;ge (<code>1190,00</code>) und <code>TTMM</code>-Belegdatum ohne Excel-Formatierungsfehler:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:215px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~datev-buchungsstapel-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "skr": "SKR04",
+    "consultantNumber": "29481",
+    "clientNumber": "10402",
+    "fiscalYearStart": "2026-01-01",
+    "bookings": [
+      {
+        "date": "2026-11-13",
+        "amount": 1190.00,
+        "debitAccount": "1800",
+        "creditAccount": "4400",
+        "vatRate": 19,
+        "invoiceNumber": "RE-2026-8812",
+        "description": "SaaS Jahreslizenz Cloud GmbH"
+      }
+    ]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Offizieller MCP Server (#1 Global Rank)</span>
+        <h3 style="margin:10px 0 8px;">KI-Buchhaltungs-Agenten (Claude / Cursor MCP)</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Registriert in der offiziellen MCP Registry als <code>io.github.Geornaden/datev-buchungsstapel-extf-mcp</code> &mdash; null Halluzinationen bei Spaltenpositionen oder Kontenrahmen:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:215px;">{
+  "mcpServers": {
+    "datev-buchungsstapel": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/datev-buchungsstapel-generator",
+      "headers": {
+        "Authorization": "Bearer YOUR_APIFY_API_TOKEN"
+      }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">Alle 12 Finanz-APIs</a> &bull; <a href="./eu-einvoice-xml-generator.html">XRechnung 3.0 &amp; ZUGFeRD API</a> &bull; <a href="./sepa-xml-generator.html">SEPA pain.001.001.09 API</a></div>
+      <div><a href="https://apify.com/finops_studio/datev-buchungsstapel-generator" target="_blank" rel="noopener">DATEV Generator im Apify Store &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var ROWS = [
+        { bu: 'Leer (Auto)', title: 'Erlöse 19 % USt (Inland Standard)', skr03: '8400 (AM)', skr04: '4400 (AM)', note: 'Automatikkonto: BU-Feld im EXTF leer lassen, DATEV zieht 19 % USt automatisch' },
+        { bu: 'Leer (Auto)', title: 'Erlöse 7 % USt (Ermäßigter Steuersatz)', skr03: '8300 (AM)', skr04: '4300 (AM)', note: 'Automatikkonto für Bücher, Lebensmittel, ÖPNV, Kultur' },
+        { bu: '3', title: 'Umsatzsteuer 19 % (auf Nicht-Automatikkonto)', skr03: 'div. Erlöse', skr04: 'div. Erlöse', note: 'Erzwingt 19 % USt-Berechnung auf individuellen Erlöskonten ohne AM-Funktion' },
+        { bu: '2', title: 'Umsatzsteuer 7 % (auf Nicht-Automatikkonto)', skr03: 'div. Erlöse', skr04: 'div. Erlöse', note: 'Erzwingt 7 % USt-Berechnung auf individuellen Erlöskonten' },
+        { bu: '9', title: 'Abziehbare Vorsteuer 19 % (Eingangsrechnung)', skr03: '4980 / 3400', skr04: '6815 / 5400', note: 'Standard-Vorsteuerabzug bei deutschen Lieferantenrechnungen (SaaS, Büro, Ware)' },
+        { bu: '8', title: 'Abziehbare Vorsteuer 7 % (Eingangsrechnung)', skr03: '4654 / 3300', skr04: '6644 / 5300', note: 'Ermäßigter Vorsteuerabzug (z. B. Fachliteratur, Bahnfahrkarten Nahverkehr)' },
+        { bu: '11 / Leer', title: 'Steuerfreie innergemeinschaftliche Lieferung (§ 4 Nr. 1b UStG)', skr03: '8125 (AM)', skr04: '4125 (AM)', note: 'Pflicht: Gültige EU USt-IdNr. des B2B-Kunden im Feld EU-Land u. USt-IdNr. übergeben' },
+        { bu: 'Leer / 0', title: 'Steuerfreie Ausfuhrlieferung Drittland (USA, CH, UK)', skr03: '8120', skr04: '4120', note: 'Drittlandsexport außerhalb der EU mit Ausgangsvermerk / Ausfuhrnachweis' },
+        { bu: '19 / 94', title: 'Innergemeinschaftlicher Erwerb 19 % USt & 19 % VSt', skr03: '3425 (AM)', skr04: '5425 (AM)', note: 'Wareneinkauf aus anderem EU-Mitgliedstaat mit USt-IdNr.' },
+        { bu: '94 / §13b', title: 'Reverse-Charge Leistungsempfänger EU/Drittland (§ 13b UStG)', skr03: '3123 / 3125', skr04: '5923 / 5925', note: 'Typisch für AWS, Google Ads, OpenAI, Apify, US/EU-B2B-Softwarebezug (19 % USt/VSt)' },
+        { bu: 'Leer', title: 'Nicht steuerbare sonstige Leistung EU B2B (§ 18b UStG ZM)', skr03: '8336', skr04: '4336', note: 'B2B-Dienstleistung/SaaS an EU-Unternehmer (Reverse Charge beim Kunden, ZM-pflichtig)' },
+        { bu: '40', title: 'Aufhebung der Automatik (Steuerfrei auf AM-Konto)', skr03: 'alle AM-Konten', skr04: 'alle AM-Konten', note: 'Unterdrückt die automatische Steuerberechnung auf einem Automatikkonto im Einzelfall' },
+        { bu: 'OSS', title: 'EU One-Stop-Shop B2C Fernverkäufe (§ 18j UStG)', skr03: '8320 / individuelle', skr04: '4320 / individuelle', note: 'EU-Bestimmungsland & ausländischen Steuersatz in den EXTF-EU-Spalten übergeben' },
+        { bu: 'Gegenkonto', title: 'Bank / Stripe / PayPal / Verrechnungskonto', skr03: '1200 / 1360', skr04: '1800 / 1460', note: 'Typisches Soll-Konto bei Zahlungseingängen und Payout-Abstimmungen' }
+      ];
+
+      var tbody = document.getElementById('datevBody');
+      var search = document.getElementById('datevSearch');
+
+      function render() {
+        var q = (search.value || '').trim().toLowerCase();
+        var filtered = ROWS.filter(function (r) {
+          if (!q) return true;
+          return (
+            r.bu.toLowerCase().indexOf(q) !== -1 ||
+            r.title.toLowerCase().indexOf(q) !== -1 ||
+            r.skr03.toLowerCase().indexOf(q) !== -1 ||
+            r.skr04.toLowerCase().indexOf(q) !== -1 ||
+            r.note.toLowerCase().indexOf(q) !== -1
+          );
+        });
+        tbody.innerHTML = filtered.map(function (r) {
+          return '<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">' +
+            '<td style="padding:10px;font-family:monospace;font-weight:700;color:#38bdf8;">' + r.bu + '</td>' +
+            '<td style="padding:10px;"><strong>' + r.title + '</strong></td>' +
+            '<td style="padding:10px;font-family:monospace;color:#34d399;">' + r.skr03 + '</td>' +
+            '<td style="padding:10px;font-family:monospace;color:#a78bfa;">' + r.skr04 + '</td>' +
+            '<td style="padding:10px;color:var(--muted);">' + r.note + '</td>' +
+            '</tr>';
+        }).join('');
+      }
+
+      search.addEventListener('input', render);
+      render();
+    })();
+  </script>
+</body>
+</html>

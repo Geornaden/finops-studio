@@ -52,7 +52,7 @@ export const TOOLS_CONFIG = {
   },
   "aba": {
     "label": "🇦🇺 Australian ABA (.aba)",
-    "storeUrl": "https://apify.com/finops_studio",
+    "storeUrl": "https://apify.com/finops_studio/aba-cemtex-file-generator",
     "actorSlug": "finops_studio~aba-cemtex-file-generator",
     "fileExt": "DIRECT_ENTRY_SAMPLE.aba",
     "mime": "text/plain",
@@ -60,9 +60,29 @@ export const TOOLS_CONFIG = {
     "sample": "name,bsb,account,amount,reference\nLIAM O CONNOR,062-000,12345678,2150.00,WAGES NOV\nCHLOE NGUYEN,082-088,87654321,1890.50,WAGES NOV",
     "output": "0                 01CBA       SYDNEY TECH PTY LTD       301500PAYROLL     161126                                        \r\n1062-000 12345678 530000215000LIAM O CONNOR                   WAGES NOV         062-000 10458921SYDNEY TECH PTY 00000000\r\n1082-088 87654321 530000189050CHLOE NGUYEN                    WAGES NOV         062-000 10458921SYDNEY TECH PTY 00000000\r\n1062-000 10458921 130000404050SYDNEY TECH PTY LTD             PAYROLL           062-000 10458921SYDNEY TECH PTY 00000000\r\n7999-999            000000000000004040500000404050                        000003                                        "
   },
+  "bacs": {
+    "label": "🇬🇧 UK BACS Standard 18",
+    "storeUrl": "https://apify.com/finops_studio/uk-bacs-standard18-generator",
+    "actorSlug": "finops_studio~uk-bacs-standard18-generator",
+    "fileExt": "UK_BACS_STANDARD18_SAMPLE.txt",
+    "mime": "text/plain",
+    "summary": "VALID 100-Char UK BACS Standard 18 • 2 Credits • GBP 5250.00 (Sample Preview)",
+    "sample": "name,sortCode,accountNumber,amount,transactionCode,reference\nOLIVER WRIGHT,40-05-15,87654321,3400.00,99,SALARY NOV26\nAMELIA CLARKE,20-32-53,11223344,1850.00,99,SALARY NOV26",
+    "output": "VOL1000001                               123456                                1                    \r\nHDR1A123456S  100000100010001       b26320 b26324 000000                                            \r\nUHL1 b26320999999    000000001 DAILY  001                                                           \r\n4005158765432109920000012345678000000340000LONDON TECH UK LTDSALARY NOV26      OLIVER WRIGHT        \r\n2032531122334409920000012345678000000185000LONDON TECH UK LTDSALARY NOV26      AMELIA CLARKE        \r\n2000001234567801720000012345678000000525000PAYROLL           CONTRA            LONDON TECH UK LTD   \r\nUTL100000052500000000052500000000010000002                                                          "
+  },
+  "cpa005": {
+    "label": "🇨🇦 Canada CPA-005 EFT",
+    "storeUrl": "https://apify.com/finops_studio/canada-cpa005-eft-generator",
+    "actorSlug": "finops_studio~canada-cpa005-eft-generator",
+    "fileExt": "CANADA_CPA005_SAMPLE.eft",
+    "mime": "text/plain",
+    "summary": "VALID 1464-Byte Payments Canada CPA-005 • A/C/Z Records • CAD 3950.00 (Sample Preview)",
+    "sample": "name,institution,transit,accountNumber,amount,cpaCode,crossReference\nSOPHIE TREMBLAY,004,10202,7748392,3950.00,200,EMP-CA-204",
+    "output": "A000000001GLOBTECHCA002102632000300                    CAD                                                                 (...padded to exact 1,464 bytes)\r\nC000000002GLOBTECHCA002120000003950000263240004102027748392     000000000000000GLOBAL TECH CA SOPHIE TREMBLAY               (...6x240-byte segments = exact 1,464 bytes)\r\nZ000000003GLOBTECHCA00210000000000000000000000000039500000000001                                                           (...padded to exact 1,464 bytes)"
+  },
   "pain002": {
     "label": "🔍 ISO pain.002 Decoder",
-    "storeUrl": "https://apify.com/finops_studio",
+    "storeUrl": "https://apify.com/finops_studio/iso20022-pain002-status-parser",
     "actorSlug": "finops_studio~iso20022-pain002-status-parser",
     "fileExt": "PAIN002_DECODED_SAMPLE.csv",
     "mime": "text/csv",
@@ -101,6 +121,8 @@ export function initSandbox(defaultTool = 'sepa') {
     statusEl.className = 'status-chip status-ok';
     statusEl.textContent = cfg.summary;
     storeBtn.href = cfg.storeUrl;
+    storeBtn.className = 'btn btn-primary';
+    storeBtn.innerHTML = 'Run Unlimited Batch on Cloud API ($0/mo) &rarr;';
     if (upsellLink) upsellLink.href = cfg.storeUrl;
     upsellEl.style.display = 'none';
   }

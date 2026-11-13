@@ -76,6 +76,7 @@
 - [Canadian CPA-005 EFT Guide: CSV, Excel & QuickBooks to RBC Express, TD, BMO, Scotiabank & CIBC (1,464-Byte Standard 005)](https://geornaden.github.io/finops-studio/csv-to-canada-cpa-005-eft-rbc-td-bmo-scotiabank.html)
 - [ISO 20022 pain.002 Bank Payment Rejection Codes Encyclopedia (AC04, AM04, BE04, FF01, MD01, RC01, RR04) & XML Parser API](https://geornaden.github.io/finops-studio/iso20022-pain002-rejection-codes-ac04-am04-be04-md01-rc01-guide.html)
 - [Corporate Treasury BAI2 Type Codes Reference (010–699: 015, 115, 165, 195, 455, 475, 495, 575) & Record 16+88 Line Decoder](https://geornaden.github.io/finops-studio/bai2-type-codes-165-195-475-jpmorgan-bofa-wells-fargo-citi.html)
+- [German DATEV BU-Schlüssel Tabelle (2, 3, 7, 8, 9, 11, 40, 94) & SKR03 / SKR04 Erlöskonten-Finder + EXTF v700 API](https://geornaden.github.io/finops-studio/datev-bu-schluessel-skr03-skr04-tabelle-buchungsstapel-api.html)
 - [Make.com, Zapier & Microsoft Power Automate No-Code Blueprints](https://geornaden.github.io/finops-studio/make-zapier-power-automate-sepa-xml-nacha-peppol.html)
 - [Make.com Scenario Blueprint JSON (Google Sheets / Airtable -> SEPA XML)](https://geornaden.github.io/finops-studio/workflows/make-sheets-airtable-to-sepa-nacha-datev.json)
 - [Python 3 & Node.js 20+ Banking File API Cookbook (SEPA XML, NACHA ACH, BAI2, DATEV)](https://geornaden.github.io/finops-studio/python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html)
