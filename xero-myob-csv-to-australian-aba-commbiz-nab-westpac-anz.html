@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Convert CSV / Excel / Xero / MYOB to Australian .ABA Bank File (CBA CommBiz, NAB Connect, Westpac, ANZ) | FinOps Studio</title>
+  <meta name="description" content="Generate strict 120-character Australian BECS Direct Entry .ABA payroll &amp; supplier batch files for CBA CommBiz, NetBank, NAB Connect, Westpac Live, ANZ Transactive &amp; Macquarie via $0/mo Cloud API, n8n &amp; MCP." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/xero-myob-csv-to-australian-aba-commbiz-nab-westpac-anz.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Convert CSV, Excel, Xero & MYOB Exports to 120-Character Australian .ABA Files (CBA CommBiz, NAB Connect, Westpac & ANZ)",
+        "url": "https://geornaden.github.io/finops-studio/xero-myob-csv-to-australian-aba-commbiz-nab-westpac-anz.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Complete Australian BECS Direct Entry (Cemtex .aba) automation guide covering Record 0/1/7 fixed-width rules, self-balancing debit records, APCA User IDs, REST API, and Official MCP integration."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Do CBA CommBiz, NetBank, NAB Connect, Westpac, and ANZ require a self-balancing debit record in .ABA files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "CBA CommBiz and NAB Connect typically require a self-balancing debit line (Transaction Code 13) so Record 7 Net Total equals 0000000000, whereas ANZ Transactive and some Westpac profiles expect credits-only (includeSelfBalancingRecord: false). FinOps Studio lets you toggle includeSelfBalancingRecord with a single boolean parameter."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why did NetBank or NAB Connect reject my .ABA file for invalid record length?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Every line in an Australian BECS Cemtex .ABA file—Record 0 (Descriptive), Record 1 (Detail), and Record 7 (File Total 999-999)—must be padded with spaces to an exact width of 120 ASCII characters. Opening or saving an .aba file in Excel or basic text editors strips trailing right-hand spaces."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Free BSB Checker</a>
+        <a href="./free-bank-file-format-detector-line-length-auditor.html">120-Char ABA Auditor</a>
+        <a href="./aba-cemtex-file-generator.html">ABA Specs</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener">Launch Live ABA API ($0/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127462;&#127482; Live on Apify Store &amp; Official MCP Registry &bull; $0/Month Subscription</span>
+      <h1>Convert CSV, Excel, Xero &amp; MYOB Batches to Compliant 120-Character Australian <code>.ABA</code> Files</h1>
+      <p>Automate fortnightly payroll (Code <code>53</code>) and supplier creditor runs (Code <code>50</code>) for <strong>Commonwealth Bank (CommBiz / NetBank)</strong>, <strong>NAB Connect</strong>, <strong>Westpac Live</strong>, <strong>ANZ Transactive</strong>, <strong>Macquarie</strong>, <strong>Bendigo</strong>, and <strong>Suncorp</strong>—with exact integer-cent Record <code>7</code> balancing and zero desktop software fees.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener">Run Australian ABA Generator on Apify ($0.02/row) &rarr;</a>
+        <a class="btn btn-outline" href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Validate Australian BSB Free</a>
+        <a class="btn btn-outline" href="./free-bank-file-format-detector-line-length-auditor.html">Audit Existing .ABA File</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <h2 style="margin-top:0;">Australian Bank Portal Reference (`bankCode`, Self-Balancing &amp; APCA IDs)</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.86rem;margin-top:8px;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Australian Bank &amp; Portal</th>
+              <th style="padding:10px;">3-Letter <code>bankCode</code></th>
+              <th style="padding:10px;">BSB Prefixes</th>
+              <th style="padding:10px;">Self-Balancing Debit Row</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>Commonwealth Bank (CommBiz / NetBank)</strong></td>
+              <td style="padding:10px;font-family:monospace;">CBA</td>
+              <td style="padding:10px;font-family:monospace;">06x-xxx</td>
+              <td style="padding:10px;color:#34d399;"><code>true</code> (APCA <code>301500</code> or custom DE ID)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>NAB (NAB Connect / Internet Banking)</strong></td>
+              <td style="padding:10px;font-family:monospace;">NAB</td>
+              <td style="padding:10px;font-family:monospace;">08x-xxx</td>
+              <td style="padding:10px;color:#34d399;"><code>true</code> (Net total = <code>0000000000</code>)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>Westpac (Westpac Live / Corporate Online)</strong></td>
+              <td style="padding:10px;font-family:monospace;">WBC</td>
+              <td style="padding:10px;font-family:monospace;">03x-xxx / 73x-xxx</td>
+              <td style="padding:10px;"><code>true</code> or <code>false</code> (per portal profile)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>ANZ (ANZ Transactive / Internet Banking)</strong></td>
+              <td style="padding:10px;font-family:monospace;">ANZ</td>
+              <td style="padding:10px;font-family:monospace;">01x-xxx</td>
+              <td style="padding:10px;">Often <code>false</code> (unbalanced credit file)</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;"><strong>Macquarie / Bendigo / Suncorp</strong></td>
+              <td style="padding:10px;font-family:monospace;">MBL / BEN / SUN</td>
+              <td style="padding:10px;font-family:monospace;">18x / 633 / 484</td>
+              <td style="padding:10px;">Configurable via <code>includeSelfBalancingRecord</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">REST API / n8n / Make.com Example</span>
+        <h3 style="margin:10px 0 8px;">Generate 120-Char `.ABA` from JSON or CSV</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Pass either a structured <code>transactions</code> array or raw spreadsheet <code>csvTransactions</code> text:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:220px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~aba-cemtex-file-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "bankCode": "CBA",
+    "userName": "SYDNEY CLOUD PTY LTD",
+    "apcaUserId": "301500",
+    "traceBsb": "062-000",
+    "traceAccount": "10458921",
+    "description": "PAYROLL",
+    "processDate": "2026-11-16",
+    "includeSelfBalancingRecord": true,
+    "transactions": [
+      {
+        "accountTitle": "LIAM O CONNOR",
+        "bsb": "082-140",
+        "accountNumber": "88412093",
+        "amount": 3150.45,
+        "reference": "FORTNIGHT PAY 22",
+        "transactionCode": "53"
+      }
+    ]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Official MCP Registry (#1 Ranked)</span>
+        <h3 style="margin:10px 0 8px;">Connect Claude Desktop, Cursor or Windsurf</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Registered in <code>registry.modelcontextprotocol.io</code> as <code>io.github.Geornaden/aba-cemtex-direct-entry-mcp</code> so AI finance agents generate mathematically exact 120-char <code>.aba</code> files:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:220px;">{
+  "mcpServers": {
+    "aba-cemtex-generator": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/aba-cemtex-file-generator",
+      "headers": {
+        "Authorization": "Bearer YOUR_APIFY_API_TOKEN"
+      }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+
+    <div class="sandbox-card" style="margin-top:24px;text-align:center;">
+      <h3 style="margin-top:0;">Ideal for Australian Bookkeepers, BAS Agents, Payroll Bureaus &amp; Fintechs</h3>
+      <p style="color:var(--muted);max-width:700px;margin:8px auto 16px;">Generate ABA files for 1 or 500 ABN client entities at <strong>$0/month subscription</strong>—only $0.03 per batch + $0.02 per payee row (with $5/month free starter credits on Apify).</p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener">Open Australian ABA Generator on Apify &rarr;</a>
+        <a class="btn btn-outline" href="./for-accounting-firms-payroll-bureaus-and-fintechs.html">BAS Agent &amp; Payroll ROI Calculator</a>
+        <a class="btn btn-outline" href="./quickbooks-xero-csv-to-sepa-nacha-positive-pay.html">Xero &amp; QuickBooks Automation</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio (All 12 Banking APIs)</a> &bull;
+      <a href="./aba-cemtex-file-generator.html">ABA Technical Spec</a> &bull;
+      <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Free BSB Lookup</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>
