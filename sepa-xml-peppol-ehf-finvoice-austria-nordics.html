@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peppol BIS 3.0 (Norway EHF, Sweden, Denmark NemHandel, Finland) &amp; Austria / Nordic SEPA pain.001 XML API | FinOps Studio</title>
+  <meta name="description" content="Generate compliant 2026 ISO 20022 SEPA XML (pain.001.001.09 / pain.008) and Peppol BIS Billing 3.0 XML (Norwegian EHF 3.0, Swedish Svefaktura replacement, Danish Bogføringsloven NemHandel, Finnish OVT, Austrian e-Rechnung) via $0/mo REST API, n8n &amp; MCP." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/sepa-xml-peppol-ehf-finvoice-austria-nordics.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Nordic & Austria Corporate Banking Automation: Peppol BIS 3.0 (EHF 3.0 / NemHandel) & 2026 ISO 20022 SEPA pain.001 XML",
+        "url": "https://geornaden.github.io/finops-studio/sepa-xml-peppol-ehf-finvoice-austria-nordics.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Developer and CFO guide for automating ISO 20022 SEPA XML bulk payments and EN 16931 Peppol BIS 3.0 e-invoices across Austria (Erste, Raiffeisen, Bank Austria), Norway (DNB, EHF 3.0), Sweden (SEB, Swedbank, Nordea), Finland (OP), and Denmark (Danske Bank, NemHandel)."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is Norwegian EHF 3.0 identical to Peppol BIS Billing 3.0 UBL XML?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Norway's DFØ/Anskaffelser EHF Billing 3.0 specification uses the exact OASIS UBL 2.1 Peppol BIS Billing 3.0 CIUS profile (urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0) with EndpointID scheme 0192 (9-digit Norwegian Organisasjonsnummer) and NO...MVA tax registration."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do Erste Bank, Raiffeisen, Nordea, Danske Bank, and DNB handle Å, Ä, Ö, Æ, Ø, Ü, and ß in SEPA pain.001 XML?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Many Nordic and Austrian corporate banking gateways reject legacy ISO 20022 files containing unescaped Nordic/German diacritics or unstructured <AdrLine> postal addresses (error BE04). FinOps Studio automatically sanitizes characters and builds 2026 EPC structured <TwnNm> and <Ctry> address blocks with MOD-97 IBAN verification."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-bank-file-format-detector-line-length-auditor.html">Free File Auditor</a>
+        <a href="./sepa-xml-generator.html">SEPA pain.001 API</a>
+        <a href="./eu-einvoice-xml-generator.html">Peppol / EHF 3.0 API</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Live Cloud APIs ($0/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127462;&#127481; &#127480;&#127466; &#127475;&#127476; &#127467;&#127470; &#127465;&#127472; Austria &amp; Nordics 2026 Compliance &bull; $0/Month API</span>
+      <h1>SEPA XML (pain.001.001.09) &amp; Peppol BIS 3.0 / EHF 3.0 Automation for Austria &amp; the Nordics</h1>
+      <p>Convert ERP exports, Stripe/Shopify orders, or CSV spreadsheets into bank-ready <strong>ISO 20022 SEPA Credit Transfers &amp; Direct Debits</strong> (Erste, Raiffeisen, Nordea, Danske Bank, SEB, Swedbank, OP, DNB) and <strong>EN 16931 Peppol BIS Billing 3.0 XML</strong> (Norway <strong>EHF 3.0</strong>, Denmark <strong>Bogf&oslash;ringsloven / NemHandel</strong>, Sweden, Finland &amp; Austria).</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Launch SEPA XML API ($0.02/tx) &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Launch Peppol / EHF 3.0 API ($0.05/inv) &rarr;</a>
+        <a class="btn btn-outline" href="./free-bank-file-format-detector-line-length-auditor.html">Test Sample File in Browser</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <h2 style="margin-top:0;">Country-by-Country Banking Gateways &amp; Peppol Endpoint IDs</h2>
+      <p style="color:var(--muted);font-size:0.93rem;">All five markets share the exact same <strong>OASIS UBL 2.1 Peppol BIS Billing 3.0</strong> XML standard and <strong>ISO 20022 2026 Structured Address (`&lt;TwnNm&gt;` + `&lt;Ctry&gt;`)</strong> banking rules:</p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:0.86rem;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Country</th>
+              <th style="padding:10px;">Corporate Bank Portals (pain.001 / pain.008)</th>
+              <th style="padding:10px;">National E-Invoice Mandate &amp; Peppol Scheme</th>
+              <th style="padding:10px;">IBAN Width</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127462;&#127481; Austria (AT)</strong></td>
+              <td style="padding:10px;">Erste Bank (George Business / Telebanking Pro), Raiffeisen Mein ELBA, UniCredit Bank Austria, BAWAG</td>
+              <td style="padding:10px;">Peppol BIS 3.0 (<code>9914</code> ATU VAT / <code>9915</code> B2Ggv) + DATEV EXTF CSV for Steuerberater</td>
+              <td style="padding:10px;font-family:monospace;">AT + 18 digits (20)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127475;&#127476; Norway (NO)</strong></td>
+              <td style="padding:10px;">DNB Corporate, SpareBank 1, Nordea Corporate Access, Handelsbanken</td>
+              <td style="padding:10px;"><strong>EHF Billing 3.0</strong> = Peppol BIS 3.0 UBL (Scheme <code>0192</code> 9-digit Org.nr + <code>MVA</code>)</td>
+              <td style="padding:10px;font-family:monospace;">NO + 13 digits (15)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127480;&#127466; Sweden (SE)</strong></td>
+              <td style="padding:10px;">SEB C&amp;I, Swedbank, Svenska Handelsbanken, Nordea Corporate</td>
+              <td style="padding:10px;"><strong>Peppol BIS 3.0</strong> (replaces legacy Svefaktura; Scheme <code>0007</code> Org.nr)</td>
+              <td style="padding:10px;font-family:monospace;">SE + 22 digits (24)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127465;&#127472; Denmark (DK)</strong></td>
+              <td style="padding:10px;">Danske Bank District, Nykredit, Jyske Bank, Nordea</td>
+              <td style="padding:10px;"><strong>Bogf&oslash;ringsloven</strong> (Digital Bookkeeping Act) via NemHandel / Peppol BIS 3.0 (<code>0184</code> CVR / <code>0088</code> GLN)</td>
+              <td style="padding:10px;font-family:monospace;">DK + 16 digits (18)</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;"><strong>&#127467;&#127470; Finland (FI)</strong></td>
+              <td style="padding:10px;">OP Corporate Hub, Nordea Corporate, Danske Bank District</td>
+              <td style="padding:10px;"><strong>Peppol BIS 3.0</strong> (Scheme <code>0216</code> OVT-tunnus / <code>0037</code> Y-tunnus; interoperable with Finvoice gateways)</td>
+              <td style="padding:10px;font-family:monospace;">FI + 16 digits (18)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">cURL / n8n / Make HTTP Example 1</span>
+        <h3 style="margin:10px 0 8px;">Generate Norwegian EHF 3.0 / Nordic Peppol UBL Invoice</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Pass standard JSON with <code>PEPPOL_UBL</code> profile and 25% MVA/Moms VAT—receive deterministic, cent-exact OASIS UBL 2.1 XML ready for any Peppol Access Point (Maventa, Pagero, Basware, Logiq, Compello):</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:210px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "profile": "PEPPOL_UBL",
+    "invoiceNumber": "NO-2026-4410",
+    "issueDate": "2026-11-13",
+    "dueDate": "2026-12-13",
+    "currency": "NOK",
+    "buyerReference": "PO-OSLO-992",
+    "seller": {
+      "name": "Nordic Cloud Systems AS",
+      "vatId": "NO987654321MVA",
+      "endpointId": "987654321",
+      "endpointScheme": "0192",
+      "street": "Karl Johans gate 14",
+      "city": "Oslo",
+      "postalCode": "0154",
+      "country": "NO"
+    },
+    "buyer": {
+      "name": "Fjord Logistics AS",
+      "vatId": "NO912345678MVA",
+      "endpointId": "912345678",
+      "endpointScheme": "0192",
+      "street": "Bryggen 7",
+      "city": "Bergen",
+      "postalCode": "5003",
+      "country": "NO"
+    },
+    "lines": [
+      { "description": "Enterprise Treasury Integration", "quantity": 10, "unitPrice": 1250.00, "vatRate": 25 }
+    ]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">cURL / n8n / Make HTTP Example 2</span>
+        <h3 style="margin:10px 0 8px;">Generate Austrian &amp; Finnish 2026 SEPA pain.001.001.09 XML</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Automatically validates Austrian (<code>AT</code>), Finnish (<code>FI</code>), Swedish (<code>SE</code>), Danish (<code>DK</code>), and Norwegian (<code>NO</code>) IBAN MOD-97 checksums, sanitizes <code>&Aring;/&Auml;/&Ouml;/&AElig;/&Oslash;/&Uuml;/&szlig;</code>, and outputs mandatory 2026 structured <code>&lt;PstlAdr&gt;</code> tags:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:210px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "paymentType": "CREDIT_TRANSFER",
+    "painVersion": "pain.001.001.09",
+    "messageId": "VIENNA-HELSINKI-2026-11",
+    "executionDate": "2026-11-16",
+    "initiatingParty": {
+      "name": "AlpenTech GmbH",
+      "iban": "AT611904300234573201",
+      "bic": "BKAUATWWXXX",
+      "address": { "street": "Kaerntner Ring 12", "postalCode": "1010", "city": "Wien", "country": "AT" }
+    },
+    "transactions": [
+      {
+        "endToEndId": "INV-FI-8821",
+        "amount": 4850.50,
+        "currency": "EUR",
+        "creditorName": "Sisu Engineering Oy",
+        "creditorIban": "FI2112345600000785",
+        "creditorBic": "NDEAFIHHXXX",
+        "creditorAddress": { "street": "Mannerheimintie 20", "postalCode": "00100", "city": "Helsinki", "country": "FI" },
+        "remittanceInfo": "Invoice INV-FI-8821"
+      }
+    ]
+  }'</pre>
+      </div>
+    </div>
+
+    <section style="margin-top:28px;">
+      <div class="faq-item">
+        <h4>Austrian Steuerberater &amp; DACH Accounting: Also Generate Official DATEV EXTF v700 CSV</h4>
+        <p>Austrian and cross-border DACH companies working with tax advisors using DATEV, BMD, or RZL can pair Peppol e-invoicing directly with our <a href="https://apify.com/finops_studio/datev-buchungsstapel-generator" target="_blank" rel="noopener">DATEV Buchungsstapel EXTF v700 Generator</a> ($0/mo + $0.02/booking row).</p>
+      </div>
+      <div class="faq-item">
+        <h4>Zero Subscription Lock-In vs. €1,800–€6,000/yr Legacy EDI Connectors</h4>
+        <p>Traditional Nordic &amp; Austrian ERP bank-file modules charge hefty annual maintenance fees before you send a single invoice or payment batch. FinOps Studio charges <strong>$0/month</strong>—pay $0.02 per SEPA transaction or $0.05 per Peppol/EHF XML invoice via Apify Cloud.</p>
+      </div>
+    </section>
+
+    <div class="sandbox-card" style="margin-top:24px;text-align:center;">
+      <h3 style="margin-top:0;">Ready to Automate SEPA XML &amp; Peppol / EHF 3.0 in Minutes?</h3>
+      <div class="hero-actions" style="justify-content:center;margin-top:12px;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Open SEPA XML API &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Open Peppol / EHF 3.0 API &rarr;</a>
+        <a class="btn btn-outline" href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node.js SDK Scripts</a>
+        <a class="btn btn-outline" href="./make-zapier-power-automate-sepa-xml-nacha-peppol.html">Make / Zapier / n8n Blueprints</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio (All 12 Banking APIs)</a> &bull;
+      <a href="./fix-sepa-pain001-2026-structured-address-rejection.html">2026 SEPA BE04 Fix</a> &bull;
+      <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">DACH DATEV Guide</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>
