@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generator Przelewów SEPA XML (pain.001) z Excel/CSV oraz E-Faktura UE Peppol / XRechnung 2026 | FinOps Studio</title>
+  <meta name="description" content="Konwertuj pliki Excel, CSV lub JSON na paczki przelewów walutowych EUR SEPA XML ISO 20022 (pain.001.001.09) dla mBank CompanyNet, iPKO biznes, ING Business, Santander i Pekao oraz e-faktury unijne Peppol BIS 3.0 i XRechnung bez abonamentu." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/ksef-2026-peppol-efaktura-przelewy-sepa-xml-polska.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "FinOps Studio — Generator SEPA XML (pain.001) & E-Faktura Peppol / XRechnung API Polska",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Cloud API, Web, n8n, Make, MCP",
+        "url": "https://geornaden.github.io/finops-studio/ksef-2026-peppol-efaktura-przelewy-sepa-xml-polska.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.02",
+          "priceCurrency": "USD",
+          "description": "0 USD/miesiąc abonamentu — rozliczenie wyłącznie za użycie ($0.02 za przelew SEPA, $0.05 za e-fakturę Peppol/XRechnung)"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Jak wygenerować plik paczki przelewów EUR SEPA XML (pain.001) z arkusza Excel lub CSV do mBank CompanyNet, ING Business lub iPKO biznes?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "API FinOps Studio przyjmuje dane z Excela, CSV lub systemów ERP (Comarch Optima, Symfonia, Subiekt, enova365, Odoo), weryfikuje każdy numer IBAN algorytmem ISO 13616 MOD-97 i generuje gotowy plik ISO 20022 pain.001.001.09 lub pain.001.001.03 ze strukturalnymi adresami EPC 2026 (<TwnNm> i <Ctry>)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Czy polscy eksporterzy wystawiający faktury w KSeF 2026 potrzebują również formatu Peppol BIS 3.0 lub niemieckiego XRechnung?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Tak. Krajowy System e-Faktur (KSeF) obsługuje polski schemat FA dla obrotu krajowego, natomiast kontrahenci B2B i instytucje publiczne w Niemczech (obowiązek E-Rechnung / XRechnung 3.0), Belgii (Peppol B2B 2026), Francji (Factur-X) i Holandii wymagają unijnego standardu EN 16931 XML. Nasze API generuje certyfikowalne pliki UBL Peppol BIS 3.0 oraz XRechnung za $0.05 za fakturę bez opłat miesięcznych."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Jak naprawić odrzucenie paczki SEPA w banku z kodem błędu BE04 w 2026 roku?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Wytyczne EPC SEPA 2026 wycofują nieustrukturyzowane linie adresowe (<AdrLine>) na rzecz pól strukturalnych (<TwnNm> miasto, <PstCd> kod pocztowy oraz <Ctry> kod kraju ISO). Generator FinOps Studio tworzy poprawną strukturę automatycznie."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-iban-routing-number-pain002-validator.html">Darmowy Walidator IBAN &amp; Błędów SEPA</a>
+        <a href="./index.html">Wszystkie 10 API Bankowych</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Otwórz API w Apify ($0/mies.) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">🇵🇱 Polska &amp; Eksport UE 2026 &bull; Paczki Przelewów EUR SEPA XML (pain.001) &amp; Peppol / XRechnung</span>
+      <h1>Konwersja Excel/CSV do Przelewów SEPA XML oraz Unijnych E-Faktur Peppol &amp; XRechnung — 0 zł Abonamentu</h1>
+      <p>Zautomatyzuj masowe przelewy walutowe EUR <strong>ISO 20022 <code>pain.001.001.09</code></strong> do <strong>mBank CompanyNet, PKO BP iPKO biznes, ING Business, Santander iBiznes24, Pekao Biznes24 i BNP Paribas</strong> oraz wystawiaj europejskie e-faktury <strong>EN 16931 (Peppol BIS 3.0, niemiecki XRechnung 3.0, Factur-X)</strong> dla kontrahentów zagranicznych już od <strong>$0,02 za rekord</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generuj Paczkę SEPA XML w Chmurze &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">API E-Faktur UE (XRechnung / Peppol) &rarr;</a>
+        <a class="btn btn-outline" href="./free-iban-routing-number-pain002-validator.html">Sprawdź IBAN MOD-97 Za Darmo</a>
+      </div>
+    </section>
+
+    <div class="grid-3">
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">1. Masowe Przelewy EUR SEPA (pain.001)</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Zamień zestawienia płac i płatności z <strong>Comarch ERP Optima/XL, Symfonii, Insert Subiekt/Rewizor, enova365</strong> lub arkusza Excel w plik XML ISO 20022 z kontrolą sumy <code>CtrlSum</code> co do centa i adresami strukturalnymi 2026 (brak odrzuceń <code>BE04</code>).</p>
+        <a href="./sepa-xml-generator.html">Zobacz podgląd pliku SEPA XML &rarr;</a>
+      </div>
+
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">2. Eksport do Niemiec i UE: XRechnung &amp; Peppol</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Sprzedajesz towary, transport lub usługi IT do Niemiec, Belgii, Francji lub Holandii? KSeF działa krajowo, a klienci z UE wymagają <strong>EN 16931 XRechnung 3.0 / Peppol BIS 3.0 XML</strong>. Generuj gotowe pliki UBL i CII przez API.</p>
+        <a href="./eu-einvoice-xml-generator.html">Zobacz podgląd XRechnung / Peppol &rarr;</a>
+      </div>
+
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">3. Dekoder Odrzuceń Bankowych (pain.002)</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Bank odrzucił paczkę przelewów z kodem <code>AC04</code>, <code>AM04</code>, <code>BE04</code> lub <code>RC01</code>? Nasze narzędzie tłumaczy techniczne raporty zwrotne <code>pain.002</code> na czytelne instrukcje dla działu księgowości.</p>
+        <a href="./iso20022-pain002-decoder.html">Otwórz Dekoder Statusów pain.002 &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Tabela porównawcza kosztów -->
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Dlaczego działy finansowe, software house'y i biura rachunkowe wybierają FinOps Studio?</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);color:var(--muted);text-align:left;">
+              <th style="padding:10px;">Zastosowanie w Firmie</th>
+              <th style="padding:10px;">Tradycyjne Konwertery i Dodatki ERP</th>
+              <th style="padding:10px;">FinOps Studio Cloud API</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px;"><strong>Paczka 100 przelewów SEPA EUR miesięcznie</strong></td>
+              <td style="padding:10px;">120 – 300 PLN / mies. stałego abonamentu</td>
+              <td style="padding:10px;"><strong style="color:#34d399;">$0 / mies.</strong> (~$2,03 za całą paczkę 100 przelewów!)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px;"><strong>E-Faktury Eksportowe XRechnung / Peppol BIS 3.0</strong></td>
+              <td style="padding:10px;">€100 – €400 / mies. + opłata wdrożeniowa</td>
+              <td style="padding:10px;"><strong style="color:#34d399;">$0 / mies.</strong> ($0,05 za wygenerowaną fakturę XML)</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;"><strong>Integracja z n8n, Make, Python, Node.js i AI (MCP)</strong></td>
+              <td style="padding:10px;">Ręczne wgrywanie plików na komputerze</td>
+              <td style="padding:10px;"><strong style="color:#38bdf8;">Gotowe REST API + Oficjalny Serwer MCP</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Przykład wywołania API -->
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Szybka Integracja REST API (cURL / n8n / Python / System ERP)</h2>
+      <p style="color:var(--muted);font-size:0.9rem;">Wygeneruj paczkę przelewów walutowych SEPA <code>pain.001.001.09</code> zgodną z wymogami adresów strukturalnych 2026 jednym zapytaniem HTTPS:</p>
+      <pre class="code-box">curl -X POST "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items?token=TWOJ_TOKEN_APIFY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messageType": "pain.001.001.09",
+    "initiatingPartyName": "Wisla Logistics Sp. z o.o.",
+    "debtorName": "Wisla Logistics Sp. z o.o.",
+    "debtorIban": "PL61109010140000071219812874",
+    "debtorBic": "WBKPPLPP",
+    "debtorAddress": { "streetName": "ul. Prosta 20", "postCode": "00-850", "townName": "Warszawa", "country": "PL" },
+    "executionDate": "2026-11-16",
+    "transactions": [
+      {
+        "endToEndId": "FV-2026-1104",
+        "creditorName": "Rhein Technik GmbH",
+        "creditorIban": "DE89370400440532013000",
+        "amount": 2850.00,
+        "currency": "EUR",
+        "remittanceInfo": "Zapłata za FV 1104/2026",
+        "creditorAddress": { "townName": "Berlin", "postCode": "10115", "country": "DE" }
+      }
+    ]
+  }'</pre>
+      <div class="hero-actions" style="margin-top:14px;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Uruchom w Apify Store &rarr;</a>
+        <a class="btn btn-outline" href="./workflows/n8n-sheets-to-sepa-xml.json" download>Pobierz Szablon n8n (Google Sheets &rarr; SEPA XML)</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio (Wszystkie 10 API)</a> &bull;
+      <a href="./sepa-xml-generator.html">SEPA XML</a> &bull;
+      <a href="./eu-einvoice-xml-generator.html">Peppol / XRechnung</a> &bull;
+      <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">DATEV CSV</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>

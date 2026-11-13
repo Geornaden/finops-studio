@@ -52,3 +52,4 @@
 - [Stripe Paid Invoice to Peppol E-Invoice + German DATEV CSV](https://geornaden.github.io/finops-studio/workflows/n8n-stripe-to-datev-and-einvoice.json)
 - [Daily SFTP BAI2 Treasury Parser + pain.002 Slack Rejection Alert](https://geornaden.github.io/finops-studio/workflows/n8n-bank-sftp-bai2-and-pain002-alerts.json)
 - [Italian Corporate Banking Guide: Bonifici SEPA XML CBI (pain.001) & Fatturazione Elettronica Peppol UE](https://geornaden.github.io/finops-studio/fatturazione-elettronica-peppol-bonifico-sepa-xml-italia.html)
+- [Polish Corporate Banking & KSeF Export Guide: Przelewy SEPA XML (pain.001) & E-Faktura UE Peppol / XRechnung](https://geornaden.github.io/finops-studio/ksef-2026-peppol-efaktura-przelewy-sepa-xml-polska.html)

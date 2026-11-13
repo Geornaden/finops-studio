@@ -115,4 +115,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.88</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/ksef-2026-peppol-efaktura-przelewy-sepa-xml-polska.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
 </urlset>
