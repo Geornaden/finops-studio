@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Australian ABA Transaction Codes (50, 53, 13), APCA Bank Codes &amp; 120-Character Record 0/1/7 Slicer | FinOps Studio</title>
+  <meta name="description" content="Searchable Australian AusPayNet BECS Direct Entry (.ABA / Cemtex) Transaction Codes (53 Pay, 50 Credit, 13 Debit, 51–57), Tax Indicators (N, W, X, Y), APCA Bank Codes (CBA 301500, NAB, WBC, ANZ) &amp; Free 120-Char Record 0/1/7 Column Slicer." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/australian-aba-transaction-codes-50-53-13-record-1-column-slicer.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Australian ABA Transaction Codes (50, 53, 13) & 120-Character Record 0/1/7 Column Slicer | FinOps Studio" />
+  <meta property="og:description" content="Audit exact 120-character Australian BECS .ABA files (Record 0, Record 1, Record 7 999-999), lookup Transaction Codes 13/50/53 & APCA IDs, and generate .ABA batches via $0/mo API." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/australian-aba-transaction-codes-50-53-13-record-1-column-slicer.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Australian AusPayNet BECS Direct Entry (.ABA / Cemtex) Transaction Codes (13, 50, 51–57) & 120-Character Column Slicer",
+        "url": "https://geornaden.github.io/finops-studio/australian-aba-transaction-codes-50-53-13-record-1-column-slicer.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Complete Australian corporate bookkeeping, payroll, and engineering reference for 120-character BECS .ABA files across CBA CommBiz, NetBank, NAB Connect, Westpac Live, ANZ Transactive, Macquarie, Bendigo, and Suncorp."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the difference between Australian ABA Transaction Code 50 and Code 53?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In Australian BECS Direct Entry (Record 1, columns 19–20), Transaction Code 50 (Externally Initiated Credit) is used for supplier invoice payments, contractor bills, customer refunds, and general accounts payable. Transaction Code 53 (Pay) is specifically reserved for employee salary and wage payroll—Australian retail banks use Code 53 to classify incoming salary deposits for fee waivers and lending verification."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why must Australian BSB numbers include the hyphen (NNN-NNN) in columns 02–08 of an .ABA file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Unlike UK BACS (6 digits, no hyphens), the AusPayNet BECS Cemtex specification mandates a 7-character BSB with a hyphen at position 4 (for example, '082-140' in columns 02–08 and Trace BSB '062-000' in columns 81–87, plus '999-999' in Record 7 columns 02–08). Omitting the hyphen shifts every downstream column and triggers an immediate CommBiz, NAB Connect, or Westpac upload rejection."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "When should Transaction Code 13 be included as a self-balancing row in an .ABA file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "CBA CommBiz/NetBank and NAB Connect generally require a self-balancing debit Record 1 with Transaction Code 13 debiting your originating account for the exact batch total so Record 7 Net Total (columns 21–30) equals 0000000000. ANZ Transactive and certain Westpac Corporate Online profiles expect unbalanced credit-only files (includeSelfBalancingRecord: false). FinOps Studio supports both modes via a single boolean toggle."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./aba-cemtex-file-generator.html">ABA Sandbox</a>
+        <a href="./xero-myob-csv-to-australian-aba-commbiz-nab-westpac-anz.html">Xero/MYOB &rarr; ABA</a>
+        <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Free BSB Checker</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener">Launch Live ABA API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127462;&#127482; AusPayNet BECS Direct Entry Reference &bull; 120-Char .ABA API &bull; A$0 / $0 Monthly Fee</span>
+      <h1>Australian <code>.ABA</code> Transaction Codes (<code>53</code>, <code>50</code>, <code>13</code>), APCA Bank IDs &amp; 120-Char Column Slicer</h1>
+      <p>Lookup every AusPayNet <strong>BECS Direct Entry (Cemtex)</strong> Transaction Code, Withholding Tax Indicator, and 3-letter APCA Financial Institution Code for <strong>CBA CommBiz / NetBank</strong>, <strong>NAB Connect</strong>, <strong>Westpac Live</strong>, <strong>ANZ Transactive</strong>, and <strong>Macquarie</strong>—and slice 120-character <code>Record 0 / 1 / 7</code> lines locally in your browser.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener">Generate 120-Char .ABA Files ($0.02/row) &rarr;</a>
+        <a class="btn btn-outline" href="./aba-cemtex-file-generator.html">Open Interactive .ABA Sandbox</a>
+        <a class="btn btn-outline" href="./xero-myob-csv-to-australian-aba-commbiz-nab-westpac-anz.html">CBA / NAB / Westpac / ANZ Guide</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <h2 style="margin:0;">Searchable Australian BECS Transaction, Tax &amp; APCA Bank Directory</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline aba-filter" data-cat="ALL" style="padding:6px 12px;font-size:0.8rem;">All (24)</button>
+          <button type="button" class="btn btn-outline aba-filter" data-cat="TX" style="padding:6px 12px;font-size:0.8rem;">Tx Codes (13 / 50–57)</button>
+          <button type="button" class="btn btn-outline aba-filter" data-cat="TAX" style="padding:6px 12px;font-size:0.8rem;">Col 18 Indicators (N/W/X/Y)</button>
+          <button type="button" class="btn btn-outline aba-filter" data-cat="BANK" style="padding:6px 12px;font-size:0.8rem;">APCA Bank Codes &amp; BSBs</button>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <input id="abaSearch" type="search" placeholder="Search code or bank (e.g. 53, 50, 13, 301500, CBA, NAB, WBC, ANZ, Macquarie, payroll, self-balancing, dividend)..." style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.92rem;" />
+      </div>
+      <div style="overflow-x:auto;margin-top:14px;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Code</th>
+              <th style="padding:10px;">Record / Position</th>
+              <th style="padding:10px;">Official AusPayNet BECS Meaning</th>
+              <th style="padding:10px;">Actionable Payroll, BAS &amp; Engineering Rule</th>
+            </tr>
+          </thead>
+          <tbody id="abaTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <span class="tag">100% Local Browser 120-Column BECS Slicer</span>
+      <h2 style="margin:10px 0 8px;">Instant 120-Character Australian <code>.ABA</code> Column Slicer (<code>Record 0</code>, <code>Record 1</code> &amp; <code>Record 7</code>)</h2>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0;">Paste any 120-character line from your <code>.aba</code> file—or load a preset below—to audit exact AusPayNet BECS byte columns (<code>001</code>–<code>120</code>), hyphenated <code>NNN-NNN</code> BSBs, right-justified 9-char account padding, and integer-cent Record <code>7</code> totals:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+        <button type="button" class="btn btn-outline aba-preset" data-line="0                 01CBA       SYDNEY CLOUD PTY LTD      301500PAYROLL     161126                                        " style="padding:5px 10px;font-size:0.78rem;">Load Record 0 Header (120 chars)</button>
+        <button type="button" class="btn btn-outline aba-preset" data-line="1082-140 88412093 530000315045LIAM O CONNOR                   FORTNIGHT PAY 22  062-000 10458921SYDNEY CLOUD PTY00000000" style="padding:5px 10px;font-size:0.78rem;">Load Record 1 Code 53 Payroll (120 chars)</button>
+        <button type="button" class="btn btn-outline aba-preset" data-line="1062-000 10458921 130000315045SYDNEY CLOUD PTY LTD            BALANCING DEBIT   062-000 10458921SYDNEY CLOUD PTY00000000" style="padding:5px 10px;font-size:0.78rem;">Load Record 1 Code 13 Balancing (120 chars)</button>
+        <button type="button" class="btn btn-outline aba-preset" data-line="7999-999            000000000000003150450000315045                        000002                                        " style="padding:5px 10px;font-size:0.78rem;">Load Record 7 999-999 Trailer (120 chars)</button>
+      </div>
+      <input id="abaLineInput" type="text" value="1082-140 88412093 530000315045LIAM O CONNOR                   FORTNIGHT PAY 22  062-000 10458921SYDNEY CLOUD PTY00000000" spellcheck="false" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#34d399;font-family:monospace;font-size:0.8rem;" />
+      <pre id="abaLineOut" class="code-box" style="margin-top:12px;min-height:225px;font-size:0.8rem;"></pre>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">Production Cloud API ($0/mo + $0.02/row)</span>
+        <h3 style="margin:10px 0 8px;">Generate 120-Char `.ABA` Batches via HTTP POST</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Validates <code>NNN-NNN</code> BSBs, formats right-justified 9-character account numbers, builds optional Code <code>13</code> self-balancing rows, and reconciles Record <code>7</code> to the exact cent:</p>
+        <pre class="code-box" style="font-size:0.76rem;min-height:225px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~aba-cemtex-file-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "bankCode": "CBA",
+    "userName": "SYDNEY CLOUD PTY LTD",
+    "apcaUserId": "301500",
+    "traceBsb": "062-000",
+    "traceAccount": "10458921",
+    "description": "PAYROLL",
+    "processDate": "2026-11-16",
+    "includeSelfBalancingRecord": true,
+    "transactions": [
+      {
+        "accountTitle": "LIAM O CONNOR",
+        "bsb": "082-140",
+        "accountNumber": "88412093",
+        "amount": 3150.45,
+        "reference": "FORTNIGHT PAY 22",
+        "transactionCode": "53"
+      }
+    ]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Official MCP Registry (#1 Global Rank)</span>
+        <h3 style="margin:10px 0 8px;">Top 4 `.ABA` Upload Rejections Prevented Automatically</h3>
+        <ul style="color:var(--muted);font-size:0.85rem;line-height:1.55;margin-top:6px;">
+          <li><strong>Missing Trailing Spaces:</strong> Excel/Notepad strips trailing spaces on <code>Record 0</code> &amp; <code>Record 7</code>, shrinking lines from <code>120</code> to <code>80</code> chars.</li>
+          <li><strong>Missing BSB Hyphen:</strong> Passing <code>082140</code> instead of <code>082-140</code> shifts columns <code>09–120</code> left by 1 byte.</li>
+          <li><strong>Zero-Filled Account Numbers:</strong> Most AU banks require left-space padding (<code>" 88412093"</code>), not leading zeros, when accounts have &lt;9 digits.</li>
+          <li><strong>All-Zero Remitter Name:</strong> Cols <code>97–112</code> must contain alphabetic characters, never all spaces or zeros.</li>
+        </ul>
+        <pre class="code-box" style="font-size:0.76rem;min-height:115px;">{
+  "mcpServers": {
+    "aba-cemtex": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/aba-cemtex-file-generator",
+      "headers": { "Authorization": "Bearer YOUR_APIFY_API_TOKEN" }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">Frequently Asked Australian `.ABA` Direct Entry Questions</h2>
+      <div class="faq-item">
+        <h4>Should I use Transaction Code 50 or 53 for Australian payroll vs contractor invoices?</h4>
+        <p>Use <code>53</code> (<em>Pay</em>) for employee wages and salaries (TFN payroll runs), and <code>50</code> (<em>Externally Initiated Credit</em>) for ABN supplier invoices, contractor bills, superannuation clearing house transfers, and expense reimbursements.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What APCA User ID (`apcaUserId`) do I use if my business uploads via NetBank or CommBiz web banking?</h4>
+        <p>Commonwealth Bank NetBank business uploads commonly accept generic APCA ID <code>301500</code>, whereas Direct Entry facility holders (CommBiz DE, NAB Connect DE, Westpac Corporate Online, ANZ Transactive) enter their bank-issued 6-digit APCA Direct Entry User ID in columns <code>57–62</code> of Record <code>0</code>.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio Home</a> &bull;
+      <a href="./aba-cemtex-file-generator.html">Australian .ABA Sandbox</a> &bull;
+      <a href="./xero-myob-csv-to-australian-aba-commbiz-nab-westpac-anz.html">Xero/MYOB &rarr; .ABA Guide</a> &bull;
+      <a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Global Payroll</a> &bull;
+      <a href="./openapi.json">OpenAPI 3.1</a>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var CODES = [
+      { code: "53", cat: "TX", pos: "Record 1 (Cols 19–20)", name: "Pay / Employee Salary Credit", fix: "Mandatory best-practice code for Australian TFN employee wages & salaries; triggers salary recognition at retail banks." },
+      { code: "50", cat: "TX", pos: "Record 1 (Cols 19–20)", name: "Externally Initiated Credit (Standard AP)", fix: "Default credit code for ABN supplier bills, contractor payouts, expense reimbursements, and customer refunds." },
+      { code: "13", cat: "TX", pos: "Record 1 (Cols 19–20)", name: "Externally Initiated Debit Item", fix: "Used both for Direct Debit customer collections (requires DE Debit User ID) and for the self-balancing debit line in CBA/NAB credit batches." },
+      { code: "51", cat: "TX", pos: "Record 1 (Cols 19–20)", name: "Australian Government Security Interest", fix: "Reserved for Commonwealth/State Treasury bond & security interest distributions." },
+      { code: "52", cat: "TX", pos: "Record 1 (Cols 19–20)", name: "Family Allowance / Benefit", fix: "Statutory benefit credit classification." },
+      { code: "54", cat: "TX", pos: "Record 1 (Cols 19–20)", name: "Pension Payment", fix: "Used by superannuation funds and pension administrators paying retirement income streams." },
+      { code: "55", cat: "TX", pos: "Record 1 (Cols 19–20)", name: "Allotment Credit", fix: "Split-pay payroll allotment credit." },
+      { code: "56", cat: "TX", pos: "Record 1 (Cols 19–20)", name: "Dividend Payment", fix: "Corporate share registry dividend payout; pair with Col 18 indicator W or X when non-resident withholding applies." },
+      { code: "57", cat: "TX", pos: "Record 1 (Cols 19–20)", name: "Debenture / Note Interest", fix: "Fixed-income note or debenture interest distribution." },
+      { code: "' ' (Blank)", cat: "TAX", pos: "Record 1 (Col 18)", name: "Standard Domestic Item (No Withholding)", fix: "Single ASCII space (' ') used on 99.9% of domestic Australian payroll (53), supplier (50), and debit (13) entries." },
+      { code: "N", cat: "TAX", pos: "Record 1 (Col 18)", name: "New or Varied BSB / Account Details", fix: "Flags a newly added or recently updated recipient BSB/account number." },
+      { code: "W", cat: "TAX", pos: "Record 1 (Col 18)", name: "Dividend — Double Tax Agreement Country", fix: "Non-resident dividend where DTA treaty rate applies; populate 8-digit cent tax in Cols 113–120." },
+      { code: "X", cat: "TAX", pos: "Record 1 (Col 18)", name: "Dividend — Non-Treaty Country", fix: "Dividend paid to a resident of a country without a Double Tax Agreement; populate Cols 113–120." },
+      { code: "Y", cat: "TAX", pos: "Record 1 (Col 18)", name: "Interest Paid to Non-Residents", fix: "Non-resident interest withholding indicator; populate 8-digit cent tax in Cols 113–120." },
+      { code: "CBA", cat: "BANK", pos: "Rec 0 (Cols 21–23) • BSB 06x", name: "Commonwealth Bank (CommBiz / NetBank)", fix: "BSB prefixes 062–067 (Bankwest 302–306). NetBank web uploads use APCA 301500 + includeSelfBalancingRecord: true." },
+      { code: "NAB", cat: "BANK", pos: "Rec 0 (Cols 21–23) • BSB 08x", name: "National Australia Bank (NAB Connect)", fix: "BSB prefixes 082–086. NAB Connect standard profile expects includeSelfBalancingRecord: true (Net Total = 0)." },
+      { code: "WBC", cat: "BANK", pos: "Rec 0 (Cols 21–23) • BSB 03x/73x", name: "Westpac (Westpac Live / Corporate Online)", fix: "BSB prefixes 032–037 & 732–736. Supports STG (11x St.George), BSA (105 BankSA), and BOM (193 Bank of Melbourne)." },
+      { code: "ANZ", cat: "BANK", pos: "Rec 0 (Cols 21–23) • BSB 01x", name: "ANZ (ANZ Transactive / Internet Banking)", fix: "BSB prefixes 012–017. ANZ Transactive often prefers unbalanced credit files (includeSelfBalancingRecord: false)." },
+      { code: "MBL", cat: "BANK", pos: "Rec 0 (Cols 21–23) • BSB 18x", name: "Macquarie Bank Limited", fix: "BSB prefix 182-xxx (Macquarie Business Banking & Cash Management Accelerator)." },
+      { code: "BEN", cat: "BANK", pos: "Rec 0 (Cols 21–23) • BSB 633", name: "Bendigo and Adelaide Bank", fix: "BSB prefix 633-xxx (Rural Bank 633-111)." },
+      { code: "SUN", cat: "BANK", pos: "Rec 0 (Cols 21–23) • BSB 484", name: "Suncorp Bank", fix: "BSB prefix 484-799 across Queensland & national commercial accounts." },
+      { code: "BOQ", cat: "BANK", pos: "Rec 0 (Cols 21–23) • BSB 124", name: "Bank of Queensland", fix: "BSB prefix 124-xxx." },
+      { code: "ING", cat: "BANK", pos: "Rec 0 (Cols 21–23) • BSB 923", name: "ING Bank (Australia)", fix: "Standard BSB 923-100." },
+      { code: "BQL / AMP", cat: "BANK", pos: "Rec 0 (Cols 21–23) • BSB 939", name: "AMP Bank Limited", fix: "Standard BSB 939-200." }
+    ];
+
+    var activeCat = "ALL";
+    var searchEl = document.getElementById("abaSearch");
+    var tbody = document.getElementById("abaTableBody");
+
+    function renderTable() {
+      var q = (searchEl.value || "").trim().toLowerCase();
+      var rows = CODES.filter(function (item) {
+        if (activeCat !== "ALL" && item.cat !== activeCat) return false;
+        if (!q) return true;
+        return (item.code + " " + item.pos + " " + item.name + " " + item.fix).toLowerCase().indexOf(q) !== -1;
+      });
+      tbody.innerHTML = rows.map(function (r) {
+        return '<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">' +
+          '<td style="padding:10px;font-family:monospace;font-weight:700;color:#38bdf8;white-space:nowrap;">' + r.code + '</td>' +
+          '<td style="padding:10px;color:var(--muted);white-space:nowrap;">' + r.pos + '</td>' +
+          '<td style="padding:10px;font-weight:600;">' + r.name + '</td>' +
+          '<td style="padding:10px;color:#cbd5e1;">' + r.fix + '</td>' +
+        '</tr>';
+      }).join("") || '<tr><td colspan="4" style="padding:14px;color:var(--muted);">No matching Australian .ABA codes found.</td></tr>';
+    }
+
+    document.querySelectorAll(".aba-filter").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        activeCat = btn.getAttribute("data-cat");
+        renderTable();
+      });
+    });
+    searchEl.addEventListener("input", renderTable);
+    renderTable();
+
+    var lineIn = document.getElementById("abaLineInput");
+    var lineOut = document.getElementById("abaLineOut");
+
+    function fmtAud(centsStr) {
+      return /^\d+$/.test(centsStr) ? "A$" + (parseInt(centsStr, 10) / 100).toFixed(2) : "ERR (non-numeric)";
+    }
+
+    function inspectAba() {
+      var raw = (lineIn.value || "").replace(/\r?\n/g, "");
+      var lenStatus = raw.length === 120
+        ? "PASS (Exact 120 ASCII characters)"
+        : "FAIL (Length is " + raw.length + " chars — AusPayNet BECS requires exact 120 chars incl. trailing spaces)";
+      var recType = raw.slice(0, 1);
+
+      if (recType === "0") {
+        var ddmmyy = raw.slice(74, 80);
+        var isoDate = /^\d{6}$/.test(ddmmyy) ? "20" + ddmmyy.slice(4,6) + "-" + ddmmyy.slice(2,4) + "-" + ddmmyy.slice(0,2) : "ERR (must be DDMMYY)";
+        lineOut.textContent = [
+          "Record Type        : Record 0 (Descriptive Header)",
+          "Line Width Check   : " + lenStatus,
+          "[001]     Rec Type : '0'",
+          "[002–018] Blank(17): " + (/^ {17}$/.test(raw.slice(1, 18)) ? "OK (17 spaces)" : "WARN (expected 17 spaces)"),
+          "[019–020] Reel Seq : \"" + raw.slice(18, 20) + "\" (Standard '01')",
+          "[021–023] Bank Code: \"" + raw.slice(20, 23) + "\" (3-letter APCA FI code)",
+          "[024–030] Blank(7) : " + (/^ {7}$/.test(raw.slice(23, 30)) ? "OK (7 spaces)" : "WARN (expected 7 spaces)"),
+          "[031–056] User Name: \"" + raw.slice(30, 56) + "\" (26 chars)",
+          "[057–062] APCA ID  : \"" + raw.slice(56, 62) + "\" (" + (/^\d{6}$/.test(raw.slice(56, 62)) ? "OK — 6 digits" : "ERR — must be 6 digits") + ")",
+          "[063–074] Desc     : \"" + raw.slice(62, 74) + "\" (12 chars)",
+          "[075–080] DDMMYY   : \"" + ddmmyy + "\" -> " + isoDate,
+          "[081–120] Blank(40): " + (raw.slice(80, 120).length === 40 ? "OK (40 trailing chars)" : "FAIL (missing trailing spaces)")
+        ].join("\n");
+        return;
+      }
+
+      if (recType === "7") {
+        var netC = raw.slice(20, 30);
+        var crC = raw.slice(30, 40);
+        var drC = raw.slice(40, 50);
+        var cnt = raw.slice(74, 80);
+        lineOut.textContent = [
+          "Record Type        : Record 7 (File Total Trailer)",
+          "Line Width Check   : " + lenStatus,
+          "[001]     Rec Type : '7'",
+          "[002–008] Filler   : \"" + raw.slice(1, 8) + "\" (" + (raw.slice(1, 8) === "999-999" ? "OK — exact '999-999'" : "ERR — must be '999-999'") + ")",
+          "[021–030] Net Total: " + netC + " -> " + fmtAud(netC) + (netC === "0000000000" ? " (Self-Balanced Batch)" : " (Unbalanced Credit/Debit Batch)"),
+          "[031–040] Cr Total : " + crC + " -> " + fmtAud(crC),
+          "[041–050] Dr Total : " + drC + " -> " + fmtAud(drC),
+          "[075–080] Rec1 Cnt : " + cnt + " (" + (parseInt(cnt, 10) || 0) + " Detail Record 1 line(s))"
+        ].join("\n");
+        return;
+      }
+
+      var bsb = raw.slice(1, 8);
+      var acct = raw.slice(8, 17);
+      var ind = raw.slice(17, 18);
+      var tx = raw.slice(18, 20);
+      var amt = raw.slice(20, 30);
+      var title = raw.slice(30, 62);
+      var lodg = raw.slice(62, 80);
+      var trBsb = raw.slice(80, 87);
+      var trAcct = raw.slice(87, 96);
+      var remit = raw.slice(96, 112);
+      var wht = raw.slice(112, 120);
+
+      lineOut.textContent = [
+        "Record Type        : Record 1 (Detail Payment / Debit Entry)",
+        "Line Width Check   : " + lenStatus,
+        "[001]     Rec Type : '" + recType + "'" + (recType === "1" ? "" : " (ERR — expected 0, 1, or 7)"),
+        "[002–008] Dest BSB : \"" + bsb + "\" (" + (/^\d{3}-\d{3}$/.test(bsb) ? "OK — hyphenated NNN-NNN" : "ERR — must be NNN-NNN with hyphen at col 5") + ")",
+        "[009–017] Dest Acct: \"" + acct + "\" (9 chars right-justified)",
+        "[018]     Indicator: '" + ind + "'",
+        "[019–020] Tx Code  : \"" + tx + "\"" + (tx === "53" ? " (Pay / Salary)" : tx === "50" ? " (General Credit)" : tx === "13" ? " (Debit / Self-Balancing)" : ""),
+        "[021–030] Amount   : " + amt + " -> " + fmtAud(amt),
+        "[031–062] AcctTitle: \"" + title + "\" (32 chars)",
+        "[063–080] Reference: \"" + lodg + "\" (18 chars)",
+        "[081–087] Trace BSB: \"" + trBsb + "\" (" + (/^\d{3}-\d{3}$/.test(trBsb) ? "OK — NNN-NNN" : "ERR — must be NNN-NNN") + ")",
+        "[088–096] TraceAcct: \"" + trAcct + "\" (9 chars)",
+        "[097–112] Remitter : \"" + remit + "\" (16 chars)",
+        "[113–120] WHT Cents: " + wht + " -> " + fmtAud(wht)
+      ].join("\n");
+    }
+
+    document.querySelectorAll(".aba-preset").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        lineIn.value = btn.getAttribute("data-line");
+        inspectAba();
+      });
+    });
+    lineIn.addEventListener("input", inspectAba);
+    inspectAba();
+  })();
+  </script>
+</body>
+</html>
