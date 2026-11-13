@@ -170,4 +170,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/sage-xero-csv-to-uk-bacs-standard-18-barclays-hsbc-lloyds-natwest.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
 </urlset>

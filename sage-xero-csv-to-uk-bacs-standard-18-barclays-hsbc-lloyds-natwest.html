@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Convert Sage, Xero &amp; CSV Payroll/Supplier Batches to UK BACS Standard 18 (Barclays.net, HSBCnet, Lloyds, NatWest Bankline) | FinOps Studio</title>
+  <meta name="description" content="Generate exact 100-character UK BACS Standard 18 Direct Credit (Code 99) &amp; Direct Debit files (VOL1, HDR1, UHL1 Julian bYYDDD, CONTRA, UTL1) for Barclays.net, HSBCnet, Lloyds &amp; NatWest Bankline via $0/mo Cloud API &amp; MCP." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/sage-xero-csv-to-uk-bacs-standard-18-barclays-hsbc-lloyds-natwest.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Convert Sage, Xero, BrightPay & CSV Exports to 100-Character UK BACS Standard 18 Files (Barclays, HSBC, Lloyds & NatWest)",
+        "url": "https://geornaden.github.io/finops-studio/sage-xero-csv-to-uk-bacs-standard-18-barclays-hsbc-lloyds-natwest.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "UK BACS Standard 18 Bacstel-IP file formatting guide covering 6-digit Service User Numbers (SUN), Julian bYYDDD processing dates, CONTRA balancing records, and UTL1 penny totals."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the difference between a bank CSV import and a true 100-character UK BACS Standard 18 file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Direct Bacstel-IP bureaus and corporate portals (Barclays.net, HSBCnet, Lloyds Commercial, NatWest Bankline) require strict 100-character fixed-width BACS Standard 18 records including VOL1, HDR1/HDR2, UHL1 (with bYYDDD Julian processing date), 100-byte payment detail rows, balancing CONTRA rows, EOF1/EOF2, and UTL1 penny control totals."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can UK accountancy firms and payroll bureaus generate BACS Standard 18 files for multiple client SUNs?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Pass any 6-digit BACS Service User Number (serviceUserNumber), originating UK Sort Code, and 8-digit GBP Account Number per API call with £0 / $0 monthly licence fees—paying only $0.02 per payment row."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Free UK Sort Code Checker</a>
+        <a href="./free-bank-file-format-detector-line-length-auditor.html">100-Char BACS Auditor</a>
+        <a href="./uk-bacs-standard-18-file-generator.html">Standard 18 Spec</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Launch Live UK BACS API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127468;&#127463; Live on Apify Store &amp; Official MCP Registry &bull; &pound;0 / $0 Monthly Subscription</span>
+      <h1>Convert Sage, Xero, BrightPay &amp; CSV Payrolls into Exact 100-Character UK <code>BACS Standard 18</code> Files</h1>
+      <p>Skip &pound;1,200+/year desktop BACS formatting licences. Generate complete <strong>Bacstel-IP Standard 18</strong> envelopes (<code>VOL1</code>, <code>HDR1</code>/<code>HDR2</code>, <code>UHL1</code> Julian <code>bYYDDD</code> date, Direct Credit <code>99</code> / Direct Debit <code>01</code>/<code>17</code>/<code>18</code>, <code>CONTRA</code> &amp; <code>UTL1</code>) for <strong>Barclays.net</strong>, <strong>HSBCnet</strong>, <strong>Lloyds Commercial</strong>, <strong>NatWest / RBS Bankline</strong>, and <strong>Santander Connect</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Run UK BACS Standard 18 API ($0.02/row) &rarr;</a>
+        <a class="btn btn-outline" href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Check UK 6-Digit Sort Code Free</a>
+        <a class="btn btn-outline" href="./free-bank-file-format-detector-line-length-auditor.html">Audit Existing BACS File</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <h2 style="margin-top:0;">UK Clearing Bank Gateways &amp; BACS Transaction Codes</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.86rem;margin-top:8px;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">UK Corporate Bank Portal</th>
+              <th style="padding:10px;">Typical Sort Code Prefix</th>
+              <th style="padding:10px;">Envelope Mode</th>
+              <th style="padding:10px;">Common Transaction Codes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>Barclays (Barclays.net / Direct BACS)</strong></td>
+              <td style="padding:10px;font-family:monospace;">20-xx-xx</td>
+              <td style="padding:10px;color:#34d399;">Full <code>VOL1..UTL1</code> or Detail-Only</td>
+              <td style="padding:10px;"><code>99</code> Credit, <code>17</code> Direct Debit</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>HSBC UK (HSBCnet)</strong></td>
+              <td style="padding:10px;font-family:monospace;">40-xx-xx</td>
+              <td style="padding:10px;color:#34d399;">Full Standard 18 (100 chars)</td>
+              <td style="padding:10px;"><code>99</code> Vendor/Payroll Credit</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>Lloyds &amp; Bank of Scotland Commercial</strong></td>
+              <td style="padding:10px;font-family:monospace;">30-xx-xx / 80-xx-xx</td>
+              <td style="padding:10px;color:#34d399;">Full Standard 18 + <code>CONTRA</code></td>
+              <td style="padding:10px;"><code>99</code> Credit, <code>01</code> First DD, <code>17</code> Ongoing DD</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;"><strong>NatWest / RBS Bankline &amp; Santander Connect</strong></td>
+              <td style="padding:10px;font-family:monospace;">60-xx-xx / 83-xx-xx / 09-xx-xx</td>
+              <td style="padding:10px;color:#34d399;">Toggle <code>includeHeadersAndTrailers</code></td>
+              <td style="padding:10px;"><code>99</code> Direct Credit, <code>18</code> Re-presented DD</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">REST API / Python / n8n / Make.com</span>
+        <h3 style="margin:10px 0 8px;">Generate 100-Char BACS Standard 18 via HTTP POST</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Automatically converts <code>YYYY-MM-DD</code> into BACS Julian <code>bYYDDD</code>, formats integer pence (11 digits), appends <code>CONTRA</code>, and reconciles <code>UTL1</code>:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:220px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~uk-bacs-standard18-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceUserNumber": "654321",
+    "originatingCompanyName": "THAMES CLOUD LTD",
+    "originatingSortCode": "20-45-45",
+    "originatingAccountNumber": "87654321",
+    "processingDate": "2026-11-18",
+    "includeHeadersAndTrailers": true,
+    "payments": [
+      {
+        "name": "OLIVER WRIGHT",
+        "sortCode": "40-12-34",
+        "accountNumber": "12345678",
+        "amount": 2845.50,
+        "reference": "SALARY NOV 2026",
+        "transactionCode": "99"
+      }
+    ]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Official MCP Registry (#1 Ranked)</span>
+        <h3 style="margin:10px 0 8px;">Plug UK BACS Directly Into Claude &amp; Cursor</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Published in <code>registry.modelcontextprotocol.io</code> as <code>io.github.Geornaden/uk-bacs-standard18-payroll-mcp</code> for zero-hallucination UK GBP payroll automation:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:220px;">{
+  "mcpServers": {
+    "uk-bacs-standard18": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/uk-bacs-standard18-generator",
+      "headers": {
+        "Authorization": "Bearer YOUR_APIFY_API_TOKEN"
+      }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+
+    <div class="sandbox-card" style="margin-top:24px;text-align:center;">
+      <h3 style="margin-top:0;">Built for UK Accountancy Practices, Payroll Bureaus &amp; Finance Directors</h3>
+      <p style="color:var(--muted);max-width:700px;margin:8px auto 16px;">Format unlimited client SUNs and GBP payment runs for <strong>$0/month fixed subscription</strong> and $0.02 per row.</p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Open UK BACS Generator on Apify Store &rarr;</a>
+        <a class="btn btn-outline" href="./for-accounting-firms-payroll-bureaus-and-fintechs.html">Accountancy &amp; Bureau ROI Calculator</a>
+        <a class="btn btn-outline" href="./uk-bacs-standard-18-file-generator.html">Full Standard 18 Column Map</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio (All 12 Banking APIs)</a> &bull;
+      <a href="./uk-bacs-standard-18-file-generator.html">BACS Spec</a> &bull;
+      <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Sort Code Checker</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>
