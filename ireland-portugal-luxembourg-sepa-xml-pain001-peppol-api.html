@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ireland, Portugal &amp; Luxembourg SEPA XML (pain.001) &amp; Peppol E-Invoice API (BOI, AIB, Millennium bcp, Spuerkeess, BIL) | FinOps Studio</title>
+  <meta name="description" content="Generate 2026 EPC structured-address ISO 20022 SEPA XML (pain.001.001.09 / pain.008) &amp; EN 16931 Peppol BIS 3.0 UBL e-invoices for Ireland (BOI Business On Line, AIB iBB), Portugal (Millennium bcp, CGD, Novo Banco, eSPap) &amp; Luxembourg (Spuerkeess, BIL, BGL MultiLine) at $0/mo." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/ireland-portugal-luxembourg-sepa-xml-pain001-peppol-api.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Corporate SEPA XML (pain.001 / pain.008) & Peppol BIS 3.0 Automation for Ireland, Portugal & Luxembourg",
+        "url": "https://geornaden.github.io/finops-studio/ireland-portugal-luxembourg-sepa-xml-pain001-peppol-api.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Treasury and ERP integration guide for generating 2026 EPC structured-address SEPA Credit Transfer & Direct Debit XML and EN 16931 Peppol e-invoices across Irish (BOI, AIB), Portuguese (Millennium bcp, CGD, Novo Banco), and Luxembourgish (Spuerkeess, BIL, BGL MultiLine) corporate banking portals."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which SEPA XML pain.001 schema versions do Bank of Ireland Business On Line, AIB iBB, Millennium bcp, and Luxembourg MultiLine accept?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Irish, Portuguese, and Luxembourgish corporate banking portals support both ISO 20022 pain.001.001.03 and the 2026 EPC Rulebook pain.001.001.09 schema with structured <PstlAdr> elements (<StrtNm>, <BldgNb>, <PstCd>, <TwnNm>, <Ctry>) to prevent BE04 rejections after November 2026. FinOps Studio generates both versions via a single JSON parameter."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What Peppol EndpointID scheme codes are used in Ireland, Portugal, and Luxembourg?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In Peppol BIS Billing 3.0 (EN 16931 UBL 2.1), Ireland uses EAS scheme 9935 (Irish IE VAT number) or 0088 (GLN) for HSE/OGP public procurement; Portugal uses 9946 (PT VAT / NIF) for eSPap FE-AP and cross-border Peppol; and Luxembourg uses 9938 (LU TVA number) for mandatory B2G e-invoicing to Luxembourg public entities."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./sepa-xml-generator.html">SEPA XML Sandbox</a>
+        <a href="./eu-einvoice-xml-generator.html">Peppol XML Sandbox</a>
+        <a href="./free-eu-vat-peppol-endpoint-id-validator.html">Peppol VAT Checker</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Launch Live SEPA API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127470;&#127466; &#127477;&#127481; &#127473;&#127482; Live EU Treasury &amp; Peppol APIs &bull; $0/Month Subscription</span>
+      <h1>Corporate <code>SEPA XML (pain.001)</code> &amp; <code>Peppol BIS 3.0</code> API for Ireland, Portugal &amp; Luxembourg</h1>
+      <p>Automate supplier bulk payments, payroll credit transfers, SEPA Direct Debits, and EN 16931 e-invoicing for <strong>Irish EMEA HQs</strong> (Bank of Ireland Business On Line, AIB iBB), <strong>Portuguese enterprises</strong> (Millennium bcp, CGD, Novo Banco, eSPap), and <strong>Luxembourg Soparfi / fund structures</strong> (Spuerkeess, BIL, BGL MultiLine).</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Run SEPA XML API ($0.02/tx) &rarr;</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Run Peppol E-Invoice API ($0.05/inv) &rarr;</a>
+        <a class="btn btn-outline" href="./fix-sepa-pain001-2026-structured-address-rejection.html">2026 EPC BE04 Guide</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <h2 style="margin-top:0;">Banking Rails, IBAN Formats &amp; Peppol Endpoint Matrix (<code>IE</code> / <code>PT</code> / <code>LU</code>)</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;margin-top:10px;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Country</th>
+              <th style="padding:10px;">IBAN Length &amp; Structure</th>
+              <th style="padding:10px;">Major Corporate Portals &amp; BICs</th>
+              <th style="padding:10px;">Peppol EAS Scheme &amp; Mandate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127470;&#127466; Ireland (<code>IE</code>)</strong></td>
+              <td style="padding:10px;font-family:monospace;">22 chars: IEkk AAAA BBBB BBCC CCCC CC<br /><span style="color:var(--muted);font-size:0.78rem;">e.g. IE29AIBK93115212345678</span></td>
+              <td style="padding:10px;"><strong>BOI Business On Line</strong> (<code>BOFIIE2D</code>), <strong>AIB iBB</strong> (<code>AIBKIE2D</code>), PTSB (<code>IPBSIE2D</code>), Citi Dublin (<code>CITIIE2X</code>)</td>
+              <td style="padding:10px;"><code>9935</code> (IE VAT) / <code>0088</code> (GLN) &mdash; HSE, OGP Public Sector &amp; ViDA EU B2B</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>&#127477;&#127481; Portugal (<code>PT</code>)</strong></td>
+              <td style="padding:10px;font-family:monospace;">25 chars: PT50 BBBB SSSS CCCC CCCC CCCK K<br /><span style="color:var(--muted);font-size:0.78rem;">e.g. PT50000201231234567890154</span></td>
+              <td style="padding:10px;"><strong>Millennium bcp</strong> (<code>BCOMPTPL</code>), <strong>CGD</strong> (<code>CGDIPTPL</code>), <strong>Novo Banco</strong> (<code>BESCPTPL</code>), BPI (<code>BBPIPTPL</code>), Santander Totta</td>
+              <td style="padding:10px;"><code>9946</code> (PT NIF) &mdash; <em>Fatura Eletr&oacute;nica</em> eSPap (FE-AP UBL 2.1) &amp; EU Peppol</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;"><strong>&#127473;&#127482; Luxembourg (<code>LU</code>)</strong></td>
+              <td style="padding:10px;font-family:monospace;">20 chars: LUkk BBBC CCCC CCCC CCCC<br /><span style="color:var(--muted);font-size:0.78rem;">e.g. LU280019400644750000</span></td>
+              <td style="padding:10px;"><strong>Spuerkeess</strong> (<code>BCEELULL</code>), <strong>BIL</strong> (<code>BILLLULL</code>), <strong>BGL BNP Paribas</strong> (<code>BGLLLULL</code>) via <strong>MultiLine</strong> / SFTP</td>
+              <td style="padding:10px;"><code>9938</code> (LU TVA) &mdash; Mandatory B2G Peppol BIS 3.0 across all Luxembourg state bodies</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <span class="tag">100% Local Pre-Flight Validator</span>
+      <h2 style="margin:10px 0 8px;">Instant <code>IE</code> / <code>PT</code> / <code>LU</code> IBAN MOD-97 &amp; Bank Identifier Checker</h2>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0;">Test any Irish, Portuguese, or Luxembourgish IBAN locally before generating your bulk <code>pain.001.001.09</code> XML batch:</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <input id="iePtLuIban" type="text" value="IE29AIBK93115212345678" placeholder="Enter IE, PT, or LU IBAN..." style="flex:1;min-width:260px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-family:monospace;font-size:0.95rem;" />
+        <button type="button" class="btn btn-outline sample-iban" data-val="IE29AIBK93115212345678">Try IE (AIB)</button>
+        <button type="button" class="btn btn-outline sample-iban" data-val="PT50000201231234567890154">Try PT (NIB/SEPA)</button>
+        <button type="button" class="btn btn-outline sample-iban" data-val="LU280019400644750000">Try LU (Spuerkeess)</button>
+      </div>
+      <div id="ibanCheckResult" style="margin-top:12px;padding:12px 14px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);font-size:0.88rem;"></div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">Multi-Country SEPA pain.001.001.09 REST API</span>
+        <h3 style="margin:10px 0 8px;">Generate Dublin / Lisbon / Luxembourg Payout Batch</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Includes mandatory November 2026 EPC structured addresses, diacritic normalization (<code>&atilde;</code>, <code>&ccedil;</code>, <code>&eacute;</code>), and integer-cent <code>CtrlSum</code>:</p>
+        <pre class="code-box" style="font-size:0.77rem;min-height:245px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "schemaVersion": "pain.001.001.09",
+    "initiatingPartyName": "Atlantic Holdings DAC",
+    "debtorName": "Atlantic Holdings DAC",
+    "debtorIban": "IE29AIBK93115212345678",
+    "debtorBic": "AIBKIE2DXXX",
+    "transactions": [
+      {
+        "name": "Tejo Digital Lda",
+        "iban": "PT50000201231234567890154",
+        "amount": 6420.50,
+        "remittanceInfo": "FT 2026/1084",
+        "country": "PT",
+        "townName": "Lisboa",
+        "streetName": "Avenida da Liberdade",
+        "buildingNumber": "190",
+        "postCode": "1250-147"
+      },
+      {
+        "name": "Kirchberg Advisory S.a r.l.",
+        "iban": "LU280019400644750000",
+        "amount": 9800.00,
+        "remittanceInfo": "ADMIN-Q4-2026",
+        "country": "LU",
+        "townName": "Luxembourg",
+        "streetName": "Avenue J.F. Kennedy",
+        "buildingNumber": "42",
+        "postCode": "L-1855"
+      }
+    ]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">EN 16931 Peppol BIS 3.0 UBL 2.1 API</span>
+        <h3 style="margin:10px 0 8px;">Generate Cross-Border EU / B2G Peppol E-Invoice</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Outputs compliant OASIS UBL 2.1 XML with <code>9935</code> (IE), <code>9946</code> (PT), or <code>9938</code> (LU) Peppol EndpointIDs:</p>
+        <pre class="code-box" style="font-size:0.77rem;min-height:245px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "profile": "PEPPOL_BIS_30",
+    "invoiceNumber": "IE-2026-0419",
+    "issueDate": "2026-11-13",
+    "dueDate": "2026-12-13",
+    "currency": "EUR",
+    "buyerReference": "PO-LUX-8821",
+    "seller": {
+      "name": "Atlantic Holdings DAC",
+      "vatId": "IE1234567FA",
+      "endpointId": "IE1234567FA",
+      "endpointScheme": "9935",
+      "country": "IE",
+      "city": "Dublin",
+      "postalCode": "D02 X285",
+      "street": "Grand Canal Dock 14"
+    },
+    "buyer": {
+      "name": "Kirchberg Advisory S.a r.l.",
+      "vatId": "LU12345678",
+      "endpointId": "LU12345678",
+      "endpointScheme": "9938",
+      "country": "LU",
+      "city": "Luxembourg",
+      "postalCode": "L-1855",
+      "street": "Avenue J.F. Kennedy 42"
+    },
+    "lines": [
+      { "description": "EMEA Cloud Treasury Licensing Q4", "quantity": 1, "unitPrice": 4500.00, "vatRate": 0, "vatCategory": "K" }
+    ]
+  }'</pre>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Global Payroll Router</a> &bull; <a href="./iso20022-pain002-rejection-codes-ac04-am04-be04-md01-rc01-guide.html">pain.002 Rejection Codes</a></div>
+      <div><a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Apify Storefront &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var LENS = { IE: 22, PT: 25, LU: 20 };
+      var input = document.getElementById('iePtLuIban');
+      var out = document.getElementById('ibanCheckResult');
+
+      function check() {
+        var clean = (input.value || '').replace(/\s+/g, '').toUpperCase();
+        if (clean.length < 5) {
+          out.style.background = 'rgba(248,113,113,0.12)';
+          out.style.borderColor = 'rgba(248,113,113,0.35)';
+          out.textContent = 'Enter a full IBAN starting with IE, PT, LU (or any SEPA country code).';
+          return;
+        }
+        var cc = clean.slice(0, 2);
+        var expected = LENS[cc];
+        if (expected && clean.length !== expected) {
+          out.style.background = 'rgba(248,113,113,0.12)';
+          out.style.borderColor = 'rgba(248,113,113,0.35)';
+          out.textContent = 'Invalid length for ' + cc + ': got ' + clean.length + ' chars, expected ' + expected + ' chars.';
+          return;
+        }
+        if (!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{10,30}$/.test(clean)) {
+          out.style.background = 'rgba(248,113,113,0.12)';
+          out.style.borderColor = 'rgba(248,113,113,0.35)';
+          out.textContent = 'Invalid IBAN character format.';
+          return;
+        }
+        var rearr = clean.slice(4) + clean.slice(0, 4);
+        var expanded = rearr.replace(/[A-Z]/g, function (ch) { return String(ch.charCodeAt(0) - 55); });
+        var rem = 0;
+        for (var i = 0; i < expanded.length; i++) {
+          rem = (rem * 10 + Number(expanded[i])) % 97;
+        }
+        if (rem === 1) {
+          var detail = '';
+          if (cc === 'IE') detail = ' | Bank Code: ' + clean.slice(4, 8) + ' | NSC Sort Code: ' + clean.slice(8, 14);
+          else if (cc === 'PT') detail = ' | Banco Code: ' + clean.slice(4, 8) + ' | Balcao: ' + clean.slice(8, 12);
+          else if (cc === 'LU') detail = ' | Luxembourg Bank Code: ' + clean.slice(4, 7) + (clean.slice(4, 7) === '001' ? ' (Spuerkeess BCEE)' : (clean.slice(4, 7) === '002' ? ' (BIL)' : (clean.slice(4, 7) === '003' ? ' (BGL BNP Paribas)' : '')));
+          out.style.background = 'rgba(16,185,129,0.1)';
+          out.style.borderColor = 'rgba(16,185,129,0.3)';
+          out.innerHTML = '<strong style="color:#34d399;">&#10003; VALID ISO 13616 MOD-97 IBAN</strong> &mdash; <code>' + clean + '</code> (' + clean.length + ' chars' + detail + '). Ready for <code>pain.001.001.09</code> generation.';
+        } else {
+          out.style.background = 'rgba(248,113,113,0.12)';
+          out.style.borderColor = 'rgba(248,113,113,0.35)';
+          out.innerHTML = '<strong style="color:#f87171;">&#10007; FAILED MOD-97 CHECKSUM</strong> (remainder ' + rem + ' &ne; 1). Bank portal will reject with <code>AC01</code>.';
+        }
+      }
+
+      document.querySelectorAll('.sample-iban').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          input.value = btn.getAttribute('data-val') || '';
+          check();
+        });
+      });
+      input.addEventListener('input', check);
+      check();
+    })();
+  </script>
+</body>
+</html>

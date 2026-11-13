@@ -195,4 +195,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.91</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/ireland-portugal-luxembourg-sepa-xml-pain001-peppol-api.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.89</priority>
+  </url>
 </urlset>
