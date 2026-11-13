@@ -1,0 +1,220 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FinOps Studio — Deterministic Banking, Payroll, Treasury & E-Invoicing Cloud APIs",
+    "version": "1.4.0",
+    "summary": "Zero-hallucination REST APIs for SEPA XML (pain.001/008), Peppol/XRechnung/Factur-X EN 16931 E-Invoices, US NACHA ACH, BAI2 Statements, German DATEV EXTF, UK BACS Standard 18, Australian ABA, Canadian CPA-005 & ISO 20022 pain.002.",
+    "description": "Production financial file generation and statement parsing endpoints hosted on Apify Cloud ($0/month subscription, $0.02-$0.05 per row/invoice, $5/month free starter credits included). Compatible with OpenAI GPT Actions, Microsoft Copilot Studio, Postman, Retool, n8n, Make.com, and Model Context Protocol (MCP).",
+    "contact": {
+      "name": "FinOps Studio",
+      "url": "https://geornaden.github.io/finops-studio/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.apify.com/v2",
+      "description": "Apify Production Synchronous HTTPS Gateway"
+    }
+  ],
+  "security": [
+    {
+      "ApifyBearerToken": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApifyBearerToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Apify API Token (obtain free with $5/month recurring credits at https://apify.com/finops_studio)"
+      }
+    }
+  },
+  "paths": {
+    "/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "generateSepaXml",
+        "summary": "Generate ISO 20022 SEPA Credit Transfer (pain.001.001.09 / .03) or Direct Debit (pain.008) XML",
+        "tags": ["Payments & Payroll"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["debtorName", "debtorIban", "transactions"],
+                "properties": {
+                  "schemaVersion": { "type": "string", "default": "pain.001.001.09" },
+                  "initiatingPartyName": { "type": "string" },
+                  "debtorName": { "type": "string" },
+                  "debtorIban": { "type": "string" },
+                  "debtorBic": { "type": "string" },
+                  "transactions": { "type": "array", "items": { "type": "object" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Dataset items containing validated SEPA XML output and CtrlSum audit." }
+        }
+      }
+    },
+    "/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "generateEuEinvoiceXml",
+        "summary": "Generate EN 16931 EU E-Invoice XML (Peppol BIS 3.0, XRechnung 3.0, Factur-X / ZUGFeRD)",
+        "tags": ["Tax & E-Invoicing"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Dataset items containing EN 16931 UBL 2.1 or UN/CEFACT CII XML." }
+        }
+      }
+    },
+    "/acts/finops_studio~nacha-ach-file-generator/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "generateOrParseNachaAch",
+        "summary": "Generate or Parse 94-Character US NACHA ACH Files (PPD, CCD, WEB) with ABA MOD-10 Check",
+        "tags": ["Payments & Payroll"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Dataset items containing 94-char block-10 padded .ach content or parsed JSON." }
+        }
+      }
+    },
+    "/acts/finops_studio~bai2-bank-statement-parser/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "parseBai2BankStatement",
+        "summary": "Parse Corporate BAI2 Cash-Management Bank Statements (01/02/03/16/88/49/98/99) to JSON & CSV",
+        "tags": ["Treasury Reconciliation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["bai2Content"],
+                "properties": {
+                  "bai2Content": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Dataset items containing stitched accounts, signed transactions, and CSV." }
+        }
+      }
+    },
+    "/acts/finops_studio~datev-buchungsstapel-generator/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "generateDatevExtfCsv",
+        "summary": "Generate German DATEV EXTF v700 Buchungsstapel CSV (SKR03 & SKR04)",
+        "tags": ["Tax & E-Invoicing"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Dataset items containing official 31-column EXTF v700 semicolon CSV." }
+        }
+      }
+    },
+    "/acts/finops_studio~aba-cemtex-file-generator/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "generateAustralianAbaFile",
+        "summary": "Generate 120-Character Australian BECS Direct Entry (.aba / Cemtex) File",
+        "tags": ["Payments & Payroll"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Dataset items containing 120-char Australian .aba file content." }
+        }
+      }
+    },
+    "/acts/finops_studio~iso20022-pain002-status-parser/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "decodePain002StatusXml",
+        "summary": "Decode ISO 20022 pain.002 Bank Payment Status & Rejection XML into Plain-English Fixes",
+        "tags": ["Treasury Reconciliation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["xmlContent"],
+                "properties": {
+                  "xmlContent": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Dataset items containing decoded rejection reasons and remediation actions." }
+        }
+      }
+    },
+    "/acts/finops_studio~uk-bacs-standard18-generator/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "generateUkBacsStandard18",
+        "summary": "Generate 100-Character UK BACS Standard 18 Direct Credit & Direct Debit File",
+        "tags": ["Payments & Payroll"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Dataset items containing 100-char UK BACS Standard 18 file." }
+        }
+      }
+    },
+    "/acts/finops_studio~canada-cpa005-eft-generator/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "generateCanadaCpa005Eft",
+        "summary": "Generate 1,464-Byte Payments Canada Standard 005 (CPA-005) EFT Direct Deposit File",
+        "tags": ["Payments & Payroll"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Dataset items containing 1,464-character CPA-005 A/C/D/Z file." }
+        }
+      }
+    }
+  }
+}

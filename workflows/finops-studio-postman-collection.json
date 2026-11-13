@@ -1,0 +1,124 @@
+{
+  "info": {
+    "name": "FinOps Studio — 9 Live Banking, Payroll, Treasury & E-Invoice APIs",
+    "description": "Ready-to-run Postman Collection for FinOps Studio's zero-subscription Cloud APIs on Apify Store. Set collection variable APIFY_TOKEN (free $5/mo credits at https://apify.com/finops_studio).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "APIFY_TOKEN",
+      "value": "YOUR_APIFY_API_TOKEN",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. EU SEPA XML Generator (pain.001.001.09)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items?token={{APIFY_TOKEN}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"schemaVersion\": \"pain.001.001.09\",\n  \"initiatingPartyName\": \"Acme Europe GmbH\",\n  \"debtorName\": \"Acme Europe GmbH\",\n  \"debtorIban\": \"DE89370400440532013000\",\n  \"debtorBic\": \"COBADEFFXXX\",\n  \"transactions\": [\n    { \"name\": \"Nordic Cloud AB\", \"iban\": \"NL91ABNA0417164300\", \"amount\": 1450.00, \"remittanceInfo\": \"INV-2026-0891\", \"country\": \"NL\", \"townName\": \"Amsterdam\" }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "2. EU E-Invoice XML Generator (Peppol BIS 3.0 / XRechnung)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items?token={{APIFY_TOKEN}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"profile\": \"PEPPOL_BIS_30\",\n  \"invoiceNumber\": \"INV-2026-1001\",\n  \"issueDate\": \"2026-11-13\",\n  \"dueDate\": \"2026-12-13\",\n  \"currency\": \"EUR\",\n  \"buyerReference\": \"PO-8841\",\n  \"seller\": { \"name\": \"TechSolutions GmbH\", \"vatId\": \"DE123456789\", \"country\": \"DE\", \"city\": \"Berlin\", \"postalCode\": \"10115\", \"street\": \"Friedrichstr. 100\" },\n  \"buyer\": { \"name\": \"EuroTrade NV\", \"vatId\": \"BE0123456789\", \"country\": \"BE\", \"city\": \"Brussels\", \"postalCode\": \"1000\", \"street\": \"Rue de la Loi 42\" },\n  \"lines\": [{ \"description\": \"Cloud Treasury Service\", \"quantity\": 1, \"unitPrice\": 1250.00, \"vatRate\": 0, \"vatCategory\": \"K\" }]\n}"
+        }
+      }
+    },
+    {
+      "name": "3. US 94-Char NACHA ACH File Generator",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "https://api.apify.com/v2/acts/finops_studio~nacha-ach-file-generator/run-sync-get-dataset-items?token={{APIFY_TOKEN}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"mode\": \"generate\",\n  \"secCode\": \"PPD\",\n  \"immediateDestination\": \"021000021\",\n  \"immediateDestinationName\": \"JPMORGAN CHASE\",\n  \"immediateOrigin\": \"1987654321\",\n  \"immediateOriginName\": \"ACME US CORP\",\n  \"companyName\": \"ACME US CORP\",\n  \"companyId\": \"1987654321\",\n  \"companyEntryDescription\": \"PAYROLL\",\n  \"originatingDfiId\": \"02100002\",\n  \"effectiveEntryDate\": \"261120\",\n  \"entries\": [{ \"transactionCode\": \"22\", \"routingNumber\": \"021000021\", \"accountNumber\": \"449012398\", \"amount\": 2450.00, \"individualId\": \"EMP-101\", \"individualName\": \"SARAH JENKINS\" }]\n}"
+        }
+      }
+    },
+    {
+      "name": "4. Corporate BAI2 Bank Statement Parser",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "https://api.apify.com/v2/acts/finops_studio~bai2-bank-statement-parser/run-sync-get-dataset-items?token={{APIFY_TOKEN}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bai2Content\": \"01,021000021,ACMECORP,261113,0600,001,80,,2/\\n02,ACMECORP,021000021,1,261113,0600,USD,2/\\n03,000012345678,USD,015,15000000,,,/\\n16,165,4825000,0,REF991,CUST881/\\n88,INV-2026-9941 ACME HEALTHCARE/\\n49,19825000,4/\\n98,19825000,1,6/\\n99,19825000,1,8/\"\n}"
+        }
+      }
+    },
+    {
+      "name": "5. German DATEV EXTF v700 CSV Generator",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "https://api.apify.com/v2/acts/finops_studio~datev-buchungsstapel-generator/run-sync-get-dataset-items?token={{APIFY_TOKEN}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"skr\": \"SKR03\",\n  \"consultantNumber\": \"12345\",\n  \"clientNumber\": \"10001\",\n  \"bookings\": [{ \"date\": \"2026-11-13\", \"amount\": 1190.00, \"vatRate\": 19, \"invoiceNumber\": \"RE-2026-401\", \"description\": \"SaaS Lizenz GmbH\" }]\n}"
+        }
+      }
+    },
+    {
+      "name": "6. Australian 120-Char ABA Direct Entry Generator",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "https://api.apify.com/v2/acts/finops_studio~aba-cemtex-file-generator/run-sync-get-dataset-items?token={{APIFY_TOKEN}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"financialInstitution\": \"CBA\",\n  \"userName\": \"SYDNEY TECH PTY LTD\",\n  \"apcaUserId\": \"301500\",\n  \"description\": \"PAYROLL\",\n  \"processingDate\": \"2026-11-20\",\n  \"traceBsb\": \"062-000\",\n  \"traceAccount\": \"10458921\",\n  \"remitterName\": \"SYDNEY TECH PTY\",\n  \"includeSelfBalancingRow\": true,\n  \"transactions\": [{ \"bsb\": \"082-088\", \"accountNumber\": \"87654321\", \"transactionCode\": \"53\", \"amount\": 2150.00, \"accountTitle\": \"LIAM O CONNOR\", \"lodgementReference\": \"WAGES NOV\" }]\n}"
+        }
+      }
+    },
+    {
+      "name": "7. ISO 20022 pain.002 Bank Rejection Status Decoder",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "https://api.apify.com/v2/acts/finops_studio~iso20022-pain002-status-parser/run-sync-get-dataset-items?token={{APIFY_TOKEN}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"xmlContent\": \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?><Document xmlns=\\\"urn:iso:std:iso:20022:tech:xsd:pain.002.001.10\\\"><CstmrPmtStsRpt><GrpHdr><MsgId>STS-01</MsgId></GrpHdr><OrgnlPmtInfAndSts><OrgnlPmtInfId>PMT-01</OrgnlPmtInfId><TxInfAndSts><OrgnlEndToEndId>E2E-1</OrgnlEndToEndId><TxSts>RJCT</TxSts><StsRsnInf><Rsn><Cd>BE04</Cd></Rsn></StsRsnInf></TxInfAndSts></OrgnlPmtInfAndSts></CstmrPmtStsRpt></Document>\"\n}"
+        }
+      }
+    },
+    {
+      "name": "8. UK BACS Standard 18 (100-Char) Generator",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "https://api.apify.com/v2/acts/finops_studio~uk-bacs-standard18-generator/run-sync-get-dataset-items?token={{APIFY_TOKEN}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceUserNumber\": \"123456\",\n  \"originatorName\": \"LONDON TECH UK LTD\",\n  \"originatorSortCode\": \"20-00-00\",\n  \"originatorAccountNumber\": \"12345678\",\n  \"processingDate\": \"2026-11-20\",\n  \"includeHeaders\": true,\n  \"transactions\": [{ \"name\": \"OLIVER WRIGHT\", \"sortCode\": \"40-05-15\", \"accountNumber\": \"87654321\", \"amount\": 3400.00, \"transactionCode\": \"99\", \"reference\": \"SALARY NOV26\" }]\n}"
+        }
+      }
+    },
+    {
+      "name": "9. Canadian CPA-005 (1464-Byte) EFT Generator",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "https://api.apify.com/v2/acts/finops_studio~canada-cpa005-eft-generator/run-sync-get-dataset-items?token={{APIFY_TOKEN}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"originatorId\": \"GLOBTECHCA\",\n  \"originatorShortName\": \"GLOBAL TECH CA\",\n  \"originatorLongName\": \"GLOBAL TECH CANADA INC\",\n  \"destinationDataCentre\": \"00300\",\n  \"fileCreationNumber\": \"0021\",\n  \"returnInstitution\": \"003\",\n  \"returnTransit\": \"00012\",\n  \"returnAccount\": \"1004589\",\n  \"dueDate\": \"2026-11-20\",\n  \"transactions\": [{ \"name\": \"SOPHIE TREMBLAY\", \"institution\": \"004\", \"transit\": \"10202\", \"accountNumber\": \"7748392\", \"amount\": 3950.00, \"cpaCode\": \"200\", \"crossReference\": \"EMP-CA-204\" }]\n}"
+        }
+      }
+    }
+  ]
+}

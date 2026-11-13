@@ -2,7 +2,9 @@
 
 > Zero-hallucination financial file generators, checksum validators, and parsers for CFOs, accounting firms, ERP integrators, n8n/Make workflows, and AI agents (Model Context Protocol / MCP). Hosted on Apify Cloud (`https://apify.com/finops_studio`) with interactive previews and documentation at `https://geornaden.github.io/finops-studio/`.
 
-## Official Model Context Protocol (MCP) Registry Identifiers (`registry.modelcontextprotocol.io`)
+## Official OpenAPI 3.1, Postman & Model Context Protocol (MCP) Registry Identifiers
+- OpenAPI 3.1 Specification (GPT Actions / Copilot Studio / Retool): https://geornaden.github.io/finops-studio/openapi.json
+- Postman v2.1 Collection (All 9 Live Endpoints): https://geornaden.github.io/finops-studio/workflows/finops-studio-postman-collection.json
 - Unified Suite (9 Live Public Actors): `io.github.Geornaden/finops-studio` (`https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser,finops_studio/uk-bacs-standard18-generator,finops_studio/canada-cpa005-eft-generator`)
 - Dedicated Single-Tool MCP Servers (All #1 Ranked Globally):
   - `io.github.Geornaden/sepa-xml-pain001-iban-mcp`

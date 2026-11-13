@@ -32,12 +32,18 @@
 
 ## Quickstart: CLI, cURL, Node.js & Python
 
-### 1. Zero-Install CLI (`npx` v1.3.0)
+### 1. Zero-Install CLI & Pre-Flight Checksum Doctor (`npx` v1.4.0)
 ```bash
 npx github:Geornaden/finops-studio list
+npx github:Geornaden/finops-studio doctor ./batch.csv
 npx github:Geornaden/finops-studio mcp-config
-APIFY_TOKEN=YOUR_APIFY_TOKEN npx github:Geornaden/finops-studio run sepa ./payload.json
+npx github:Geornaden/finops-studio openapi
+APIFY_TOKEN=YOUR_APIFY_TOKEN npx github:Geornaden/finops-studio run sepa ./payload.json --out ./sepa.xml
 ```
+
+### 1b. OpenAPI 3.1 Spec & Postman v2.1 Collection (Custom GPT Actions / Copilot Studio / Retool)
+- **OpenAPI 3.1 Specification:** [`https://geornaden.github.io/finops-studio/openapi.json`](https://geornaden.github.io/finops-studio/openapi.json)
+- **Postman Collection v2.1:** [`workflows/finops-studio-postman-collection.json`](./workflows/finops-studio-postman-collection.json)
 
 ### 2. Direct Synchronous REST API (`cURL`)
 ```bash
