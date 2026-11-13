@@ -70,6 +70,7 @@
 - [Swiss Corporate Treasury Guide: SIX SPS 2026 ISO 20022 pain.001.001.09 XML (UBS, PostFinance, ZKB, Raiffeisen CH) & EU Peppol Exports](https://geornaden.github.io/finops-studio/swiss-sps-pain001-ubs-postfinance-zkb-sepa-xml.html)
 - [Australian Direct Entry .ABA Guide: Xero, MYOB & CSV to CBA CommBiz, NAB Connect, Westpac & ANZ (120-Char Cemtex)](https://geornaden.github.io/finops-studio/xero-myob-csv-to-australian-aba-commbiz-nab-westpac-anz.html)
 - [UK BACS Standard 18 Guide: Sage, Xero, BrightPay & CSV to Barclays.net, HSBCnet, Lloyds & NatWest Bankline (100-Char)](https://geornaden.github.io/finops-studio/sage-xero-csv-to-uk-bacs-standard-18-barclays-hsbc-lloyds-natwest.html)
+- [Canadian CPA-005 EFT Guide: CSV, Excel & QuickBooks to RBC Express, TD, BMO, Scotiabank & CIBC (1,464-Byte Standard 005)](https://geornaden.github.io/finops-studio/csv-to-canada-cpa-005-eft-rbc-td-bmo-scotiabank.html)
 - [Make.com, Zapier & Microsoft Power Automate No-Code Blueprints](https://geornaden.github.io/finops-studio/make-zapier-power-automate-sepa-xml-nacha-peppol.html)
 - [Make.com Scenario Blueprint JSON (Google Sheets / Airtable -> SEPA XML)](https://geornaden.github.io/finops-studio/workflows/make-sheets-airtable-to-sepa-nacha-datev.json)
 - [Python 3 & Node.js 20+ Banking File API Cookbook (SEPA XML, NACHA ACH, BAI2, DATEV)](https://geornaden.github.io/finops-studio/python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html)

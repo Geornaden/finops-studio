@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Convert CSV, Excel &amp; QuickBooks to Canadian CPA-005 (1464-Byte) EFT Files (RBC Express, TD, BMO, Scotiabank, CIBC) | FinOps Studio</title>
+  <meta name="description" content="Generate strict 1,464-character Payments Canada Standard 005 (CPA-005) EFT payroll &amp; vendor direct deposit files (A/C/D/Z records, 0YYDDD Julian dates, 0YYYXXXXX routing) for RBC, TD, BMO, Scotiabank &amp; CIBC via $0/mo API &amp; MCP." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/csv-to-canada-cpa-005-eft-rbc-td-bmo-scotiabank.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Convert CSV, Excel & QuickBooks Canada Batches to 1,464-Byte CPA-005 EFT Files (RBC, TD, BMO, Scotiabank, CIBC & Desjardins)",
+        "url": "https://geornaden.github.io/finops-studio/csv-to-canada-cpa-005-eft-rbc-td-bmo-scotiabank.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Developer and Canadian CPA guide to generating 1,464-character Payments Canada Standard 005 EFT files with 6 packed 240-byte segments per C/D record, Data Centre codes, and 0YYDDD Julian dates."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do Canadian Cheque MICR Transit-Institution numbers convert to CPA-005 9-digit EFT routing numbers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Canadian paper cheques print 5-digit Branch Transit followed by 3-digit Institution (XXXXX-YYY, e.g., 00012-003 for RBC). Payments Canada Standard 005 EFT files reverse this into a 9-digit string prefixed with zero: 0 + 3-digit Institution + 5-digit Transit (0YYYXXXXX, e.g., 000300012)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why are CPA-005 EFT lines 1,464 characters wide?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under Payments Canada Standard 005, each physical Record C (Direct Deposit Credit) or Record D (PAD Debit) starts with a 24-byte logical record header followed by up to six 240-byte payment segments (24 + 6 × 240 = 1,464 bytes), right-padded with spaces when the final line contains fewer than 6 segments."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Free CA Transit Converter</a>
+        <a href="./free-bank-file-format-detector-line-length-auditor.html">1464-Char Auditor</a>
+        <a href="./canada-cpa-005-eft-file-generator.html">CPA-005 Spec</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/canada-cpa005-eft-generator" target="_blank" rel="noopener">Launch Live CPA-005 API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127464;&#127462; Live on Apify Store &amp; Official MCP Registry &bull; $0/Month Subscription</span>
+      <h1>Convert CSV, Excel &amp; QuickBooks Canada Exports into 1,464-Byte <code>CPA-005</code> EFT Files</h1>
+      <p>Replace CAD $600–$1,800/year Windows EFT software. Generate strict <strong>Payments Canada Standard 005</strong> files (<code>A</code> Header, 6-per-line packed <code>C</code> Direct Deposit &amp; <code>D</code> PAD records, <code>Z</code> Trailer) for <strong>RBC Express</strong>, <strong>TD Commercial</strong>, <strong>BMO</strong>, <strong>ScotiaConnect</strong>, <strong>CIBC CMO</strong>, <strong>National Bank</strong>, and <strong>Desjardins</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/canada-cpa005-eft-generator" target="_blank" rel="noopener">Run Canadian CPA-005 Generator ($0.02/row) &rarr;</a>
+        <a class="btn btn-outline" href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Convert XXXXX-YYY &harr; 0YYYXXXXX Free</a>
+        <a class="btn btn-outline" href="./free-bank-file-format-detector-line-length-auditor.html">Audit 1464-Char File</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <h2 style="margin-top:0;">Major Canadian Bank Institution IDs &amp; 5-Digit Data Centre Codes</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.86rem;margin-top:8px;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Canadian Financial Institution</th>
+              <th style="padding:10px;">3-Digit Institution</th>
+              <th style="padding:10px;">9-Digit Routing Format</th>
+              <th style="padding:10px;">Typical Data Centre</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>Royal Bank of Canada (RBC Express)</strong></td>
+              <td style="padding:10px;font-family:monospace;">003</td>
+              <td style="padding:10px;font-family:monospace;">0003XXXXX</td>
+              <td style="padding:10px;font-family:monospace;">00300 (or regional 003xx)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>TD Canada Trust (Web Business Banking)</strong></td>
+              <td style="padding:10px;font-family:monospace;">004</td>
+              <td style="padding:10px;font-family:monospace;">0004XXXXX</td>
+              <td style="padding:10px;font-family:monospace;">00400 / 00420</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>Bank of Montreal (BMO Online for Business)</strong></td>
+              <td style="padding:10px;font-family:monospace;">001</td>
+              <td style="padding:10px;font-family:monospace;">0001XXXXX</td>
+              <td style="padding:10px;font-family:monospace;">00100</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:10px;"><strong>Scotiabank (ScotiaConnect)</strong></td>
+              <td style="padding:10px;font-family:monospace;">002</td>
+              <td style="padding:10px;font-family:monospace;">0002XXXXX</td>
+              <td style="padding:10px;font-family:monospace;">00200</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;"><strong>CIBC / National Bank / Desjardins</strong></td>
+              <td style="padding:10px;font-family:monospace;">010 / 006 / 815</td>
+              <td style="padding:10px;font-family:monospace;">0010... / 0006... / 0815...</td>
+              <td style="padding:10px;font-family:monospace;">01000 / 00600 / 81500</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">REST API / Python / n8n / Make.com</span>
+        <h3 style="margin:10px 0 8px;">Generate 1,464-Byte CPA-005 File via HTTP POST</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Automatically packs 6 segments per 1,464-char line, converts dates to <code>0YYDDD</code> Julian format, and reconciles <code>Record Z</code> cent totals:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:220px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~canada-cpa005-eft-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "originatorId": "MAPLETECH1",
+    "originatorShortName": "MAPLE TECH INC",
+    "originatorLongName": "MAPLE TECH SOLUTIONS INC",
+    "destinationDataCentre": "00300",
+    "fileCreationNumber": "0014",
+    "returnInstitution": "003",
+    "returnTransit": "00012",
+    "returnAccount": "1004589",
+    "dueDate": "2026-11-18",
+    "transactions": [
+      {
+        "name": "SOPHIE TREMBLAY",
+        "institution": "004",
+        "transit": "10242",
+        "accountNumber": "5548912",
+        "amount": 2950.75,
+        "cpaCode": "200",
+        "reference": "PAY-2026-23"
+      }
+    ]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Official MCP Registry (#1 Ranked)</span>
+        <h3 style="margin:10px 0 8px;">Connect Canadian CPA-005 to Claude &amp; Cursor</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Published in <code>registry.modelcontextprotocol.io</code> as <code>io.github.Geornaden/canada-cpa005-eft-payroll-mcp</code> so AI agents never misalign a 240-byte CPA segment:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:220px;">{
+  "mcpServers": {
+    "canada-cpa005-eft": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/canada-cpa005-eft-generator",
+      "headers": {
+        "Authorization": "Bearer YOUR_APIFY_API_TOKEN"
+      }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+
+    <div class="sandbox-card" style="margin-top:24px;text-align:center;">
+      <h3 style="margin-top:0;">Built for Canadian CPA Firms, Bookkeepers, Payroll Teams &amp; SaaS Platforms</h3>
+      <p style="color:var(--muted);max-width:700px;margin:8px auto 16px;">Process unlimited Canadian client Originator IDs for <strong>$0/month subscription</strong> and $0.02 per payee segment.</p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/canada-cpa005-eft-generator" target="_blank" rel="noopener">Open Canadian CPA-005 API on Apify &rarr;</a>
+        <a class="btn btn-outline" href="./for-accounting-firms-payroll-bureaus-and-fintechs.html">CPA Firm &amp; Payroll ROI Calculator</a>
+        <a class="btn btn-outline" href="./canada-cpa-005-eft-file-generator.html">Full 1464-Byte Record Spec</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio (All 12 Banking APIs)</a> &bull;
+      <a href="./canada-cpa-005-eft-file-generator.html">CPA-005 Spec</a> &bull;
+      <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Transit Converter</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>
