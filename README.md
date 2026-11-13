@@ -96,6 +96,7 @@ Give **Claude Desktop**, **Cursor**, **Windsurf**, or any MCP-compatible AI agen
 ---
 
 ## Free Browser Pre-Flight Validators & Regional Guides
+- **Corporate Treasury `BAI2` Type Codes (`010`–`699`: `015`, `115`, `165`, `195`, `455`, `475`, `495`, `575`) & Record `16+88` Line Decoder:** [Launch BAI2 Reference](https://geornaden.github.io/finops-studio/bai2-type-codes-165-195-475-jpmorgan-bofa-wells-fargo-citi.html)
 - **Free Bank File Format & Line-Length Auditor (`NACHA` 94, `ABA` 120, `BACS` 100, `CPA-005` 1464, `Norma 43` 80, `BAI2`, `SEPA BE04`):** [Launch Browser Auditor](https://geornaden.github.io/finops-studio/free-bank-file-format-detector-line-length-auditor.html)
 - **Free IBAN MOD-97, US ABA Routing & ISO 20022 Error Code Lookup:** [Launch Checker](https://geornaden.github.io/finops-studio/free-iban-routing-number-pain002-validator.html)
 - **Free UK Sort Code, Australian BSB & Canadian CPA-005 Transit Converter:** [Launch Checker](https://geornaden.github.io/finops-studio/free-uk-sort-code-au-bsb-canada-transit-checker.html)

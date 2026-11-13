@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BAI2 Transaction Type Codes List (015, 115, 165, 195, 455, 475, 495, 575) &amp; JSON/CSV Parser API | FinOps Studio</title>
+  <meta name="description" content="Searchable corporate treasury BAI2 Type Codes reference (010–699: 015 Closing Ledger, 115 Lockbox, 165 ACH Credit, 195 Incoming Wire, 455 ACH Debit, 475 Check Paid, 495 Outgoing Wire, 575 ZBA) for J.P. Morgan, BofA CashPro, Wells Fargo CEO &amp; CitiDirect + $0/mo BAI2 to JSON/CSV API." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/bai2-type-codes-165-195-475-jpmorgan-bofa-wells-fargo-citi.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "BAI2 Transaction & Summary Type Codes Reference (010–699) for J.P. Morgan, BofA CashPro, Wells Fargo CEO & CitiDirect",
+        "url": "https://geornaden.github.io/finops-studio/bai2-type-codes-165-195-475-jpmorgan-bofa-wells-fargo-citi.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Complete corporate treasury guide to Bank Administration Institute (BAI2) Account Summary (Record 03) and Transaction Detail (Record 16 + 88 continuation) type codes, implied currency decimals, and automated ERP reconciliation."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do you tell if a BAI2 Type Code is an Account Summary, Credit, or Debit?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under the Bank Administration Institute (BAI2) standard, codes 010–099 appear in Record 03 for account balances and summary totals (e.g., 010 Opening Ledger, 015 Closing Ledger, 045 Closing Available). Codes 100–399 represent Credits/Deposits (mostly in Record 16 detail, such as 115 Lockbox, 165 Preauthorized ACH Credit, 195 Incoming Wire), and codes 400–699 represent Debits/Disbursements (such as 455 Preauthorized ACH Debit, 475 Check Paid, 495 Outgoing Wire, 575 ZBA Debit)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How are amounts formatted in BAI2 Record 03 and Record 16?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "BAI2 amounts never contain a decimal point. Instead, the number of implied decimal places is determined by the ISO 4217 currency code in Record 03 (or Group Record 02): 2 implied decimals for USD/EUR/GBP/CAD/AUD (so 125000 = $1,250.00), 0 decimals for JPY/KRW, and 3 decimals for KWD/BHD/OMR."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How can I automatically parse multi-line BAI2 Record 88 continuations into JSON or CSV for NetSuite, SAP, or Excel?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Call the FinOps Studio Corporate BAI2 Bank Statement Parser API (finops_studio/bai2-bank-statement-parser on Apify Store or via MCP). It stitches all consecutive 88 continuation lines onto their parent 03 or 16 record, applies currency-aware implied decimals, signs debits negatively and credits positively, verifies 49/98/99 control trailers, and outputs clean JSON and UTF-8 CSV at $0/month + $0.02 per transaction."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./bai2-bank-statement-parser.html">Live BAI2 Sandbox</a>
+        <a href="./netsuite-odoo-sap-sepa-xml-bai2-nacha-automation.html">NetSuite / SAP SFTP</a>
+        <a href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python BAI2 Script</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/bai2-bank-statement-parser" target="_blank" rel="noopener">Launch Live BAI2 Parser API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127974; Corporate Treasury BAI2 Reference &bull; Live API on Apify Store &amp; Official MCP Registry</span>
+      <h1>Complete <code>BAI2</code> Transaction &amp; Balance Type Codes Directory (<code>010</code>–<code>699</code>)</h1>
+      <p>Instant lookup for treasury teams and ERP engineers reconciling daily <code>.bai</code> / <code>.bai2</code> cash-management files from <strong>J.P. Morgan Access</strong>, <strong>Bank of America CashPro</strong>, <strong>Wells Fargo CEO</strong>, <strong>CitiDirect</strong>, <strong>PNC PINACLE</strong>, <strong>U.S. Bank SinglePoint</strong>, and <strong>HSBCnet</strong>—plus a zero-subscription Cloud API to convert full multi-account BAI2 files into signed JSON &amp; CSV.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/bai2-bank-statement-parser" target="_blank" rel="noopener">Parse Full BAI2 Files via Cloud API ($0.02/tx) &rarr;</a>
+        <a class="btn btn-outline" href="./bai2-bank-statement-parser.html">Open Interactive BAI2 Sandbox</a>
+        <a class="btn btn-outline" href="./workflows/n8n-bank-sftp-bai2-and-pain002-alerts.json" download>Download SFTP BAI2 n8n JSON</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <h2 style="margin:0;">Searchable BAI2 Type Codes Table (Summary <code>03</code> &amp; Detail <code>16</code>)</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline bai-filter" data-cat="ALL" style="padding:6px 12px;font-size:0.8rem;">All (32)</button>
+          <button type="button" class="btn btn-outline bai-filter" data-cat="STATUS" style="padding:6px 12px;font-size:0.8rem;">Balances &amp; Summary (010–099)</button>
+          <button type="button" class="btn btn-outline bai-filter" data-cat="CREDIT" style="padding:6px 12px;font-size:0.8rem;">Credits + (100–399)</button>
+          <button type="button" class="btn btn-outline bai-filter" data-cat="DEBIT" style="padding:6px 12px;font-size:0.8rem;">Debits &minus; (400–699)</button>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <input id="baiSearch" type="search" placeholder="Filter by 3-digit BAI code or keyword (e.g. 165, 195, 475, 575, lockbox, wire, ACH, ZBA, check)..." style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.92rem;" />
+      </div>
+      <div style="overflow-x:auto;margin-top:14px;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Code</th>
+              <th style="padding:10px;">Record</th>
+              <th style="padding:10px;">Sign / Direction</th>
+              <th style="padding:10px;">Official BAI2 Description</th>
+              <th style="padding:10px;">ERP Cash-Application &amp; Reconciliation Mapping</th>
+            </tr>
+          </thead>
+          <tbody id="baiTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <span class="tag">100% Local Browser Inspector</span>
+      <h2 style="margin:10px 0 8px;">Instant Single-Transaction <code>Record 16 + 88</code> Line Decoder</h2>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0;">Paste a raw <code>16,...</code> transaction line (plus any <code>88,...</code> continuation lines) below to inspect how implied decimals, direction sign, funds availability, and stitched remittance text decode:</p>
+      <div class="grid-2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:12px;">
+        <div>
+          <textarea id="rawBaiSnippet" class="code-box" style="min-height:145px;font-size:0.8rem;" spellcheck="false">16,165,4825000,0,261113004912,INV-2026-9941/
+88,ORIG CO NAME=ACME HEALTHCARE CORP
+88,ORIG ID=1948201923 ENTRY DESC=EDI PYMNTS/</textarea>
+          <div style="display:flex;gap:10px;align-items:center;margin-top:8px;">
+            <label style="font-size:0.82rem;color:var(--muted);">Account Currency:
+              <select id="baiCurrency" style="margin-left:6px;padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;">
+                <option value="USD" selected>USD / EUR / GBP / CAD (2 implied decimals)</option>
+                <option value="JPY">JPY / KRW (0 implied decimals)</option>
+                <option value="KWD">KWD / BHD / OMR (3 implied decimals)</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div>
+          <pre id="decodedBaiOut" class="code-box" style="min-height:185px;font-size:0.79rem;margin:0;"></pre>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">REST API / Python / NetSuite / SAP</span>
+        <h3 style="margin:10px 0 8px;">Convert Multi-Account BAI2 Statements to JSON &amp; CSV</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Stitches unlimited <code>88</code> continuations across hundreds of bank accounts and verifies <code>49</code>/<code>98</code>/<code>99</code> control totals:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:195px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~bai2-bank-statement-parser/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "bai2Content": "01,021000021,ACMECORP,261113,0600,001,80,,2/\n02,ACMECORP,021000021,1,261113,0600,USD,2/\n03,000012345678,USD,015,15000000,,,/\n16,165,4825000,0,REF991,CUST881/\n88,INV-2026-9941 ACME HEALTHCARE/\n49,19825000,4/\n98,19825000,1,6/\n99,19825000,1,8/"
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Official MCP Server (#1 Global Rank)</span>
+        <h3 style="margin:10px 0 8px;">AI Treasury Agent MCP Integration</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Registered on <code>registry.modelcontextprotocol.io</code> as <code>io.github.Geornaden/bai2-bank-statement-parser-mcp</code>:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:195px;">{
+  "mcpServers": {
+    "bai2-treasury-parser": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/bai2-bank-statement-parser",
+      "headers": {
+        "Authorization": "Bearer YOUR_APIFY_API_TOKEN"
+      }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./free-bank-file-format-detector-line-length-auditor.html">Free Bank File Auditor</a> &bull; <a href="./spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html">Spanish Norma 43 Parser</a></div>
+      <div><a href="https://apify.com/finops_studio/bai2-bank-statement-parser" target="_blank" rel="noopener">Open BAI2 Parser on Apify Store &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var CODES = [
+        { code: '010', rec: '03', cat: 'STATUS', sign: 'Balance', name: 'Opening Ledger Balance', erp: 'Prior-day starting book balance check' },
+        { code: '015', rec: '03', cat: 'STATUS', sign: 'Balance', name: 'Closing Ledger Balance', erp: 'End-of-day GL bank account reconciliation anchor' },
+        { code: '040', rec: '03', cat: 'STATUS', sign: 'Balance', name: 'Opening Available Balance', erp: 'Intraday treasury liquidity starting cash' },
+        { code: '045', rec: '03', cat: 'STATUS', sign: 'Balance', name: 'Closing Available Balance', erp: 'Cleared investable / sweepable cash balance' },
+        { code: '060', rec: '03', cat: 'STATUS', sign: 'Balance', name: 'Current Available Balance', erp: 'Same-day intraday polling available cash' },
+        { code: '072', rec: '03', cat: 'STATUS', sign: 'Float', name: '1-Day Float', erp: 'Uncollected check deposit float clearing next business day' },
+        { code: '074', rec: '03', cat: 'STATUS', sign: 'Float', name: '2-or-More Days Float', erp: 'Extended check clearing hold' },
+        { code: '100', rec: '03', cat: 'STATUS', sign: 'Summary +', name: 'Total Credits', erp: 'Control sum of all credit detail items on account' },
+        { code: '115', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'Lockbox Deposit', erp: 'Auto-apply AR customer check lockbox batch credit' },
+        { code: '140', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'ACH Deposit / Settlement Credit', erp: 'Batch settlement from Stripe, Adyen, or merchant processor' },
+        { code: '142', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'ACH Credit Received', erp: 'Incoming customer CCD/CTX/PPD ACH payment' },
+        { code: '165', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'Preauthorized ACH Credit', erp: 'Most common B2B customer ACH invoice payment (match 88 remittance)' },
+        { code: '166', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'ACH Settlement Credit', erp: 'Consolidated ACH batch credit settlement' },
+        { code: '168', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'ACH Return Item or Adjustment Credit', erp: 'Reversed outgoing vendor/payroll ACH debit or credit return' },
+        { code: '169', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'Miscellaneous ACH Credit', erp: 'General incoming ACH credit' },
+        { code: '175', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'Check Deposit Package', erp: 'Branch or remote capture (RDC) check deposit batch' },
+        { code: '195', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'Incoming Money Transfer (Wire Credit)', erp: 'Domestic Fedwire / CHIPS / SWIFT incoming wire (parse OBI/IMAD in 88)' },
+        { code: '208', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'Incoming International Money Transfer', erp: 'Cross-border FX / SWIFT wire receipt' },
+        { code: '252', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'Debit Reversal', erp: 'Bank correction reversing a prior debit' },
+        { code: '275', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'Zero Balance Account (ZBA) Credit', erp: 'Intercompany sweep credit from master concentration account' },
+        { code: '301', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'Commercial Deposit', erp: 'Over-the-counter or armored courier cash/check deposit' },
+        { code: '354', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'Interest Credit', erp: 'Post to GL Interest Income' },
+        { code: '399', rec: '16', cat: 'CREDIT', sign: 'Credit (+)', name: 'Miscellaneous Credit', erp: 'Unclassified credit adjustment' },
+        { code: '400', rec: '03', cat: 'STATUS', sign: 'Summary -', name: 'Total Debits', erp: 'Control sum of all debit detail items on account' },
+        { code: '455', rec: '16', cat: 'DEBIT', sign: 'Debit (-)', name: 'Preauthorized ACH Debit', erp: 'Direct debit pull (tax authority, utility, SaaS vendor, payroll funding)' },
+        { code: '466', rec: '16', cat: 'DEBIT', sign: 'Debit (-)', name: 'ACH Settlement Debit', erp: 'Originated NACHA ACH payroll/AP batch settlement debit' },
+        { code: '469', rec: '16', cat: 'DEBIT', sign: 'Debit (-)', name: 'Miscellaneous ACH Debit', erp: 'General outgoing ACH debit' },
+        { code: '475', rec: '16', cat: 'DEBIT', sign: 'Debit (-)', name: 'Check Paid', erp: 'Cleared AP/payroll paper check (check # typically in Customer Ref)' },
+        { code: '495', rec: '16', cat: 'DEBIT', sign: 'Debit (-)', name: 'Outgoing Money Transfer (Wire Debit)', erp: 'Originated Fedwire / SWIFT wire disbursement' },
+        { code: '555', rec: '16', cat: 'DEBIT', sign: 'Debit (-)', name: 'Deposited Item Returned (NSF)', erp: 'Reopen customer AR invoice for bounced check / ACH return' },
+        { code: '575', rec: '16', cat: 'DEBIT', sign: 'Debit (-)', name: 'Zero Balance Account (ZBA) Debit', erp: 'End-of-day cash concentration sweep to parent treasury account' },
+        { code: '698', rec: '16', cat: 'DEBIT', sign: 'Debit (-)', name: 'Miscellaneous Service Charge / Bank Fee', erp: 'Auto-post to GL Bank Analysis & Wire Fees' }
+      ];
+
+      var activeCat = 'ALL';
+      var tbody = document.getElementById('baiTableBody');
+      var searchEl = document.getElementById('baiSearch');
+
+      function renderTable() {
+        var q = (searchEl.value || '').trim().toLowerCase();
+        var rows = CODES.filter(function (item) {
+          if (activeCat !== 'ALL' && item.cat !== activeCat) return false;
+          if (!q) return true;
+          return (
+            item.code.toLowerCase().indexOf(q) !== -1 ||
+            item.name.toLowerCase().indexOf(q) !== -1 ||
+            item.erp.toLowerCase().indexOf(q) !== -1 ||
+            item.sign.toLowerCase().indexOf(q) !== -1
+          );
+        });
+
+        tbody.innerHTML = rows.map(function (r) {
+          var badgeColor = r.cat === 'CREDIT' ? '#34d399' : (r.cat === 'DEBIT' ? '#f87171' : '#38bdf8');
+          return '<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">' +
+            '<td style="padding:10px;font-family:monospace;font-weight:700;color:#f8fafc;">' + r.code + '</td>' +
+            '<td style="padding:10px;font-family:monospace;">' + r.rec + '</td>' +
+            '<td style="padding:10px;font-weight:600;color:' + badgeColor + ';">' + r.sign + '</td>' +
+            '<td style="padding:10px;"><strong>' + r.name + '</strong></td>' +
+            '<td style="padding:10px;color:var(--muted);">' + r.erp + '</td>' +
+            '</tr>';
+        }).join('');
+      }
+
+      document.querySelectorAll('.bai-filter').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          activeCat = btn.getAttribute('data-cat') || 'ALL';
+          renderTable();
+        });
+      });
+      searchEl.addEventListener('input', renderTable);
+      renderTable();
+
+      function decodeSnippet() {
+        var raw = (document.getElementById('rawBaiSnippet').value || '').trim();
+        var ccy = document.getElementById('baiCurrency').value || 'USD';
+        var decimals = ccy === 'JPY' ? 0 : (ccy === 'KWD' ? 3 : 2);
+        var lines = raw.split(/\r?\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+        if (!lines.length || !lines[0].startsWith('16,')) {
+          document.getElementById('decodedBaiOut').textContent = JSON.stringify({
+            error: 'First line must start with Record 16 (e.g., 16,165,4825000,0,BANKREF,CUSTREF/)'
+          }, null, 2);
+          return;
+        }
+        var firstClean = lines[0].replace(/\/$/, '');
+        var parts = firstClean.split(',');
+        var typeCode = parts[1] || '';
+        var rawAmt = parseInt(parts[2] || '0', 10) || 0;
+        var fundsType = parts[3] || '0';
+        var idxShift = 0;
+        if (fundsType === 'S') idxShift = 3;
+        else if (fundsType === 'V') idxShift = 2;
+        var bankRef = parts[4 + idxShift] || '';
+        var custRef = parts[5 + idxShift] || '';
+        var inlineText = parts.slice(6 + idxShift).join(',');
+        var continuations = lines.slice(1)
+          .filter(function (l) { return l.startsWith('88,'); })
+          .map(function (l) { return l.slice(3).replace(/\/$/, ''); });
+        var fullRemittance = [inlineText].concat(continuations).filter(Boolean).join(' | ');
+
+        var meta = CODES.find(function (c) { return c.code === typeCode; });
+        var codeNum = parseInt(typeCode, 10) || 0;
+        var isDebit = codeNum >= 400 && codeNum <= 699;
+        var divisor = Math.pow(10, decimals);
+        var signedAmount = (isDebit ? -1 : 1) * (rawAmt / divisor);
+
+        document.getElementById('decodedBaiOut').textContent = JSON.stringify({
+          recordType: '16 (Transaction Detail)',
+          typeCode: typeCode,
+          typeDescription: meta ? meta.name : (isDebit ? 'BAI2 Debit Transaction' : 'BAI2 Credit Transaction'),
+          direction: isDebit ? 'DEBIT' : 'CREDIT',
+          currency: ccy,
+          signedAmount: Number(signedAmount.toFixed(decimals)),
+          fundsAvailabilityCode: fundsType,
+          bankReference: bankRef || null,
+          customerReference: custRef || null,
+          continuationLinesStitched: continuations.length,
+          remittanceDetail: fullRemittance || null
+        }, null, 2);
+      }
+
+      document.getElementById('rawBaiSnippet').addEventListener('input', decodeSnippet);
+      document.getElementById('baiCurrency').addEventListener('change', decodeSnippet);
+      decodeSnippet();
+    })();
+  </script>
+</body>
+</html>
