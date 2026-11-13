@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Peppol EndpointID Scheme Lookup, EU VAT Validator &amp; XRechnung Leitweg-ID Checksum Checker | FinOps Studio</title>
+  <meta name="description" content="Instant free browser validator for Peppol BIS 3.0 EndpointID EAS scheme codes (0208 BE KBO, 0009 FR SIRET, 0192 NO EHF, 0106 NL KvK, 9930 DE VAT), EU VAT formats, and German XRechnung Leitweg-ID MOD 97-10 checksums." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-eu-vat-peppol-endpoint-id-validator.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Peppol EndpointID Scheme, EU VAT & XRechnung Leitweg-ID Validator",
+        "url": "https://geornaden.github.io/finops-studio/free-eu-vat-peppol-endpoint-id-validator.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "description": "Free client-side Peppol EAS EndpointID scheme lookup, EU/EEA/Swiss VAT format & Belgian MOD-97 validator, and German XRechnung Leitweg-ID ISO 7064 MOD 97-10 check-digit calculator."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What Peppol EndpointID schemeID code is required for Belgium, Germany, France, Netherlands, and Norway?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Belgium uses 0208 (10-digit KBO/BCE enterprise number) or 9925 (BE VAT); Germany uses 0204 (Leitweg-ID for B2G) or 9930 (DE VAT); France uses 0009 (14-digit SIRET) or 0225 / 9957 (FR TVA); Netherlands uses 0106 (8-digit KvK) or 0190 (OIN); Norway EHF 3.0 uses 0192 (9-digit Organisasjonsnummer)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How is the German XRechnung Leitweg-ID 2-digit check number calculated?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A German Leitweg-ID consists of Coarse Routing (Grobadressierung), optional Fine Routing (Feinadressierung), and a 2-digit ISO/IEC 7064 MOD 97-10 check digit computed over the concatenated digits (with letters mapped A=10..Z=35) plus '00' such that (number * 100 + checkDigit) mod 97 === 1."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-bank-file-format-detector-line-length-auditor.html">Bank File Auditor</a>
+        <a href="./free-iban-routing-number-pain002-validator.html">IBAN &amp; ABA Checker</a>
+        <a href="./eu-einvoice-xml-generator.html">Peppol / XRechnung API</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Generate E-Invoice XML ($0.05) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127466;&#127482; Free Pre-Flight Peppol BIS 3.0 &amp; XRechnung 3.0 Validator</span>
+      <h1>Instant Peppol <code>EndpointID</code> Scheme Finder, EU VAT Checker &amp; German <code>Leitweg-ID</code> Calculator</h1>
+      <p>Resolve the exact 4-digit Peppol Electronic Address Scheme (<code>EAS @schemeID</code>), validate European &amp; Swiss VAT numbers (including Belgian KBO <code>MOD-97</code>), and verify German B2G XRechnung <code>Leitweg-ID</code> check digits—then generate full EN 16931 UBL &amp; Factur-X CII XML via our $0/month Cloud API.</p>
+    </section>
+
+    <div class="grid-2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <!-- Tool 1: EU VAT & Peppol EAS Resolver -->
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">1. EU / EEA / CH VAT &rarr; Peppol <code>EndpointID</code> Builder</h3>
+        <p style="color:var(--muted);font-size:0.86rem;">Enter any European, Nordic, UK, or Swiss VAT / Enterprise ID (e.g. <code>BE0403170701</code>, <code>DE123456789</code>, <code>NO987654321MVA</code>, <code>FR40303265045</code>, <code>NL820646660B01</code>):</p>
+        <input id="inp-vat" type="text" value="BE0403170701" style="width:100%;padding:10px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);margin-bottom:10px;font-family:monospace;" />
+        <button type="button" class="btn btn-primary" style="width:100%;" onclick="checkVatAndPeppol()">Validate VAT &amp; Build Peppol Tag</button>
+        <div id="out-vat" style="margin-top:14px;font-size:0.88rem;"></div>
+      </div>
+
+      <!-- Tool 2: German XRechnung Leitweg-ID Checksum -->
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">2. German XRechnung <code>Leitweg-ID</code> (BT-10) Checksum</h3>
+        <p style="color:var(--muted);font-size:0.86rem;">Verify or compute the 2-digit ISO 7064 <code>MOD 97-10</code> check digit for German federal/municipal XRechnung 3.0 routing IDs:</p>
+        <input id="inp-leitweg" type="text" value="04011000-1234512345-06" style="width:100%;padding:10px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);margin-bottom:10px;font-family:monospace;" />
+        <button type="button" class="btn btn-primary" style="width:100%;" onclick="checkLeitweg()">Verify Leitweg-ID Check Digit</button>
+        <div id="out-leitweg" style="margin-top:14px;font-size:0.88rem;"></div>
+      </div>
+    </div>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">2026 European Peppol Electronic Address Scheme (<code>EAS @schemeID</code>) Reference</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:9px;">Country</th>
+              <th style="padding:9px;">Primary Peppol EAS</th>
+              <th style="padding:9px;">VAT Fallback EAS</th>
+              <th style="padding:9px;">Identifier Format</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:9px;"><strong>&#127463;&#127466; Belgium</strong></td>
+              <td style="padding:9px;"><code>0208</code> (KBO / BCE)</td>
+              <td style="padding:9px;"><code>9925</code> (BE VAT)</td>
+              <td style="padding:9px;font-family:monospace;">10 digits (0xxxxxxxxx, MOD-97)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:9px;"><strong>&#127465;&#127466; Germany</strong></td>
+              <td style="padding:9px;"><code>0204</code> (Leitweg-ID) / <code>9930</code></td>
+              <td style="padding:9px;"><code>9930</code> (DE USt-IdNr.)</td>
+              <td style="padding:9px;font-family:monospace;">DE + 9 digits / Leitweg-ID</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:9px;"><strong>&#127467;&#127479; France</strong></td>
+              <td style="padding:9px;"><code>0009</code> (SIRET) / <code>0225</code> (SIREN)</td>
+              <td style="padding:9px;"><code>9957</code> (FR TVA)</td>
+              <td style="padding:9px;font-family:monospace;">14-digit SIRET / FRxx999999999</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:9px;"><strong>&#127475;&#127473; Netherlands</strong></td>
+              <td style="padding:9px;"><code>0106</code> (KvK) / <code>0190</code> (OIN)</td>
+              <td style="padding:9px;"><code>9944</code> (NL BTW)</td>
+              <td style="padding:9px;font-family:monospace;">8-digit KvK / NL999999999B01</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:9px;"><strong>&#127475;&#127476; Norway (EHF 3.0)</strong></td>
+              <td style="padding:9px;"><code>0192</code> (Org.nr)</td>
+              <td style="padding:9px;"><code>9908</code></td>
+              <td style="padding:9px;font-family:monospace;">9-digit Organisasjonsnummer</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+              <td style="padding:9px;"><strong>&#127480;&#127466; Sweden / &#127465;&#127472; Denmark / &#127467;&#127470; Finland</strong></td>
+              <td style="padding:9px;"><code>0007</code> (SE) / <code>0184</code> (DK CVR) / <code>0216</code> (FI OVT)</td>
+              <td style="padding:9px;"><code>9955</code> / <code>9904</code> / <code>9937</code></td>
+              <td style="padding:9px;font-family:monospace;">10-digit SE / 8-digit DK / 0037+FI</td>
+            </tr>
+            <tr>
+              <td style="padding:9px;"><strong>&#127470;&#127481; Italy / &#127466;&#127480; Spain / &#127477;&#127473; Poland / &#127462;&#127481; Austria / &#127464;&#127469; CH</strong></td>
+              <td style="padding:9px;"><code>0211</code> (IT) / <code>9920</code> (ES) / <code>9945</code> (PL) / <code>9914</code> (AT) / <code>0183</code> (CH)</td>
+              <td style="padding:9px;">Same / National VAT</td>
+              <td style="padding:9px;font-family:monospace;">IT11 / ES9 / PL10 / ATU8 / CHE9</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="sandbox-card" style="margin-top:24px;text-align:center;">
+      <h3 style="margin-top:0;">Generate Full Peppol BIS 3.0, EHF 3.0, XRechnung 3.0 &amp; Factur-X XML for $0.05/Invoice</h3>
+      <p style="color:var(--muted);max-width:700px;margin:8px auto 16px;">Zero monthly subscription fees. Automate unlimited B2B &amp; B2G European e-invoices via REST API, Python, Node.js, Make.com, n8n, or Claude/Cursor MCP.</p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Launch EU E-Invoice XML API ($0.05/inv) &rarr;</a>
+        <a class="btn btn-outline" href="./eu-einvoice-xml-generator.html">View UBL &amp; Factur-X Specs</a>
+        <a class="btn btn-outline" href="./index.html">Explore All 12 FinOps Studio Tools</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio</a> &bull;
+      <a href="./free-bank-file-format-detector-line-length-auditor.html">Bank File Format Auditor</a> &bull;
+      <a href="./free-iban-routing-number-pain002-validator.html">IBAN &amp; ABA Checker</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+
+  <script>
+    const VAT_RULES = {
+      BE: { re: /^BE([01]\d{9})$/, primaryEas: '0208', vatEas: '9925', extractPrimary: m => m[1], name: 'Belgium (KBO/BCE)' },
+      DE: { re: /^DE(\d{9})$/, primaryEas: '9930', vatEas: '9930', extractPrimary: m => 'DE' + m[1], name: 'Germany (USt-IdNr.)' },
+      FR: { re: /^FR([A-Z0-9]{2})(\d{9})$/, primaryEas: '0225', vatEas: '9957', extractPrimary: m => m[2], name: 'France (SIREN / TVA)' },
+      NL: { re: /^NL(\d{9}B\d{2})$/, primaryEas: '9944', vatEas: '9944', extractPrimary: m => 'NL' + m[1], name: 'Netherlands (BTW)' },
+      NO: { re: /^NO(\d{9})(?:MVA)?$/, primaryEas: '0192', vatEas: '9908', extractPrimary: m => m[1], name: 'Norway (EHF 3.0 Org.nr)' },
+      DK: { re: /^DK(\d{8})$/, primaryEas: '0184', vatEas: '9904', extractPrimary: m => m[1], name: 'Denmark (NemHandel CVR)' },
+      SE: { re: /^SE(\d{10})01$/, primaryEas: '0007', vatEas: '9955', extractPrimary: m => m[1], name: 'Sweden (Org.nr)' },
+      FI: { re: /^FI(\d{8})$/, primaryEas: '0216', vatEas: '9937', extractPrimary: m => '0037' + m[1], name: 'Finland (OVT-tunnus)' },
+      AT: { re: /^ATU(\d{8})$/, primaryEas: '9914', vatEas: '9914', extractPrimary: m => 'ATU' + m[1], name: 'Austria (UID)' },
+      IT: { re: /^IT(\d{11})$/, primaryEas: '0211', vatEas: '0211', extractPrimary: m => 'IT' + m[1], name: 'Italy (Partita IVA)' },
+      ES: { re: /^ES([A-Z0-9]\d{7}[A-Z0-9])$/, primaryEas: '9920', vatEas: '9920', extractPrimary: m => 'ES' + m[1], name: 'Spain (NIF/CIF)' },
+      PL: { re: /^PL(\d{10})$/, primaryEas: '9945', vatEas: '9945', extractPrimary: m => 'PL' + m[1], name: 'Poland (NIP / KSeF)' },
+      CH: { re: /^CHE(\d{9})(?:MWST|TVA|IVA)?$/, primaryEas: '0183', vatEas: '9927', extractPrimary: m => 'CHE' + m[1], name: 'Switzerland (UID)' }
+    };
+
+    function checkVatAndPeppol() {
+      const clean = document.getElementById('inp-vat').value.replace(/[\s.-]/g, '').toUpperCase();
+      const el = document.getElementById('out-vat');
+      const prefix = clean.startsWith('CHE') ? 'CH' : clean.slice(0, 2);
+      const rule = VAT_RULES[prefix];
+      if (!rule) {
+        el.innerHTML = '<span style="color:#f87171;">&#10007; Unrecognized country prefix (try BE, DE, FR, NL, NO, DK, SE, FI, ATU, IT, ES, PL, or CHE).</span>';
+        return;
+      }
+      const m = clean.match(rule.re);
+      if (!m) {
+        el.innerHTML = `<span style="color:#f87171;">&#10007; Invalid ${rule.name} structure or digit count.</span>`;
+        return;
+      }
+      if (prefix === 'BE') {
+        const kbo = m[1];
+        const first8 = Number(kbo.slice(0, 8));
+        const check2 = Number(kbo.slice(8, 10));
+        if (97 - (first8 % 97) !== check2) {
+          el.innerHTML = '<span style="color:#f87171;">&#10007; Failed Belgian KBO MOD-97 check digit!</span>';
+          return;
+        }
+      }
+      const endpointVal = rule.extractPrimary(m);
+      el.innerHTML = `
+        <div style="color:#34d399;font-weight:700;margin-bottom:6px;">&#10003; Valid ${rule.name} Identifier!</div>
+        <div style="color:var(--muted);margin-bottom:6px;">Recommended Peppol Endpoint Tag:</div>
+        <pre class="code-box" style="min-height:auto;padding:10px;font-size:0.8rem;">&lt;cbc:EndpointID schemeID="${rule.primaryEas}"&gt;${endpointVal}&lt;/cbc:EndpointID&gt;</pre>
+        <div style="margin-top:8px;"><a href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Generate Full Peppol / XRechnung XML &rarr;</a></div>`;
+    }
+
+    function mod97(numStr) {
+      let rem = 0;
+      for (const ch of numStr) rem = (rem * 10 + Number(ch)) % 97;
+      return rem;
+    }
+
+    function checkLeitweg() {
+      const raw = document.getElementById('inp-leitweg').value.trim().toUpperCase();
+      const el = document.getElementById('out-leitweg');
+      const parts = raw.split('-');
+      if (parts.length < 2 || !/^\d{2}$/.test(parts[parts.length - 1])) {
+        el.innerHTML = '<span style="color:#f87171;">&#10007; Format must be Grobadressierung-[Feinadressierung]-Pr&uuml;fziffer (ending in a 2-digit check code, e.g. 04011000-1234512345-06).</span>';
+        return;
+      }
+      const givenCheck = parts[parts.length - 1];
+      const body = parts.slice(0, -1).join('');
+      if (!/^[A-Z0-9]+$/.test(body)) {
+        el.innerHTML = '<span style="color:#f87171;">&#10007; Routing segments can only contain A-Z and 0-9.</span>';
+        return;
+      }
+      const expanded = body.replace(/[A-Z]/g, c => String(c.charCodeAt(0) - 55));
+      const expectedNum = 98 - mod97(expanded + '00');
+      const expectedCheck = String(expectedNum).padStart(2, '0');
+      if (givenCheck === expectedCheck) {
+        el.innerHTML = `<div style="color:#34d399;font-weight:700;">&#10003; Valid German XRechnung Leitweg-ID (MOD 97-10 Check Digit <code>${givenCheck}</code> Verified)!</div>
+        <div style="margin-top:8px;"><a href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Generate XRechnung 3.0 XML with BT-10="${raw}" &rarr;</a></div>`;
+      } else {
+        const fixed = parts.slice(0, -1).join('-') + '-' + expectedCheck;
+        el.innerHTML = `<div style="color:#f87171;font-weight:700;">&#10007; Invalid Check Digit (given <code>${givenCheck}</code>, expected <code>${expectedCheck}</code>)!</div>
+        <div style="color:var(--muted);margin-top:4px;">Corrected Leitweg-ID: <code>${fixed}</code></div>`;
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      checkVatAndPeppol();
+      checkLeitweg();
+    });
+  </script>
+</body>
+</html>
