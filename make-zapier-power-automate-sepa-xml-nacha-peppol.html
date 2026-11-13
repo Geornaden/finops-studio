@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automate SEPA XML, US NACHA ACH, Peppol E-Invoices &amp; DATEV CSV in Make.com, Zapier &amp; Power Automate | FinOps Studio</title>
+  <meta name="description" content="No-code step-by-step blueprints for Make.com, Zapier, and Microsoft Power Automate: convert Google Sheets, Airtable, Stripe, or Excel Online rows into SEPA XML (pain.001), US NACHA (.ach), Peppol XML, DATEV CSV, and Positive Pay files for $0/month." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/make-zapier-power-automate-sepa-xml-nacha-peppol.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "How to Generate SEPA XML, NACHA ACH, Peppol E-Invoices & DATEV CSV in Make.com, Zapier & Power Automate",
+        "url": "https://geornaden.github.io/finops-studio/make-zapier-power-automate-sepa-xml-nacha-peppol.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can Make.com or Zapier generate bank-compliant SEPA XML (pain.001) or US NACHA ACH (.ach) files without custom coding?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Use either the native Apify integration ('Run an Actor' module in Make.com or Zapier) or a single HTTP POST step calling FinOps Studio's synchronous endpoint. It validates IBAN MOD-97 or US ABA MOD-10 checksums, formats strict 94-character NACHA or ISO 20022 XML structures, and returns ready-to-upload bank files."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can Microsoft Power Automate convert Excel Online or SharePoint tables into Positive Pay, BACS, or SEPA bank files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Add a Power Automate 'List rows present in a table' action followed by an 'HTTP POST' action to FinOps Studio on Apify Cloud, then save the returned XML, .ACH, .ABA, or 80-char Positive Pay file directly to SharePoint, OneDrive, or bank SFTP."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need a monthly FinOps Studio subscription on top of Make, Zapier, or n8n?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. FinOps Studio charges $0/month subscription — you pay only pennies per processed payment row ($0.02/row, or $0.05/e-invoice) via Apify Pay-Per-Event, and new Apify accounts include $5 in free monthly platform credit."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./quickbooks-xero-csv-to-sepa-nacha-positive-pay.html">QuickBooks &amp; Xero</a>
+        <a href="./netsuite-odoo-sap-sepa-xml-bai2-nacha-automation.html">NetSuite &amp; Odoo</a>
+        <a href="./index.html">All 10 Banking APIs</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs ($0/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">Zero-Code Finance Automation &bull; Make.com &bull; Zapier &bull; Microsoft Power Automate &bull; n8n</span>
+      <h1>Turn Google Sheets, Airtable, Stripe &amp; Excel Online into Bank-Ready Files — Without Writing Code</h1>
+      <p>Connect <strong>Make.com</strong>, <strong>Zapier</strong>, or <strong>Microsoft Power Automate</strong> directly to our 10 deterministic banking APIs via Apify's built-in app or a 1-step HTTP POST webhook. Generate <strong>SEPA XML (`pain.001`)</strong>, <strong>US NACHA (`.ach`)</strong>, <strong>EU Peppol / XRechnung XML</strong>, <strong>German DATEV CSV</strong>, <strong>UK BACS</strong>, <strong>Canadian CPA-005</strong>, and <strong>US Positive Pay</strong> files for <strong>$0/month</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="./workflows/make-sheets-airtable-to-sepa-nacha-datev.json" download>Download Make.com Blueprint (.json) &darr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Get Free Apify API Token &rarr;</a>
+        <a class="btn btn-outline" href="./workflows/n8n-sheets-to-sepa-xml.json" download>Download n8n Workflow (.json)</a>
+      </div>
+    </section>
+
+    <div class="grid-3">
+      <!-- Make.com -->
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">1. Make.com (2-Minute Setup)</h3>
+        <ol style="color:var(--muted);font-size:0.89rem;padding-left:18px;line-height:1.6;">
+          <li>Trigger: <strong>Google Sheets / Airtable / Stripe / Xero</strong> (Watch Approved Bills).</li>
+          <li>Add <strong>Array Aggregator</strong> to bundle rows into <code>transactions</code>.</li>
+          <li>Add native <strong>Apify &rarr; Run an Actor</strong> (or <strong>HTTP &rarr; Make a request</strong>) pointing to <code>finops_studio/sepa-xml-generator</code> or <code>nacha-ach-file-generator</code>.</li>
+          <li>Save output to <strong>Google Drive, Dropbox, Slack, or SFTP</strong>!</li>
+        </ol>
+        <a href="./workflows/make-sheets-airtable-to-sepa-nacha-datev.json" download>Download Make Blueprint JSON &rarr;</a>
+      </div>
+
+      <!-- Zapier -->
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">2. Zapier (Native Apify App or Webhook)</h3>
+        <ol style="color:var(--muted);font-size:0.89rem;padding-left:18px;line-height:1.6;">
+          <li>Trigger: <strong>Stripe Invoice Paid</strong>, <strong>QuickBooks Bill</strong>, or <strong>Airtable View</strong>.</li>
+          <li>Action: Search <strong>Apify</strong> in Zapier (&ldquo;Run Actor Synchronously&rdquo;) or choose <strong>Webhooks by Zapier &rarr; Custom Request (POST)</strong>.</li>
+          <li>Paste the synchronous URL below — Zapier receives the validated XML / CSV / `.ach` string in under 3 seconds.</li>
+        </ol>
+        <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">View Actors for Zapier &rarr;</a>
+      </div>
+
+      <!-- Microsoft Power Automate -->
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">3. Microsoft Power Automate (Office 365)</h3>
+        <ol style="color:var(--muted);font-size:0.89rem;padding-left:18px;line-height:1.6;">
+          <li>Trigger: <strong>Excel Online (Business)</strong> or <strong>Dynamics 365 Business Central</strong> approval.</li>
+          <li>Action: Add <strong>HTTP &rarr; POST</strong> to our Apify `run-sync-get-dataset-items` URL.</li>
+          <li>Action: <strong>SharePoint / OneDrive &rarr; Create File</strong> so Treasury simply uploads the verified Positive Pay, NACHA, or SEPA batch.</li>
+        </ol>
+        <a href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">See US Positive Pay Guide &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Copy-Paste Synchronous Endpoints Table -->
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Copy-Paste Synchronous Webhook URLs for Make, Zapier &amp; Power Automate</h2>
+      <p style="color:var(--muted);font-size:0.9rem;">Every FinOps Studio tool supports single-call synchronous execution (`POST` JSON in &rarr; validated bank file JSON out in 1–3 seconds). Just append <code>?token=YOUR_APIFY_TOKEN</code>:</p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);color:var(--muted);text-align:left;">
+              <th style="padding:10px;">Automation Use Case</th>
+              <th style="padding:10px;">HTTP POST Endpoint (Synchronous Dataset Return)</th>
+              <th style="padding:10px;">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px;"><strong>🇪🇺 SEPA XML (`pain.001` / `pain.008`)</strong></td>
+              <td style="padding:10px;"><code>https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items</code></td>
+              <td style="padding:10px;">$0.02 / tx</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px;"><strong>🇪🇺 Peppol / XRechnung / Factur-X XML</strong></td>
+              <td style="padding:10px;"><code>https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items</code></td>
+              <td style="padding:10px;">$0.05 / inv</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px;"><strong>🇺🇸 US NACHA Payroll &amp; Vendor `.ACH`</strong></td>
+              <td style="padding:10px;"><code>https://api.apify.com/v2/acts/finops_studio~nacha-ach-file-generator/run-sync-get-dataset-items</code></td>
+              <td style="padding:10px;">$0.02 / row</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px;"><strong>🏦 Corporate `BAI2` Statement &rarr; JSON/CSV</strong></td>
+              <td style="padding:10px;"><code>https://api.apify.com/v2/acts/finops_studio~bai2-bank-statement-parser/run-sync-get-dataset-items</code></td>
+              <td style="padding:10px;">$0.02 / tx</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px;"><strong>🇩🇪 German `DATEV Buchungsstapel` CSV</strong></td>
+              <td style="padding:10px;"><code>https://api.apify.com/v2/acts/finops_studio~datev-buchungsstapel-generator/run-sync-get-dataset-items</code></td>
+              <td style="padding:10px;">$0.02 / row</td>
+            </tr>
+            <tr>
+              <td style="padding:10px;"><strong>🇺🇸🇬🇧🇦🇺🇨🇦 Positive Pay / BACS / ABA / CPA-005</strong></td>
+              <td style="padding:10px;"><code>finops_studio~us-positive-pay-check-generator</code> &bull; <code>uk-bacs-standard18-generator</code> &bull; <code>aba-cemtex-file-generator</code> &bull; <code>canada-cpa005-eft-generator</code></td>
+              <td style="padding:10px;">$0.02 / row</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Copy-Paste Zapier / Power Automate JSON Body Example -->
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Copy-Paste HTTP JSON Body Template (Zapier Webhooks &amp; Power Automate)</h2>
+      <p style="color:var(--muted);font-size:0.9rem;">Paste this into the <strong>Data / Body</strong> field of your HTTP POST step (example: converting Stripe or Shopify payouts into a German accountant's <strong>DATEV Buchungsstapel EXTF v700 CSV</strong>):</p>
+      <pre class="code-box">{
+  "consultantNumber": "12345",
+  "clientNumber": "67890",
+  "chartOfAccounts": "SKR04",
+  "fiscalYearStart": "20260101",
+  "bookings": [
+    {
+      "amount": 1190.00,
+      "debitCredit": "S",
+      "account": "1800",
+      "contraAccount": "4400",
+      "taxKey": "9",
+      "bookingDate": "1211",
+      "documentNumber": "STRIPE-INV-9042",
+      "postingText": "SaaS Jahresabo Kunde GmbH"
+    }
+  ]
+}</pre>
+      <div class="hero-actions" style="margin-top:14px;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/datev-buchungsstapel-generator" target="_blank" rel="noopener">Open DATEV Generator on Apify &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank" rel="noopener">Open US NACHA Generator &rarr;</a>
+        <a class="btn btn-outline" href="./index.html">Explore All 10 Live Sandboxes</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio (All 10 Banking APIs)</a> &bull;
+      <a href="./quickbooks-xero-csv-to-sepa-nacha-positive-pay.html">QuickBooks &amp; Xero</a> &bull;
+      <a href="./netsuite-odoo-sap-sepa-xml-bai2-nacha-automation.html">NetSuite &amp; Odoo</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,83 @@
+{
+  "name": "FinOps Studio — Google Sheets / Airtable Approved Bills to SEPA XML or US NACHA ACH (Make.com Blueprint)",
+  "flow": [
+    {
+      "id": 1,
+      "module": "google-sheets:filterRows",
+      "version": 2,
+      "parameters": {},
+      "mapper": {
+        "spreadsheetId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetId": "ApprovedPayouts",
+        "filter": "Status = Ready"
+      },
+      "metadata": {
+        "designer": { "x": 0, "y": 0 }
+      }
+    },
+    {
+      "id": 2,
+      "module": "builtin:BasicAggregator",
+      "version": 1,
+      "parameters": { "feeder": 1 },
+      "mapper": {
+        "endToEndId": "{{1.InvoiceNumber}}",
+        "creditorName": "{{1.VendorName}}",
+        "creditorIban": "{{1.VendorIBAN}}",
+        "amount": "{{parseNumber(1.AmountEUR)}}",
+        "currency": "EUR",
+        "remittanceInfo": "{{1.RemittanceNote}}",
+        "creditorAddress": {
+          "townName": "{{1.VendorCity}}",
+          "postCode": "{{1.VendorPostCode}}",
+          "country": "{{1.VendorCountryISO2}}"
+        }
+      },
+      "metadata": {
+        "designer": { "x": 300, "y": 0 }
+      }
+    },
+    {
+      "id": 3,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": { "handleErrors": true },
+      "mapper": {
+        "url": "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items?token=YOUR_APIFY_API_TOKEN",
+        "method": "post",
+        "headers": [
+          { "name": "Content-Type", "value": "application/json" }
+        ],
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "data": "{\"messageType\":\"pain.001.001.09\",\"initiatingPartyName\":\"Your Company Ltd\",\"debtorName\":\"Your Company Ltd\",\"debtorIban\":\"DE89370400440532013000\",\"debtorBic\":\"COBADEFFXXX\",\"debtorAddress\":{\"townName\":\"Berlin\",\"postCode\":\"10115\",\"country\":\"DE\"},\"executionDate\":\"{{formatDate(now; \"YYYY-MM-DD\")}}\",\"transactions\":{{toString(2.array)}}}",
+        "parseResponse": true
+      },
+      "metadata": {
+        "designer": { "x": 600, "y": 0 }
+      }
+    },
+    {
+      "id": 4,
+      "module": "google-drive:uploadAFile",
+      "version": 2,
+      "parameters": {},
+      "mapper": {
+        "fileName": "sepa-payout-{{formatDate(now; \"YYYY-MM-DD\")}}.xml",
+        "data": "{{3.data[].xmlContent}}"
+      },
+      "metadata": {
+        "designer": { "x": 900, "y": 0 }
+      }
+    }
+  ],
+  "metadata": {
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "sequential": false
+    }
+  }
+}

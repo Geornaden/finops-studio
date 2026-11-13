@@ -120,4 +120,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.88</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/make-zapier-power-automate-sepa-xml-nacha-peppol.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
 </urlset>
