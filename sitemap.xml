@@ -135,4 +135,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.91</priority>
+  </url>
 </urlset>

@@ -46,6 +46,9 @@
 11. [Spanish AEB Norma 43 (`Cuaderno 43`) Corporate Bank Statement Parser to JSON & CSV](https://apify.com/finops_studio/spanish-aeb-norma43-parser): Parses 80-character Spanish `.n43` / `.c43` corporate bank statements (CaixaBank, BBVA, Santander, Sabadell, Bankinter) into JSON & UTF-8 CSV with automatic Bank of Spain MOD-11 `DC` + ISO 13616 `ES` IBAN calculation and cent-exact Record `33` balance audit. ($0/mo + $0.02/tx)
     - Docs: https://geornaden.github.io/finops-studio/spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html
 
+12. [ISO 20022 `pacs.008.001.08` Fedwire Funds & SWIFT CBPR+ Wire Transfer XML Generator](https://apify.com/finops_studio/iso20022-pacs008-fedwire-generator): Generates compliant `head.001.001.02` + `pacs.008.001.08` wire transfer XML for Federal Reserve Fedwire Funds (`FDW` / `USABA`), SWIFT CBPR+, UK CHAPS, and Eurosystem TARGET2 with UUID v4 `UETR`, ABA MOD-10 verification, and 2026 structured addresses. ($0/mo + $0.02/wire)
+    - Docs: https://geornaden.github.io/finops-studio/fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html
+
 ## Free Browser Checkers & Ready-to-Import n8n Templates
 - [Free Instant IBAN MOD-97, US ABA Routing & ISO 20022 Error Code Checker](https://geornaden.github.io/finops-studio/free-iban-routing-number-pain002-validator.html)
 - [Free Instant UK Sort Code (BACS), Australian BSB (.ABA) & Canadian CPA-005 EFT Routing Converter](https://geornaden.github.io/finops-studio/free-uk-sort-code-au-bsb-canada-transit-checker.html)

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISO 20022 pacs.008.001.08 Fedwire Funds &amp; SWIFT CBPR+ Wire Transfer XML Generator API | FinOps Studio</title>
+  <meta name="description" content="Generate compliant ISO 20022 pacs.008.001.08 + head.001.001.02 AppHdr wire transfer XML for Federal Reserve Fedwire Funds (FDW / USABA), SWIFT CBPR+, UK CHAPS, and TARGET2 with UETR v4 &amp; 2026 structured addresses." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "ISO 20022 pacs.008 Fedwire & SWIFT CBPR+ Wire XML Generator API",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Cloud API, Web, n8n, Make, Python, MCP",
+        "url": "https://geornaden.github.io/finops-studio/fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.02",
+          "priceCurrency": "USD",
+          "description": "$0/month subscription — $0.02 per ISO 20022 pacs.008 wire instruction"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What ISO 20022 XML message replaced legacy Fedwire FAIM {1500}/{3600} wire tags?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The Federal Reserve Fedwire Funds Service replaced legacy proprietary FAIM tag-value wire messages with ISO 20022 pacs.008.001.08 (FIToFICustomerCreditTransferV08) wrapped in a head.001.001.02 Business Application Header (AppHdr) using clearing code FDW, 9-digit USABA member IDs, mandatory UUID v4 UETRs, and structured postal addresses."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does SWIFT CBPR+ require a UETR and structured debtor/creditor postal addresses in 2026?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Both SWIFT CBPR+ (swift.cbprplus.02) and Fedwire ISO 20022 mandate a lowercase RFC 4122 version-4 UUID in <UETR> for end-to-end GPI tracking, plus structured <PstlAdr> elements (<TwnNm> and <Ctry> at minimum). FinOps Studio generates and validates both automatically."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./nacha-ach-file-generator.html">US NACHA ACH</a>
+        <a href="./bai2-bank-statement-parser.html">BAI2 Treasury Parser</a>
+        <a href="./index.html">All 12 Banking APIs</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs ($0/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">🇺🇸🌐 Enterprise Treasury &amp; RTGS &bull; Fedwire ISO 20022 &bull; SWIFT CBPR+ &bull; CHAPS &bull; TARGET2</span>
+      <h1>ISO 20022 `pacs.008.001.08` Fedwire Funds &amp; SWIFT CBPR+ Wire XML Generator — $0/Month</h1>
+      <p>Convert JSON treasury approvals, escrow closings, or cross-border FX instructions into deterministic <strong>`head.001.001.02` + `pacs.008.001.08`</strong> XML messages for <strong>Federal Reserve Fedwire Funds (`FDW` / `USABA`)</strong>, <strong>SWIFT CBPR+</strong>, <strong>UK CHAPS</strong>, and <strong>Eurosystem TARGET2</strong> — with RFC 4122 v4 <strong>`UETR`</strong> generation, 9-digit ABA `MOD-10` verification, and 2026 structured addresses for <strong>$0.02/wire</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open on Apify Store ($0/mo) &rarr;</a>
+        <a class="btn btn-outline" href="./free-iban-routing-number-pain002-validator.html">Free US ABA &amp; IBAN Checksum Tool</a>
+        <a class="btn btn-outline" href="./iso20022-pain002-decoder.html">ISO 20022 Rejection Decoder</a>
+      </div>
+    </section>
+
+    <div class="grid-3">
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">1. Fedwire (`FDW`) + `AppHdr` Ready</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Wraps `pacs.008.001.08` inside the `head.001.001.02` Business Application Header (`fedwirefunds.01` or `swift.cbprplus.02`) and validates 9-digit Federal Reserve `USABA` routing prefixes &amp; `3-7-1` MOD-10 checksums.</p>
+      </div>
+
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">2. Mandatory `UETR` UUID v4 Tracking</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Auto-generates cryptographic lowercase RFC 4122 v4 `<UETR>` identifiers (or validates caller-supplied UETRs) for end-to-end SWIFT GPI and Federal Reserve wire tracking.</p>
+      </div>
+
+      <div class="sandbox-card">
+        <h3 style="margin-top:0;">3. 2026 Structured `<PstlAdr>` Compliance</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Eliminates CBPR+ &amp; Fedwire structured-address rejections by enforcing `<StrtNm>`, `<BldgNb>`, `<PstCd>`, `<TwnNm>`, `<CtrySubDvsn>`, and `<Ctry>` tags alongside integer-cent `<TtlIntrBkSttlmAmt>` totals.</p>
+      </div>
+    </div>
+
+    <!-- Sample Output Preview -->
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Sample Generated Fedwire ISO 20022 `BusMsg` (`head.001.001.02` + `pacs.008.001.08`)</h2>
+      <pre class="code-box">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;BusMsg xmlns="urn:iso:std:iso:20022:tech:xsd:busmsg"&gt;
+  &lt;AppHdr xmlns="urn:iso:std:iso:20022:tech:xsd:head.001.001.02"&gt;
+    &lt;Fr&gt;&lt;FIId&gt;&lt;FinInstnId&gt;&lt;BICFI&gt;CHASUS33XXX&lt;/BICFI&gt;&lt;/FinInstnId&gt;&lt;/FIId&gt;&lt;/Fr&gt;
+    &lt;To&gt;&lt;FIId&gt;&lt;FinInstnId&gt;&lt;BICFI&gt;BOFAUS3NXXX&lt;/BICFI&gt;&lt;/FinInstnId&gt;&lt;/FIId&gt;&lt;/To&gt;
+    &lt;BizMsgIdr&gt;MSG-20261113-9A4F1C&lt;/BizMsgIdr&gt;
+    &lt;MsgDefIdr&gt;pacs.008.001.08&lt;/MsgDefIdr&gt;
+    &lt;BizSvc&gt;fedwirefunds.01&lt;/BizSvc&gt;
+    &lt;CreDt&gt;2026-11-13T14:00:00Z&lt;/CreDt&gt;
+  &lt;/AppHdr&gt;
+  &lt;Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08"&gt;
+    &lt;FIToFICstmrCdtTrf&gt;
+      &lt;GrpHdr&gt;
+        &lt;MsgId&gt;MSG-20261113-9A4F1C&lt;/MsgId&gt;
+        &lt;NbOfTxs&gt;1&lt;/NbOfTxs&gt;
+        &lt;TtlIntrBkSttlmAmt Ccy="USD"&gt;125000.00&lt;/TtlIntrBkSttlmAmt&gt;
+        &lt;IntrBkSttlmDt&gt;2026-11-13&lt;/IntrBkSttlmDt&gt;
+        &lt;SttlmInf&gt;&lt;SttlmMtd&gt;CLRG&lt;/SttlmMtd&gt;&lt;ClrSys&gt;&lt;Cd&gt;FDW&lt;/Cd&gt;&lt;/ClrSys&gt;&lt;/SttlmInf&gt;
+      &lt;/GrpHdr&gt;
+      &lt;CdtTrfTxInf&gt;
+        &lt;PmtId&gt;
+          &lt;InstrId&gt;FEDWIRE-20261113-001&lt;/InstrId&gt;
+          &lt;EndToEndId&gt;ESCROW-CLOSING-8841&lt;/EndToEndId&gt;
+          &lt;UETR&gt;f47ac10b-58cc-4372-a567-0e02b2c3d479&lt;/UETR&gt;
+        &lt;/PmtId&gt;
+        &lt;IntrBkSttlmAmt Ccy="USD"&gt;125000.00&lt;/IntrBkSttlmAmt&gt;
+        &lt;ChrgBr&gt;SLEV&lt;/ChrgBr&gt;
+        ...
+      &lt;/CdtTrfTxInf&gt;
+    &lt;/FIToFICstmrCdtTrf&gt;
+  &lt;/Document&gt;
+&lt;/BusMsg&gt;</pre>
+      <div class="hero-actions" style="margin-top:14px;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Run Cloud Wire Generator &rarr;</a>
+        <a class="btn btn-outline" href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node.js SDK Cookbook</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio (All 12 Banking APIs)</a> &bull;
+      <a href="./nacha-ach-file-generator.html">US NACHA ACH</a> &bull;
+      <a href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">US Check Positive Pay</a> &bull;
+      <a href="./sepa-xml-generator.html">EU SEPA pain.001</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>
