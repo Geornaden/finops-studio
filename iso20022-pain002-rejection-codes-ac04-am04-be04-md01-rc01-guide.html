@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISO 20022 pain.002 Rejection Codes Guide (AC01, AC04, AM04, BE04, FF01, MD01, RC01, RR04) &amp; XML Parser API | FinOps Studio</title>
+  <meta name="description" content="Complete searchable reference of ISO 20022 pain.002.001.03 &amp; pain.002.001.10 bank payment rejection codes (AC01, AC04, AM04, BE04, FF01, MD01, RC01, RR04) with plain-English fixes and $0/mo XML-to-JSON/CSV API." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/iso20022-pain002-rejection-codes-ac04-am04-be04-md01-rc01-guide.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "ISO 20022 pain.002 Bank Payment Status & Rejection Reason Codes Encyclopedia (AC04, AM04, BE04, FF01, MD01, RC01)",
+        "url": "https://geornaden.github.io/finops-studio/iso20022-pain002-rejection-codes-ac04-am04-be04-md01-rc01-guide.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Searchable reference and automated REST/MCP XML decoder guide for ISO 20022 CustomerPaymentStatusReport (pain.002.001.03 and pain.002.001.10) status and error codes."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What do ACTC, ACCP, ACSP, ACSC, PART, and RJCT mean in an ISO 20022 pain.002 file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "ACTC means Accepted Technical Validation (syntax passed, not yet settled); ACCP means Accepted Customer Profile; ACSP means Accepted Settlement in Process; ACSC means Accepted Settlement Completed; PART means Partially Accepted (at least one item in the batch failed with RJCT—inspect TxInfAndSts); and RJCT means Rejected."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How can I automatically parse daily bank SFTP pain.002 XML files into JSON, CSV, or Slack alerts?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "POST raw pain.002 XML to FinOps Studio's ISO 20022 pain.002 Status & Rejection Decoder API (finops_studio/iso20022-pain002-status-parser) with onlyRejectedOrExceptions: true to extract every failed EndToEndId, amount, debtor/creditor name, ISO reason code, and plain-English remediation action for $0/month ($0.02/tx)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-bank-file-format-detector-line-length-auditor.html">Free XML Auditor</a>
+        <a href="./iso20022-pain002-decoder.html">pain.002 Specs</a>
+        <a href="./sepa-xml-generator.html">SEPA pain.001 API</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/iso20022-pain002-status-parser" target="_blank" rel="noopener">Launch Live pain.002 API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127760; Live on Apify Store &amp; Official MCP Registry &bull; ISO 20022 CGI-MP / SEPA / CBPR+</span>
+      <h1>ISO 20022 <code>pain.002</code> Bank Rejection Codes Reference &amp; Automated XML Decoder API</h1>
+      <p>Instantly look up any 4-letter ISO 20022 <code>ExternalStatusReason1Code</code> (<code>BE04</code>, <code>AC04</code>, <code>AM04</code>, <code>FF01</code>, <code>MD01</code>, <code>RC01</code>, <code>RR04</code>) from J.P. Morgan Access, HSBCnet, CitiDirect, Deutsche Bank, BNP Paribas, ING, or UBS—and automate daily <code>pain.002.001.03</code> / <code>pain.002.001.10</code> XML parsing into JSON, CSV, and Slack alerts.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/iso20022-pain002-status-parser" target="_blank" rel="noopener">Decode Full pain.002 XML via API ($0.02/tx) &rarr;</a>
+        <a class="btn btn-outline" href="./workflows/n8n-bank-sftp-bai2-and-pain002-alerts.json" download>Download Free n8n Slack Alert Workflow</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+        <h2 style="margin:0;">Searchable ISO 20022 Rejection &amp; Status Code Directory</h2>
+        <input id="code-filter" type="text" oninput="filterCodes()" placeholder="Filter by code or keyword (e.g. BE04, IBAN, mandate, closed)..." style="min-width:290px;padding:9px 12px;border-radius:8px;background:#070b14;color:#f8fafc;border:1px solid var(--border);" />
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:9px;">ISO Code</th>
+              <th style="padding:9px;">Official ISO Meaning</th>
+              <th style="padding:9px;">Root Cause &amp; Exact Plain-English Fix</th>
+              <th style="padding:9px;">Owner</th>
+            </tr>
+          </thead>
+          <tbody id="codes-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">REST API / Python / n8n / Make.com</span>
+        <h3 style="margin:10px 0 8px;">Parse Bank SFTP <code>pain.002</code> XML to JSON &amp; CSV</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Set <code>onlyRejectedOrExceptions: true</code> to surface failed <code>RJCT</code> / <code>PART</code> items immediately for AP &amp; Payroll teams:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:210px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~iso20022-pain002-status-parser/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "onlyRejectedOrExceptions": true,
+    "includeInlineCsv": true,
+    "xmlContent": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.002.001.10\"&gt;...&lt;/Document&gt;"
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Official MCP Registry (#1 Ranked)</span>
+        <h3 style="margin:10px 0 8px;">Connect <code>pain.002</code> Decoder to Claude &amp; Cursor</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Published in <code>registry.modelcontextprotocol.io</code> as <code>io.github.Geornaden/iso20022-pain002-rejection-decoder-mcp</code>:</p>
+        <pre class="code-box" style="font-size:0.78rem;min-height:210px;">{
+  "mcpServers": {
+    "iso20022-pain002-decoder": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/iso20022-pain002-status-parser",
+      "headers": {
+        "Authorization": "Bearer YOUR_APIFY_API_TOKEN"
+      }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+
+    <div class="sandbox-card" style="margin-top:24px;text-align:center;">
+      <h3 style="margin-top:0;">Prevent <code>BE04</code>, <code>AC01</code> &amp; <code>FF01</code> Rejections Before Uploading to Your Bank</h3>
+      <p style="color:var(--muted);max-width:700px;margin:8px auto 16px;">Pair automated <code>pain.002</code> status decoding with our 2026 structured-address <strong>SEPA XML Generator</strong> and <strong>Fedwire / SWIFT <code>pacs.008</code> Wire Generator</strong> ($0/month subscription).</p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/iso20022-pain002-status-parser" target="_blank" rel="noopener">Open pain.002 Decoder on Apify &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generate Clean 2026 SEPA XML &rarr;</a>
+        <a class="btn btn-outline" href="./fix-sepa-pain001-2026-structured-address-rejection.html">2026 BE04 Structured Address Guide</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio (All 12 Banking APIs)</a> &bull;
+      <a href="./iso20022-pain002-decoder.html">pain.002 Spec</a> &bull;
+      <a href="./free-iban-routing-number-pain002-validator.html">Free IBAN &amp; Error Checker</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+
+  <script>
+    const REASON_ROWS = [
+      ['AC01', 'Incorrect Account Number', 'IBAN failed ISO 13616 MOD-97 check digit or domestic account number length is wrong. Validate IBAN before sending.', 'AP / Vendor Master'],
+      ['AC04', 'Closed Account Number', 'Recipient bank account has been closed at the receiving bank. Request updated bank details from payee.', 'Payee / Vendor'],
+      ['AC06', 'Blocked Account', 'Target account is frozen or blocked for credits or SEPA Direct Debits.', 'Payee Bank'],
+      ['AG01', 'Transaction Forbidden', 'Account type (e.g. savings account) does not permit Direct Debits or this payment instrument.', 'Payee / Treasury'],
+      ['AG02', 'Invalid Bank Operation Code', 'Unsupported LocalInstrument / ServiceLevel code (e.g. B2B vs CORE or SEPA vs URGP).', 'ERP / Payload'],
+      ['AM02', 'Not Allowed Amount', 'Single transaction exceeds bank portal per-item limit or scheme ceiling.', 'Treasury Approval'],
+      ['AM04', 'Insufficient Funds', 'Originating corporate account (or SDD debtor account) lacks available balance.', 'Treasury / Cash'],
+      ['AM05', 'Duplication', 'Duplicate MessageId, PaymentInformationId, or EndToEndId detected within bank lookback window.', 'ERP / Batch ID'],
+      ['AM09', 'Wrong Amount', 'GrpHdr/PmtInf <CtrlSum> does not equal the exact penny sum of child transactions.', 'XML Generator'],
+      ['BE01', 'Inconsistent With End Customer', 'Verification of Payee (VoP) mismatch between Creditor Name (<Nm>) and legal account holder.', 'AP / Vendor Master'],
+      ['BE04', 'Missing Creditor Address', '2026 EPC SEPA / SIX SPS violation: unstructured <AdrLine> used without structured <TwnNm> and <Ctry>.', 'XML Schema Upgrade'],
+      ['CNOR', 'Creditor Bank Not Registered', 'Beneficiary BIC is not reachable in SEPA / TARGET2 / SCT Inst directory.', 'Payee Bank BIC'],
+      ['CURR', 'Incorrect Currency', 'Currency code invalid for scheme (e.g. non-EUR inside strict SEPA scheme).', 'ERP / Payload'],
+      ['DT01', 'Invalid Date', 'RequestedExecutionDate (<ReqdExctnDt>) is in the past, on a TARGET2 holiday, or malformed.', 'Batch Scheduler'],
+      ['FF01', 'Invalid File Format', 'XML XSD validation failed, unescaped &/< characters in RemittanceInfo, or wrong pain.001 namespace.', 'XML Generator'],
+      ['MD01', 'No Mandate', 'SEPA Direct Debit (pain.008) missing valid MandateId (<MndtId>) or DateOfSignature (<DtOfSgntr>).', 'AR / Mandate Ops'],
+      ['MD06', 'Refund Request By End Customer', 'Authorized SEPA Direct Debit no-questions-asked refund claimed within 8 weeks.', 'AR / Collections'],
+      ['MD07', 'End Customer Deceased', 'Account holder is deceased; cease automated debit retries immediately.', 'AR / Customer Ops'],
+      ['MS02', 'Not Specified Reason Customer Generated', 'Debtor explicitly instructed their bank to refuse the Direct Debit.', 'AR / Customer Ops'],
+      ['MS03', 'Not Specified Reason Agent Generated', 'Bank internal compliance, AML, or technical filter declined transaction.', 'Bank Relationship Mgr'],
+      ['RC01', 'Bank Identifier Incorrect', 'Malformed 8/11-char SWIFT BIC or invalid national clearing routing code.', 'Vendor Master'],
+      ['RR01', 'Missing Debtor Account Or Identification', 'Regulatory Originator identification or address incomplete under Wire Transfer Regulation.', 'Company Profile'],
+      ['RR04', 'Regulatory Reason', 'Sanctions screening, embargoes, or cross-border central bank reporting hold.', 'Compliance / Legal'],
+      ['TM01', 'Invalid Cut Off Time', 'File arrived after bank same-day clearing cut-off window.', 'Treasury Ops']
+    ];
+
+    function renderCodes(q) {
+      const term = (q || '').trim().toLowerCase();
+      const filtered = REASON_ROWS.filter(r => !term || r.some(col => col.toLowerCase().includes(term)));
+      document.getElementById('codes-tbody').innerHTML = filtered.map(r => `
+        <tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+          <td style="padding:9px;font-family:monospace;font-weight:700;color:#38bdf8;">${r[0]}</td>
+          <td style="padding:9px;font-weight:600;">${r[1]}</td>
+          <td style="padding:9px;color:var(--muted);">${r[2]}</td>
+          <td style="padding:9px;"><span class="tag">${r[3]}</span></td>
+        </tr>`).join('');
+    }
+
+    function filterCodes() {
+      renderCodes(document.getElementById('code-filter').value);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => renderCodes(''));
+  </script>
+</body>
+</html>

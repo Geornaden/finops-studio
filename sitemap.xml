@@ -180,4 +180,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/iso20022-pain002-rejection-codes-ac04-am04-be04-md01-rc01-guide.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.91</priority>
+  </url>
 </urlset>
