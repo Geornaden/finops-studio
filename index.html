@@ -20,7 +20,8 @@
       </a>
       <nav class="nav-links">
         <a href="./index.html#sandbox">Sample Sandbox</a>
-        <a href="./index.html#suite">10 Banking APIs</a>
+        <a href="./index.html#suite">12 Banking APIs</a>
+        <a href="./free-bank-file-format-detector-line-length-auditor.html">Free File Auditor</a>
         <a href="./free-iban-routing-number-pain002-validator.html">Free IBAN/ABA Checker</a>
         <a href="./index.html#workflows">n8n &amp; MCP</a>
         <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Apify Store &rarr;</a>
@@ -33,9 +34,9 @@
       <h1>Turn Spreadsheets &amp; Webhooks Into Compliant Bank &amp; Tax Files</h1>
       <p>Inspect verified Before &amp; After bank samples right in your browser—then automate unlimited bulk payroll, AP, treasury reconciliation, check fraud Positive Pay, and e-invoicing via REST API, <strong>n8n</strong>, <strong>Make.com</strong>, or <strong>Official MCP Servers</strong>.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Explore All 10 Cloud APIs on Apify &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Explore Cloud APIs on Apify &rarr;</a>
+        <a class="btn btn-outline" href="./free-bank-file-format-detector-line-length-auditor.html">Free Bank File Format &amp; Width Auditor</a>
         <a class="btn btn-outline" href="./free-iban-routing-number-pain002-validator.html">Free IBAN / ABA / Error Checker</a>
-        <a class="btn btn-outline" href="#workflows">Free n8n Templates</a>
       </div>
     </section>
     
@@ -75,7 +76,7 @@
     initSandbox('sepa');
   </script>
     
-  <h2 id="suite" class="section-title">Complete 10-Tool Financial File Automation Suite</h2>
+  <h2 id="suite" class="section-title">Complete 12-Tool Financial File Automation Suite</h2>
   <p class="section-sub">Zero-LLM deterministic engines with exact integer-cent math—built for CFOs, accounting firms, ERP integrators, and AI agents.</p>
   <div class="grid-3">
     
@@ -198,6 +199,30 @@
           <a class="btn btn-outline" href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">Specs &amp; Guide</a>
         </div>
       </article>
+
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">80-Char Norma 43</span><span class="tag">CaixaBank / BBVA / Santander</span><span class="tag">ES IBAN MOD-11/97</span><span class="tag">Record 33 Audit</span></div>
+          <h3><a href="./spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html" style="color:var(--text)">Spanish AEB Norma 43 (Cuaderno 43) Corporate Bank Statement Parser</a></h3>
+          <p>Parse 80-character `.n43` / `.c43` statements from CaixaBank, BBVA, Santander, Sabadell, and Bankinter into JSON &amp; CSV with Bank of Spain MOD-11 `DC` + `ES` IBAN derivation and cent-exact balance audits.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="./spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html">Specs &amp; Guide &rarr;</a>
+          <a class="btn btn-outline" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+        </div>
+      </article>
+
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">pacs.008.001.08</span><span class="tag">Fedwire Funds / SWIFT CBPR+</span><span class="tag">UUID v4 UETR</span><span class="tag">AppHdr head.001</span></div>
+          <h3><a href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html" style="color:var(--text)">ISO 20022 Fedwire Funds &amp; SWIFT CBPR+ Wire Transfer Generator (pacs.008)</a></h3>
+          <p>Generate compliant `head.001.001.02` + `pacs.008.001.08` high-value wire XML for Federal Reserve Fedwire, SWIFT CBPR+, UK CHAPS, and TARGET2 with UUID v4 `UETR` and ABA MOD-10 verification.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html">Specs &amp; Guide &rarr;</a>
+          <a class="btn btn-outline" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+        </div>
+      </article>
     
   </div>
     
@@ -261,7 +286,7 @@
           <a href="./llms.txt">llms.txt</a>
         </div>
       </div>
-      <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;font-size:0.82rem;"><strong>Regional &amp; ERP Guides:</strong> <a href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html">🇺🇸🌐 Fedwire &amp; SWIFT pacs.008</a> &bull; <a href="./spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html">🇪🇸 Norma 43 (Cuaderno 43) Parser</a> &bull; <a href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node.js Cookbook</a> &bull; <a href="./make-zapier-power-automate-sepa-xml-nacha-peppol.html">Make.com / Zapier / Power Automate</a> &bull; <a href="./netsuite-odoo-sap-sepa-xml-bai2-nacha-automation.html">NetSuite / Odoo / SAP</a> &bull; <a href="./quickbooks-xero-csv-to-sepa-nacha-positive-pay.html">QuickBooks &amp; Xero CSV</a> &bull; <a href="./free-iban-routing-number-pain002-validator.html">Free IBAN/ABA Checker</a> &bull; <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Free UK Sort Code / AU BSB / CA CPA-005 Checker</a> &bull; <a href="./convert-excel-csv-to-nacha-ach-chase-bofa-wells-fargo.html">🇺🇸 US Chase/BofA ACH</a> &bull; <a href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">🇺🇸 US Check Positive Pay</a> &bull; <a href="./uk-bacs-standard-18-file-generator.html">🇬🇧 UK BACS Standard 18</a> &bull; <a href="./canada-cpa-005-eft-file-generator.html">🇨🇦 Canada CPA-005 EFT</a> &bull; <a href="./fix-sepa-pain001-2026-structured-address-rejection.html">🇪🇺 2026 SEPA BE04 Fix</a> &bull; <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">🇩🇪 DATEV &amp; XRechnung</a> &bull; <a href="./facturation-electronique-2026-peppol-factur-x-xml.html">🇫🇷 Factur-X &amp; Peppol 2026</a> &bull; <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">🇳🇱🇧🇪 SEPA &amp; Peppol NL/BE</a> &bull; <a href="./facturacion-electronica-2026-peppol-sepa-xml-espana.html">🇪🇸 SEPA Cuaderno 34 &amp; Peppol ES</a> &bull; <a href="./fatturazione-elettronica-peppol-bonifico-sepa-xml-italia.html">🇮🇹 Bonifici SEPA &amp; Peppol Italia</a> &bull; <a href="./ksef-2026-peppol-efaktura-przelewy-sepa-xml-polska.html">🇵🇱 KSeF / Peppol &amp; SEPA Polska</a></div>
+      <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;font-size:0.82rem;"><strong>Regional &amp; ERP Guides:</strong> <a href="./free-bank-file-format-detector-line-length-auditor.html">&#128269; Free Bank File Format &amp; Width Auditor</a> &bull; <a href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html">🇺🇸🌐 Fedwire &amp; SWIFT pacs.008</a> &bull; <a href="./spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html">🇪🇸 Norma 43 (Cuaderno 43) Parser</a> &bull; <a href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node.js Cookbook</a> &bull; <a href="./make-zapier-power-automate-sepa-xml-nacha-peppol.html">Make.com / Zapier / Power Automate</a> &bull; <a href="./netsuite-odoo-sap-sepa-xml-bai2-nacha-automation.html">NetSuite / Odoo / SAP</a> &bull; <a href="./quickbooks-xero-csv-to-sepa-nacha-positive-pay.html">QuickBooks &amp; Xero CSV</a> &bull; <a href="./free-iban-routing-number-pain002-validator.html">Free IBAN/ABA Checker</a> &bull; <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Free UK Sort Code / AU BSB / CA CPA-005 Checker</a> &bull; <a href="./convert-excel-csv-to-nacha-ach-chase-bofa-wells-fargo.html">🇺🇸 US Chase/BofA ACH</a> &bull; <a href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">🇺🇸 US Check Positive Pay</a> &bull; <a href="./uk-bacs-standard-18-file-generator.html">🇬🇧 UK BACS Standard 18</a> &bull; <a href="./canada-cpa-005-eft-file-generator.html">🇨🇦 Canada CPA-005 EFT</a> &bull; <a href="./fix-sepa-pain001-2026-structured-address-rejection.html">🇪🇺 2026 SEPA BE04 Fix</a> &bull; <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">🇩🇪 DATEV &amp; XRechnung</a> &bull; <a href="./facturation-electronique-2026-peppol-factur-x-xml.html">🇫🇷 Factur-X &amp; Peppol 2026</a> &bull; <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">🇳🇱🇧🇪 SEPA &amp; Peppol NL/BE</a> &bull; <a href="./facturacion-electronica-2026-peppol-sepa-xml-espana.html">🇪🇸 SEPA Cuaderno 34 &amp; Peppol ES</a> &bull; <a href="./fatturazione-elettronica-peppol-bonifico-sepa-xml-italia.html">🇮🇹 Bonifici SEPA &amp; Peppol Italia</a> &bull; <a href="./ksef-2026-peppol-efaktura-przelewy-sepa-xml-polska.html">🇵🇱 KSeF / Peppol &amp; SEPA Polska</a></div>
       <p style="margin-top:12px;color:#64748b;">Disclaimer: FinOps Studio tools are technical file-formatting, parsing, and mathematical checksum utilities provided "as-is", not legal, tax, or financial advice. Always verify totals and recipient identifiers inside your banking portal before authorizing transfers.</p>
     </div>
   </footer>

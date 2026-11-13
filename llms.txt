@@ -1,9 +1,9 @@
-# FinOps Studio — 10 Deterministic Banking, Payroll, Treasury & E-Invoicing Cloud APIs & Official MCP Suite
+# FinOps Studio — 12 Deterministic Banking, Payroll, Treasury & E-Invoicing Cloud APIs & Official MCP Suite
 
 > Zero-hallucination financial file generators, checksum validators, and parsers for CFOs, accounting firms, ERP integrators, n8n/Make workflows, and AI agents (Model Context Protocol / MCP). Hosted on Apify Cloud (`https://apify.com/finops_studio`) with interactive previews and documentation at `https://geornaden.github.io/finops-studio/`.
 
 ## Official Model Context Protocol (MCP) Registry Identifiers (`registry.modelcontextprotocol.io`)
-- Full 10-Tool Suite: `io.github.Geornaden/finops-studio` (`https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser,finops_studio/uk-bacs-standard18-generator,finops_studio/canada-cpa005-eft-generator,finops_studio/us-positive-pay-check-generator`)
+- Unified Suite: `io.github.Geornaden/finops-studio` (`https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator`)
 - Dedicated Single-Tool MCP Servers:
   - `io.github.Geornaden/sepa-xml-pain001-iban-mcp`
   - `io.github.Geornaden/peppol-xrechnung-facturx-einvoice-mcp`
@@ -11,7 +11,7 @@
   - `io.github.Geornaden/bai2-bank-statement-parser-mcp`
   - `io.github.Geornaden/datev-buchungsstapel-extf-mcp`
 
-## 10 Production API & Store Tools (`finops_studio`)
+## 12 Production API & Store Tools (`finops_studio`)
 
 1. [SEPA XML Generator & IBAN Validator (`pain.001` & `pain.008`)](https://apify.com/finops_studio/sepa-xml-generator): Converts CSV/Excel/JSON into 2026 EPC structured-address ISO 20022 `pain.001.001.09` / `pain.001.001.03` Credit Transfers and `pain.008.001.08` / `pain.008.001.02` Direct Debits with ISO 13616 MOD-97 IBAN verification and integer-cent `CtrlSum`. ($0/mo + $0.02/tx)
    - Docs: https://geornaden.github.io/finops-studio/sepa-xml-generator.html
@@ -50,6 +50,7 @@
     - Docs: https://geornaden.github.io/finops-studio/fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html
 
 ## Free Browser Checkers & Ready-to-Import n8n Templates
+- [Free Instant Bank File Format Detector & Fixed-Width / XML Line-Length Auditor](https://geornaden.github.io/finops-studio/free-bank-file-format-detector-line-length-auditor.html)
 - [Free Instant IBAN MOD-97, US ABA Routing & ISO 20022 Error Code Checker](https://geornaden.github.io/finops-studio/free-iban-routing-number-pain002-validator.html)
 - [Free Instant UK Sort Code (BACS), Australian BSB (.ABA) & Canadian CPA-005 EFT Routing Converter](https://geornaden.github.io/finops-studio/free-uk-sort-code-au-bsb-canada-transit-checker.html)
 - [QuickBooks & Xero Checks/Bills to Positive Pay + US NACHA ACH](https://geornaden.github.io/finops-studio/workflows/n8n-quickbooks-checks-to-positive-pay-and-ach.json)

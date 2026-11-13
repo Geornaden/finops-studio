@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Bank File Format Detector &amp; Line-Length Auditor (NACHA 94, ABA 120, BACS 100, CPA-005 1464, Norma 43, BAI2, SEPA XML) | FinOps Studio</title>
+  <meta name="description" content="Instant 100% browser-local bank file format detector and fixed-width / XML pre-flight auditor. Diagnose NACHA 94-char trailing-space bugs, ABA 120-char, BACS 100-char, CPA-005 1464-byte, Norma 43 80-char, BAI2, DATEV EXTF, SEPA pain.001 BE04, and pacs.008 wire errors." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-bank-file-format-detector-line-length-auditor.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Free Bank File Format Detector & Line-Length Auditor",
+        "url": "https://geornaden.github.io/finops-studio/free-bank-file-format-detector-line-length-auditor.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "Client-side pre-flight bank file format identifier and fixed-width character length auditor for US NACHA ACH (94 chars), Australian ABA (120 chars), UK BACS Standard 18 (100 chars), Canadian CPA-005 (1464 chars), Spanish AEB Norma 43 (80 chars), BAI2, DATEV EXTF, ISO 20022 SEPA pain.001/pain.002/pacs.008, and Peppol EN 16931 XML."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why did my bank reject my NACHA ACH, ABA, or BACS file for invalid record length?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Spreadsheet exports and text editors frequently strip trailing right-padded spaces or omit NACHA block-10 '9999...' padding rows. NACHA requires exact 94-character records in multiples of 10 lines, Australian ABA requires exact 120-character records, UK BACS Standard 18 requires 100-character records, Spanish Norma 43 requires 80-character records, and Canadian CPA-005 requires 1464-character logical records."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this bank file format auditor upload my financial data to a server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The pre-flight format detector and line-length auditor runs 100% locally in your browser via client-side JavaScript. Your pasted lines never leave your device."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-iban-routing-number-pain002-validator.html">IBAN &amp; ABA Checker</a>
+        <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Sort Code / BSB / CPA-005</a>
+        <a href="./index.html">All 12 Banking APIs</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs ($0/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#128274; 100% Browser-Local Diagnostic &bull; Zero Data Leaves Your Device</span>
+      <h1>Instant Bank File Format Detector &amp; Fixed-Width / XML Line-Length Auditor</h1>
+      <p>Paste the first few lines (or full sample) of any corporate payment, payroll, treasury statement, or e-invoice file. Instantly identify the banking standard, catch stripped trailing spaces, missing block-10 padding, CRLF issues, or 2026 ISO 20022 <code>BE04</code> unstructured address rejections before uploading to your bank portal.</p>
+    </section>
+
+    <div class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <strong>Load Instant Diagnostic Sample:</strong>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.82rem;" onclick="loadSample('nacha_broken')">Broken US NACHA (.ach)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.82rem;" onclick="loadSample('sepa_be04')">SEPA pain.001 (BE04 Bug)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.82rem;" onclick="loadSample('norma43_ok')">Spanish Norma 43 (.n43)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.82rem;" onclick="loadSample('aba_ok')">Australian ABA (120-char)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.82rem;" onclick="loadSample('bai2_ok')">Corporate BAI2 Statement</button>
+        </div>
+      </div>
+
+      <textarea id="file-input" rows="9" spellcheck="false" style="width:100%;padding:14px;border-radius:10px;background:#070b14;color:#e2e8f0;border:1px solid var(--border);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:0.84rem;line-height:1.45;" placeholder="Paste NACHA (.ach), Australian ABA (.aba), UK BACS Standard 18, Canadian CPA-005, Spanish Norma 43 (.n43), BAI2, DATEV EXTF CSV, SEPA pain.001/pain.002 XML, Fedwire pacs.008 XML, or Peppol UBL/CII XML here..."></textarea>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;align-items:center;">
+        <button type="button" class="btn btn-primary" onclick="auditBankFile()">Detect Format &amp; Audit File Structure</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('file-input').value='';document.getElementById('audit-result').innerHTML='';">Clear</button>
+        <span style="font-size:0.82rem;color:var(--muted);">Supports 12 global corporate banking &amp; e-invoicing standards</span>
+      </div>
+
+      <div id="audit-result" style="margin-top:20px;"></div>
+    </div>
+
+    <section style="margin-top:32px;">
+      <h2>Quick Reference: Mandatory Corporate Bank File Widths &amp; Rules</h2>
+      <div class="grid-3" style="margin-top:16px;">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">US / AU / UK / CA</span><span class="tag">Fixed-Width ASCII</span></div>
+            <h3>Payroll &amp; Direct Entry Widths</h3>
+            <p><strong>US NACHA ACH:</strong> Exact <code>94</code> chars/line + <code>9999...</code> block-of-10 padding.<br/>
+               <strong>Australia ABA:</strong> Exact <code>120</code> chars/line (<code>0</code>/<code>1</code>/<code>7</code> records).<br/>
+               <strong>UK BACS Std 18:</strong> Exact <code>100</code> chars/line.<br/>
+               <strong>Canada CPA-005:</strong> Exact <code>1464</code> chars/line (<code>A</code>/<code>C</code>/<code>Z</code>).</p>
+          </div>
+          <div class="card-actions">
+            <a class="btn btn-outline" href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank" rel="noopener">US NACHA API &rarr;</a>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Treasury Statements</span><span class="tag">80-Char &amp; Slash-Delimited</span></div>
+            <h3>BAI2, Norma 43 &amp; Positive Pay</h3>
+            <p><strong>Corporate BAI2:</strong> Records <code>01</code>/<code>02</code>/<code>03</code>/<code>16</code>/<code>88</code>/<code>49</code>/<code>98</code>/<code>99</code> ending in <code>/</code>.<br/>
+               <strong>Spanish Norma 43:</strong> Exact <code>80</code> chars/line (<code>11</code>/<code>22</code>/<code>23</code>/<code>33</code>/<code>88</code>).<br/>
+               <strong>US Positive Pay:</strong> Exact <code>80</code>-char fixed or bank CSV profile.</p>
+          </div>
+          <div class="card-actions">
+            <a class="btn btn-outline" href="https://apify.com/finops_studio/bai2-bank-statement-parser" target="_blank" rel="noopener">BAI2 Parser API &rarr;</a>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">ISO 20022 &amp; EN 16931</span><span class="tag">2026 Mandates</span></div>
+            <h3>SEPA, Fedwire pacs.008 &amp; Peppol</h3>
+            <p><strong>SEPA pain.001.001.09:</strong> Structured <code>&lt;TwnNm&gt;</code> + <code>&lt;Ctry&gt;</code> mandatory (prevents <code>BE04</code>).<br/>
+               <strong>Fedwire / SWIFT pacs.008:</strong> Requires <code>AppHdr</code> + UUID v4 <code>&lt;UETR&gt;</code>.<br/>
+               <strong>EU E-Invoice:</strong> Peppol BIS 3.0 UBL &amp; Factur-X CII.</p>
+          </div>
+          <div class="card-actions">
+            <a class="btn btn-outline" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">SEPA XML API &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sandbox-card" style="margin-top:28px;text-align:center;">
+      <h3 style="margin-top:0;">Stop Debugging Padding Spaces &amp; Schema Rejections by Hand</h3>
+      <p style="color:var(--muted);max-width:720px;margin:8px auto 16px;">FinOps Studio generates deterministic, checksum-verified banking, treasury, and e-invoicing files via REST API, Python/Node.js, n8n, Make.com, and Claude/Cursor MCP for <strong>$0/month subscription</strong> and pennies per row.</p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Browse Live Cloud APIs on Apify Store &rarr;</a>
+        <a class="btn btn-outline" href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node.js SDK Cookbook</a>
+        <a class="btn btn-outline" href="./make-zapier-power-automate-sepa-xml-nacha-peppol.html">n8n / Make / Zapier Blueprints</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio Home</a> &bull;
+      <a href="./free-iban-routing-number-pain002-validator.html">IBAN &amp; ABA Checksum Validator</a> &bull;
+      <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">UK Sort Code / AU BSB / CA CPA-005 Checker</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+
+  <script>
+    const SAMPLES = {
+      nacha_broken: [
+        '101 021000021 1234567892611130830A094101JPMORGAN CHASE         ACME CORP PAYROLL',
+        '5200ACME CORP PAYROLL                   1234567890PPDPAYROLL   261113261114   1021000020000001',
+        '622021000021123456789012345  0000250000EMP001         JANE DOE                0021000020000001',
+        '820000000100021000020000000000000000002500001234567890                         021000020000001',
+        '9000001000001000000010002100002000000000000000000250000'
+      ].join('\n'),
+      sepa_be04: `<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09">
+  <CstmrCdtTrfInitn>
+    <GrpHdr><MsgId>BATCH-2026-99</MsgId><NbOfTxs>1</NbOfTxs><CtrlSum>1450.00</CtrlSum></GrpHdr>
+    <PmtInf>
+      <CdtTrfTxInf>
+        <Cdtr><Nm>Mueller Maschinenbau GmbH</Nm><PstlAdr><AdrLine>Friedrichstrasse 100, 10117 Berlin</AdrLine></PstlAdr></Cdtr>
+      </CdtTrfTxInf>
+    </PmtInf>
+  </CstmrCdtTrfInitn>
+</Document>`,
+      norma43_ok: [
+        '112100041826110126110120200051332000000001000009783ACME IBERIA SLU          ' + '    ',
+        '22    21000418261101261101010012000000002500000000000001FACTURA CLIENTE 8841    ',
+        '3321000418020005133200000000000000000000000100000000250000200000001250000978    ',
+        '88999999999999999999000002                                                      '
+      ].map(s => s.slice(0, 80).padEnd(80, ' ')).join('\r\n'),
+      aba_ok: [
+        '0                 01CBA       ACME PTY LTD              301500PAYROLL     131126                                        ',
+        '1062-000 12345678 530000250000JANE SMITH                      PAYROLL NOV       062-000 87654321ACME PTY LTD    00000000',
+        '7999-999            000025000000002500000000000000                        000001                                        '
+      ].map(s => s.slice(0, 120).padEnd(120, ' ')).join('\r\n'),
+      bai2_ok: [
+        '01,021000021,ACMECORP,261113,0600,001,80,,2/',
+        '02,ACMECORP,021000021,1,261113,0600,USD,2/',
+        '03,000012345678,USD,015,5000000,,,/',
+        '16,195,125000,Z,FEDWIRE8812,CUSTOMER WIRE INBOUND/',
+        '49,5125000,3/',
+        '98,5125000,1,5/',
+        '99,5125000,1,7/'
+      ].join('\r\n')
+    };
+
+    function loadSample(key) {
+      document.getElementById('file-input').value = SAMPLES[key] || '';
+      auditBankFile();
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    function auditBankFile() {
+      const raw = document.getElementById('file-input').value;
+      const out = document.getElementById('audit-result');
+      if (!raw || !raw.trim()) {
+        out.innerHTML = '<div style="color:#f87171;">Please paste a bank file header/sample or click one of the sample buttons above.</div>';
+        return;
+      }
+
+      const hasCrlf = raw.includes('\r\n');
+      const rawLines = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      while (rawLines.length > 1 && rawLines[rawLines.length - 1] === '') rawLines.pop();
+      const trimmed = raw.trim();
+
+      let format = 'Unrecognized / Custom Delimited File';
+      let expectedWidth = null;
+      let ctaLabel = 'Explore All 12 FinOps Studio Banking APIs';
+      let ctaUrl = './index.html';
+      let storeUrl = 'https://apify.com/finops_studio';
+      const checks = [];
+
+      // 1. XML formats
+      if (trimmed.startsWith('<')) {
+        if (/pain\.001\.001/i.test(trimmed) || /<CstmrCdtTrfInitn>/i.test(trimmed)) {
+          format = 'ISO 20022 SEPA Credit Transfer XML (pain.001)';
+          ctaLabel = 'Generate 2026-Compliant SEPA pain.001 XML ($0/mo API)';
+          ctaUrl = './sepa-xml-generator.html';
+          storeUrl = 'https://apify.com/finops_studio/sepa-xml-generator';
+          const hasAdrLine = /<AdrLine>/i.test(trimmed);
+          const hasStructured = /<TwnNm>/i.test(trimmed) && /<Ctry>/i.test(trimmed);
+          checks.push(hasAdrLine && !hasStructured
+            ? { ok: false, msg: '2026 EPC SEPA Rule Alert (Error BE04): Unstructured <AdrLine> detected without <TwnNm> and <Ctry>. European banks reject legacy unstructured postal addresses!' }
+            : { ok: true, msg: 'Postal address check passed (no legacy <AdrLine>-only BE04 violation detected).' });
+          checks.push(/<CtrlSum>/i.test(trimmed)
+            ? { ok: true, msg: 'Header <CtrlSum> control total tag present.' }
+            : { ok: false, msg: 'Missing <CtrlSum> decimal control total inside <GrpHdr>.' });
+        } else if (/pain\.008\.001/i.test(trimmed) || /<CstmrDrctDbtInitn>/i.test(trimmed)) {
+          format = 'ISO 20022 SEPA Direct Debit XML (pain.008)';
+          ctaLabel = 'Generate SEPA Direct Debit pain.008 XML ($0/mo API)';
+          ctaUrl = './sepa-xml-generator.html';
+          storeUrl = 'https://apify.com/finops_studio/sepa-xml-generator';
+          checks.push(/<MndtId>/i.test(trimmed)
+            ? { ok: true, msg: 'Direct Debit Mandate ID (<MndtId>) present.' }
+            : { ok: false, msg: 'Missing <MndtId> — bank will reject with ISO error MD01!' });
+        } else if (/pain\.002\.001/i.test(trimmed) || /<CstmrPmtStsRpt>/i.test(trimmed)) {
+          format = 'ISO 20022 Bank Payment Status Report (pain.002)';
+          ctaLabel = 'Decode Full pain.002 XML & Error Codes';
+          ctaUrl = './iso20022-pain002-decoder.html';
+          const rjct = /RJCT/.test(trimmed);
+          checks.push(rjct
+            ? { ok: false, msg: 'Rejected payment status (RJCT) detected in pain.002 bank report — decode exact transaction reason codes.' }
+            : { ok: true, msg: 'pain.002 status envelope detected.' });
+        } else if (/pacs\.008\.001/i.test(trimmed) || /<FIToFICstmrCdtTrf>/i.test(trimmed)) {
+          format = 'ISO 20022 High-Value Wire XML (Fedwire / SWIFT CBPR+ pacs.008)';
+          ctaLabel = 'Open Fedwire & SWIFT pacs.008 Generator Docs';
+          ctaUrl = './fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html';
+          checks.push(/<UETR>[0-9a-f-]{36}<\/UETR>/i.test(trimmed)
+            ? { ok: true, msg: 'Mandatory 36-char UUID v4 <UETR> end-to-end wire tracker present.' }
+            : { ok: false, msg: 'Missing UUID v4 <UETR> tag — required by SWIFT CBPR+ and Fedwire ISO 20022!' });
+          checks.push(/AppHdr/i.test(trimmed)
+            ? { ok: true, msg: 'Business Application Header (head.001.001.02 AppHdr) present.' }
+            : { ok: false, msg: 'No <AppHdr> wrapper detected — Fedwire Funds & CBPR+ require head.001 + pacs.008.' });
+        } else if (/<Invoice[\s>]/i.test(trimmed) || /CrossIndustryInvoice/i.test(trimmed)) {
+          format = 'European EN 16931 E-Invoice XML (Peppol BIS 3.0 UBL / XRechnung / Factur-X CII)';
+          ctaLabel = 'Generate EN 16931 Peppol / XRechnung XML ($0/mo API)';
+          ctaUrl = './eu-einvoice-xml-generator.html';
+          storeUrl = 'https://apify.com/finops_studio/eu-einvoice-xml-generator';
+          checks.push(/urn:cen\.eu:en16931:2017/i.test(trimmed)
+            ? { ok: true, msg: 'EN 16931:2017 customization / profile identifier present.' }
+            : { ok: false, msg: 'Missing EN 16931:2017 CustomizationID / GuidelineSpecifiedDocumentContextParameter.' });
+        } else {
+          format = 'Generic XML Financial Payload';
+          checks.push({ ok: false, msg: 'Unrecognized root XML namespace (expected pain.001, pain.008, pain.002, pacs.008, UBL Invoice, or CII).' });
+        }
+      }
+      // 2. DATEV EXTF
+      else if (/^"?EXTF"?\s*;/i.test(rawLines[0])) {
+        format = 'German DATEV Buchungsstapel EXTF CSV (v700)';
+        ctaLabel = 'Generate Official DATEV EXTF v700 CSV ($0/mo API)';
+        ctaUrl = './datev-buchungsstapel-generator.html';
+        storeUrl = 'https://apify.com/finops_studio/datev-buchungsstapel-generator';
+        checks.push(rawLines[0].includes('700') && rawLines[0].includes('21')
+          ? { ok: true, msg: 'Valid EXTF format version 700, category 21 (Buchungsstapel) header detected.' }
+          : { ok: false, msg: 'Line 1 EXTF metadata header is missing version 700 or category 21.' });
+      }
+      // 3. BAI2
+      else if (/^01,/.test(rawLines[0])) {
+        format = 'Corporate BAI2 Cash Management Statement';
+        ctaLabel = 'Parse BAI2 Statement to JSON & CSV ($0/mo API)';
+        ctaUrl = './bai2-bank-statement-parser.html';
+        storeUrl = 'https://apify.com/finops_studio/bai2-bank-statement-parser';
+        const badSlash = rawLines.filter(l => l.trim() && !l.trim().endsWith('/'));
+        checks.push(badSlash.length === 0
+          ? { ok: true, msg: `All ${rawLines.length} BAI2 physical lines properly terminate with '/' delimiter.` }
+          : { ok: false, msg: `${badSlash.length} line(s) are missing the mandatory trailing '/' delimiter!` });
+        checks.push(rawLines.some(l => /^99,/.test(l))
+          ? { ok: true, msg: 'Record 99 File Trailer present.' }
+          : { ok: false, msg: 'Missing Record 99 File Trailer at end of BAI2 file.' });
+      }
+      // 4. Canadian CPA-005 (starts with A + 9-digit record count 000000001 or line ~1464 chars)
+      else if ((rawLines[0].startsWith('A000000001') || rawLines[0].length > 900)) {
+        format = 'Canadian Payments Association Standard 005 (CPA-005 EFT)';
+        expectedWidth = 1464;
+        ctaLabel = 'Open Canadian CPA-005 (1464-Byte) Generator Docs';
+        ctaUrl = './canada-cpa-005-eft-file-generator.html';
+        checks.push(rawLines.some(l => l.startsWith('Z'))
+          ? { ok: true, msg: 'Record Z File Trailer detected.' }
+          : { ok: false, msg: 'Missing Record Z trailer record.' });
+      }
+      // 5. Australian ABA (starts with '0' and 17 spaces or ~120 chars with BSB pattern)
+      else if (rawLines[0].startsWith('0                 ') || (rawLines[0].startsWith('0') && rawLines[0].length >= 105 && rawLines[0].length <= 125)) {
+        format = 'Australian ABA Direct Entry / BECS Cemtex (.aba)';
+        expectedWidth = 120;
+        ctaLabel = 'Open Australian 120-Char .ABA Generator Docs';
+        ctaUrl = './aba-cemtex-file-generator.html';
+        checks.push(rawLines.some(l => l.startsWith('7999-999'))
+          ? { ok: true, msg: 'Record 7 (999-999) File Total trailer present.' }
+          : { ok: false, msg: 'Missing Record 7 (7999-999) net/credit/debit balancing trailer!' });
+      }
+      // 6. UK BACS Standard 18
+      else if (/^(VOL1|HDR1|UHL1)/.test(rawLines[0]) || (rawLines[0].length === 100 && /^\d{6}\d{8}/.test(rawLines[0]))) {
+        format = 'UK BACS Standard 18 Direct Credit / Debit File';
+        expectedWidth = 100;
+        ctaLabel = 'Open UK BACS Standard 18 (100-Char) Generator Docs';
+        ctaUrl = './uk-bacs-standard-18-file-generator.html';
+        checks.push(rawLines.some(l => l.startsWith('UTL1'))
+          ? { ok: true, msg: 'UTL1 User Trailer totals record present.' }
+          : { ok: false, msg: 'Note: Single-line or header snippet without UTL1 User Trailer.' });
+      }
+      // 7. Spanish AEB Norma 43 (Cuaderno 43)
+      else if (/^(11|22|23|33|88)\d{2}/.test(rawLines[0]) && rawLines[0].length >= 70 && rawLines[0].length <= 85) {
+        format = 'Spanish AEB Norma 43 / Cuaderno 43 Bank Statement (.n43)';
+        expectedWidth = 80;
+        ctaLabel = 'Open Spanish Norma 43 (Cuaderno 43) Parser Docs';
+        ctaUrl = './spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html';
+        checks.push(rawLines.some(l => l.startsWith('33'))
+          ? { ok: true, msg: 'Record 33 Account Final Balance trailer detected.' }
+          : { ok: false, msg: 'Missing Record 33 Account Balance summary line.' });
+        checks.push(rawLines.some(l => l.startsWith('88999999'))
+          ? { ok: true, msg: 'Record 88 End-of-File (`889999...`) record detected.' }
+          : { ok: false, msg: 'Missing Record 88 End-of-File trailer (`889999999999999999...`).' });
+      }
+      // 8. US NACHA ACH (starts with 101)
+      else if (/^101[\s\d]/.test(rawLines[0])) {
+        format = 'US NACHA ACH Electronic Payment / Payroll File (.ach)';
+        expectedWidth = 94;
+        ctaLabel = 'Generate Exact 94-Char US NACHA .ACH File ($0/mo API)';
+        ctaUrl = './nacha-ach-file-generator.html';
+        storeUrl = 'https://apify.com/finops_studio/nacha-ach-file-generator';
+        checks.push(rawLines.length % 10 === 0
+          ? { ok: true, msg: `Blocking factor of 10 satisfied (${rawLines.length} total lines).` }
+          : { ok: false, msg: `Blocking factor warning: ${rawLines.length} lines is NOT a multiple of 10! Most US bank gateways require '9999...' padding rows to fill a block of 10.` });
+        checks.push(rawLines.some(l => l.startsWith('8')) && rawLines.some(l => l.startsWith('9'))
+          ? { ok: true, msg: 'Batch Control (8) and File Control (9) records detected.' }
+          : { ok: false, msg: 'Missing Batch Control (Record 8) or File Control (Record 9).' });
+      }
+      // 9. US Positive Pay 80-char
+      else if (rawLines[0].length >= 75 && rawLines[0].length <= 82 && /\d{8,12}/.test(rawLines[0])) {
+        format = 'US Bank 80-Character Fixed-Width Check Positive Pay Register';
+        expectedWidth = 80;
+        ctaLabel = 'Open US Bank Positive Pay Check File Generator Docs';
+        ctaUrl = './us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html';
+        checks.push({ ok: true, msg: 'Detected 80-column fixed-width check issue/void register layout.' });
+      } else {
+        checks.push({ ok: false, msg: 'Could not match standard header signature (101 NACHA, 0 ABA, VOL1/UHL1 BACS, A000000001 CPA-005, 11 Norma 43, 01, BAI2, EXTF DATEV, or ISO 20022 XML).' });
+      }
+
+      // Fixed-width line-length audit
+      let widthTableHtml = '';
+      if (expectedWidth) {
+        const badLines = rawLines
+          .map((line, idx) => ({ lineNo: idx + 1, len: line.length, preview: line.slice(0, 42) }))
+          .filter(x => x.len !== expectedWidth);
+
+        if (badLines.length === 0) {
+          checks.unshift({ ok: true, msg: `Exact Fixed-Width Match: All ${rawLines.length} line(s) are exactly ${expectedWidth} characters wide!` });
+        } else {
+          checks.unshift({
+            ok: false,
+            msg: `CRITICAL RECORD-WIDTH ERROR: ${badLines.length} of ${rawLines.length} line(s) do NOT equal ${expectedWidth} characters! (Common cause: Excel or text editor stripped trailing spaces.)`
+          });
+        }
+
+        const previewRows = rawLines.slice(0, 8).map((line, idx) => {
+          const ok = line.length === expectedWidth;
+          return `<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">
+            <td style="padding:6px 10px;">Line ${idx + 1}</td>
+            <td style="padding:6px 10px;font-family:monospace;color:${ok ? '#34d399' : '#f87171'};font-weight:700;">${line.length} / ${expectedWidth} chars ${ok ? '&#10003;' : '&#10007;'}</td>
+            <td style="padding:6px 10px;font-family:monospace;color:var(--muted);">${escapeHtml(line.slice(0, 48))}${line.length > 48 ? '&hellip;' : ''}</td>
+          </tr>`;
+        }).join('');
+
+        widthTableHtml = `
+          <table style="width:100%;border-collapse:collapse;margin-top:14px;font-size:0.84rem;">
+            <thead>
+              <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+                <th style="padding:6px 10px;">Record</th>
+                <th style="padding:6px 10px;">Measured Width</th>
+                <th style="padding:6px 10px;">Record Prefix</th>
+              </tr>
+            </thead>
+            <tbody>${previewRows}</tbody>
+          </table>`;
+      }
+
+      const checksHtml = checks.map(c =>
+        `<li style="margin-bottom:8px;color:${c.ok ? '#34d399' : '#fca5a5'};">
+          <strong>${c.ok ? '&#10003; PASS' : '&#10007; ISSUE'}:</strong> ${escapeHtml(c.msg)}
+        </li>`
+      ).join('');
+
+      out.innerHTML = `
+        <div style="padding:18px;border-radius:12px;background:rgba(15,23,42,0.85);border:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center;">
+            <div>
+              <span class="tag">Detected Standard</span>
+              <h3 style="margin:6px 0 4px;">${escapeHtml(format)}</h3>
+              <div style="font-size:0.83rem;color:var(--muted);">Lines inspected: <strong>${rawLines.length}</strong> &bull; Line endings in paste: <strong>${hasCrlf ? 'CRLF (\\r\\n)' : 'LF (\\n)'}</strong></div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <a class="btn btn-primary" href="${ctaUrl}">${escapeHtml(ctaLabel)} &rarr;</a>
+              <a class="btn btn-outline" href="${storeUrl}" target="_blank" rel="noopener">Open Apify Cloud API</a>
+            </div>
+          </div>
+          <ul style="margin:14px 0 0;padding-left:18px;font-size:0.9rem;">${checksHtml}</ul>
+          ${widthTableHtml}
+        </div>`;
+    }
+
+    // Load a default broken NACHA example on initial page view so visitors immediately see how it works
+    window.addEventListener('DOMContentLoaded', () => loadSample('nacha_broken'));
+  </script>
+</body>
+</html>
