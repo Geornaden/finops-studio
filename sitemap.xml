@@ -215,4 +215,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.89</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/github-actions-ci-cd-sepa-nacha-peppol-bank-file-validation.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.91</priority>
+  </url>
 </urlset>

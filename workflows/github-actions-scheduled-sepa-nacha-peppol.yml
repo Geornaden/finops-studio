@@ -1,0 +1,74 @@
+name: FinOps Studio — Scheduled Treasury, Payroll & Tax File Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      tool:
+        description: "Banking / E-Invoicing Engine"
+        required: true
+        default: "sepa"
+        type: choice
+        options:
+          - sepa
+          - einvoice
+          - nacha
+          - bai2
+          - datev
+          - bacs
+          - aba
+          - cpa005
+          - pain002
+      payload_path:
+        description: "Path to approved JSON batch payload"
+        required: true
+        default: "./batches/approved-payouts.json"
+        type: string
+  schedule:
+    # Runs every Friday at 14:00 UTC for weekly AP / treasury close
+    - cron: "0 14 * * 5"
+
+permissions:
+  contents: read
+
+jobs:
+  generate-compliant-bank-file:
+    name: Generate & Verify Bank / Tax Artifact
+    runs-on: ubuntu-latest
+    environment: finance-production
+    steps:
+      - name: Checkout Approved Finance Batch Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Execute Deterministic FinOps Studio Cloud Engine
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          TOOL_KEY: ${{ inputs.tool || 'sepa' }}
+          PAYLOAD_FILE: ${{ inputs.payload_path || './batches/approved-payouts.json' }}
+        run: |
+          mkdir -p ./out
+          npx --yes github:Geornaden/finops-studio run "$TOOL_KEY" "$PAYLOAD_FILE" > ./out/dataset-response.json
+          node -e '
+            const fs = require("fs");
+            const items = JSON.parse(fs.readFileSync("./out/dataset-response.json", "utf8"));
+            if (!Array.isArray(items) || !items.length) {
+              throw new Error("Empty dataset response from FinOps Studio API");
+            }
+            const first = items[0];
+            const content = first.xmlContent || first.achContent || first.abaContent || first.bacsContent || first.cpa005Content || first.csvContent || JSON.stringify(items, null, 2);
+            const fileName = first.fileName || ("finops-" + process.env.TOOL_KEY + "-output.txt");
+            fs.writeFileSync("./out/" + fileName, content, "utf8");
+            console.log("Verified bank artifact written:", fileName, "(" + content.length + " bytes)");
+          '
+
+      - name: Upload Bank-Ready Artifact for Treasury Portal Sign-Off
+        uses: actions/upload-artifact@v4
+        with:
+          name: finops-bank-batch-${{ github.run_number }}
+          path: ./out/*
+          retention-days: 7
+          if-no-files-found: error

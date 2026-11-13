@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Actions, GitLab CI &amp; npx CLI for SEPA XML, NACHA ACH, Peppol &amp; BAI2 Automation | FinOps Studio</title>
+  <meta name="description" content="Finance-as-Code CI/CD blueprints: generate &amp; validate ISO 20022 SEPA XML (pain.001), US NACHA ACH, UK BACS 18, Australia ABA, Canada CPA-005, Peppol BIS 3.0 &amp; DATEV CSV inside GitHub Actions or GitLab CI via npx github:Geornaden/finops-studio." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/github-actions-ci-cd-sepa-nacha-peppol-bank-file-validation.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Finance-as-Code: Automate SEPA XML, NACHA ACH, Peppol E-Invoices & BAI2 Statements in GitHub Actions & GitLab CI",
+        "url": "https://geornaden.github.io/finops-studio/github-actions-ci-cd-sepa-nacha-peppol-bank-file-validation.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Engineering guide to dual-control pull-request approval and scheduled CI/CD bank file generation using the zero-install FinOps Studio CLI (npx github:Geornaden/finops-studio) and REST APIs."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does Finance-as-Code dual-control approval work in GitHub Actions for corporate payments?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Finance or ERP scripts open a Pull Request containing the structured payout JSON batch, requiring CODEOWNERS review from the Controller or CFO plus GitHub Environment deployment protection. Once approved, the GitHub Actions workflow runs npx github:Geornaden/finops-studio run <tool> ./payload.json using secrets.APIFY_TOKEN, mathematically validates every IBAN/ABA/BSB/Sort Code, and uploads the exact fixed-width or ISO 20022 XML bank file as a short-lived encrypted artifact."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does the FinOps Studio CLI require installing heavy npm packages or XML/XSD libraries in CI?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. npx github:Geornaden/finops-studio is a zero-dependency Node.js 20+ thin HTTP client (<3 KB) that starts in under 1 second on ubuntu-latest runners and invokes isolated, deterministic 256 MB cloud containers on Apify Store at $0/month fixed cost + $0.02 per payment row."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./workflows/github-actions-scheduled-sepa-nacha-peppol.yml" download>Download Actions YAML</a>
+        <a href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node SDKs</a>
+        <a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Payroll</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Get API Token ($5 Free Credits) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#9881;&#65039; Finance-as-Code CI/CD &bull; Zero-Dependency <code>npx</code> CLI &bull; $0/Month Subscription</span>
+      <h1>Automate <code>SEPA XML</code>, <code>NACHA ACH</code>, <code>BACS 18</code>, <code>Peppol</code> &amp; <code>BAI2</code> in GitHub Actions &amp; GitLab CI</h1>
+      <p>Replace brittle local Excel macros with auditable, Git-reviewed treasury pipelines. Require <code>CODEOWNERS</code> CFO sign-off on payout batches, validate every IBAN/ABA/Sort Code/BSB automatically, and build ready-to-upload bank artifacts in seconds using <code>npx github:Geornaden/finops-studio</code>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="./workflows/github-actions-scheduled-sepa-nacha-peppol.yml" download>&#11015; Download GitHub Actions Workflow (.yml)</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Live Cloud APIs ($0.02/row) &rarr;</a>
+        <a class="btn btn-outline" href="https://github.com/Geornaden/finops-studio" target="_blank" rel="noopener">View CLI Repo on GitHub</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <span class="tag">Interactive CI/CD &amp; CLI Snippet Generator</span>
+      <h2 style="margin:10px 0 8px;">Generate Your Custom Pipeline Step in 1 Click</h2>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0;">Select your target banking/tax standard and execution environment to generate a ready-to-paste pipeline snippet:</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px;">
+        <label style="font-size:0.82rem;color:var(--muted);">1. Select Live Cloud Engine
+          <select id="ciTool" style="width:100%;margin-top:4px;padding:9px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;">
+            <option value="sepa" selected>🇪🇺 SEPA XML (pain.001.001.09 / pain.008)</option>
+            <option value="einvoice">🧾 EU Peppol BIS 3.0 / XRechnung / Factur-X</option>
+            <option value="nacha">🇺🇸 US 94-Char NACHA ACH (.ach)</option>
+            <option value="bai2">🏦 Corporate BAI2 Statement Parser</option>
+            <option value="datev">🇩🇪 German DATEV EXTF v700 CSV</option>
+            <option value="bacs">🇬🇧 UK BACS Standard 18 (100-Char)</option>
+            <option value="aba">🇦🇺 Australian 120-Char ABA (.aba)</option>
+            <option value="cpa005">🇨🇦 Canadian 1464-Byte CPA-005 EFT</option>
+            <option value="pain002">🔍 ISO 20022 pain.002 Rejection Decoder</option>
+          </select>
+        </label>
+        <label style="font-size:0.82rem;color:var(--muted);">2. Select Runner / Environment
+          <select id="ciEnv" style="width:100%;margin-top:4px;padding:9px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;">
+            <option value="gha" selected>GitHub Actions (.github/workflows/*.yml)</option>
+            <option value="gitlab">GitLab CI (.gitlab-ci.yml)</option>
+            <option value="cli">Terminal / Cron / Docker (npx CLI)</option>
+          </select>
+        </label>
+      </div>
+      <pre id="ciCodeOut" class="code-box" style="margin-top:14px;min-height:210px;font-size:0.8rem;"></pre>
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+        <a id="ciDirectStore" class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Open Selected API on Apify Store &rarr;</a>
+        <a class="btn btn-outline" href="./workflows/github-actions-scheduled-sepa-nacha-peppol.yml" download>Download Full Production .YML</a>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">SOX / Audit-Ready Architecture</span>
+        <h3 style="margin:10px 0 8px;">Why Engineering-Led Finance Teams Use GitHub Actions</h3>
+        <ul style="color:var(--muted);font-size:0.88rem;line-height:1.65;padding-left:18px;margin:8px 0 0;">
+          <li><strong>Dual-Control PR Sign-Off:</strong> Enforce 2-person approval via <code>CODEOWNERS</code> + GitHub Protected Environments (<code>finance-production</code>) before any payment file is generated.</li>
+          <li><strong>Zero Secret Exposure:</strong> Store <code>APIFY_TOKEN</code> in encrypted GitHub Environment Secrets; upload generated bank files with <code>retention-days: 7</code>.</li>
+          <li><strong>Zero-Dependency Runner Speed:</strong> Uses Node 20 built-in <code>fetch</code>—no brittle Python/Java XSD compilers to maintain.</li>
+        </ul>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Zero-Install CLI Commands (v1.3.0)</span>
+        <h3 style="margin:10px 0 8px;">Test Locally in 5 Seconds</h3>
+        <pre class="code-box" style="font-size:0.79rem;min-height:165px;"># 1. List all 12 financial file engines
+npx github:Geornaden/finops-studio list
+
+# 2. Print ready-to-paste Claude / Cursor MCP config
+npx github:Geornaden/finops-studio mcp-config
+
+# 3. Generate a compliant bank/tax file from JSON
+APIFY_TOKEN=apify_api_xxx npx github:Geornaden/finops-studio run sepa ./batch.json</pre>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./make-zapier-power-automate-sepa-xml-nacha-peppol.html">Make / Zapier / Power Automate</a> &bull; <a href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node Cookbook</a></div>
+      <div><a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Apify Storefront &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var SLUGS = {
+        sepa: 'sepa-xml-generator',
+        einvoice: 'eu-einvoice-xml-generator',
+        nacha: 'nacha-ach-file-generator',
+        bai2: 'bai2-bank-statement-parser',
+        datev: 'datev-buchungsstapel-generator',
+        bacs: 'uk-bacs-standard18-generator',
+        aba: 'aba-cemtex-file-generator',
+        cpa005: 'canada-cpa005-eft-generator',
+        pain002: 'iso20022-pain002-status-parser'
+      };
+      var toolEl = document.getElementById('ciTool');
+      var envEl = document.getElementById('ciEnv');
+      var outEl = document.getElementById('ciCodeOut');
+      var storeEl = document.getElementById('ciDirectStore');
+
+      function update() {
+        var t = toolEl.value || 'sepa';
+        var env = envEl.value || 'gha';
+        var slug = SLUGS[t] || 'sepa-xml-generator';
+        storeEl.href = 'https://apify.com/finops_studio/' + slug;
+
+        if (env === 'gha') {
+          outEl.textContent = [
+            '- name: Generate Verified ' + t.toUpperCase() + ' Bank Artifact',
+            '  env:',
+            '    APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}',
+            '  run: |',
+            '    npx --yes github:Geornaden/finops-studio run ' + t + ' ./batches/' + t + '-payload.json > ./' + t + '-dataset.json',
+            '',
+            '- uses: actions/upload-artifact@v4',
+            '  with:',
+            '    name: finops-' + t + '-batch',
+            '    path: ./' + t + '-dataset.json',
+            '    retention-days: 7'
+          ].join('\n');
+        } else if (env === 'gitlab') {
+          outEl.textContent = [
+            'generate_' + t + '_batch:',
+            '  image: node:20-alpine',
+            '  stage: finance-release',
+            '  rules:',
+            '    - if: $CI_PIPELINE_SOURCE == "schedule"',
+            '  script:',
+            '    - npx --yes github:Geornaden/finops-studio run ' + t + ' ./batches/' + t + '-payload.json > ' + t + '-dataset.json',
+            '  artifacts:',
+            '    expire_in: 7 days',
+            '    paths:',
+            '      - ' + t + '-dataset.json'
+          ].join('\n');
+        } else {
+          outEl.textContent = [
+            '# Zero-install execution on macOS, Linux, Windows, or Docker (Node 20+)',
+            'export APIFY_TOKEN="YOUR_APIFY_API_TOKEN"',
+            'npx --yes github:Geornaden/finops-studio run ' + t + ' ./batches/' + t + '-payload.json > ./' + t + '-dataset.json',
+            '',
+            '# Or direct synchronous HTTPS POST:',
+            'curl -sS -X POST "https://api.apify.com/v2/acts/finops_studio~' + slug + '/run-sync-get-dataset-items?token=$APIFY_TOKEN" \\',
+            '  -H "Content-Type: application/json" \\',
+            '  -d @./batches/' + t + '-payload.json'
+          ].join('\n');
+        }
+      }
+
+      toolEl.addEventListener('change', update);
+      envEl.addEventListener('change', update);
+      update();
+    })();
+  </script>
+</body>
+</html>

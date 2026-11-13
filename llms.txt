@@ -82,3 +82,5 @@
 - [Make.com, Zapier & Microsoft Power Automate No-Code Blueprints](https://geornaden.github.io/finops-studio/make-zapier-power-automate-sepa-xml-nacha-peppol.html)
 - [Make.com Scenario Blueprint JSON (Google Sheets / Airtable -> SEPA XML)](https://geornaden.github.io/finops-studio/workflows/make-sheets-airtable-to-sepa-nacha-datev.json)
 - [Python 3 & Node.js 20+ Banking File API Cookbook (SEPA XML, NACHA ACH, BAI2, DATEV)](https://geornaden.github.io/finops-studio/python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html)
+- [GitHub Actions, GitLab CI & npx CLI Finance-as-Code Blueprints (SEPA XML, NACHA ACH, Peppol, BAI2, BACS, ABA, CPA-005)](https://geornaden.github.io/finops-studio/github-actions-ci-cd-sepa-nacha-peppol-bank-file-validation.html)
+- [GitHub Actions Scheduled Treasury & Payroll Workflow YAML](https://geornaden.github.io/finops-studio/workflows/github-actions-scheduled-sepa-nacha-peppol.yml)

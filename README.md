@@ -83,7 +83,8 @@ Give **Claude Desktop**, **Cursor**, **Windsurf**, or any MCP-compatible AI agen
 
 ---
 
-## Ready-to-Import `n8n` & `Make.com` Workflow Blueprints + Python/Node.js Cookbook
+## Ready-to-Import `n8n`, `GitHub Actions` & `Make.com` Workflow Blueprints + Python/Node.js Cookbook
+- [`workflows/github-actions-scheduled-sepa-nacha-peppol.yml`](./workflows/github-actions-scheduled-sepa-nacha-peppol.yml) — **GitHub Actions Scheduled Treasury, Payroll & Tax Pipeline** (`CODEOWNERS` CFO PR sign-off + `npx github:Geornaden/finops-studio`) + [CI/CD Guide](https://geornaden.github.io/finops-studio/github-actions-ci-cd-sepa-nacha-peppol-bank-file-validation.html)
 - [`workflows/n8n-global-payroll-sepa-nacha-bacs-aba-cpa005.json`](./workflows/n8n-global-payroll-sepa-nacha-bacs-aba-cpa005.json) — **5-Country Global Payroll Router** (`US` NACHA ACH, `EU` SEPA XML, `GB` BACS Standard 18, `AU` ABA Cemtex, `CA` CPA-005 EFT) + [Architecture Guide](https://geornaden.github.io/finops-studio/multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html)
 - [`cookbook/`](./cookbook) — Zero-dependency Python 3 & Node.js 20+ client scripts (`csv_to_sepa_pain001.mjs`, `payroll_csv_to_nacha_ach.py`, `bai2_to_json_and_csv.py`, `stripe_to_datev_skr04.py`)
 - [`workflows/make-sheets-airtable-to-sepa-nacha-datev.json`](./workflows/make-sheets-airtable-to-sepa-nacha-datev.json) — Make.com Scenario Blueprint (Google Sheets / Airtable → SEPA XML)
