@@ -155,4 +155,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.92</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/swiss-sps-pain001-ubs-postfinance-zkb-sepa-xml.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.89</priority>
+  </url>
 </urlset>

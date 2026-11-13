@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swiss ISO 20022 pain.001.001.09 XML (UBS, PostFinance, ZKB, Raiffeisen CH) &amp; EU Peppol API | FinOps Studio</title>
+  <meta name="description" content="Generate SIX Swiss Payment Standards (SPS 2026) &amp; EPC SEPA compliant ISO 20022 pain.001.001.09 XML for UBS KeyDirect, PostFinance, ZKB, and Raiffeisen Switzerland + EU Peppol/XRechnung export invoices ($0/mo API)." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/swiss-sps-pain001-ubs-postfinance-zkb-sepa-xml.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Swiss Corporate Treasury Automation: SIX SPS 2026 ISO 20022 pain.001.001.09 XML (UBS, PostFinance, ZKB, Raiffeisen) & EU Peppol Exports",
+        "url": "https://geornaden.github.io/finops-studio/swiss-sps-pain001-ubs-postfinance-zkb-sepa-xml.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Guide for Swiss CFOs, Treuhand firms, and ERP developers automating CHF/EUR ISO 20022 pain.001.001.09 supplier/payroll batches with structured postal addresses and EU EN 16931 e-invoices."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why did UBS, PostFinance, ZKB, or Raiffeisen reject my pain.001 XML file for unstructured addresses?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under SIX Interbank Clearing Swiss Payment Standards (SPS 2025/2026) and EPC SEPA rules, legacy free-text <AdrLine> address elements without structured <TwnNm> (Town Name) and <Ctry> (ISO Country Code) are rejected. FinOps Studio generates native pain.001.001.09 XML with structured postal address blocks and 21-character CH/LI IBAN MOD-97 verification."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How can Swiss AG and GmbH exporters send XRechnung, Factur-X, and Peppol BIS 3.0 XML to EU customers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Swiss exporters selling to German, Belgian, French, Italian, or Nordic B2B/B2G buyers can call FinOps Studio's EU E-Invoice XML Generator API ($0.05/invoice, $0/month) using Swiss UID/MWST identifiers (CHE-xxx.xxx.xxx MWST, Endpoint scheme 0183) to produce compliant OASIS UBL 2.1 or UN/CEFACT CII XML."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./for-accounting-firms-payroll-bureaus-and-fintechs.html">Treuhand &amp; CFO ROI</a>
+        <a href="./free-bank-file-format-detector-line-length-auditor.html">Free File Auditor</a>
+        <a href="./index.html#suite">All 12 APIs</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs ($0/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127464;&#127469; &#127473;&#127470; Switzerland &amp; Liechtenstein SPS 2026 Ready &bull; $0/Month Fixed Cost</span>
+      <h1>Swiss ISO 20022 <code>pain.001.001.09</code> XML (UBS, PostFinance, ZKB, Raiffeisen) &amp; EU Peppol Export API</h1>
+      <p>Automate structured-address <strong>EUR SEPA &amp; cross-border ISO 20022 <code>pain.001.001.09</code></strong> batches, decode <strong><code>pain.002</code></strong> bank status reports, generate <strong>SWIFT CBPR+ <code>pacs.008</code></strong> wires, and issue <strong>EN 16931 XRechnung / Factur-X / Peppol</strong> XML for EU clients from Bexio, Abacus, Odoo, NetSuite, or SAP.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Launch ISO 20022 pain.001 API ($0.02/tx) &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Launch EU Peppol / XRechnung API &rarr;</a>
+        <a class="btn btn-outline" href="./free-iban-routing-number-pain002-validator.html">Validate CH IBAN Checksum</a>
+      </div>
+    </section>
+
+    <div class="grid-3">
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">SIX SPS / EPC 2026</span><span class="tag">CH &amp; LI IBAN</span></div>
+          <h3>1. UBS, PostFinance, ZKB &amp; Raiffeisen <code>pain.001.001.09</code></h3>
+          <p>Strict structured <code>&lt;StrtNm&gt;</code>, <code>&lt;PstCd&gt;</code>, <code>&lt;TwnNm&gt;</code>, and <code>&lt;Ctry&gt;</code> blocks + 21-char <code>CH</code>/<code>LI</code> MOD-97 checksum validation and integer-rappen/cent <code>CtrlSum</code>.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-outline" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Open pain.001 API &rarr;</a>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">pain.002 XML</span><span class="tag">Instant Fixes</span></div>
+          <h3>2. Automated Bank Status &amp; Rejection Decoding</h3>
+          <p>Turn cryptic UBS KeyDirect &amp; PostFinance <code>pain.002.001.10</code> rejection files (<code>BE04</code>, <code>AC04</code>, <code>RC01</code>, <code>AM04</code>) into structured JSON &amp; Slack/Teams alerts.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-outline" href="./iso20022-pain002-decoder.html">Open pain.002 Docs &rarr;</a>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">CHE-UID 0183</span><span class="tag">DE / FR / IT / AT / BE</span></div>
+          <h3>3. EU E-Invoicing for Swiss Exporters</h3>
+          <p>Billing German (<code>XRechnung</code>), French (<code>Factur-X</code>), Belgian, or Italian clients? Generate compliant EN 16931 XML with Swiss <code>CHE-... MWST</code> IDs at $0.05/invoice.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Open EU E-Invoice API &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Copy-Paste REST API Example: Swiss Debtor (Z&uuml;rich) &rarr; Supplier Batch (`pain.001.001.09`)</h2>
+      <p style="color:var(--muted);font-size:0.9rem;">Works directly from Python, Node.js, cURL, <code>n8n</code>, <code>Make.com</code>, or Claude/Cursor MCP with verified 21-character Swiss IBANs:</p>
+      <pre class="code-box" style="font-size:0.8rem;min-height:220px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "paymentType": "CREDIT_TRANSFER",
+    "painVersion": "pain.001.001.09",
+    "messageId": "ZURICH-AP-2026-1113",
+    "executionDate": "2026-11-16",
+    "initiatingParty": {
+      "name": "Helvetia Precision AG",
+      "iban": "CH9300762011623852957",
+      "bic": "UBSWCHZH80A",
+      "address": { "street": "Bahnhofstrasse 45", "postalCode": "8001", "city": "Zuerich", "country": "CH" }
+    },
+    "transactions": [
+      {
+        "endToEndId": "BILL-DE-9041",
+        "amount": 6400.00,
+        "currency": "EUR",
+        "creditorName": "Bavaria Optics GmbH",
+        "creditorIban": "DE89370400440532013000",
+        "creditorBic": "COBADEFFXXX",
+        "creditorAddress": { "street": "Maximilianstrasse 18", "postalCode": "80539", "city": "Muenchen", "country": "DE" },
+        "remittanceInfo": "Rechnung BILL-DE-9041"
+      }
+    ]
+  }'</pre>
+    </section>
+
+    <div class="sandbox-card" style="margin-top:24px;text-align:center;">
+      <h3 style="margin-top:0;">Ideal for Swiss Treuhand Firms, Family Offices &amp; Multi-Currency SaaS</h3>
+      <p style="color:var(--muted);max-width:700px;margin:8px auto 16px;">Skip CHF 3,000+/year ERP banking modules. Process unlimited client entities for <strong>$0/month fixed subscription</strong> and $0.02 per transaction.</p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Explore All Cloud APIs on Apify Store &rarr;</a>
+        <a class="btn btn-outline" href="./for-accounting-firms-payroll-bureaus-and-fintechs.html">Open Treuhand / CFO ROI Calculator</a>
+        <a class="btn btn-outline" href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html">SWIFT CBPR+ pacs.008 Wires</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio Home</a> &bull;
+      <a href="./sepa-xml-peppol-ehf-finvoice-austria-nordics.html">Austria &amp; Nordics Guide</a> &bull;
+      <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">DACH DATEV Guide</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+</body>
+</html>
