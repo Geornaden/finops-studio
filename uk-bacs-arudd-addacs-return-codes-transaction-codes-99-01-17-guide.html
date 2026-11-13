@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UK BACS ARUDD &amp; ADDACS Return Codes, Transaction Codes (99, 01, 17, 18, 19, 0N) &amp; 100-Char Standard 18 Slicer | FinOps Studio</title>
+  <meta name="description" content="Searchable UK Pay.UK Bacs Standard 18 Transaction Codes (99 Direct Credit, 01/17/18/19 Direct Debit, 0N/0C AUDDIS), ARUDD Unpaid DD Return Codes (0–B), ADDACS &amp; AWACS CASS Switch Codes + Free 100-Character BACS Column Slicer &amp; bYYDDD Julian Date Calculator." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/uk-bacs-arudd-addacs-return-codes-transaction-codes-99-01-17-guide.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="UK BACS ARUDD & ADDACS Return Codes + 100-Character Standard 18 Column Slicer | FinOps Studio" />
+  <meta property="og:description" content="Lookup every UK Bacs Transaction Code (99, 01, 17, 18, 19, 0N), ARUDD unpaid reason (0–B), and ADDACS/AWACS code, slice 100-char Standard 18 lines in your browser, and generate BACS files via $0/mo API." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/uk-bacs-arudd-addacs-return-codes-transaction-codes-99-01-17-guide.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "UK BACS ARUDD & ADDACS Return Codes, Standard 18 Transaction Codes (99, 01, 17, 18, 19, 0N) & 100-Character Record Inspector",
+        "url": "https://geornaden.github.io/finops-studio/uk-bacs-arudd-addacs-return-codes-transaction-codes-99-01-17-guide.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Complete UK payroll, Direct Debit, and corporate treasury guide to Pay.UK Bacs Standard 18 transaction codes, ARUDD unpaid Direct Debit returns, ADDACS/AWACS Current Account Switch Service (CASS) amendments, bYYDDD Julian dates, and 100-character Bacstel-IP file generation."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the difference between BACS Transaction Codes 99, 01, 17, 18, and 19?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Transaction Code 99 is a Bacs Direct Credit used for UK GBP payroll, supplier invoices, and expense reimbursements. Codes 01, 17, 18, and 19 are Direct Debit collections: 01 is the first collection under a new Direct Debit Instruction (DDI), 17 is an ongoing recurring collection, 18 is a re-presented Direct Debit following an unpaid return (permitted within 1 month after notifying the payer), and 19 is the final collection closing a mandate series."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What do UK BACS ARUDD Reason Codes 0, 1, 5, 6, and B mean?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "ARUDD (Automated Return of Unpaid Direct Debits) reports why a Direct Debit failed on Day 3 of the Bacs cycle: Code 0 (Refer to Payer) indicates insufficient cleared funds; Code 1 (Instruction Cancelled) means the payer cancelled their mandate; Code 5 (No Account) means the 6-digit Sort Code or 8-digit Account Number is invalid; Code 6 (No Instruction) means no active AUDDIS 0N mandate exists for your 6-digit SUN and reference; and Code B (Account Closed) means the payer closed the bank account."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How is the BACS UHL1 Julian processing date (bYYDDD) formatted in a 100-character Standard 18 file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In a 100-character UK BACS Standard 18 User Header Label (UHL1), columns 05–10 store a 6-character date prefixed by a single space ('b') followed by the 2-digit year (YY) and 3-digit day-of-year (DDD, from 001 to 365/366)—for example, ' 26322' for 18 November 2026. The FinOps Studio UK BACS Standard 18 Generator API converts ISO YYYY-MM-DD dates into exact bYYDDD headers automatically."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./uk-bacs-standard-18-file-generator.html">UK BACS 18 Spec</a>
+        <a href="./sage-xero-csv-to-uk-bacs-standard-18-barclays-hsbc-lloyds-natwest.html">Sage/Xero CSV &rarr; BACS</a>
+        <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Free Sort Code Checker</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Launch Live UK BACS API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127468;&#127463; UK Pay.UK Bacstel-IP Reference &bull; 100-Char Standard 18 API &bull; &pound;0 / $0 Monthly Fee</span>
+      <h1>Complete UK <code>BACS</code> Transaction Codes (<code>99</code>, <code>01</code>, <code>17</code>, <code>18</code>, <code>19</code>), <code>ARUDD / ADDACS</code> Returns &amp; 100-Char Slicer</h1>
+      <p>Lookup every Pay.UK <strong>Bacs Direct Credit</strong>, <strong>Direct Debit</strong>, <strong>AUDDIS</strong>, <strong>ARUDD</strong>, <strong>ADDACS</strong>, and <strong>AWACS</strong> code for <strong>Barclays.net</strong>, <strong>HSBCnet</strong>, <strong>Lloyds Commercial</strong>, <strong>NatWest Bankline</strong>, and <strong>Santander Connect</strong>—and inspect 100-character Standard 18 records in your browser.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Generate 100-Char BACS Files ($0.02/row) &rarr;</a>
+        <a class="btn btn-outline" href="./sage-xero-csv-to-uk-bacs-standard-18-barclays-hsbc-lloyds-natwest.html">Barclays / HSBC / Lloyds Guide</a>
+        <a class="btn btn-outline" href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">6-Digit UK Sort Code Validator</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <h2 style="margin:0;">Searchable UK BACS Transaction, ARUDD, ADDACS &amp; AWACS Directory</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline bacs-filter" data-cat="ALL" style="padding:6px 12px;font-size:0.8rem;">All (28)</button>
+          <button type="button" class="btn btn-outline bacs-filter" data-cat="TX" style="padding:6px 12px;font-size:0.8rem;">Tx Codes (99 / 01–19 / 0N)</button>
+          <button type="button" class="btn btn-outline bacs-filter" data-cat="ARUDD" style="padding:6px 12px;font-size:0.8rem;">ARUDD Unpaid (0–B)</button>
+          <button type="button" class="btn btn-outline bacs-filter" data-cat="ADDACS" style="padding:6px 12px;font-size:0.8rem;">ADDACS / AWACS Switch</button>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <input id="bacsSearch" type="search" placeholder="Search code or symptom (e.g. 99, 17, 18, 0N, ARUDD 0, ARUDD 6, ADDACS 3, AWACS, Refer to Payer, CASS, SUN)..." style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.92rem;" />
+      </div>
+      <div style="overflow-x:auto;margin-top:14px;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Code</th>
+              <th style="padding:10px;">Report / Direction</th>
+              <th style="padding:10px;">Official Pay.UK / Bacs Meaning</th>
+              <th style="padding:10px;">Actionable Finance &amp; Engineering Fix</th>
+            </tr>
+          </thead>
+          <tbody id="bacsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <span class="tag">100% Client-Side 100-Column Standard 18 Slicer &amp; Julian Date Unpacker</span>
+      <h2 style="margin:10px 0 8px;">Instant 100-Character UK BACS <code>Standard 18</code> Line Inspector (<code>Detail</code>, <code>CONTRA</code>, <code>UHL1</code> &amp; <code>UTL1</code>)</h2>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0;">Paste any 100-character line from your Bacstel-IP file—or click a preset below—to verify exact byte columns (<code>01</code>–<code>100</code>), 6-digit Sort Code, 8-digit Account Number, 11-digit integer pence, and <code>UHL1</code> <code>bYYDDD</code> Julian processing date:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+        <button type="button" class="btn btn-outline bacs-preset" data-line="4012341234567809920454587654321000000000284550THAMES CLOUD LTD  SALARY NOV 2026   OLIVER WRIGHT     " style="padding:5px 10px;font-size:0.78rem;">Load Code 99 Payroll Credit (100 chars)</button>
+        <button type="button" class="btn btn-outline bacs-preset" data-line="3098768765432101720454587654321000000000014900THAMES CLOUD LTD  SUB-INV-2026-884  ACME RETAIL UK LTD" style="padding:5px 10px;font-size:0.78rem;">Load Code 17 Direct Debit (100 chars)</button>
+        <button type="button" class="btn btn-outline bacs-preset" data-line="2045458765432101720454587654321000000000284550THAMES CLOUD LTD  CONTRA            THAMES CLOUD LTD  " style="padding:5px 10px;font-size:0.78rem;">Load Balancing CONTRA Row (100 chars)</button>
+        <button type="button" class="btn btn-outline bacs-preset" data-line="UHL1 26322654321    000000001 DAILY  001                                                            " style="padding:5px 10px;font-size:0.78rem;">Load UHL1 Julian Header (100 chars)</button>
+      </div>
+      <input id="bacsLineInput" type="text" value="4012341234567809920454587654321000000000284550THAMES CLOUD LTD  SALARY NOV 2026   OLIVER WRIGHT     " spellcheck="false" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#34d399;font-family:monospace;font-size:0.82rem;" />
+      <pre id="bacsLineOut" class="code-box" style="margin-top:12px;min-height:210px;font-size:0.8rem;"></pre>
+
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(148,163,184,0.16);display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+        <label for="julianDatePicker" style="font-size:0.85rem;color:var(--muted);"><strong>Calendar &rarr; BACS <code>UHL1</code> Julian Date (<code>bYYDDD</code>):</strong></label>
+        <input id="julianDatePicker" type="date" value="2026-11-18" style="padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.85rem;" />
+        <code id="julianOut" style="padding:6px 12px;border-radius:6px;background:rgba(52,211,153,0.12);color:#34d399;font-size:0.88rem;">UHL1 Cols 05–10: " 26322" (Day 322 of 2026)</code>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">Production Cloud API ($0/mo + $0.02/row)</span>
+        <h3 style="margin:10px 0 8px;">Generate Complete 100-Char Standard 18 Files via REST</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Converts ISO <code>YYYY-MM-DD</code> dates into <code>bYYDDD</code>, validates 6-digit Sort Codes &amp; 8-digit Account Numbers, appends <code>CONTRA</code>, and reconciles <code>UTL1</code> penny totals:</p>
+        <pre class="code-box" style="font-size:0.76rem;min-height:225px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~uk-bacs-standard18-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceUserNumber": "654321",
+    "originatingCompanyName": "THAMES CLOUD LTD",
+    "originatingSortCode": "20-45-45",
+    "originatingAccountNumber": "87654321",
+    "processingDate": "2026-11-18",
+    "includeHeadersAndTrailers": true,
+    "payments": [
+      {
+        "name": "OLIVER WRIGHT",
+        "sortCode": "40-12-34",
+        "accountNumber": "12345678",
+        "amount": 2845.50,
+        "reference": "SALARY NOV 2026",
+        "transactionCode": "99"
+      }
+    ]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Official MCP Registry (#1 Global Rank)</span>
+        <h3 style="margin:10px 0 8px;">3-Day Bacs Clearing Cycle &amp; AI Agent MCP Config</h3>
+        <ul style="color:var(--muted);font-size:0.85rem;line-height:1.55;margin-top:6px;">
+          <li><strong>Day 1 (Input Day — up to 22:30 UK):</strong> Submit 100-char Standard 18 file via Bacstel-IP / Barclays.net / HSBCnet / Bankline.</li>
+          <li><strong>Day 2 (Processing Day):</strong> Bacs validates SUN, Sort Codes, and AUDDIS mandates.</li>
+          <li><strong>Day 3 (Entry / Settlement Day):</strong> Cleared GBP funds credit/debit at 07:00 UK; <code>ARUDD</code> unpaid returns release after settlement.</li>
+        </ul>
+        <pre class="code-box" style="font-size:0.76rem;min-height:125px;">{
+  "mcpServers": {
+    "uk-bacs-standard18": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/uk-bacs-standard18-generator",
+      "headers": { "Authorization": "Bearer YOUR_APIFY_API_TOKEN" }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">Frequently Asked UK BACS &amp; Direct Debit Engineering Questions</h2>
+      <div class="faq-item">
+        <h4>What is the difference between BACS Transaction Codes 99, 01, 17, 18, and 19?</h4>
+        <p><code>99</code> is a Bacs Direct Credit (payroll, supplier AP, HMRC/pension/expense payouts). Codes <code>01</code>, <code>17</code>, <code>18</code>, and <code>19</code> are Direct Debit collections: <code>01</code> initiates the first collection on a new Direct Debit Instruction, <code>17</code> collects ongoing recurring instalments, <code>18</code> re-presents an unpaid Direct Debit within 30 days after notifying the payer, and <code>19</code> collects the final payment closing a mandate.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Why does Barclays.net, Lloyds Commercial, or NatWest Bankline reject a Standard 18 file on upload?</h4>
+        <p>Over 90% of Bacstel-IP upload rejections come from four formatting bugs: (1) lines that are 99 or 101 bytes instead of <strong>exact 100 ASCII characters</strong>, (2) hyphens left inside 6-digit UK Sort Codes (<code>20-45-45</code> instead of <code>204545</code>), (3) non-BACS punctuation or lowercase characters in columns <code>47–100</code>, or (4) a <code>CONTRA</code> / <code>UTL1</code> penny total mismatch. Our <a href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">UK BACS Standard 18 Generator API</a> sanitizes and mathematically verifies every field automatically.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio Home</a> &bull;
+      <a href="./uk-bacs-standard-18-file-generator.html">UK BACS Standard 18 API</a> &bull;
+      <a href="./sage-xero-csv-to-uk-bacs-standard-18-barclays-hsbc-lloyds-natwest.html">Sage/Xero CSV Guide</a> &bull;
+      <a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Global Payroll</a> &bull;
+      <a href="./openapi.json">OpenAPI 3.1</a>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var CODES = [
+      { code: "99", cat: "TX", win: "Direct Credit (Cols 16–17)", name: "Bacs Direct Credit (Standard)", fix: "Default GBP credit code for UK payroll salaries, supplier invoices, customer refunds, and expenses." },
+      { code: "Z4", cat: "TX", win: "Direct Credit (Cols 16–17)", name: "Dividend Payment Credit", fix: "Used by corporate registrars and investment platforms distributing UK equity dividends." },
+      { code: "Z5", cat: "TX", win: "Direct Credit (Cols 16–17)", name: "Building Society Interest Credit", fix: "Used for building society interest distributions; verify roll-number reference in Cols 65–82 if required." },
+      { code: "01", cat: "TX", win: "Direct Debit (Cols 16–17)", name: "First Direct Debit Collection", fix: "Use on the very first collection after lodging an AUDDIS 0N mandate (allow Bacs setup lead time before Day 1)." },
+      { code: "17", cat: "TX", win: "Direct Debit (Cols 16–17)", name: "Ongoing / Standard Direct Debit", fix: "Standard recurring Direct Debit collection code for active SaaS subscriptions, utilities, and B2B retainers." },
+      { code: "18", cat: "TX", win: "Direct Debit (Cols 16–17)", name: "Re-Presented Direct Debit", fix: "Retry collection within 1 calendar month of an ARUDD Code 0 unpaid return after giving required notice to payer." },
+      { code: "19", cat: "TX", win: "Direct Debit (Cols 16–17)", name: "Final Direct Debit Collection", fix: "Final instalment under a fixed-term Direct Debit series; mandate becomes dormant afterwards." },
+      { code: "0N", cat: "TX", win: "AUDDIS Mandate (Zero Pence)", name: "New AUDDIS Direct Debit Instruction", fix: "Paperless mandate lodge row (Cols 36–46 must be 00000000000); reference in Cols 65–82 must be unique (min 6 chars)." },
+      { code: "0C", cat: "TX", win: "AUDDIS Mandate (Zero Pence)", name: "Cancel AUDDIS Direct Debit Instruction", fix: "Zero-value cancellation row sent by Service User to close an active DDI cleanly at the payer's bank." },
+      { code: "0S", cat: "TX", win: "AUDDIS Mandate (Zero Pence)", name: "Convert Paper DDI to AUDDIS", fix: "Zero-value migration code converting legacy paper mandates onto electronic AUDDIS management." },
+      { code: "ARUDD 0", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "Refer to Payer (Insufficient Funds)", fix: "Payer lacked cleared funds on Settlement Day. Notify customer; optionally re-present once using Tx Code 18." },
+      { code: "ARUDD 1", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "Instruction Cancelled", fix: "Customer cancelled their DDI via mobile/online banking. Do NOT re-present with Code 18; request a fresh mandate." },
+      { code: "ARUDD 2", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "Payer Deceased", fix: "Immediately suspend automated billing & dunning emails; route account to bereavement/compliance handling." },
+      { code: "ARUDD 3", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "Account Transferred", fix: "Account switched via CASS to another UK bank. Inspect your ADDACS report for the new Sort Code & Account Number." },
+      { code: "ARUDD 4", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "Advance Notice Disputed", fix: "Payer states they did not receive mandatory advance notice of amount/date. Re-issue compliant advance notice." },
+      { code: "ARUDD 5", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "No Account (Invalid Sort/Account)", fix: "Sort Code (6 digits) or Account Number (8 digits) does not exist at receiving PSP. Validate before submitting." },
+      { code: "ARUDD 6", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "No Instruction Held", fix: "Receiving bank has no active 0N mandate matching your 6-digit SUN + exact Core Reference (Cols 65–82)." },
+      { code: "ARUDD 7", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "Amount Differs", fix: "Presented penny amount conflicts with fixed mandate terms or payer's expected schedule." },
+      { code: "ARUDD 8", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "Amount Not Yet Due", fix: "UHL1 processing date (bYYDDD) is earlier than the agreed collection date notified to the payer." },
+      { code: "ARUDD 9", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "Presentation Overdue", fix: "Collection submitted after mandate expiry or beyond the allowable re-presentation window." },
+      { code: "ARUDD A", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "Originating Service User Differs", fix: "6-digit SUN in header does not match the SUN under which the original DDI was lodged." },
+      { code: "ARUDD B", cat: "ARUDD", win: "Day 3 Unpaid DD Return", name: "Account Closed", fix: "Payer closed their UK current account without CASS switch. Pause recurring Code 17 runs and request new bank details." },
+      { code: "ADDACS 0", cat: "ADDACS", win: "Mandate Cancellation", name: "Instruction Cancelled — Refer to Payer", fix: "Bank cancelled DDI (e.g. account unable to accept Direct Debits). Mark mandate inactive in ERP/CRM." },
+      { code: "ADDACS 1", cat: "ADDACS", win: "Mandate Cancellation", name: "Instruction Cancelled by Payer", fix: "Payer cancelled mandate directly with their bank. Halt future Code 17 collections within 3 working days." },
+      { code: "ADDACS 3", cat: "ADDACS", win: "CASS Bank Switch (Mandatory Update)", name: "Account Transferred to New PSP", fix: "Current Account Switch Service (CASS) update! Replace stored Sort Code & Account Number with new values from ADDACS XML." },
+      { code: "ADDACS B", cat: "ADDACS", win: "Mandate Cancellation", name: "Account Closed", fix: "Deactivate mandate immediately in billing engine and trigger automated payment-method update link." },
+      { code: "ADDACS C", cat: "ADDACS", win: "Branch / Account Amendment", name: "Account Transferred Within Same Bank", fix: "Internal bank re-numbering; update stored Sort Code & 8-digit Account Number before next collection." },
+      { code: "AWACS 3", cat: "ADDACS", win: "Direct Credit Switch Advice", name: "Direct Credit Redirected via CASS", fix: "Code 99 payroll/supplier payment was auto-forwarded via CASS. Update payee Sort Code & Account Number in HR/ERP." }
+    ];
+
+    var activeCat = "ALL";
+    var searchEl = document.getElementById("bacsSearch");
+    var tbody = document.getElementById("bacsTableBody");
+
+    function renderTable() {
+      var q = (searchEl.value || "").trim().toLowerCase();
+      var rows = CODES.filter(function (item) {
+        if (activeCat !== "ALL" && item.cat !== activeCat) return false;
+        if (!q) return true;
+        return (item.code + " " + item.win + " " + item.name + " " + item.fix).toLowerCase().indexOf(q) !== -1;
+      });
+      tbody.innerHTML = rows.map(function (r) {
+        return '<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">' +
+          '<td style="padding:10px;font-family:monospace;font-weight:700;color:#38bdf8;white-space:nowrap;">' + r.code + '</td>' +
+          '<td style="padding:10px;color:var(--muted);white-space:nowrap;">' + r.win + '</td>' +
+          '<td style="padding:10px;font-weight:600;">' + r.name + '</td>' +
+          '<td style="padding:10px;color:#cbd5e1;">' + r.fix + '</td>' +
+        '</tr>';
+      }).join("") || '<tr><td colspan="4" style="padding:14px;color:var(--muted);">No matching UK BACS codes found.</td></tr>';
+    }
+
+    document.querySelectorAll(".bacs-filter").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        activeCat = btn.getAttribute("data-cat");
+        renderTable();
+      });
+    });
+    searchEl.addEventListener("input", renderTable);
+    renderTable();
+
+    function decodeJulian(yyddd) {
+      var m = /^ (\d{2})(\d{3})$/.exec(yyddd);
+      if (!m) return "Invalid bYYDDD (must be leading space + 2-digit YY + 3-digit DDD)";
+      var year = 2000 + parseInt(m[1], 10);
+      var doy = parseInt(m[2], 10);
+      if (doy < 1 || doy > 366) return "Invalid day-of-year (" + doy + ")";
+      var dt = new Date(Date.UTC(year, 0, doy));
+      return dt.toISOString().slice(0, 10) + " (Year " + year + ", Day " + doy + ")";
+    }
+
+    var lineIn = document.getElementById("bacsLineInput");
+    var lineOut = document.getElementById("bacsLineOut");
+
+    function inspectLine() {
+      var raw = (lineIn.value || "").replace(/\r?\n/g, "");
+      var lenStatus = raw.length === 100
+        ? "PASS (Exact 100 ASCII characters)"
+        : "FAIL (Length is " + raw.length + " chars — UK BACS Standard 18 requires exact 100 chars)";
+
+      if (raw.slice(0, 4) === "UHL1") {
+        var jul = raw.slice(4, 10);
+        var recv = raw.slice(10, 16);
+        var curr = raw.slice(20, 22);
+        var work = raw.slice(28, 37);
+        var fno = raw.slice(37, 40);
+        lineOut.textContent = [
+          "Record Type      : UHL1 (User Header Label 1)",
+          "Line Width Check : " + lenStatus,
+          "[01–04] Label    : \"" + raw.slice(0, 4) + "\"",
+          "[05–10] bYYDDD   : \"" + jul + "\" -> " + decodeJulian(jul),
+          "[11–16] Receiver : \"" + recv + "\" (SUN / Bureau Party ID)",
+          "[21–22] Currency : \"" + curr + "\" (00 = GBP Sterling)",
+          "[29–37] Work Code: \"" + work + "\" (1 DAILY / 4 MULTI)",
+          "[38–40] File No. : \"" + fno + "\""
+        ].join("\n");
+        return;
+      }
+
+      if (raw.slice(0, 4) === "UTL1") {
+        var drPence = parseInt(raw.slice(4, 17), 10) || 0;
+        var crPence = parseInt(raw.slice(17, 30), 10) || 0;
+        var drCnt = parseInt(raw.slice(30, 37), 10) || 0;
+        var crCnt = parseInt(raw.slice(37, 44), 10) || 0;
+        lineOut.textContent = [
+          "Record Type      : UTL1 (User Trailer Label 1)",
+          "Line Width Check : " + lenStatus,
+          "[05–17] Debit £  : £" + (drPence / 100).toFixed(2) + " (" + raw.slice(4, 17) + " pence)",
+          "[18–30] Credit £ : £" + (crPence / 100).toFixed(2) + " (" + raw.slice(17, 30) + " pence)",
+          "[31–37] Dr Count : " + drCnt + " item(s)",
+          "[38–44] Cr Count : " + crCnt + " item(s)",
+          "Balance Check    : " + (drPence === crPence ? "BALANCED (Debits == Credits incl. CONTRA)" : "UNBALANCED (Check CONTRA row)")
+        ].join("\n");
+        return;
+      }
+
+      var destSort = raw.slice(0, 6);
+      var destAcct = raw.slice(6, 14);
+      var acctType = raw.slice(14, 15);
+      var txCode = raw.slice(15, 17);
+      var origSort = raw.slice(17, 23);
+      var origAcct = raw.slice(23, 31);
+      var freeFmt = raw.slice(31, 35);
+      var penceRaw = raw.slice(35, 46);
+      var origName = raw.slice(46, 64);
+      var ref = raw.slice(64, 82);
+      var destName = raw.slice(82, 100);
+      var penceVal = /^\d{11}$/.test(penceRaw) ? "£" + (parseInt(penceRaw, 10) / 100).toFixed(2) : "INVALID (must be 11 digits)";
+      var isContra = ref.trim() === "CONTRA";
+
+      lineOut.textContent = [
+        "Record Type      : " + (isContra ? "Standard 18 Balancing CONTRA Record" : "Standard 18 Payment / Collection Data Record"),
+        "Line Width Check : " + lenStatus,
+        "[01–06] Dest Sort: " + destSort + (/^\d{6}$/.test(destSort) ? " (OK — 6 digits, formatted " + destSort.slice(0,2) + "-" + destSort.slice(2,4) + "-" + destSort.slice(4,6) + ")" : " (ERR — must be 6 digits without hyphens)"),
+        "[07–14] Dest Acct: " + destAcct + (/^\d{8}$/.test(destAcct) ? " (OK — 8 digits)" : " (ERR — must be 8 digits)"),
+        "[15–15] Acct Type: " + acctType,
+        "[16–17] Tx Code  : " + txCode + (txCode === "99" ? " (Bacs Direct Credit)" : txCode === "17" ? " (Ongoing Direct Debit)" : txCode === "01" ? " (First Direct Debit)" : ""),
+        "[18–23] Orig Sort: " + origSort + (/^\d{6}$/.test(origSort) ? " (OK — 6 digits)" : " (ERR — must be 6 digits)"),
+        "[24–31] Orig Acct: " + origAcct + (/^\d{8}$/.test(origAcct) ? " (OK — 8 digits)" : " (ERR — must be 8 digits)"),
+        "[32–35] Free Fmt : \"" + freeFmt + "\"",
+        "[36–46] Pence(11): " + penceRaw + " -> " + penceVal,
+        "[47–64] Orig Name: \"" + origName + "\" (18 chars)",
+        "[65–82] Reference: \"" + ref + "\" (18 chars" + (isContra ? " — CONTRA marker" : "") + ")",
+        "[83–100] DestName: \"" + destName + "\" (18 chars)"
+      ].join("\n");
+    }
+
+    document.querySelectorAll(".bacs-preset").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        lineIn.value = btn.getAttribute("data-line");
+        inspectLine();
+      });
+    });
+    lineIn.addEventListener("input", inspectLine);
+    inspectLine();
+
+    var dtPicker = document.getElementById("julianDatePicker");
+    var julOut = document.getElementById("julianOut");
+    function updateJulian() {
+      var val = dtPicker.value;
+      if (!val) return;
+      var parts = val.split("-").map(Number);
+      var d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+      var start = new Date(Date.UTC(parts[0], 0, 0));
+      var doy = Math.round((d - start) / 86400000);
+      var yy = String(parts[0]).slice(-2);
+      var ddd = String(doy).padStart(3, "0");
+      julOut.textContent = 'UHL1 Cols 05–10: " ' + yy + ddd + '" (Day ' + doy + ' of ' + parts[0] + ')';
+    }
+    dtPicker.addEventListener("change", updateJulian);
+    updateJulian();
+  })();
+  </script>
+</body>
+</html>

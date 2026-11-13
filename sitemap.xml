@@ -225,4 +225,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.91</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/uk-bacs-arudd-addacs-return-codes-transaction-codes-99-01-17-guide.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.91</priority>
+  </url>
 </urlset>
