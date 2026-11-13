@@ -266,20 +266,20 @@
       ['tab_datev', 'Clicked German DATEV Tab']
     ];
 
-    // ownerUsers = 1 (our own finops_studio creator account); ownerRuns = our own internal QC verification runs
+    // ownerUsers = 2 on public Store Actors (1 creator account + 1 Apify automated Store QA checker); ownerRuns = creator + QA baseline runs
     const PRODUCTS = [
-      { num: 1, name: 'SEPA XML Generator (pain.001/008)', market: 'Europe (40+ Countries)', slug: 'finops_studio~sepa-xml-generator', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 2 },
-      { num: 2, name: 'EU E-Invoice XML (Peppol/XRechnung)', market: 'BE / DE / FR / EU', slug: 'finops_studio~eu-einvoice-xml-generator', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 2 },
-      { num: 3, name: 'US NACHA ACH Payroll Generator', market: 'United States', slug: 'finops_studio~nacha-ach-file-generator', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 2 },
-      { num: 4, name: 'Corporate BAI2 Statement Parser', market: 'US & Global Treasury', slug: 'finops_studio~bai2-bank-statement-parser', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 2 },
-      { num: 5, name: 'German DATEV Buchungsstapel CSV', market: 'Germany & Austria', slug: 'finops_studio~datev-buchungsstapel-generator', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 2 },
-      { num: 6, name: 'Australian ABA Direct Entry (.aba)', market: 'Australia (CBA/NAB/WBC)', slug: 'finops_studio~aba-cemtex-file-generator', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 2 },
-      { num: 7, name: 'ISO 20022 pain.002 Error Decoder', market: 'Global Banking', slug: 'finops_studio~iso20022-pain002-status-parser', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 2 },
-      { num: 8, name: 'UK BACS Standard 18 Generator', market: 'United Kingdom (GBP)', slug: 'finops_studio~uk-bacs-standard18-generator', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 2 },
-      { num: 9, name: 'Canadian CPA-005 EFT Generator', market: 'Canada (RBC/TD/BMO)', slug: 'finops_studio~canada-cpa005-eft-generator', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 2 },
+      { num: 1, name: 'SEPA XML Generator (pain.001/008)', market: 'Europe (40+ Countries)', slug: 'finops_studio~sepa-xml-generator', rivals: '0 Competitors (#1)', ownerUsers: 2, ownerRuns: 3 },
+      { num: 2, name: 'EU E-Invoice XML (Peppol/XRechnung)', market: 'BE / DE / FR / EU / Nordics', slug: 'finops_studio~eu-einvoice-xml-generator', rivals: '0 Competitors (#1)', ownerUsers: 2, ownerRuns: 3 },
+      { num: 3, name: 'US NACHA ACH Payroll Generator', market: 'United States', slug: 'finops_studio~nacha-ach-file-generator', rivals: '0 Competitors (#1)', ownerUsers: 2, ownerRuns: 3 },
+      { num: 4, name: 'Corporate BAI2 Statement Parser', market: 'US & Global Treasury', slug: 'finops_studio~bai2-bank-statement-parser', rivals: '0 Competitors (#1)', ownerUsers: 2, ownerRuns: 3 },
+      { num: 5, name: 'German DATEV Buchungsstapel CSV', market: 'Germany & Austria', slug: 'finops_studio~datev-buchungsstapel-generator', rivals: '0 Competitors (#1)', ownerUsers: 2, ownerRuns: 3 },
+      { num: 6, name: 'Australian ABA Direct Entry (.aba)', market: 'Australia (CBA/NAB/WBC)', slug: 'finops_studio~aba-cemtex-file-generator', rivals: '0 Competitors (#1)', ownerUsers: 2, ownerRuns: 2 },
+      { num: 7, name: 'ISO 20022 pain.002 Error Decoder', market: 'Global Banking', slug: 'finops_studio~iso20022-pain002-status-parser', rivals: '0 Competitors (#1)', ownerUsers: 2, ownerRuns: 2 },
+      { num: 8, name: 'UK BACS Standard 18 Generator', market: 'United Kingdom (GBP)', slug: 'finops_studio~uk-bacs-standard18-generator', rivals: '0 Competitors (#1)', ownerUsers: 2, ownerRuns: 2 },
+      { num: 9, name: 'Canadian CPA-005 EFT Generator', market: 'Canada (RBC/TD/BMO)', slug: 'finops_studio~canada-cpa005-eft-generator', rivals: '0 Competitors (#1)', ownerUsers: 2, ownerRuns: 2 },
       { num: 10, name: 'US Bank Positive Pay Check Generator', market: 'US (Chase/BofA/Wells Fargo/PNC)', slug: 'finops_studio~us-positive-pay-check-generator', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 2 },
       { num: 11, name: 'Spanish AEB Norma 43 Statement Parser', market: 'Spain (CaixaBank/BBVA/Santander)', slug: 'finops_studio~spanish-aeb-norma43-parser', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 1 },
-      { num: 12, name: 'ISO 20022 pacs.008 Fedwire & SWIFT Generator (NEW!)', market: 'US Fedwire / Global SWIFT CBPR+', slug: 'finops_studio~iso20022-pacs008-fedwire-generator', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 1 }
+      { num: 12, name: 'ISO 20022 pacs.008 Fedwire & SWIFT Generator', market: 'US Fedwire / Global SWIFT CBPR+', slug: 'finops_studio~iso20022-pacs008-fedwire-generator', rivals: '0 Competitors (#1)', ownerUsers: 1, ownerRuns: 1 }
     ];
 
     async function getCount(key) {
@@ -378,7 +378,7 @@
                 <td><strong>${p.name}</strong></td>
                 <td>${p.market}</td>
                 <td><span class="badge-win">${p.rivals}</span></td>
-                <td><span class="badge-queue">BUILT &amp; QUEUED (24H QUOTA)</span></td>
+                <td><span class="badge-queue">READY (VERIFY ID FOR 10+ TOOLS)</span></td>
                 <td>Cloud-Verified &#10003;</td>
               </tr>`);
           }

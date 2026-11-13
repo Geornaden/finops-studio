@@ -3,13 +3,17 @@
 > Zero-hallucination financial file generators, checksum validators, and parsers for CFOs, accounting firms, ERP integrators, n8n/Make workflows, and AI agents (Model Context Protocol / MCP). Hosted on Apify Cloud (`https://apify.com/finops_studio`) with interactive previews and documentation at `https://geornaden.github.io/finops-studio/`.
 
 ## Official Model Context Protocol (MCP) Registry Identifiers (`registry.modelcontextprotocol.io`)
-- Unified Suite: `io.github.Geornaden/finops-studio` (`https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator`)
-- Dedicated Single-Tool MCP Servers:
+- Unified Suite (9 Live Public Actors): `io.github.Geornaden/finops-studio` (`https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser,finops_studio/uk-bacs-standard18-generator,finops_studio/canada-cpa005-eft-generator`)
+- Dedicated Single-Tool MCP Servers (All #1 Ranked Globally):
   - `io.github.Geornaden/sepa-xml-pain001-iban-mcp`
   - `io.github.Geornaden/peppol-xrechnung-facturx-einvoice-mcp`
   - `io.github.Geornaden/nacha-ach-payroll-generator-mcp`
   - `io.github.Geornaden/bai2-bank-statement-parser-mcp`
   - `io.github.Geornaden/datev-buchungsstapel-extf-mcp`
+  - `io.github.Geornaden/aba-cemtex-direct-entry-mcp`
+  - `io.github.Geornaden/iso20022-pain002-rejection-decoder-mcp`
+  - `io.github.Geornaden/uk-bacs-standard18-payroll-mcp`
+  - `io.github.Geornaden/canada-cpa005-eft-payroll-mcp`
 
 ## 12 Production API & Store Tools (`finops_studio`)
 
