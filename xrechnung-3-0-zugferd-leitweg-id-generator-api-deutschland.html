@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Rechnungspflicht Deutschland (XRechnung 3.0 UBL &amp; ZUGFeRD 2.3 CII) — Leitweg-ID Rechner &amp; XML API | FinOps Studio</title>
+  <meta name="description" content="Praxisleitfaden &amp; interaktiver Leitweg-ID Prüfziffer-Rechner (MOD 97-10) zur deutschen B2B/B2G E-Rechnungspflicht (§ 14 UStG): XRechnung 3.0 UBL &amp; ZUGFeRD 2.3 / Factur-X EN 16931 XML per REST API, n8n, Make.com oder DATEV-Workflow erstellen (0 €/Monat + $0,05/Rechnung)." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/xrechnung-3-0-zugferd-leitweg-id-generator-api-deutschland.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="E-Rechnungspflicht Deutschland: XRechnung 3.0 & ZUGFeRD 2.3 XML API + Leitweg-ID Prüfer | FinOps Studio" />
+  <meta property="og:description" content="Berechnen Sie deutsche Leitweg-ID Prüfziffern (BT-10) lokal im Browser und generieren Sie EN 16931 XRechnung 3.0 UBL sowie ZUGFeRD 2.3 / Factur-X CII XML ohne Grundgebühr." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/xrechnung-3-0-zugferd-leitweg-id-generator-api-deutschland.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "inLanguage": "de-DE",
+        "headline": "E-Rechnungspflicht Deutschland (§ 14 UStG): XRechnung 3.0 UBL & ZUGFeRD 2.3 / Factur-X CII XML API + Leitweg-ID Rechner",
+        "url": "https://geornaden.github.io/finops-studio/xrechnung-3-0-zugferd-leitweg-id-generator-api-deutschland.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "publisher": { "@type": "Organization", "name": "FinOps Studio" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Welche E-Rechnungsformate erfüllen die deutsche B2B-E-Rechnungspflicht nach § 14 UStG und dem Wachstumschancengesetz?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Als strukturierte elektronische Rechnung gelten alle Formate, die der europäischen Norm CEN EN 16931 entsprechen — insbesondere XRechnung 3.0 (OASIS UBL 2.1 oder UN/CEFACT CII, Pflicht bei B2G-Auftraggebern wie ZRE/OZG-RE und weit verbreitet im B2B) sowie der strukturierte XML-Datensatz von ZUGFeRD ab Version 2.0.1 / 2.3 (Profil EN 16931 / Comfort bzw. XRechnung, identisch mit dem französisch-deutschen Factur-X Standard)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Wie wird die zweistellige Prüfziffer einer deutschen Leitweg-ID (BT-10) berechnet?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Eine Leitweg-ID besteht aus der Grobadressierung (z. B. Bundesland-/Gemeindeschlüssel wie 04011000 oder 991/992/993 für Bundesinstitutionen), einer optionalen Feinadressierung und einer zweistelligen Prüfziffer nach ISO/IEC 7064 MOD 97-10: Buchstaben A–Z werden durch 10–35 ersetzt, '00' angehängt und 98 minus (Zahl mod 97) ergibt die zweistellige Prüfziffer."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Visueller XML-Editor</a>
+        <a href="./datev-bu-schluessel-skr03-skr04-tabelle-buchungsstapel-api.html">DATEV SKR03/04</a>
+        <a href="./sepa-xml-generator.html">SEPA pain.001.001.09</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">XRechnung / ZUGFeRD API ($0,05) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#127465;&#127466; § 14 UStG &bull; Wachstumschancengesetz 2025–2028 &bull; KoSIT XRechnung 3.0 &amp; ZUGFeRD 2.3 (EN 16931)</span>
+      <h1>Deutsche E-Rechnungspflicht: <code>XRechnung 3.0</code> &amp; <code>ZUGFeRD 2.3</code> XML API + <code>Leitweg-ID</code> Rechner</h1>
+      <p>Seit dem <strong>1. Januar 2025</strong> müssen alle deutschen B2B-Unternehmen EN-16931-konforme E-Rechnungen empfangen können; ab dem <strong>1. Januar 2027</strong> endet die Papier-/PDF-Übergangsfrist für Unternehmen über 800.000&nbsp;&euro; Jahresumsatz (ab <strong>1. Januar 2028</strong> für alle). Prüfen oder berechnen Sie unten jede <strong><code>Leitweg-ID</code> (BT-10)</strong> und erzeugen Sie cent-exakte <code>xrechnung-3.0-ubl</code> &amp; <code>facturx-cii-en16931</code> XML-Dateien ohne monatliche Grundgebühr.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#de-builder">Leitweg-ID prüfen &amp; XRechnung/ZUGFeRD JSON bauen &darr;</a>
+        <a class="btn btn-outline" href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">DATEV EXTF v700 Buchungsstapel Guide &rarr;</a>
+      </div>
+    </section>
+
+    <section id="de-builder" class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+        <div>
+          <label for="deFormatSel" style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;"><strong>Ziel-Profil nach CEN EN 16931 auswählen:</strong></label>
+          <select id="deFormatSel" style="padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.92rem;font-weight:600;">
+            <option value="xrechnung-3.0-ubl">&#127963;&#65039; XRechnung 3.0 (OASIS UBL 2.1 — B2G ZRE / OZG-RE &amp; B2B Mittelstand)</option>
+            <option value="facturx-cii-en16931">&#128196; ZUGFeRD 2.3 / Factur-X EN 16931 (UN/CEFACT CII XML — B2B Industrie &amp; DATEV)</option>
+          </select>
+        </div>
+        <span id="deCheckBadge" class="status-chip status-ok">PRÜFZIFFER GÜLTIG</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:14px;">
+        <div>
+          <label for="deLeitwegInp" style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;">Käufer-Referenz / Leitweg-ID (<code>BT-10</code>)</label>
+          <input id="deLeitwegInp" value="04011000-1234512345-06" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.86rem;font-family:monospace;font-weight:700;" />
+        </div>
+        <div>
+          <label for="deSellerVatInp" style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;">Verkäufer USt-IdNr. (<code>BT-31</code>)</label>
+          <input id="deSellerVatInp" value="DE129273398" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.86rem;font-family:monospace;font-weight:700;" />
+        </div>
+        <div>
+          <label for="deIbanInp" style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;">Verkäufer Auszahlungs-IBAN (<code>BG-17</code>)</label>
+          <input id="deIbanInp" value="DE89370400440532013000" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.86rem;font-family:monospace;font-weight:700;" />
+        </div>
+        <div>
+          <label for="deNetInp" style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;">Nettobetrag EUR (zzgl. 19% USt.)</label>
+          <input id="deNetInp" type="number" step="0.01" value="2450.00" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.86rem;font-weight:700;" />
+        </div>
+      </div>
+
+      <div id="deDiagBar" style="margin-bottom:14px;padding:10px 12px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.35);font-size:0.83rem;color:#d1fae5;"></div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Fertiger REST-API JSON-Payload (<code>EN 16931</code> + <code>BR-DE</code>)</strong></span>
+            <button id="btnCopyDeJson" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">JSON kopieren</button>
+          </div>
+          <pre id="dePayloadPre" class="code-box" style="min-height:260px;font-size:0.76rem;"></pre>
+        </div>
+        <div>
+          <div class="pane-label">
+            <span><strong>Sofortiger cURL / n8n / Make.com Aufruf</strong></span>
+            <span class="status-chip status-ok">BR-CO-10..16 EXAKT</span>
+          </div>
+          <pre id="deCurlPre" class="code-box" style="min-height:260px;font-size:0.76rem;"></pre>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.86rem;color:#e2e8f0;">
+          <strong>DATEV + E-Rechnung in einem Workflow?</strong> Erzeugen Sie parallel zur <code>XRechnung 3.0</code> / <code>ZUGFeRD 2.3</code> XML auch den fertigen <strong>DATEV EXTF v700 Buchungsstapel (SKR03/SKR04)</strong> — beide abgedeckt durch das kostenlose $5/Monat Apify-Startguthaben (~100 E-Rechnungen/Monat gratis).
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a class="btn btn-outline" href="./workflows/n8n-stripe-to-datev-and-einvoice.json" download>n8n DATEV + XRechnung JSON</a>
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">XRechnung Cloud API starten &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">Fahrplan der deutschen B2B-E-Rechnungspflicht (2025–2028)</h2>
+      <div class="grid-3">
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Seit 01.01.2025</span><span class="tag">Empfangspflicht</span></div>
+          <h3>Phase 1: Verbindlicher Empfang für alle B2B-Unternehmen</h3>
+          <p>Jedes in Deutschland ansässige Unternehmen muss strukturierte Rechnungen nach <code>EN 16931</code> (<code>XRechnung 3.0</code> und <code>ZUGFeRD 2.x</code>) elektronisch empfangen und GoBD-konform verarbeiten können.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Ab 01.01.2027</span><span class="tag">&gt; 800.000 &euro; Umsatz</span></div>
+          <h3>Phase 2: Versandpflicht für Mittelstand &amp; Konzerne</h3>
+          <p>Unternehmen mit mehr als 800.000&nbsp;&euro; Vorjahresumsatz dürfen im inländischen B2B-Verkehr keine reinen PDF- oder Papierrechnungen mehr versenden — strukturierte <code>EN 16931</code> XML wird Pflicht.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Ab 01.01.2028</span><span class="tag">Alle Unternehmen</span></div>
+          <h3>Phase 3: Vollständige B2B-Pflicht &amp; Vorbereitung auf EU ViDA</h3>
+          <p>Wegfall der KMU-Übergangsregelung: Auch kleinere Unternehmen unter 800.000&nbsp;&euro; Umsatz stellen inländische B2B-Rechnungen ausschließlich strukturiert (z.&nbsp;B. per <code>XRechnung</code> oder <code>ZUGFeRD CII</code>) aus.</p>
+        </article>
+      </div>
+    </section>
+
+    <section style="margin-top:24px;">
+      <h2 class="section-title">Häufige Fragen zu XRechnung 3.0, ZUGFeRD &amp; KoSIT-Regeln (<code>BR-DE</code>)</h2>
+      <div class="faq-item">
+        <h4>Was ist der Unterschied zwischen <code>xrechnung-3.0-ubl</code> und <code>facturx-cii-en16931</code>?</h4>
+        <p>Beide Profile setzen das identische semantische Datenmodell <strong>CEN EN 16931</strong> um. <code>xrechnung-3.0-ubl</code> erzeugt OASIS UBL 2.1 XML nach der deutschen KoSIT-Spezifikation (ideal für Bundes-/Landesportale ZRE &amp; OZG-RE sowie Peppol-Zustellung mit <code>schemeID="0204"</code> oder <code>"9930"</code>). <code>facturx-cii-en16931</code> erzeugt UN/CEFACT Cross-Industry Invoice (CII) XML, das exakt dem XML-Kern von <strong>ZUGFeRD 2.3 (Profil EN 16931)</strong> und dem französischen <strong>Factur-X</strong> entspricht.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Welche Pflichtfelder prüfen deutsche Behördenportale (<code>BR-DE-1</code> bis <code>BR-DE-26</code>)?</h4>
+        <p>Neben der <code>BuyerReference</code> / <code>Leitweg-ID</code> (<code>BT-10</code>, <code>BR-DE-15</code>) verlangen XRechnung-Validatoren eine vollständige Verkäufer-Kontaktstelle (<code>BG-6</code>: Name, Telefon, E-Mail), Zahlungsbedingungen oder Fälligkeitsdatum (<code>BT-9</code> / <code>BT-20</code>), eine valide <code>IBAN</code> bei SEPA-Überweisung (<code>BT-84</code>) sowie cent-genaue Netto-/Steuer-/Bruttosummen ohne Rundungsdifferenzen (<code>BR-CO-10..16</code>).</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">Alle 12 Finanz-APIs</a> &bull; <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">DATEV EXTF v700 CSV</a> &bull; <a href="./datev-bu-schluessel-skr03-skr04-tabelle-buchungsstapel-api.html">DATEV BU-Schl&uuml;ssel &amp; SKR03/04</a> &bull; <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">SEPA pain.001 Validator</a></div>
+      <div><a href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">EU E-Invoice XML Generator im Apify Store &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      function mod97(digits) {
+        var rem = 0;
+        for (var i = 0; i < digits.length; i++) {
+          rem = (rem * 10 + parseInt(digits[i], 10)) % 97;
+        }
+        return rem;
+      }
+
+      function verifyLeitweg(raw) {
+        var s = String(raw || '').trim().toUpperCase();
+        var parts = s.split('-');
+        if (parts.length < 2 || !/^\d{2}$/.test(parts[parts.length - 1])) {
+          return { isLeitweg: false, valid: true, msg: 'Freie B2B-Käuferreferenz (BT-10) aktiv — für B2G-Behörden Format Grobadressierung-Feinadressierung-Prüfziffer nutzen.' };
+        }
+        var given = parts[parts.length - 1];
+        var body = parts.slice(0, -1).join('');
+        if (!/^[A-Z0-9]+$/.test(body)) {
+          return { isLeitweg: true, valid: false, msg: 'Ungültige Zeichen in der Leitweg-ID.' };
+        }
+        var expanded = body.replace(/[A-Z]/g, function (c) { return String(c.charCodeAt(0) - 55); });
+        var expected = String(98 - mod97(expanded + '00')).padStart(2, '0');
+        var fixed = parts.slice(0, -1).join('-') + '-' + expected;
+        return {
+          isLeitweg: true,
+          valid: given === expected,
+          expected: expected,
+          fixed: fixed,
+          msg: given === expected
+            ? ('Leitweg-ID Prüfziffer ' + given + ' (MOD 97-10) gültig')
+            : ('Prüfziffer ' + given + ' falsch — korrekt wäre ' + fixed)
+        };
+      }
+
+      function verifyIban(raw) {
+        var s = String(raw || '').replace(/\s+/g, '').toUpperCase();
+        if (!/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(s)) return false;
+        var moved = s.slice(4) + s.slice(0, 4);
+        var expanded = moved.replace(/[A-Z]/g, function (c) { return String(c.charCodeAt(0) - 55); });
+        return mod97(expanded) === 1;
+      }
+
+      var fmtSel = document.getElementById('deFormatSel');
+      var lwInp = document.getElementById('deLeitwegInp');
+      var vatInp = document.getElementById('deSellerVatInp');
+      var ibanInp = document.getElementById('deIbanInp');
+      var netInp = document.getElementById('deNetInp');
+      var badge = document.getElementById('deCheckBadge');
+      var diag = document.getElementById('deDiagBar');
+      var payloadPre = document.getElementById('dePayloadPre');
+      var curlPre = document.getElementById('deCurlPre');
+
+      function updateDe() {
+        var fmt = fmtSel.value;
+        var lw = verifyLeitweg(lwInp.value);
+        var vat = String(vatInp.value || '').replace(/\s+/g, '').toUpperCase();
+        var vatOk = /^DE\d{9}$/.test(vat);
+        var iban = String(ibanInp.value || '').replace(/\s+/g, '').toUpperCase();
+        var ibanOk = verifyIban(iban);
+        var net = Math.max(1, parseFloat(netInp.value) || 1000);
+        var gross = Math.round(net * 119) / 100;
+
+        if (lw.valid && vatOk && ibanOk) {
+          badge.textContent = 'EN 16931 & MOD-97 GÜLTIG';
+          badge.className = 'status-chip status-ok';
+          diag.innerHTML = '&#9989; <strong>BT-10:</strong> ' + lw.msg + ' &bull; <strong>USt-IdNr.:</strong> <code>' + vat + '</code> &bull; <strong>IBAN MOD-97:</strong> OK &bull; <strong>Brutto (inkl. 19% USt.):</strong> <code>' + gross.toFixed(2) + ' EUR</code>';
+        } else {
+          badge.textContent = 'PRÜFUNGSHINWEIS';
+          badge.className = 'status-chip status-warn';
+          var notes = [];
+          if (!lw.valid) notes.push(lw.msg);
+          if (!vatOk) notes.push('Deutsche USt-IdNr. muss dem Muster DE + 9 Ziffern entsprechen.');
+          if (!ibanOk) notes.push('IBAN MOD-97 Prüfsumme ungültig.');
+          diag.innerHTML = '&#9888;&#65039; ' + notes.join(' | ');
+        }
+
+        var buyerRef = lwInp.value.trim() || 'PO-2026-DE-104';
+        var payload = {
+          format: fmt,
+          invoiceNumber: 'RE-2026-1084',
+          issueDate: '2026-11-14',
+          dueDate: '2026-12-14',
+          currency: 'EUR',
+          buyerReference: buyerRef,
+          seller: {
+            name: 'RheinCloud Engineering GmbH',
+            vatId: vatOk ? vat : 'DE129273398',
+            endpointId: vatOk ? vat : 'DE129273398',
+            endpointScheme: '9930',
+            street: 'Königsallee 92',
+            city: 'Düsseldorf',
+            postalCode: '40212',
+            country: 'DE',
+            iban: ibanOk ? iban : 'DE89370400440532013000',
+            contactName: 'Buchhaltung RheinCloud',
+            contactPhone: '+49 211 5550190',
+            contactEmail: 'rechnung@rheincloud-example.de'
+          },
+          buyer: {
+            name: lw.isLeitweg ? 'Freie Hansestadt Bremen — Beschaffungsamt' : 'Süddeutsche Maschinenbau AG',
+            vatId: 'DE811234567',
+            endpointId: lw.isLeitweg ? (lw.valid ? buyerRef : lw.fixed) : 'DE811234567',
+            endpointScheme: lw.isLeitweg ? '0204' : '9930',
+            street: lw.isLeitweg ? 'Contrescarpe 72' : 'Maximilianstraße 35',
+            city: lw.isLeitweg ? 'Bremen' : 'München',
+            postalCode: lw.isLeitweg ? '28195' : '80539',
+            country: 'DE'
+          },
+          lines: [
+            {
+              description: 'Cloud-Plattformbetrieb & Managed Security Q4/2026',
+              quantity: 1,
+              unitPrice: +net.toFixed(2),
+              vatRate: 19
+            }
+          ]
+        };
+
+        payloadPre.textContent = JSON.stringify(payload, null, 2);
+        curlPre.textContent =
+          'curl -X POST "https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items?token=$APIFY_TOKEN" \\\n' +
+          '  -H "Content-Type: application/json" \\\n' +
+          "  -d '" + JSON.stringify(payload) + "'";
+      }
+
+      fmtSel.addEventListener('change', updateDe);
+      lwInp.addEventListener('input', updateDe);
+      vatInp.addEventListener('input', updateDe);
+      ibanInp.addEventListener('input', updateDe);
+      netInp.addEventListener('input', updateDe);
+
+      document.getElementById('btnCopyDeJson').addEventListener('click', function () {
+        var btn = document.getElementById('btnCopyDeJson');
+        navigator.clipboard.writeText(payloadPre.textContent || '');
+        btn.textContent = 'Kopiert!';
+        if (window.finopsTrack) window.finopsTrack('action_copy_curl');
+        setTimeout(function () { btn.textContent = 'JSON kopieren'; }, 1600);
+      });
+
+      updateDe();
+    })();
+  </script>
+</body>
+</html>
