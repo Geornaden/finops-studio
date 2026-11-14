@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Google Sheets Apps Script &amp; Excel Office Scripts to SEPA XML, NACHA ACH, UK BACS, .ABA, CPA-005 &amp; DATEV | FinOps Studio</title>
+  <meta name="description" content="Add a custom 'Generate Bank File' menu inside Google Sheets (Apps Script UrlFetchApp) or Microsoft Excel 365 (Office Scripts + Power Automate) to generate SEPA XML (pain.001), US NACHA ACH, UK BACS 18, Australian .ABA, Canadian CPA-005, and DATEV EXTF files for $0/month." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/google-sheets-excel-apps-script-sepa-nacha-bacs-aba-automation.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Google Sheets Apps Script & Excel 365 Office Scripts Bank File Menu Generator | FinOps Studio" />
+  <meta property="og:description" content="Copy-paste Google Sheets Code.gs & Excel TypeScript macros that turn spreadsheet tabs into bank-ready SEPA XML, NACHA .ACH, UK BACS, Australian .ABA, Canadian CPA-005, and DATEV files." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/google-sheets-excel-apps-script-sepa-nacha-bacs-aba-automation.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Google Sheets Apps Script & Microsoft Excel 365 Office Scripts Cookbook for SEPA XML, NACHA ACH, UK BACS, Australian .ABA, Canadian CPA-005 & DATEV",
+        "url": "https://geornaden.github.io/finops-studio/google-sheets-excel-apps-script-sepa-nacha-bacs-aba-automation.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "publisher": { "@type": "Organization", "name": "FinOps Studio" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can Google Sheets generate SEPA XML (pain.001), US NACHA ACH (.ach), UK BACS, or Australian .ABA files directly into Google Drive?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Open Extensions -> Apps Script in Google Sheets, paste our generated Code.gs macro, and store your Apify API token inside Script Properties (APIFY_TOKEN). A custom 'FinOps Bank Files' menu appears in your toolbar, validates every row via FinOps Studio's synchronous Cloud API, and saves the upload-ready .xml, .ach, .bacs, .aba, .eft, or DATEV .csv file straight into Google Drive."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why use an external Cloud API instead of pure spreadsheet formulas or VBA macros?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Spreadsheet formulas and legacy Excel VBA macros frequently corrupt leading zeros on US ABA routing numbers, UK sort codes, Australian BSBs, and Canadian institution/transit numbers, miscalculate NACHA Block-10 94-character padding, or emit outdated unstructured SEPA XML addresses (BE04 rejection). Calling FinOps Studio's deterministic Cloud API enforces strict MOD-97/MOD-10 checksums, exact fixed-width byte lengths, and 2026 ISO 20022 compliance for $0/month subscription."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does Microsoft Excel 365 (Excel for Web & Desktop) automate bank file generation without VBA?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Modern Excel 365 uses TypeScript Office Scripts (Automate tab) paired with a 2-step Power Automate Cloud Flow. The Office Script reads your formatted Excel Table cleanly as typed strings (preserving leading zeros) and passes the JSON payload to Power Automate's HTTP POST action calling FinOps Studio on Apify Cloud, saving the resulting bank file to SharePoint, OneDrive, or SFTP."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">Browser CSV Mapper</a>
+        <a href="./make-zapier-power-automate-sepa-xml-nacha-peppol.html">Make &amp; Power Automate</a>
+        <a href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node SDK</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Get Free API Token ($5/Mo Credit) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#128215; Native Spreadsheet Add-In Cookbook &bull; Google Sheets <code>UrlFetchApp</code> + Excel 365 Office Scripts</span>
+      <h1>Add a 1-Click <code>&#127974; Generate Bank File</code> Menu Inside Google Sheets &amp; Excel 365</h1>
+      <p>Stop fighting broken Excel VBA macros, stripped leading zeros, and manual CSV exports. Generate custom <strong>Google Apps Script (<code>Code.gs</code>)</strong> and <strong>Microsoft Excel 365 Office Scripts (TypeScript)</strong> tailored to your exact columns—and save bank-verified <strong>SEPA XML</strong>, <strong>US NACHA (<code>.ach</code>)</strong>, <strong>UK BACS 18</strong>, <strong>Australian <code>.ABA</code></strong>, <strong>Canadian <code>CPA-005</code></strong>, or <strong>DATEV EXTF</strong> files straight to Google Drive or SharePoint for <strong>$0/month</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#script-generator">Configure Custom Apps Script &amp; Excel Macro &darr;</a>
+        <a class="btn btn-outline" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">Prefer Zero-Install? Use Browser CSV Mapper &rarr;</a>
+      </div>
+    </section>
+
+    <section id="script-generator" class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+        <div>
+          <label for="stdSelect" style="font-size:0.82rem;color:var(--muted);display:block;margin-bottom:4px;"><strong>Step 1 — Select Target Banking / Accounting Standard:</strong></label>
+          <select id="stdSelect" style="padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.92rem;font-weight:600;">
+            <option value="sepa">&#127466;&#127482; EU SEPA Credit Transfer XML (pain.001.001.09)</option>
+            <option value="nacha">&#127482;&#127480; US 94-Character NACHA ACH (.ach PPD / CCD)</option>
+            <option value="bacs">&#127468;&#127463; UK 100-Character BACS Standard 18 (.txt)</option>
+            <option value="aba">&#127462;&#127482; Australian 120-Character BECS Direct Entry (.aba)</option>
+            <option value="cpa005">&#127464;&#127462; Canadian 1,464-Byte CPA-005 EFT (.eft)</option>
+            <option value="datev">&#127465;&#127466; German DATEV Buchungsstapel EXTF v700 (.csv)</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <div>
+            <label for="sheetTabName" style="font-size:0.75rem;color:var(--muted);display:block;margin-bottom:3px;">Sheet / Excel Table Name</label>
+            <input id="sheetTabName" value="Payments" style="padding:7px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.84rem;width:155px;" />
+          </div>
+          <a id="directActorBtn" class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener" style="margin-top:18px;">Open Live API on Apify &rarr;</a>
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <div style="font-size:0.8rem;color:var(--muted);margin-bottom:6px;"><strong>Step 2 — Enter Your Originator / Company Header Defaults &amp; Spreadsheet Column Letters:</strong></div>
+        <div id="originatorInputs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:10px;padding:12px;border-radius:8px;background:rgba(15,23,42,0.65);border:1px solid rgba(148,163,184,0.16);margin-bottom:10px;"></div>
+        <div id="columnInputs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;padding:12px;border-radius:8px;background:rgba(15,23,42,0.45);border:1px solid rgba(56,189,248,0.2);"></div>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Google Sheets Apps Script (<code>Code.gs</code>)</strong> &mdash; Saves Directly to Google Drive</span>
+            <button id="btnCopyGas" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">Copy Code.gs</button>
+          </div>
+          <pre id="gasCodeBox" class="code-box" style="min-height:340px;max-height:460px;overflow:auto;font-size:0.76rem;"></pre>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>Microsoft Excel 365 Office Script (<code>.ts</code>)</strong> + Power Automate HTTP Spec</span>
+            <button id="btnCopyExcel" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">Copy Office Script</button>
+          </div>
+          <pre id="excelCodeBox" class="code-box" style="min-height:340px;max-height:460px;overflow:auto;font-size:0.76rem;"></pre>
+        </div>
+      </div>
+
+      <div id="templateHeaderBar" style="margin-top:12px;padding:11px 14px;border-radius:8px;background:rgba(16,185,129,0.09);border:1px solid rgba(16,185,129,0.3);font-size:0.83rem;color:#e2e8f0;"></div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">60-Second Setup Guide (Zero Servers, Zero Monthly Subscriptions)</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Google Workspace</span><span class="tag">Extensions &rarr; Apps Script</span></div>
+            <h3>1. Install in Google Sheets</h3>
+            <ol style="color:var(--muted);font-size:0.87rem;padding-left:18px;line-height:1.65;">
+              <li>Open your Google Sheet and click <strong>Extensions &rarr; Apps Script</strong>.</li>
+              <li>Paste the generated <code>Code.gs</code> above and click <strong>Save</strong>.</li>
+              <li>Click <strong>Project Settings (&#9881;&#65039;) &rarr; Script Properties</strong> and add <code>APIFY_TOKEN</code> = your token from <a href="https://console.apify.com/settings/integrations" target="_blank" rel="noopener">Apify Console</a> (includes <strong>$5/month free credit</strong>).</li>
+              <li>Reload your Google Sheet: click <strong>&#127974; FinOps Bank Files &rarr; Generate Bank File to Drive</strong>!</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Excel 365 / Web</span><span class="tag">Automate &rarr; New Script</span></div>
+            <h3>2. Install in Microsoft Excel 365</h3>
+            <ol style="color:var(--muted);font-size:0.87rem;padding-left:18px;line-height:1.65;">
+              <li>Format your payment rows as an Excel Table (<code>Ctrl + T</code>) and format routing/BSB/account columns as <strong>Text</strong> so leading zeros stay intact.</li>
+              <li>Open <strong>Automate &rarr; New Script</strong> in Excel 365 and paste the TypeScript Office Script above.</li>
+              <li>In <strong>Power Automate</strong>, add <strong>Excel Online &rarr; Run script</strong> followed by <strong>HTTP POST</strong> to the synchronous endpoint shown in the comment header, then <strong>Create file</strong> in SharePoint/OneDrive.</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Security &amp; Audit</span><span class="tag">Zero Formula Drift</span></div>
+            <h3>3. Why Finance Teams Prefer API Macros</h3>
+            <ul style="color:var(--muted);font-size:0.87rem;padding-left:18px;line-height:1.65;">
+              <li><strong>Leading-Zero Protection:</strong> Reads cells via <code>getDisplayValues()</code> / <code>getTexts()</code> so <code>021000021</code> (Chase ABA) or <code>003</code> (RBC Institution) never turns into <code>21000021</code> or <code>3</code>.</li>
+              <li><strong>Pre-Flight Checksums:</strong> Rejects bad IBAN MOD-97, ABA MOD-10, UK Sort Codes, or missing 2026 SEPA structured addresses <em>before</em> creating a file.</li>
+              <li><strong>$0/Mo Fixed Cost:</strong> Pay $0.02/row ($0.03 start)—up to ~248 payroll rows every month are <strong>$0.00</strong> on Apify's free tier.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:26px;">
+      <h2 class="section-title">Related Pre-Flight Validators &amp; Banking Format References</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <h3><a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html" style="color:var(--text);">1-Click Browser CSV / Excel Column Mapper</a></h3>
+            <p>Want to convert a spreadsheet right now without installing a script? Paste Excel or CSV rows directly in your browser and download your bank file.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-outline" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">Open Browser Mapper &rarr;</a></div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <h3><a href="./make-zapier-power-automate-sepa-xml-nacha-peppol.html" style="color:var(--text);">Make.com, Zapier &amp; Power Automate Blueprints</a></h3>
+            <p>Download ready-to-import Make.com and n8n JSON workflows connecting Airtable, Google Sheets, Stripe, and SharePoint to all 9 live APIs.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-outline" href="./make-zapier-power-automate-sepa-xml-nacha-peppol.html">View No-Code Blueprints &rarr;</a></div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <h3><a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html" style="color:var(--text);">5-Country Global Payroll Bank File Router</a></h3>
+            <p>Pay employees across the US (NACHA), Europe (SEPA), UK (BACS 18), Australia (.ABA), and Canada (CPA-005) from a single unified HRIS table.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-outline" href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">Explore 5-Country Router &rarr;</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div><strong>FinOps Studio</strong> &mdash; Deterministic Banking, Payroll &amp; E-Invoicing Cloud APIs (<a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>).</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="./index.html">Home</a>
+          <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">CSV Mapper</a>
+          <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Peppol Builder</a>
+          <a href="./openapi.json">OpenAPI 3.1</a>
+          <a href="./sitemap.xml">Sitemap</a>
+          <a href="./llms.txt">llms.txt</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var SPECS = {
+      sepa: {
+        label: "SEPA Credit Transfer XML (pain.001.001.09)",
+        actorTilde: "finops_studio~sepa-xml-generator",
+        storeUrl: "https://apify.com/finops_studio/sepa-xml-generator",
+        fileExt: "xml",
+        mimeType: "MimeType.XML",
+        outProp: "xmlString",
+        arrayProp: "transactions",
+        origFields: [
+          { key: "debtorName", label: "Debtor Company Name", val: "Acme Europe GmbH" },
+          { key: "debtorIban", label: "Debtor IBAN", val: "DE89370400440532013000" },
+          { key: "debtorBic", label: "Debtor BIC", val: "COBADEFFXXX" }
+        ],
+        cols: [
+          { key: "name", label: "Payee Name", col: "A", type: "str" },
+          { key: "iban", label: "Recipient IBAN", col: "B", type: "iban" },
+          { key: "amount", label: "Amount (EUR)", col: "C", type: "num" },
+          { key: "remittanceInfo", label: "Invoice / Reference", col: "D", type: "str" },
+          { key: "country", label: "2-Letter Country (DE/NL)", col: "E", type: "str" },
+          { key: "townName", label: "Town / City (2026 BE04)", col: "F", type: "str" }
+        ]
+      },
+      nacha: {
+        label: "US 94-Char NACHA ACH (.ach)",
+        actorTilde: "finops_studio~nacha-ach-file-generator",
+        storeUrl: "https://apify.com/finops_studio/nacha-ach-file-generator",
+        fileExt: "ach",
+        mimeType: "MimeType.PLAIN_TEXT",
+        outProp: "achContent",
+        arrayProp: "entries",
+        origFields: [
+          { key: "companyName", label: "Company Name (16ch)", val: "ACME US CORP" },
+          { key: "companyId", label: "10-Digit Company ID", val: "1987654321" },
+          { key: "immediateDestination", label: "Bank 9-Digit ABA", val: "021000021" },
+          { key: "secCode", label: "SEC Code (PPD/CCD)", val: "PPD" }
+        ],
+        cols: [
+          { key: "individualName", label: "Employee / Vendor Name", col: "A", type: "str" },
+          { key: "routingNumber", label: "9-Digit ABA Routing", col: "B", type: "digits" },
+          { key: "accountNumber", label: "Bank Account Number", col: "C", type: "str" },
+          { key: "amount", label: "Amount (USD)", col: "D", type: "num" },
+          { key: "individualId", label: "Employee / Vendor ID", col: "E", type: "str" },
+          { key: "transactionCode", label: "Tx Code (22=Chk Credit)", col: "F", type: "str" }
+        ]
+      },
+      bacs: {
+        label: "UK 100-Char BACS Standard 18 (.txt)",
+        actorTilde: "finops_studio~uk-bacs-standard18-generator",
+        storeUrl: "https://apify.com/finops_studio/uk-bacs-standard18-generator",
+        fileExt: "txt",
+        mimeType: "MimeType.PLAIN_TEXT",
+        outProp: "bacsContent",
+        arrayProp: "transactions",
+        origFields: [
+          { key: "serviceUserNumber", label: "6-Digit BACS SUN", val: "123456" },
+          { key: "originatorName", label: "Originator Name (18ch)", val: "THAMES CLOUD LTD" },
+          { key: "originatorSortCode", label: "Originator Sort Code", val: "20-00-00" },
+          { key: "originatorAccountNumber", label: "Originator 8-Digit Acct", val: "12345678" }
+        ],
+        cols: [
+          { key: "name", label: "Payee Name (18ch)", col: "A", type: "str" },
+          { key: "sortCode", label: "6-Digit UK Sort Code", col: "B", type: "str" },
+          { key: "accountNumber", label: "8-Digit UK Account", col: "C", type: "digits" },
+          { key: "amount", label: "Amount (GBP)", col: "D", type: "num" },
+          { key: "reference", label: "BACS Reference (18ch)", col: "E", type: "str" }
+        ]
+      },
+      aba: {
+        label: "Australian 120-Char BECS Direct Entry (.aba)",
+        actorTilde: "finops_studio~aba-cemtex-file-generator",
+        storeUrl: "https://apify.com/finops_studio/aba-cemtex-file-generator",
+        fileExt: "aba",
+        mimeType: "MimeType.PLAIN_TEXT",
+        outProp: "abaContent",
+        arrayProp: "transactions",
+        origFields: [
+          { key: "financialInstitution", label: "3-Letter Bank (CBA/NAB)", val: "CBA" },
+          { key: "userName", label: "User Name (26ch)", val: "SYDNEY TECH PTY LTD" },
+          { key: "apcaUserId", label: "6-Digit APCA User ID", val: "301500" },
+          { key: "traceBsb", label: "Trace BSB (NNN-NNN)", val: "062-000" },
+          { key: "traceAccount", label: "Trace Account", val: "10458921" }
+        ],
+        cols: [
+          { key: "accountTitle", label: "Account Title (32ch)", col: "A", type: "str" },
+          { key: "bsb", label: "BSB (NNN-NNN)", col: "B", type: "str" },
+          { key: "accountNumber", label: "Account Number", col: "C", type: "str" },
+          { key: "amount", label: "Amount (AUD)", col: "D", type: "num" },
+          { key: "lodgementReference", label: "Lodgement Ref (18ch)", col: "E", type: "str" },
+          { key: "transactionCode", label: "Tx Code (53=Pay / 50=Cr)", col: "F", type: "str" }
+        ]
+      },
+      cpa005: {
+        label: "Canadian 1,464-Byte CPA-005 EFT (.eft)",
+        actorTilde: "finops_studio~canada-cpa005-eft-generator",
+        storeUrl: "https://apify.com/finops_studio/canada-cpa005-eft-generator",
+        fileExt: "eft",
+        mimeType: "MimeType.PLAIN_TEXT",
+        outProp: "cpa005Content",
+        arrayProp: "transactions",
+        origFields: [
+          { key: "originatorId", label: "10-Char Originator ID", val: "GLOBTECHCA" },
+          { key: "originatorShortName", label: "Short Name (15ch)", val: "GLOBAL TECH CA" },
+          { key: "destinationDataCentre", label: "5-Digit Data Centre", val: "00300" },
+          { key: "fileCreationNumber", label: "4-Digit FCN", val: "0001" }
+        ],
+        cols: [
+          { key: "name", label: "Payee Name", col: "A", type: "str" },
+          { key: "institution", label: "3-Digit Institution (003)", col: "B", type: "digits" },
+          { key: "transit", label: "5-Digit Branch Transit", col: "C", type: "digits" },
+          { key: "accountNumber", label: "Account Number", col: "D", type: "str" },
+          { key: "amount", label: "Amount (CAD)", col: "E", type: "num" },
+          { key: "cpaCode", label: "CPA Code (200=Payroll)", col: "F", type: "str" },
+          { key: "crossReference", label: "Cross Reference ID", col: "G", type: "str" }
+        ]
+      },
+      datev: {
+        label: "German DATEV Buchungsstapel EXTF v700 (.csv)",
+        actorTilde: "finops_studio~datev-buchungsstapel-generator",
+        storeUrl: "https://apify.com/finops_studio/datev-buchungsstapel-generator",
+        fileExt: "csv",
+        mimeType: "MimeType.CSV",
+        outProp: "csvString",
+        arrayProp: "bookings",
+        origFields: [
+          { key: "skr", label: "Kontenrahmen (SKR03/04)", val: "SKR03" },
+          { key: "consultantNumber", label: "Beraternummer", val: "12345" },
+          { key: "clientNumber", label: "Mandantennummer", val: "10001" }
+        ],
+        cols: [
+          { key: "date", label: "Belegdatum (YYYY-MM-DD)", col: "A", type: "str" },
+          { key: "amount", label: "Bruttobetrag (EUR)", col: "B", type: "num" },
+          { key: "vatRate", label: "USt % (19 / 7 / 0)", col: "C", type: "num" },
+          { key: "invoiceNumber", label: "Belegfeld 1 (Rechnung)", col: "D", type: "str" },
+          { key: "description", label: "Buchungstext", col: "E", type: "str" }
+        ]
+      }
+    };
+
+    var stdSel = document.getElementById("stdSelect");
+    var tabInput = document.getElementById("sheetTabName");
+    var origBox = document.getElementById("originatorInputs");
+    var colBox = document.getElementById("columnInputs");
+    var gasBox = document.getElementById("gasCodeBox");
+    var excelBox = document.getElementById("excelCodeBox");
+    var headerBar = document.getElementById("templateHeaderBar");
+    var actorBtn = document.getElementById("directActorBtn");
+
+    function colLetterToIndex(letter) {
+      var clean = String(letter || "A").toUpperCase().replace(/[^A-Z]/g, "") || "A";
+      var idx = 0;
+      for (var i = 0; i < clean.length; i++) {
+        idx = idx * 26 + (clean.charCodeAt(i) - 64);
+      }
+      return Math.max(0, idx - 1);
+    }
+
+    function renderInputs() {
+      var spec = SPECS[stdSel.value];
+      actorBtn.href = spec.storeUrl;
+      origBox.innerHTML = spec.origFields.map(function (f) {
+        return '<div><label style="font-size:0.74rem;color:var(--muted);display:block;margin-bottom:3px;">' + f.label + '</label>' +
+          '<input data-orig="' + f.key + '" value="' + f.val + '" style="width:100%;padding:6px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.81rem;" /></div>';
+      }).join("");
+
+      colBox.innerHTML = spec.cols.map(function (c) {
+        return '<div><label style="font-size:0.73rem;color:#93c5fd;display:block;margin-bottom:3px;">Column: ' + c.label + '</label>' +
+          '<input data-col="' + c.key + '" value="' + c.col + '" maxlength="2" style="width:100%;padding:6px 9px;border-radius:6px;border:1px solid rgba(56,189,248,0.35);background:#0f172a;color:#f8fafc;font-size:0.82rem;font-weight:700;text-transform:uppercase;" /></div>';
+      }).join("");
+
+      origBox.querySelectorAll("input").forEach(function (el) { el.addEventListener("input", generateScripts); });
+      colBox.querySelectorAll("input").forEach(function (el) { el.addEventListener("input", generateScripts); });
+      generateScripts();
+    }
+
+    function buildHeaderObjectLines(std, orig) {
+      if (std === "sepa") {
+        return [
+          '    schemaVersion: "pain.001.001.09",',
+          '    initiatingPartyName: ' + JSON.stringify(orig.debtorName) + ',',
+          '    debtorName: ' + JSON.stringify(orig.debtorName) + ',',
+          '    debtorIban: ' + JSON.stringify(orig.debtorIban) + ',',
+          '    debtorBic: ' + JSON.stringify(orig.debtorBic) + ','
+        ];
+      }
+      if (std === "nacha") {
+        var odfi = String(orig.immediateDestination || "021000021").slice(0, 8);
+        return [
+          '    mode: "generate",',
+          '    secCode: ' + JSON.stringify(orig.secCode || "PPD") + ',',
+          '    immediateDestination: ' + JSON.stringify(orig.immediateDestination) + ',',
+          '    immediateDestinationName: "CLEARING BANK",',
+          '    immediateOrigin: ' + JSON.stringify(orig.companyId) + ',',
+          '    immediateOriginName: ' + JSON.stringify(orig.companyName) + ',',
+          '    companyName: ' + JSON.stringify(orig.companyName) + ',',
+          '    companyId: ' + JSON.stringify(orig.companyId) + ',',
+          '    companyEntryDescription: "PAYROLL",',
+          '    originatingDfiId: ' + JSON.stringify(odfi) + ',',
+          '    effectiveEntryDate: "261120",'
+        ];
+      }
+      if (std === "bacs") {
+        return [
+          '    serviceUserNumber: ' + JSON.stringify(orig.serviceUserNumber) + ',',
+          '    originatorName: ' + JSON.stringify(orig.originatorName) + ',',
+          '    originatorSortCode: ' + JSON.stringify(orig.originatorSortCode) + ',',
+          '    originatorAccountNumber: ' + JSON.stringify(orig.originatorAccountNumber) + ',',
+          '    processingDate: new Date().toISOString().slice(0, 10),',
+          '    includeHeaders: true,'
+        ];
+      }
+      if (std === "aba") {
+        return [
+          '    financialInstitution: ' + JSON.stringify(orig.financialInstitution) + ',',
+          '    userName: ' + JSON.stringify(orig.userName) + ',',
+          '    apcaUserId: ' + JSON.stringify(orig.apcaUserId) + ',',
+          '    description: "PAYROLL",',
+          '    processingDate: new Date().toISOString().slice(0, 10),',
+          '    traceBsb: ' + JSON.stringify(orig.traceBsb) + ',',
+          '    traceAccount: ' + JSON.stringify(orig.traceAccount) + ',',
+          '    remitterName: ' + JSON.stringify(String(orig.userName || "COMPANY").slice(0, 16)) + ',',
+          '    includeSelfBalancingRow: true,'
+        ];
+      }
+      if (std === "cpa005") {
+        return [
+          '    originatorId: ' + JSON.stringify(orig.originatorId) + ',',
+          '    originatorShortName: ' + JSON.stringify(orig.originatorShortName) + ',',
+          '    originatorLongName: ' + JSON.stringify(orig.originatorShortName) + ',',
+          '    destinationDataCentre: ' + JSON.stringify(orig.destinationDataCentre) + ',',
+          '    fileCreationNumber: ' + JSON.stringify(orig.fileCreationNumber) + ',',
+          '    returnInstitution: "003",',
+          '    returnTransit: "00012",',
+          '    returnAccount: "1004589",',
+          '    dueDate: new Date().toISOString().slice(0, 10),'
+        ];
+      }
+      return [
+        '    skr: ' + JSON.stringify(orig.skr || "SKR03") + ',',
+        '    consultantNumber: ' + JSON.stringify(orig.consultantNumber) + ',',
+        '    clientNumber: ' + JSON.stringify(orig.clientNumber) + ','
+      ];
+    }
+
+    function generateScripts() {
+      var std = stdSel.value;
+      var spec = SPECS[std];
+      var tab = (tabInput.value || "Payments").trim();
+      var orig = {};
+      origBox.querySelectorAll("input").forEach(function (el) {
+        orig[el.getAttribute("data-orig")] = el.value.trim();
+      });
+      var colMap = {};
+      colBox.querySelectorAll("input").forEach(function (el) {
+        colMap[el.getAttribute("data-col")] = (el.value || "A").toUpperCase().replace(/[^A-Z]/g, "") || "A";
+      });
+
+      var rowProps = spec.cols.map(function (c) {
+        var idx = colLetterToIndex(colMap[c.key]);
+        if (c.type === "num") {
+          return "      " + c.key + ": Number(String(r[" + idx + '] || "0").replace(/[^0-9.-]/g, ""))';
+        }
+        if (c.type === "iban") {
+          return "      " + c.key + ": String(r[" + idx + '] || "").replace(/\\s+/g, "").toUpperCase()';
+        }
+        if (c.type === "digits") {
+          return "      " + c.key + ": String(r[" + idx + '] || "").replace(/\\D/g, "")';
+        }
+        return "      " + c.key + ": String(r[" + idx + '] || "").trim()';
+      });
+      if (std === "bacs") {
+        rowProps.push('      transactionCode: "99"');
+      }
+
+      var headerLines = buildHeaderObjectLines(std, orig);
+      var endpointUrl = "https://api.apify.com/v2/acts/" + spec.actorTilde + "/run-sync-get-dataset-items";
+
+      var gasLines = [
+        "/**",
+        " * FinOps Studio — Google Sheets Bank File Add-In (" + spec.label + ")",
+        " * Setup: Extensions -> Apps Script -> Project Settings -> Script Properties: APIFY_TOKEN = <your_token>",
+        " */",
+        "function onOpen() {",
+        "  SpreadsheetApp.getUi()",
+        '    .createMenu("FinOps Bank Files")',
+        '    .addItem("Generate ' + spec.label + ' to Drive", "generateFinOpsBankFile")',
+        "    .addToUi();",
+        "}",
+        "",
+        "function generateFinOpsBankFile() {",
+        "  var ui = SpreadsheetApp.getUi();",
+        '  var token = PropertiesService.getScriptProperties().getProperty("APIFY_TOKEN");',
+        "  if (!token) {",
+        '    ui.alert("Missing APIFY_TOKEN in Project Settings -> Script Properties.");',
+        "    return;",
+        "  }",
+        "  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(" + JSON.stringify(tab) + ") || SpreadsheetApp.getActiveSheet();",
+        "  // getDisplayValues() preserves leading zeros on routing numbers, sort codes, BSBs & transit IDs",
+        "  var rows = sheet.getDataRange().getDisplayValues().slice(1).filter(function(r) { return r.join(\"\").trim().length > 0; });",
+        "  if (!rows.length) { ui.alert(\"No payment rows found below header row 1.\"); return; }",
+        "",
+        "  var items = rows.map(function(r) {",
+        "    return {",
+        rowProps.join(",\n"),
+        "    };",
+        "  });",
+        "",
+        "  var payload = {",
+        headerLines.join("\n"),
+        "    " + spec.arrayProp + ": items",
+        "  };",
+        "",
+        "  var res = UrlFetchApp.fetch(" + JSON.stringify(endpointUrl) + ' + "?token=" + encodeURIComponent(token), {',
+        '    method: "post",',
+        '    contentType: "application/json",',
+        "    payload: JSON.stringify(payload),",
+        "    muteHttpExceptions: true",
+        "  });",
+        "",
+        "  if (res.getResponseCode() >= 300) {",
+        '    ui.alert("Pre-flight bank validation error (" + res.getResponseCode() + "):\\n" + res.getContentText().slice(0, 500));',
+        "    return;",
+        "  }",
+        "  var data = JSON.parse(res.getContentText());",
+        "  var content = data[0] && data[0]." + spec.outProp + ";",
+        '  var fileName = "finops-' + std + '-" + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyyMMdd-HHmmss") + ".' + spec.fileExt + '";',
+        "  var file = DriveApp.createFile(fileName, content, " + spec.mimeType + ");",
+        '  ui.alert("Bank file verified & saved to Google Drive!\\nRows: " + items.length + "\\nFile: " + file.getName() + "\\nURL: " + file.getUrl());',
+        "}"
+      ];
+
+      var excelLines = [
+        "/**",
+        " * FinOps Studio — Microsoft Excel 365 Office Script (" + spec.label + ")",
+        " * Pair with Power Automate HTTP POST to:",
+        " *   " + endpointUrl + "?token=YOUR_APIFY_TOKEN",
+        " * Then extract body('HTTP')[0]?['" + spec.outProp + "'] and save to SharePoint / OneDrive as *." + spec.fileExt,
+        " */",
+        "function main(workbook: ExcelScript.Workbook): object {",
+        "  const table = workbook.getTable(" + JSON.stringify(tab) + ") || workbook.getTables()[0];",
+        "  if (!table) {",
+        '    throw new Error("Format your Excel sheet as a Table (Ctrl+T) first.");',
+        "  }",
+        "  // getTexts() preserves leading zeros in ABA, BSB, UK Sort Code & CPA-005 Transit columns",
+        "  const rows: string[][] = table.getRangeBetweenHeaderAndTotal().getTexts().filter(r => r.join(\"\").trim().length > 0);",
+        "",
+        "  const items = rows.map((r: string[]) => ({",
+        rowProps.join(",\n"),
+        "  }));",
+        "",
+        "  return {",
+        headerLines.join("\n"),
+        "    " + spec.arrayProp + ": items",
+        "  };",
+        "}"
+      ];
+
+      gasBox.textContent = gasLines.join("\n");
+      excelBox.textContent = excelLines.join("\n");
+
+      var headerCols = spec.cols.map(function (c) {
+        return "<code>" + colMap[c.key] + "1</code>: " + c.label;
+      }).join(" &bull; ");
+      headerBar.innerHTML = "&#128203; <strong>Expected Row-1 Spreadsheet Headers (" + tab + "):</strong> " + headerCols;
+    }
+
+    function wireCopy(btnId, preId, label) {
+      var btn = document.getElementById(btnId);
+      btn.addEventListener("click", function () {
+        navigator.clipboard.writeText(document.getElementById(preId).textContent || "");
+        btn.textContent = "Copied!";
+        if (window.finopsTrack) window.finopsTrack("action_copy_curl");
+        setTimeout(function () { btn.textContent = label; }, 1600);
+      });
+    }
+
+    stdSel.addEventListener("change", renderInputs);
+    tabInput.addEventListener("input", generateScripts);
+    wireCopy("btnCopyGas", "gasCodeBox", "Copy Code.gs");
+    wireCopy("btnCopyExcel", "excelCodeBox", "Copy Office Script");
+    renderInputs();
+  })();
+  </script>
+</body>
+</html>
