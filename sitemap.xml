@@ -260,4 +260,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.94</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/stripe-shopify-paypal-payouts-to-sepa-nacha-datev-api.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.93</priority>
+  </url>
 </urlset>

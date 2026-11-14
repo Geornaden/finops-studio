@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automate Stripe, Shopify, PayPal &amp; Marketplace Seller Payouts to SEPA XML, NACHA ACH &amp; DATEV EXTF | FinOps Studio</title>
+  <meta name="description" content="Replace 0.25%–2% marketplace payout fees: convert Stripe, Shopify, PayPal, Gumroad, or affiliate commission ledgers into direct bank SEPA XML (pain.001), US NACHA ACH (.ach), UK BACS, and German DATEV EXTF v700 CSV files for $0/month + $0.02/row." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/stripe-shopify-paypal-payouts-to-sepa-nacha-datev-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Marketplace & E-Commerce Payouts to SEPA XML, NACHA ACH & DATEV EXTF API | FinOps Studio" />
+  <meta property="og:description" content="Calculate how much you save switching creator/vendor payouts from Stripe Connect or PayPal Mass Pay to direct SEPA XML, NACHA ACH, UK BACS, and DATEV EXTF automation." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/stripe-shopify-paypal-payouts-to-sepa-nacha-datev-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "How Marketplaces, E-Commerce Brands & SaaS Platforms Automate Seller Payouts & DATEV Accounting via SEPA XML and NACHA ACH",
+        "url": "https://geornaden.github.io/finops-studio/stripe-shopify-paypal-payouts-to-sepa-nacha-datev-api.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "publisher": { "@type": "Organization", "name": "FinOps Studio" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How much can a marketplace or affiliate program save by paying sellers via direct SEPA XML or US NACHA ACH bank files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Managed payout processors typically charge $2.00 per active monthly payee plus 0.25% to 2.00% of payout volume. Generating your own bank-compliant ISO 20022 SEPA XML (pain.001.001.09) or 94-character US NACHA ACH (.ach) batch file via FinOps Studio costs $0/month subscription plus $0.02 per payout row ($0.03 batch start) and uploads straight to your corporate bank portal (Chase, BofA, Wells Fargo, SVB, Mercury, Deutsche Bank, ING, BNP Paribas, Revolut Business, Wise Batch)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I reconcile gross e-commerce sales, Stripe/Shopify/PayPal gateway fees, and VAT into German DATEV EXTF v700?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. FinOps Studio's DATEV Buchungsstapel EXTF v700 Cloud API converts Stripe balance transactions, Shopify payouts, and PayPal settlements into official 2-header-row DATEV CSV files with SKR03/SKR04 revenue accounts (8400/8300 or 4400/4300) and comma-decimal formatting ready for DATEV Unternehmen online and Kanzlei-Rechnungswesen."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">1-Click CSV Mapper</a>
+        <a href="./google-sheets-excel-apps-script-sepa-nacha-bacs-aba-automation.html">Sheets &amp; Excel Add-In</a>
+        <a href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node SDK</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs ($5 Free/Mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#128179; Marketplace, Affiliate &amp; E-Commerce Finance Stack &bull; $0/Mo Subscription</span>
+      <h1>Automate Seller &amp; Creator Payouts (<code>SEPA XML</code>, <code>NACHA ACH</code>, <code>UK BACS</code>) + <code>DATEV EXTF</code> Accounting</h1>
+      <p>Paying 0.25%&ndash;2% + $2/payee per month to third-party payout processors eats marketplace margins alive. Turn your approved <strong>Stripe</strong>, <strong>Shopify</strong>, <strong>PayPal</strong>, affiliate, or creator commission ledger directly into bank-verified <strong>SEPA <code>pain.001</code> XML</strong>, <strong>US <code>.ACH</code></strong>, <strong>UK BACS 18</strong>, <strong>Australian <code>.ABA</code></strong>, and <strong>German DATEV EXTF v700</strong> files for <strong>$0.02 per row</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#savings-calc">Calculate Payout Fee Savings &darr;</a>
+        <a class="btn btn-outline" href="./workflows/n8n-stripe-to-datev-and-einvoice.json" download>Download Stripe &rarr; DATEV + Peppol n8n JSON &darr;</a>
+      </div>
+    </section>
+
+    <section id="savings-calc" class="sandbox-card">
+      <h2 style="margin-top:0;font-size:1.22rem;">Interactive Marketplace Payout Fee Savings &amp; Payload Preview</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:12px;margin-bottom:16px;">
+        <div>
+          <label for="payoutCount" style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;">Monthly Seller / Creator Payouts</label>
+          <input id="payoutCount" type="number" min="1" max="500000" value="250" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.9rem;font-weight:700;" />
+        </div>
+        <div>
+          <label for="avgPayoutAmt" style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;">Average Payout Size ($ / &euro;)</label>
+          <input id="avgPayoutAmt" type="number" min="10" max="1000000" value="480" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.9rem;font-weight:700;" />
+        </div>
+        <div>
+          <label for="corridorSel" style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;">Primary Payout / Tax Corridor</label>
+          <select id="corridorSel" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.88rem;font-weight:600;">
+            <option value="sepa">&#127466;&#127482; EU / EEA Sellers &rarr; SEPA XML (pain.001.001.09)</option>
+            <option value="nacha">&#127482;&#127480; US Vendors / Creators &rarr; 94-Char NACHA ACH (.ach)</option>
+            <option value="bacs">&#127468;&#127463; UK Sellers &rarr; 100-Char BACS Standard 18</option>
+            <option value="datev">&#127465;&#127466; Stripe / Shopify Settlements &rarr; DATEV EXTF v700 CSV</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="roiCards" class="grid-3" style="margin-bottom:16px;"></div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Ready-to-Run Node.js / Webhook Snippet</strong></span>
+            <button id="btnCopyPayoutCode" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">Copy Snippet</button>
+          </div>
+          <pre id="payoutCodePre" class="code-box" style="min-height:240px;font-size:0.77rem;"></pre>
+        </div>
+        <div>
+          <div class="pane-label">
+            <span><strong>Direct Cloud API &amp; No-Code Shortcuts</strong></span>
+            <span class="status-chip status-ok">$5/MO FREE APIFY CREDIT</span>
+          </div>
+          <div style="padding:14px;border-radius:8px;background:rgba(15,23,42,0.75);border:1px solid var(--border);min-height:240px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div id="corridorDesc" style="font-size:0.87rem;color:#cbd5e1;line-height:1.65;"></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+              <a id="corridorStoreLink" class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Launch Live Cloud API &rarr;</a>
+              <a class="btn btn-outline" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">Paste Payout CSV in Browser &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">3 High-ROI E-Commerce &amp; Marketplace Automation Workflows</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Marketplace / SaaS</span><span class="tag">SEPA + NACHA</span></div>
+            <h3>1. Weekly Creator, Affiliate &amp; Vendor Payout Runs</h3>
+            <p>Query approved commission balances in Postgres, Supabase, or Google Sheets every Friday, pre-validate every recipient IBAN (MOD-97) and US ABA routing number (MOD-10), and upload one consolidated batch file to Chase, Mercury, Wise Batch, Revolut, or Deutsche Bank.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-outline" href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Batch Router &rarr;</a></div>
+        </div>
+
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">German E-Commerce</span><span class="tag">DATEV + XRechnung</span></div>
+            <h3>2. Stripe &amp; Shopify &rarr; DATEV EXTF v700 + EN 16931 XML</h3>
+            <p>Convert paid Stripe invoices and Shopify orders automatically into official 2-header-row German <code>EXTF_Buchungsstapel.csv</code> files (<code>SKR03</code> / <code>SKR04</code>) plus mandatory 2026 B2B <code>XRechnung 3.0</code> / <code>Peppol BIS 3.0</code> XML e-invoices.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-outline" href="./datev-bu-schluessel-skr03-skr04-tabelle-buchungsstapel-api.html">DATEV SKR03/04 Guide &rarr;</a></div>
+        </div>
+
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Treasury Reconciliation</span><span class="tag">BAI2 + pain.002</span></div>
+            <h3>3. Automated Bank Settlement &amp; Return Handling</h3>
+            <p>Ingest daily corporate <code>BAI2</code> bank statements from J.P. Morgan, BofA, or Citi to auto-reconcile marketplace escrow accounts, and decode ISO 20022 <code>pain.002</code> XML bank rejections (<code>AC04</code>, <code>BE04</code>) to notify sellers automatically.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-outline" href="./iso20022-pain002-rejection-codes-ac04-am04-be04-md01-rc01-guide.html">pain.002 Return Codes &rarr;</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div><strong>FinOps Studio</strong> &mdash; Deterministic Banking, Payout &amp; E-Invoicing Cloud APIs (<a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>).</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="./index.html">Home</a>
+          <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">CSV Mapper</a>
+          <a href="./google-sheets-excel-apps-script-sepa-nacha-bacs-aba-automation.html">Sheets &amp; Excel Add-In</a>
+          <a href="./openapi.json">OpenAPI 3.1</a>
+          <a href="./sitemap.xml">Sitemap</a>
+          <a href="./llms.txt">llms.txt</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var DETAILS = {
+      sepa: {
+        actor: "finops_studio~sepa-xml-generator",
+        storeUrl: "https://apify.com/finops_studio/sepa-xml-generator",
+        desc: "<strong>EU SEPA Credit Transfer (<code>pain.001.001.09</code>):</strong> Generates 2026 EPC-compliant structured-address XML batches accepted by Revolut Business, Wise, Qonto, Deutsche Bank, Commerzbank, BNP Paribas, ING, and ABN AMRO. Enforces IBAN MOD-97 and cent-exact <code>CtrlSum</code>.",
+        samplePayload: {
+          schemaVersion: "pain.001.001.09",
+          initiatingPartyName: "Marketplace EU GmbH",
+          debtorName: "Marketplace EU GmbH",
+          debtorIban: "DE89370400440532013000",
+          debtorBic: "COBADEFFXXX",
+          transactions: [
+            { name: "Creator Studio BV", iban: "NL91ABNA0417164300", amount: 480.00, remittanceInfo: "Payout #2026-44", country: "NL", townName: "Amsterdam" }
+          ]
+        }
+      },
+      nacha: {
+        actor: "finops_studio~nacha-ach-file-generator",
+        storeUrl: "https://apify.com/finops_studio/nacha-ach-file-generator",
+        desc: "<strong>US 94-Character NACHA ACH (<code>CCD</code> / <code>PPD</code>):</strong> Generates strict Block-10 padded <code>.ach</code> files with verified 9-digit ABA MOD-10 routing checksums and <code>Record 8 / 9</code> Entry Hash totals for Chase Access, BofA CashPro, Wells Fargo CEO, SVB, and Column.",
+        samplePayload: {
+          mode: "generate",
+          secCode: "CCD",
+          immediateDestination: "021000021",
+          immediateDestinationName: "JPMORGAN CHASE",
+          immediateOrigin: "1987654321",
+          immediateOriginName: "MARKETPLACE INC",
+          companyName: "MARKETPLACE INC",
+          companyId: "1987654321",
+          companyEntryDescription: "PAYOUTS",
+          originatingDfiId: "02100002",
+          effectiveEntryDate: "261120",
+          entries: [
+            { transactionCode: "22", routingNumber: "021000021", accountNumber: "449012398", amount: 480.00, individualId: "SELLER-801", individualName: "APEX DESIGN LLC" }
+          ]
+        }
+      },
+      bacs: {
+        actor: "finops_studio~uk-bacs-standard18-generator",
+        storeUrl: "https://apify.com/finops_studio/uk-bacs-standard18-generator",
+        desc: "<strong>UK 100-Character BACS Standard 18:</strong> Produces Pay.UK Standard 18 Direct Credit (<code>Code 99</code>) files with <code>VOL1/HDR1/UHL1</code> headers, <code>CONTRA</code> balancing records, and <code>bYYDDD</code> Julian dates for Barclays.net, HSBCnet, Lloyds, and NatWest Bankline.",
+        samplePayload: {
+          serviceUserNumber: "123456",
+          originatorName: "MARKETPLACE UK LTD",
+          originatorSortCode: "20-00-00",
+          originatorAccountNumber: "12345678",
+          processingDate: "2026-11-20",
+          includeHeaders: true,
+          transactions: [
+            { name: "BRIGHT MEDIA LTD", sortCode: "40-05-15", accountNumber: "87654321", amount: 480.00, transactionCode: "99", reference: "PAYOUT NOV26" }
+          ]
+        }
+      },
+      datev: {
+        actor: "finops_studio~datev-buchungsstapel-generator",
+        storeUrl: "https://apify.com/finops_studio/datev-buchungsstapel-generator",
+        desc: "<strong>German DATEV Buchungsstapel EXTF v700:</strong> Converts Stripe, Shopify, PayPal, and Amazon settlement rows into official 2-header-row DATEV CSV files with automatic 19% / 7% / 0% <code>SKR03</code> &amp; <code>SKR04</code> account mapping for your Steuerberater.",
+        samplePayload: {
+          skr: "SKR04",
+          consultantNumber: "12345",
+          clientNumber: "10001",
+          bookings: [
+            { date: "2026-11-13", amount: 480.00, vatRate: 19, invoiceNumber: "STRP-9921", description: "Shopify Order Batch #9921" }
+          ]
+        }
+      }
+    };
+
+    var countEl = document.getElementById("payoutCount");
+    var amtEl = document.getElementById("avgPayoutAmt");
+    var corEl = document.getElementById("corridorSel");
+    var roiBox = document.getElementById("roiCards");
+    var codePre = document.getElementById("payoutCodePre");
+    var descBox = document.getElementById("corridorDesc");
+    var storeLink = document.getElementById("corridorStoreLink");
+
+    function recalc() {
+      var n = Math.max(1, parseInt(countEl.value, 10) || 1);
+      var avg = Math.max(1, parseFloat(amtEl.value) || 100);
+      var volume = n * avg;
+      // Typical managed payout fee: $2/active payee + 0.25% payout volume (or PayPal Payouts 2% capped)
+      var managedCost = n * 2.0 + volume * 0.0025;
+      var finopsRaw = 0.03 + n * 0.02;
+      var finopsNetAfterFree = Math.max(0, finopsRaw - 5.0);
+      var annualSavings = Math.max(0, (managedCost - finopsNetAfterFree) * 12);
+
+      roiBox.innerHTML =
+        '<div class="tool-card" style="padding:14px;"><div style="font-size:0.76rem;color:var(--muted);">Typical Managed Payout Platform (0.25% + $2/Payee)</div><div style="font-size:1.45rem;font-weight:800;color:#f87171;margin-top:4px;">$' + managedCost.toFixed(2) + ' <span style="font-size:0.8rem;font-weight:500;">/ mo</span></div></div>' +
+        '<div class="tool-card" style="padding:14px;"><div style="font-size:0.76rem;color:var(--muted);">FinOps Studio Bank File API ($0.02/row)</div><div style="font-size:1.45rem;font-weight:800;color:#34d399;margin-top:4px;">$' + finopsNetAfterFree.toFixed(2) + ' <span style="font-size:0.8rem;font-weight:500;">/ mo (raw $' + finopsRaw.toFixed(2) + ')</span></div></div>' +
+        '<div class="tool-card" style="padding:14px;"><div style="font-size:0.76rem;color:var(--muted);">Estimated Annual Margin Saved</div><div style="font-size:1.45rem;font-weight:800;color:#38bdf8;margin-top:4px;">$' + Math.round(annualSavings).toLocaleString("en-US") + ' <span style="font-size:0.8rem;font-weight:500;">/ year</span></div></div>';
+
+      var d = DETAILS[corEl.value];
+      descBox.innerHTML = d.desc;
+      storeLink.href = d.storeUrl;
+      codePre.textContent =
+        'const res = await fetch(\n' +
+        '  "https://api.apify.com/v2/acts/' + d.actor + '/run-sync-get-dataset-items?token=" + process.env.APIFY_TOKEN,\n' +
+        '  {\n' +
+        '    method: "POST",\n' +
+        '    headers: { "Content-Type": "application/json" },\n' +
+        '    body: JSON.stringify(' + JSON.stringify(d.samplePayload, null, 2).split("\n").join("\n    ") + ')\n' +
+        '  }\n' +
+        ');\n' +
+        'const [batch] = await res.json();\n' +
+        'console.log("Verified payout batch ready:", Object.keys(batch));';
+    }
+
+    countEl.addEventListener("input", recalc);
+    amtEl.addEventListener("input", recalc);
+    corEl.addEventListener("change", recalc);
+    document.getElementById("btnCopyPayoutCode").addEventListener("click", function () {
+      var btn = document.getElementById("btnCopyPayoutCode");
+      navigator.clipboard.writeText(codePre.textContent || "");
+      btn.textContent = "Copied!";
+      if (window.finopsTrack) window.finopsTrack("action_copy_curl");
+      setTimeout(function () { btn.textContent = "Copy Snippet"; }, 1600);
+    });
+    recalc();
+  })();
+  </script>
+</body>
+</html>
