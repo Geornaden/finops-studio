@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free UK BACS Standard 18 File Validator — Audit 100-Char Width, CONTRA Balance &amp; UTL1 Totals | FinOps Studio</title>
+  <meta name="description" content="100% client-side UK Pay.UK BACS Standard 18 multi-line file validator: paste or open any 100-character Bacstel-IP file to verify VOL1/HDR1/UHL1 bYYDDD Julian dates, 6-digit Sort Codes, CONTRA self-balancing, and UTL1 debit/credit pence totals." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-uk-bacs-standard-18-file-validator.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Free Browser UK BACS Standard 18 File Validator & CONTRA / UTL1 Auditor | FinOps Studio" />
+  <meta property="og:description" content="Audit 100-character UK BACS Standard 18 files locally in your browser before uploading to Barclays.net, Lloyds Commercial, NatWest Bankline, HSBCnet, or Santander Connect." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-uk-bacs-standard-18-file-validator.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Free UK BACS Standard 18 File Validator & CONTRA / UTL1 Auditor",
+        "url": "https://geornaden.github.io/finops-studio/free-uk-bacs-standard-18-file-validator.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "GBP",
+          "description": "Free client-side 100-character UK BACS Standard 18 validator; $0/mo + $0.02/row Cloud API on Apify Store for automated BACS file generation."
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What causes a UK BACS Standard 18 file upload to fail at Barclays.net, NatWest Bankline, or HSBCnet?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The four most common Bacstel-IP upload rejections are: (1) lines trimmed below or exceeding exactly 100 characters due to trailing whitespace stripping, (2) UHL1 Julian date (columns 05–10, bYYDDD) missing its leading space or falling on a UK weekend/bank holiday, (3) missing or unbalanced CONTRA self-balancing debit entry, and (4) UTL1 monetary debit/credit pence totals (columns 05–30) or item counts (columns 31–44) not matching the detail rows."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this UK BACS Standard 18 validator upload employee payroll or supplier bank accounts to a server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Every 100-character column check, Sort Code / Account Number inspection, CONTRA balance check, and UTL1 integer-pence reconciliation runs 100% locally inside your browser tab."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./uk-bacs-standard-18-file-generator.html">UK BACS 18 API</a>
+        <a href="./uk-bacs-arudd-addacs-return-codes-transaction-codes-99-01-17-guide.html">ARUDD / ADDACS Codes</a>
+        <a href="./sage-xero-csv-to-uk-bacs-standard-18-barclays-hsbc-lloyds-natwest.html">Sage / Xero &rarr; BACS</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Generate BACS 18 via API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#127468;&#127463; 100% Local Browser Bacstel-IP Audit &bull; Zero Server Upload &bull; Barclays / Lloyds / NatWest Bankline / HSBCnet</span>
+      <h1>Free Multi-Line UK <code>BACS Standard 18</code> File Validator &amp; <code>CONTRA / UTL1</code> Auditor</h1>
+      <p>Paste or open any <strong>100-character UK Pay.UK BACS Standard 18</strong> file before uploading to Bacstel-IP, Barclays.net, Lloyds Commercial, NatWest Bankline, HSBCnet UK, or Santander Connect. Instantly audit <strong>exact 100-char line widths</strong>, <strong><code>UHL1</code> Julian dates (<code>bYYDDD</code>)</strong>, <strong>6-digit Sort Codes &amp; 8-digit Account Numbers</strong>, <strong><code>CONTRA</code> balancing</strong>, and <strong><code>UTL1</code> pence totals</strong>.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnBacsValid" type="button" class="btn btn-outline">Load Valid 10-Line GBP Payroll BACS File</button>
+          <button id="btnBacsBroken" type="button" class="btn btn-outline">Load Broken BACS File (Trimmed Width + UTL1 Pence Mismatch)</button>
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            &#128194; Open Local .TXT / .BACS File
+            <input id="bacsFileInput" type="file" accept=".txt,.bacs,.dat" style="display:none;" />
+          </label>
+        </div>
+        <span id="bacsBadge" class="status-chip status-ok">READY</span>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Raw 100-Character UK BACS Standard 18 File</strong></span>
+            <span id="bacsLinesChip" style="font-size:0.76rem;color:#93c5fd;">0 Lines</span>
+          </div>
+          <textarea id="bacsRawBox" class="code-box" spellcheck="false" style="min-height:320px;font-size:0.73rem;white-space:pre;overflow-x:auto;"></textarea>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>Bacstel-IP Pre-Flight Compliance Report</strong></span>
+            <span id="bacsTotalsChip" style="font-size:0.76rem;color:var(--muted);">&pound;0.00 Credit / &pound;0.00 Debit</span>
+          </div>
+          <div id="bacsReportBox" class="code-box" style="min-height:320px;max-height:420px;overflow:auto;font-family:system-ui,-apple-system,sans-serif;font-size:0.84rem;line-height:1.55;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.86rem;color:#e2e8f0;">
+          <strong>Need to convert Sage, Xero, BrightPay, or Excel CSVs into 100-char Standard 18 files automatically?</strong> Use our deterministic UK BACS Cloud API (<code>$0/month + $0.02/row</code>, covered by Apify's $5/mo free credit).
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button id="btnCopyBacsApiJson" type="button" class="btn btn-outline">Copy Clean Generator JSON</button>
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Launch UK BACS Cloud API &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">What This UK BACS Standard 18 Pre-Flight Auditor Checks</h2>
+      <div class="grid-3">
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Exact 100 Chars</span><span class="tag">VOL1 / HDR / EOF</span></div>
+          <h3>1. Strict 100-Byte Record Widths</h3>
+          <p>Flags any header, payment instruction, <code>CONTRA</code>, or trailer row where spreadsheet export or text editors stripped trailing spaces below <code>100</code> characters.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">UHL1 bYYDDD</span><span class="tag">Sort Code + Acct</span></div>
+          <h3>2. Julian Processing Date &amp; Sort Codes</h3>
+          <p>Verifies the 6-character <code>UHL1</code> Julian processing date (<code>space + YY + DDD</code>, columns 05–10) and validates numeric 6-digit UK Sort Codes &amp; 8-digit Account Numbers on every row.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">CONTRA Balancing</span><span class="tag">UTL1 Pence Totals</span></div>
+          <h3>3. Self-Balancing <code>CONTRA</code> &amp; <code>UTL1</code> Control</h3>
+          <p>Sums integer pence across Direct Credits (<code>99</code>), Direct Debits (<code>01/17/18/19</code>), and <code>CONTRA</code> entries and reconciles them against <code>UTL1</code> columns 05–44.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./uk-bacs-standard-18-file-generator.html">UK BACS 18 API</a> &bull; <a href="./uk-bacs-arudd-addacs-return-codes-transaction-codes-99-01-17-guide.html">ARUDD / ADDACS Codes</a> &bull; <a href="./free-nacha-ach-file-validator-batch-hash-auditor.html">US NACHA Validator</a></div>
+      <div><a href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Open UK BACS Standard 18 Generator on Apify Store &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      function padR(s, n) { return String(s).slice(0, n).padEnd(n, ' '); }
+      function padZ(s, n) { return String(s).replace(/\D/g, '').slice(-n).padStart(n, '0'); }
+
+      function buildDetail(dSort, dAcct, txCode, oSort, oAcct, pence, oName, ref, dName) {
+        return padZ(dSort, 6) + padZ(dAcct, 8) + '0' + padZ(txCode, 2) + padZ(oSort, 6) + padZ(oAcct, 8) + '0000' + padZ(pence, 11) + padR(oName, 18) + padR(ref, 18) + padR(dName, 18);
+      }
+
+      var jul = ' 26320';
+      var sun = '123456';
+      var VALID_BACS = [
+        padR('VOL1000001' + ' '.repeat(31) + sun + ' '.repeat(32) + '1', 100),
+        padR('HDR1A' + sun + 'S  100000100010001       ' + jul + jul + ' 000000', 100),
+        padR('HDR2F0200000100', 100),
+        padR('UHL1' + jul + '999999    000000001 DAILY  001', 100),
+        buildDetail('400515', '87654321', '99', '200000', '12345678', 245050, 'THAMES TECH LTD', 'SAL NOV 2026 01', 'OLIVIA BENNETT'),
+        buildDetail('601613', '31926819', '99', '200000', '12345678', 182500, 'THAMES TECH LTD', 'SAL NOV 2026 02', 'JAMES HARGREAVES'),
+        buildDetail('200000', '12345678', '17', '200000', '12345678', 427550, 'CONTRA', 'CONTRA', 'THAMES TECH LTD'),
+        padR('EOF1A' + sun + 'S  100000100010001       ' + jul + jul + ' 000003', 100),
+        padR('EOF2F0200000100', 100),
+        padR('UTL1' + padZ(427550, 13) + padZ(427550, 13) + padZ(1, 7) + padZ(2, 7), 100)
+      ].join('\n');
+
+      var BROKEN_BACS = [
+        padR('VOL1000001' + ' '.repeat(31) + sun + ' '.repeat(32) + '1', 100),
+        'UHL126320999999    000000001 DAILY  001',
+        buildDetail('400515', '87654321', '99', '200000', '12345678', 245050, 'THAMES TECH LTD', 'INV-UK-901', 'OLIVIA BENNETT').trimEnd(),
+        padR('UTL1' + padZ(0, 13) + padZ(240000, 13) + padZ(0, 7) + padZ(1, 7), 100)
+      ].join('\n');
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      var rawBox = document.getElementById('bacsRawBox');
+      var reportBox = document.getElementById('bacsReportBox');
+      var badge = document.getElementById('bacsBadge');
+      var linesChip = document.getElementById('bacsLinesChip');
+      var totalsChip = document.getElementById('bacsTotalsChip');
+      var extractedPayments = [];
+
+      function auditBacs() {
+        var raw = (rawBox.value || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        var lines = raw.split('\n').filter(function (l) { return l.length > 0; });
+        linesChip.textContent = lines.length + (lines.length === 1 ? ' Line' : ' Lines');
+
+        if (lines.length === 0) {
+          badge.textContent = 'EMPTY';
+          badge.className = 'status-chip';
+          reportBox.innerHTML = '<div style="color:var(--muted);">Paste or open a 100-character UK BACS Standard 18 file on the left.</div>';
+          totalsChip.textContent = '£0.00 Credit / £0.00 Debit';
+          extractedPayments = [];
+          return;
+        }
+
+        var errors = [];
+        var passes = [];
+        var creditPence = 0n;
+        var debitPence = 0n;
+        var creditCount = 0;
+        var debitCount = 0;
+        var hasContra = false;
+        var seenUhl1 = false;
+        var seenUtl1 = false;
+        extractedPayments = [];
+
+        for (var i = 0; i < lines.length; i++) {
+          var ln = i + 1;
+          var line = lines[i];
+          var tag4 = line.slice(0, 4);
+
+          if (line.length !== 100) {
+            errors.push('Line ' + ln + ' (<code>' + escapeHtml(tag4.trim() || 'DETAIL') + '</code>): Record length is <strong>' + line.length + ' chars</strong> (must be exactly <code>100</code> characters padded with trailing spaces).');
+          }
+
+          if (tag4 === 'VOL1' || tag4 === 'HDR1' || tag4 === 'HDR2' || tag4 === 'EOF1' || tag4 === 'EOF2') {
+            if (tag4 === 'VOL1') {
+              var volSun = line.slice(41, 47);
+              passes.push('VOL1 tape header detected (SUN: <code>' + escapeHtml(volSun) + '</code>).');
+            }
+          } else if (tag4 === 'UHL1') {
+            seenUhl1 = true;
+            var bDate = line.slice(4, 10);
+            if (!/^ \d{2}\d{3}$/.test(bDate)) {
+              errors.push('Line ' + ln + ' (<code>UHL1</code>): Columns 05–10 Julian date "<code>' + escapeHtml(bDate) + '</code>" invalid (must be 1 leading space + <code>YYDDD</code>, e.g. "<code> 26320</code>").');
+            } else {
+              var ddd = parseInt(bDate.slice(3, 6), 10);
+              if (ddd < 1 || ddd > 366) {
+                errors.push('Line ' + ln + ' (<code>UHL1</code>): Day-of-year <code>' + ddd + '</code> out of range (001–366).');
+              } else {
+                passes.push('UHL1 User Header Label verified: Julian processing date <code>b' + bDate.trim() + '</code>.');
+              }
+            }
+          } else if (tag4 === 'UTL1') {
+            seenUtl1 = true;
+            var declDebStr = line.slice(4, 17);
+            var declCredStr = line.slice(17, 30);
+            var declDebCnt = parseInt(line.slice(30, 37), 10);
+            var declCredCnt = parseInt(line.slice(37, 44), 10);
+
+            if (!/^\d{13}$/.test(declDebStr) || BigInt(declDebStr) !== debitPence) {
+              errors.push('Line ' + ln + ' (<code>UTL1</code>): Declared Monetary Debit Total <code>' + escapeHtml(declDebStr) + '</code>p != Computed Debit Pence <code>' + debitPence.toString() + '</code>p.');
+            }
+            if (!/^\d{13}$/.test(declCredStr) || BigInt(declCredStr) !== creditPence) {
+              errors.push('Line ' + ln + ' (<code>UTL1</code>): Declared Monetary Credit Total <code>' + escapeHtml(declCredStr) + '</code>p != Computed Credit Pence <code>' + creditPence.toString() + '</code>p.');
+            }
+            if (declDebCnt !== debitCount || declCredCnt !== creditCount) {
+              errors.push('Line ' + ln + ' (<code>UTL1</code>): Declared Counts (Debit <code>' + declDebCnt + '</code>, Credit <code>' + declCredCnt + '</code>) != Actual Counts (Debit <code>' + debitCount + '</code>, Credit <code>' + creditCount + '</code>).');
+            }
+            if (/^\d{13}$/.test(declDebStr) && /^\d{13}$/.test(declCredStr) && BigInt(declDebStr) === debitPence && BigInt(declCredStr) === creditPence && declDebCnt === debitCount && declCredCnt === creditCount) {
+              passes.push('UTL1 User Trailer Label reconciled: Debits <code>£' + (Number(debitPence) / 100).toFixed(2) + '</code> (' + debitCount + ') &amp; Credits <code>£' + (Number(creditPence) / 100).toFixed(2) + '</code> (' + creditCount + ').');
+            }
+          } else {
+            var dSort = line.slice(0, 6);
+            var dAcct = line.slice(6, 14);
+            var txCode = line.slice(15, 17);
+            var oSort = line.slice(17, 23);
+            var oAcct = line.slice(23, 31);
+            var amtStr = line.slice(35, 46);
+            var oName = line.slice(46, 64).trim();
+            var ref = line.slice(64, 82).trim();
+            var dName = line.slice(82, 100).trim();
+
+            if (!/^\d{6}$/.test(dSort)) errors.push('Line ' + ln + ': Invalid 6-digit destination UK Sort Code "<code>' + escapeHtml(dSort) + '</code>" (cols 01–06).');
+            if (!/^\d{8}$/.test(dAcct)) errors.push('Line ' + ln + ': Invalid 8-digit destination UK Account Number "<code>' + escapeHtml(dAcct) + '</code>" (cols 07–14).');
+            if (!/^\d{6}$/.test(oSort) || !/^\d{8}$/.test(oAcct)) errors.push('Line ' + ln + ': Invalid originating Sort Code / Account Number (cols 18–31).');
+            if (!/^\d{11}$/.test(amtStr)) {
+              errors.push('Line ' + ln + ': Invalid 11-digit integer pence field "<code>' + escapeHtml(amtStr) + '</code>" (cols 36–46).');
+              continue;
+            }
+
+            var penceVal = BigInt(amtStr);
+            var isContra = ref.toUpperCase() === 'CONTRA' || oName.toUpperCase() === 'CONTRA';
+            if (isContra) hasContra = true;
+
+            if (txCode === '01' || txCode === '17' || txCode === '18' || txCode === '19') {
+              debitPence += penceVal;
+              debitCount += 1;
+            } else if (txCode === '99' || txCode === 'Z4' || txCode === 'Z5') {
+              creditPence += penceVal;
+              creditCount += 1;
+            } else if (txCode === '0N' || txCode === '0C' || txCode === '0S') {
+              passes.push('Line ' + ln + ': Zero-value AUDDIS DDI instruction (<code>' + txCode + '</code>) verified.');
+            } else {
+              errors.push('Line ' + ln + ': Unrecognized BACS Transaction Code "<code>' + escapeHtml(txCode) + '</code>" in cols 16–17 (expected 99, 01, 17, 18, 19, or 0N).');
+            }
+
+            if (!isContra) {
+              extractedPayments.push({
+                name: dName || 'PAYEE ' + ln,
+                sortCode: dSort.slice(0, 2) + '-' + dSort.slice(2, 4) + '-' + dSort.slice(4, 6),
+                accountNumber: dAcct,
+                amount: Number((Number(penceVal) / 100).toFixed(2)),
+                reference: ref || 'BACS-' + ln,
+                transactionCode: txCode
+              });
+            }
+          }
+        }
+
+        if (seenUhl1 && !seenUtl1) {
+          errors.push('File contains <code>UHL1</code> header but is missing closing <code>UTL1</code> monetary trailer.');
+        }
+        if (hasContra && creditPence !== debitPence) {
+          errors.push('Self-balancing <code>CONTRA</code> mismatch: Total Credits (<code>' + creditPence.toString() + 'p</code>) != Total Debits (<code>' + debitPence.toString() + 'p</code>).');
+        } else if (hasContra && creditPence === debitPence && creditPence > 0n) {
+          passes.push('Self-balancing <code>CONTRA</code> entry matches total Direct Credits (<code>£' + (Number(creditPence) / 100).toFixed(2) + '</code>).');
+        }
+
+        totalsChip.textContent = '£' + (Number(creditPence) / 100).toFixed(2) + ' Credit / £' + (Number(debitPence) / 100).toFixed(2) + ' Debit';
+
+        if (errors.length === 0) {
+          badge.textContent = 'PASS • 100-CHAR BACS VALID';
+          badge.className = 'status-chip status-ok';
+        } else {
+          badge.textContent = errors.length + (errors.length === 1 ? ' ISSUE DETECTED' : ' ISSUES DETECTED');
+          badge.className = 'status-chip status-warn';
+        }
+
+        var html = '';
+        if (errors.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);color:#fecaca;">' +
+            '<strong>&#9888;&#65039; BACS Standard 18 Errors (' + errors.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var e = 0; e < errors.length; e++) html += '<li style="margin-bottom:4px;">' + errors[e] + '</li>';
+          html += '</ul></div>';
+        }
+        if (passes.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#bbf7d0;">' +
+            '<strong>&#9989; Verified BACS Controls (' + passes.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var p = 0; p < passes.length; p++) html += '<li style="margin-bottom:3px;">' + passes[p] + '</li>';
+          html += '</ul></div>';
+        }
+        if (extractedPayments.length > 0) {
+          html += '<div style="margin-top:8px;"><strong>Extracted Payee Instructions (' + extractedPayments.length + '):</strong>';
+          for (var k = 0; k < extractedPayments.length; k++) {
+            var py = extractedPayments[k];
+            html += '<div style="margin-top:5px;padding:7px 10px;border-radius:7px;background:rgba(15,23,42,0.75);border:1px solid var(--border);font-size:0.8rem;">' +
+              '<strong>' + escapeHtml(py.name) + '</strong> &bull; <code>' + escapeHtml(py.sortCode) + '</code> / <code>' + escapeHtml(py.accountNumber) + '</code> &bull; Tx <code>' + escapeHtml(py.transactionCode) + '</code> &bull; <strong style="color:#86efac;">£' + py.amount.toFixed(2) + '</strong> (<code>' + escapeHtml(py.reference) + '</code>)' +
+              '</div>';
+          }
+          html += '</div>';
+        }
+        reportBox.innerHTML = html;
+      }
+
+      document.getElementById('btnBacsValid').addEventListener('click', function () {
+        rawBox.value = VALID_BACS;
+        auditBacs();
+      });
+
+      document.getElementById('btnBacsBroken').addEventListener('click', function () {
+        rawBox.value = BROKEN_BACS;
+        auditBacs();
+      });
+
+      document.getElementById('bacsFileInput').addEventListener('change', function (ev) {
+        var f = ev.target.files && ev.target.files[0];
+        if (!f) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          rawBox.value = String(e.target.result || '');
+          auditBacs();
+        };
+        reader.readAsText(f);
+      });
+
+      rawBox.addEventListener('input', auditBacs);
+
+      document.getElementById('btnCopyBacsApiJson').addEventListener('click', function () {
+        var btn = document.getElementById('btnCopyBacsApiJson');
+        var payload = JSON.stringify({
+          serviceUserNumber: '123456',
+          originatingCompanyName: 'THAMES TECH LTD',
+          originatingSortCode: '20-00-00',
+          originatingAccountNumber: '12345678',
+          processingDate: '2026-11-16',
+          includeHeadersAndTrailers: true,
+          payments: extractedPayments
+        }, null, 2);
+        navigator.clipboard.writeText(payload).then(function () {
+          btn.textContent = 'Copied Clean JSON!';
+          if (window.finopsTrack) window.finopsTrack('action_copy_curl');
+          setTimeout(function () { btn.textContent = 'Copy Clean Generator JSON'; }, 1700);
+        });
+      });
+
+      rawBox.value = VALID_BACS;
+      auditBacs();
+    })();
+  </script>
+</body>
+</html>

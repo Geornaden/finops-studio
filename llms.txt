@@ -103,3 +103,4 @@
 - [Deutsche E-Rechnungspflicht (§ 14 UStG): XRechnung 3.0 UBL & ZUGFeRD 2.3 / Factur-X CII XML API + Leitweg-ID Prüfziffer-Rechner](https://geornaden.github.io/finops-studio/xrechnung-3-0-zugferd-leitweg-id-generator-api-deutschland.html)
 - [Retool, Appsmith, Bubble & Supabase Edge Functions / Next.js Fintech Integration Playbook (SEPA XML, NACHA ACH, Peppol, UK BACS, BAI2, DATEV)](https://geornaden.github.io/finops-studio/retool-supabase-bubble-sepa-xml-nacha-peppol-api.html)
 - [Free Browser ISO 20022 pain.002 XML Bank Rejection Report Viewer & Exception CSV Exporter](https://geornaden.github.io/finops-studio/free-iso20022-pain002-status-report-viewer.html)
+- [Free Browser UK Pay.UK BACS Standard 18 File Validator: 100-Char Width, UHL1 Julian Date, CONTRA Balance & UTL1 Pence Auditor](https://geornaden.github.io/finops-studio/free-uk-bacs-standard-18-file-validator.html)
