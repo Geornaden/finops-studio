@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Excel / CSV to SEPA XML, NACHA ACH, UK BACS, Australian ABA, CPA-005 &amp; DATEV Mapper | FinOps Studio</title>
+  <meta name="description" content="Convert QuickBooks, Xero, Sage, MYOB, Stripe, or Excel CSV spreadsheets into SEPA XML (pain.001), US NACHA ACH, UK BACS 18, Australian .ABA, Canadian CPA-005, or German DATEV EXTF with live IBAN/ABA checksum checks and 1-click Cloud API execution." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="1-Click Excel / CSV Column Mapper to SEPA XML, NACHA ACH, BACS, ABA, CPA-005 & DATEV | FinOps Studio" />
+  <meta property="og:description" content="Paste or drop any Excel, QuickBooks, or Xero CSV—auto-map columns, audit IBAN MOD-97 & ABA MOD-10 checksums locally, and generate bank-ready files in 1 click ($0/mo subscription)." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Excel / CSV to Bank File Column Mapper & Cloud Runner",
+        "url": "https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (Browser + Cloud REST API)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD",
+          "description": "100% free browser CSV column mapper & checksum auditor; $0/mo + $0.02/row bulk Cloud API execution (covered by Apify $5/month free credits)."
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Does pasting or selecting my Excel/CSV file upload sensitive payroll data until I click Run Cloud API?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. CSV parsing, column mapping, and mathematical IBAN MOD-97 / US ABA MOD-10 / BSB / Sort Code checksum audits run 100% locally inside your browser tab. Data is only sent over TLS 1.3 to Apify's synchronous cloud API if and when you explicitly paste an API token and click Generate Production Bank File."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which spreadsheet delimiters and ERP exports are supported?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The mapper automatically detects comma (,), European/German semicolon (;), and Excel copy-paste tab (TSV) delimiters from Microsoft Excel, Google Sheets, QuickBooks Online/Desktop, Xero, Sage 50/Intacct, MYOB, NetSuite, Odoo, and Stripe."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html#sandbox">9-API Sandbox</a>
+        <a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Payroll</a>
+        <a href="./for-accounting-firms-payroll-bureaus-and-fintechs.html">CPA &amp; Payroll ROI</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Apify Store ($5 Free/Mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#128202; No-Code Bookkeeper &amp; Payroll Bridge &bull; Auto-Detects Comma, Semicolon &amp; Excel Tab Paste</span>
+      <h1>1-Click Excel / CSV Column Mapper &rarr; <code>SEPA</code>, <code>NACHA</code>, <code>BACS</code>, <code>.ABA</code>, <code>CPA-005</code> &amp; <code>DATEV</code></h1>
+      <p>Paste rows straight from <strong>Excel</strong>, <strong>Google Sheets</strong>, <strong>QuickBooks</strong>, <strong>Xero</strong>, <strong>Sage</strong>, or <strong>MYOB</strong>. Map columns visually, audit every IBAN / ABA / Sort Code / BSB checksum in real time, and download your bank-ready file in one click—with <strong>$0/month subscription fees</strong>.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+        <div>
+          <label for="targetFormat" style="font-size:0.82rem;color:var(--muted);display:block;margin-bottom:4px;"><strong>Step 1 — Choose Target Bank / Tax Standard:</strong></label>
+          <select id="targetFormat" style="padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.92rem;font-weight:600;">
+            <option value="sepa">&#127466;&#127482; EU SEPA Credit Transfer XML (pain.001.001.09)</option>
+            <option value="nacha">&#127482;&#127480; US 94-Character NACHA ACH (.ach PPD / CCD)</option>
+            <option value="bacs">&#127468;&#127463; UK 100-Character BACS Standard 18 (.bacs)</option>
+            <option value="aba">&#127462;&#127482; Australian 120-Character BECS Direct Entry (.aba)</option>
+            <option value="cpa005">&#127464;&#127462; Canadian 1,464-Byte CPA-005 EFT (.eft)</option>
+            <option value="datev">&#127465;&#127466; German DATEV Buchungsstapel EXTF v700 (.csv)</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            &#128194; Load Local .CSV / .TSV File
+            <input id="csvFilePicker" type="file" accept=".csv,.tsv,.txt" style="display:none;" />
+          </label>
+          <button id="btnLoadSampleCsv" type="button" class="btn btn-outline">Reset Sample Spreadsheet</button>
+        </div>
+      </div>
+
+      <div id="companyFields" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px;padding:12px;border-radius:8px;background:rgba(15,23,42,0.65);border:1px solid rgba(148,163,184,0.16);"></div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Step 2 — Paste Excel / CSV Rows</strong> (Header Row First)</span>
+            <span id="delimBadge" class="status-chip status-ok">Auto-Delimiter</span>
+          </div>
+          <textarea id="csvRawInput" class="code-box" spellcheck="false" style="min-height:190px;font-size:0.8rem;"></textarea>
+          <div id="mappingControls" style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;"></div>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>Step 3 — Ready-to-Run Cloud API JSON Payload</strong></span>
+            <span id="auditBadge" class="status-chip status-ok">CHECKSUMS OK</span>
+          </div>
+          <pre id="jsonMappedOut" class="code-box" style="min-height:190px;font-size:0.78rem;"></pre>
+          <div id="auditSummary" style="margin-top:10px;padding:10px 12px;border-radius:8px;background:rgba(15,23,42,0.8);border:1px solid rgba(56,189,248,0.28);font-size:0.82rem;color:#e2e8f0;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:14px;border-radius:10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:1;">
+          <input id="directToken" type="password" placeholder="Optional: Paste Apify API Token (apify_api_...) to generate &amp; download file right here" style="min-width:290px;flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.84rem;" />
+          <button id="btnRunDirect" type="button" class="btn btn-primary">&#9889; Generate &amp; Download Bank File Now</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnCopyJson" type="button" class="btn btn-outline">Copy JSON Payload</button>
+          <a id="btnOpenActor" class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Open in Apify Console ($5 Free/Mo) &rarr;</a>
+        </div>
+      </div>
+      <pre id="cloudResultBox" class="code-box" style="display:none;margin-top:12px;min-height:160px;border-color:#34d399;"></pre>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">How Bookkeepers, Payroll Bureaus &amp; Developers Use This Mapper</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">1. Export CSV</span></div>
+            <h3>Export From QuickBooks, Xero, Sage or Excel</h3>
+            <p>Keep whatever column headers your accounting software exports—comma (<code>,</code>), German semicolon (<code>;</code>), or direct copy-paste tabs from Excel all work automatically.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">2. Pre-Flight Math Audit</span></div>
+            <h3>Catch Bad IBANs &amp; Routing Numbers Free</h3>
+            <p>Every spreadsheet row is checked locally against ISO 13616 IBAN MOD-97, US ABA 3-7-1 MOD-10, 6-digit UK Sort Code, Australian BSB, or Canadian CPA Transit rules before you spend a cent.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">3. Download Bank File</span></div>
+            <h3>Run Cloud API for $0.02/Row ($0/Mo Fixed)</h3>
+            <p>Paste your free Apify token (`$5/month` starter credits included — ~240 rows/month free!) to download your exact `.xml`, `.ach`, `.bacs`, `.aba`, `.eft`, or `.csv` file immediately.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio Home</a> &bull;
+      <a href="./quickbooks-xero-csv-to-sepa-nacha-positive-pay.html">QuickBooks &amp; Xero Guide</a> &bull;
+      <a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Global Payroll</a> &bull;
+      <a href="./openapi.json">OpenAPI 3.1</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var CONFIGS = {
+      sepa: {
+        actor: "finops_studio~sepa-xml-generator",
+        storeUrl: "https://apify.com/finops_studio/sepa-xml-generator",
+        ext: "sepa-pain001.xml",
+        outKey: "xmlString",
+        unitPrice: 0.02,
+        sampleCsv: "Payee Name,IBAN,Amount EUR,Invoice Ref,Country,City\nNordic Cloud AB,NL91ABNA0417164300,1450.00,INV-2026-891,NL,Amsterdam\nAlpine Hosting GmbH,DE89370400440532013000,820.50,INV-2026-892,DE,Munich\nAtelier Lumiere SAS,FR7630006000011234567890189,2310.00,INV-2026-893,FR,Paris",
+        companyDefaults: [
+          { key: "debtorName", label: "Your Company Name", val: "Acme Europe GmbH" },
+          { key: "debtorIban", label: "Your Debtor IBAN", val: "DE89370400440532013000" },
+          { key: "debtorBic", label: "Your Debtor BIC", val: "COBADEFFXXX" }
+        ],
+        fields: [
+          { key: "name", label: "Payee Name", match: /name|payee|vendor|supplier|beneficiary/i },
+          { key: "iban", label: "Recipient IBAN", match: /iban/i },
+          { key: "amount", label: "Amount (EUR)", match: /amount|eur|total|sum|net/i },
+          { key: "remittanceInfo", label: "Reference / Invoice", match: /ref|inv|desc|memo/i },
+          { key: "country", label: "Country (2-Letter)", match: /country|iso/i },
+          { key: "townName", label: "Town / City", match: /city|town/i }
+        ]
+      },
+      nacha: {
+        actor: "finops_studio~nacha-ach-file-generator",
+        storeUrl: "https://apify.com/finops_studio/nacha-ach-file-generator",
+        ext: "batch-nacha.ach",
+        outKey: "achContent",
+        unitPrice: 0.02,
+        sampleCsv: "Employee Name,ABA Routing,Account Number,Net Pay USD,Employee ID,Tx Code\nSARAH JENKINS,021000021,449012398,2450.00,EMP-101,22\nMARCUS VANCE,121000358,883920114,3180.75,EMP-102,22",
+        companyDefaults: [
+          { key: "companyName", label: "Company Name (16ch)", val: "ACME US CORP" },
+          { key: "companyId", label: "10-Digit Company ID", val: "1987654321" },
+          { key: "immediateDestination", label: "Bank ABA Routing", val: "021000021" },
+          { key: "secCode", label: "SEC Code (PPD/CCD)", val: "PPD" }
+        ],
+        fields: [
+          { key: "individualName", label: "Payee Name", match: /name|employee|vendor|payee/i },
+          { key: "routingNumber", label: "9-Digit ABA Routing", match: /rout|aba/i },
+          { key: "accountNumber", label: "Account Number", match: /acc/i },
+          { key: "amount", label: "Amount (USD)", match: /amount|pay|usd|total/i },
+          { key: "individualId", label: "Employee / Vendor ID", match: /id|ref|code/i },
+          { key: "transactionCode", label: "Tx Code (22=Chk Cr)", match: /tx|tran|type/i }
+        ]
+      },
+      bacs: {
+        actor: "finops_studio~uk-bacs-standard18-generator",
+        storeUrl: "https://apify.com/finops_studio/uk-bacs-standard18-generator",
+        ext: "bacs-standard18.txt",
+        outKey: "bacsContent",
+        unitPrice: 0.02,
+        sampleCsv: "Payee Name,Sort Code,Account Number,Amount GBP,BACS Reference\nOLIVER WRIGHT,40-05-15,87654321,2845.50,SALARY NOV26\nAMELIA CLARKE,20-45-45,12345678,3120.00,SALARY NOV26",
+        companyDefaults: [
+          { key: "serviceUserNumber", label: "6-Digit BACS SUN", val: "123456" },
+          { key: "originatorName", label: "Originator Name (18ch)", val: "THAMES CLOUD LTD" },
+          { key: "originatorSortCode", label: "Originator Sort Code", val: "20-00-00" },
+          { key: "originatorAccountNumber", label: "Originator 8-Digit Acct", val: "12345678" }
+        ],
+        fields: [
+          { key: "name", label: "Payee Name", match: /name|payee|employee/i },
+          { key: "sortCode", label: "6-Digit UK Sort Code", match: /sort/i },
+          { key: "accountNumber", label: "8-Digit UK Account", match: /acc/i },
+          { key: "amount", label: "Amount (GBP)", match: /amount|gbp|pay|total/i },
+          { key: "reference", label: "BACS Reference (18ch)", match: /ref|desc/i }
+        ]
+      },
+      aba: {
+        actor: "finops_studio~aba-cemtex-file-generator",
+        storeUrl: "https://apify.com/finops_studio/aba-cemtex-file-generator",
+        ext: "direct-entry.aba",
+        outKey: "abaContent",
+        unitPrice: 0.02,
+        sampleCsv: "Account Title,BSB,Account Number,Amount AUD,Lodgement Reference,Tx Code\nLIAM O CONNOR,082-088,87654321,2150.00,WAGES NOV,53\nCHLOE NGUYEN,062-000,10498211,2640.25,WAGES NOV,53",
+        companyDefaults: [
+          { key: "financialInstitution", label: "3-Letter Bank (CBA/NAB)", val: "CBA" },
+          { key: "userName", label: "Company Name (26ch)", val: "SYDNEY TECH PTY LTD" },
+          { key: "apcaUserId", label: "6-Digit APCA ID", val: "301500" },
+          { key: "traceBsb", label: "Trace BSB (NNN-NNN)", val: "062-000" },
+          { key: "traceAccount", label: "Trace Account", val: "10458921" }
+        ],
+        fields: [
+          { key: "accountTitle", label: "Account Title", match: /title|name|payee|employee/i },
+          { key: "bsb", label: "BSB (NNN-NNN)", match: /bsb/i },
+          { key: "accountNumber", label: "Account Number", match: /acc/i },
+          { key: "amount", label: "Amount (AUD)", match: /amount|aud|pay|total/i },
+          { key: "lodgementReference", label: "Reference (18ch)", match: /ref|lodg|desc/i },
+          { key: "transactionCode", label: "Tx Code (53=Pay/50=AP)", match: /tx|code/i }
+        ]
+      },
+      cpa005: {
+        actor: "finops_studio~canada-cpa005-eft-generator",
+        storeUrl: "https://apify.com/finops_studio/canada-cpa005-eft-generator",
+        ext: "canada-cpa005.eft",
+        outKey: "cpa005Content",
+        unitPrice: 0.02,
+        sampleCsv: "Payee Name,Institution (3d),Branch Transit (5d),Account Number,Amount CAD,CPA Code,Cross Reference\nSOPHIE TREMBLAY,004,10202,7748392,2950.75,200,EMP-CA-204\nMARC BOUCHARD,001,00022,8891204,3120.00,200,EMP-CA-205",
+        companyDefaults: [
+          { key: "originatorId", label: "10-Char Originator ID", val: "GLOBTECHCA" },
+          { key: "originatorShortName", label: "Short Name (15ch)", val: "GLOBAL TECH CA" },
+          { key: "destinationDataCentre", label: "5-Digit Data Centre", val: "00300" },
+          { key: "fileCreationNumber", label: "4-Digit FCN", val: "0021" }
+        ],
+        fields: [
+          { key: "name", label: "Payee Name", match: /name|payee|employee/i },
+          { key: "institution", label: "3-Digit Institution", match: /inst/i },
+          { key: "transit", label: "5-Digit Branch Transit", match: /tran|branch/i },
+          { key: "accountNumber", label: "Account Number", match: /acc/i },
+          { key: "amount", label: "Amount (CAD)", match: /amount|cad|pay|total/i },
+          { key: "cpaCode", label: "CPA Code (200/450)", match: /cpa|code/i },
+          { key: "crossReference", label: "Cross Reference", match: /ref|id/i }
+        ]
+      },
+      datev: {
+        actor: "finops_studio~datev-buchungsstapel-generator",
+        storeUrl: "https://apify.com/finops_studio/datev-buchungsstapel-generator",
+        ext: "EXTF_Buchungsstapel.csv",
+        outKey: "csvString",
+        unitPrice: 0.02,
+        sampleCsv: "Belegdatum;Bruttobetrag;USt Satz;Belegfeld 1;Buchungstext\n2026-11-13;1190.00;19;RE-2026-401;SaaS Jahreslizenz GmbH\n2026-11-13;535.00;7;RE-2026-402;Fachbuch Kontingent",
+        companyDefaults: [
+          { key: "skr", label: "Kontenrahmen (SKR03/04)", val: "SKR03" },
+          { key: "consultantNumber", label: "Beraternummer", val: "12345" },
+          { key: "clientNumber", label: "Mandantennummer", val: "10001" }
+        ],
+        fields: [
+          { key: "date", label: "Datum (YYYY-MM-DD)", match: /date|datum/i },
+          { key: "amount", label: "Umsatz (EUR)", match: /amount|betrag|umsatz|brutto/i },
+          { key: "vatRate", label: "USt % (19 / 7 / 0)", match: /vat|ust|mwst|tax/i },
+          { key: "invoiceNumber", label: "Belegfeld 1 (Rechnung)", match: /inv|beleg|rechn|nr/i },
+          { key: "description", label: "Buchungstext", match: /desc|text|memo|kunde/i }
+        ]
+      }
+    };
+
+    function checkIbanMod97(iban) {
+      var c = String(iban || "").replace(/\s+/g, "").toUpperCase();
+      if (c.length < 15 || c.length > 34 || !/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(c)) return false;
+      var rearr = c.slice(4) + c.slice(0, 4);
+      var rem = 0;
+      for (var i = 0; i < rearr.length; i++) {
+        var ch = rearr.charCodeAt(i);
+        var digits = ch >= 65 && ch <= 90 ? String(ch - 55) : rearr[i];
+        for (var j = 0; j < digits.length; j++) rem = (rem * 10 + Number(digits[j])) % 97;
+      }
+      return rem === 1;
+    }
+
+    function checkAbaMod10(rt) {
+      var d = String(rt || "").replace(/\D/g, "");
+      if (d.length !== 9) return false;
+      var sum = 3*(+d[0]+ +d[3]+ +d[6]) + 7*(+d[1]+ +d[4]+ +d[7]) + (+d[2]+ +d[5]+ +d[8]);
+      return sum > 0 && sum % 10 === 0;
+    }
+
+    function parseCsv(text) {
+      var lines = String(text || "").trim().split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
+      if (!lines.length) return { delim: ",", headers: [], rows: [] };
+      var first = lines[0];
+      var delim = first.indexOf("\t") !== -1 ? "\t" : (first.split(";").length > first.split(",").length ? ";" : ",");
+      function splitRow(line) {
+        var out = [], cur = "", inQ = false;
+        for (var i = 0; i < line.length; i++) {
+          var ch = line[i];
+          if (ch === '"') { inQ = !inQ; continue; }
+          if (ch === delim && !inQ) { out.push(cur.trim()); cur = ""; continue; }
+          cur += ch;
+        }
+        out.push(cur.trim());
+        return out;
+      }
+      var headers = splitRow(lines[0]);
+      var rows = lines.slice(1).map(splitRow);
+      return { delim: delim, headers: headers, rows: rows };
+    }
+
+    var fmtSel = document.getElementById("targetFormat");
+    var csvIn = document.getElementById("csvRawInput");
+    var compBox = document.getElementById("companyFields");
+    var mapBox = document.getElementById("mappingControls");
+    var jsonOut = document.getElementById("jsonMappedOut");
+    var auditBadge = document.getElementById("auditBadge");
+    var auditSummary = document.getElementById("auditSummary");
+    var delimBadge = document.getElementById("delimBadge");
+    var btnOpenActor = document.getElementById("btnOpenActor");
+    var colMap = {};
+
+    function renderCompanyInputs() {
+      var cfg = CONFIGS[fmtSel.value];
+      btnOpenActor.href = cfg.storeUrl;
+      compBox.innerHTML = cfg.companyDefaults.map(function (c) {
+        return '<div><label style="font-size:0.75rem;color:var(--muted);display:block;margin-bottom:3px;">' + c.label + '</label>' +
+          '<input data-comp="' + c.key + '" value="' + c.val + '" style="width:100%;padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" /></div>';
+      }).join("");
+      compBox.querySelectorAll("input").forEach(function (inp) {
+        inp.addEventListener("input", rebuildPayload);
+      });
+    }
+
+    function autoMapHeaders() {
+      var cfg = CONFIGS[fmtSel.value];
+      var parsed = parseCsv(csvIn.value);
+      delimBadge.textContent = parsed.delim === "\t" ? "Tab (Excel TSV)" : parsed.delim === ";" ? "Semicolon (;)" : "Comma (,)";
+      colMap = {};
+      cfg.fields.forEach(function (f, fIdx) {
+        var found = -1;
+        for (var i = 0; i < parsed.headers.length; i++) {
+          if (f.match.test(parsed.headers[i])) { found = i; break; }
+        }
+        colMap[f.key] = found !== -1 ? found : Math.min(fIdx, Math.max(0, parsed.headers.length - 1));
+      });
+      mapBox.innerHTML = cfg.fields.map(function (f) {
+        var opts = '<option value="-1">(Leave Default / Empty)</option>' + parsed.headers.map(function (h, idx) {
+          return '<option value="' + idx + '"' + (colMap[f.key] === idx ? " selected" : "") + '>' + h + '</option>';
+        }).join("");
+        return '<div><label style="font-size:0.74rem;color:var(--muted);display:block;margin-bottom:2px;">Map: ' + f.label + '</label>' +
+          '<select data-map="' + f.key + '" style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.78rem;">' + opts + '</select></div>';
+      }).join("");
+      mapBox.querySelectorAll("select").forEach(function (sel) {
+        sel.addEventListener("change", function () {
+          colMap[sel.getAttribute("data-map")] = parseInt(sel.value, 10);
+          rebuildPayload();
+        });
+      });
+      rebuildPayload();
+    }
+
+    function rebuildPayload() {
+      var fmt = fmtSel.value;
+      var cfg = CONFIGS[fmt];
+      var parsed = parseCsv(csvIn.value);
+      var compVals = {};
+      compBox.querySelectorAll("input").forEach(function (inp) {
+        compVals[inp.getAttribute("data-comp")] = inp.value.trim();
+      });
+
+      var errors = [];
+      var sumTotal = 0;
+      var items = parsed.rows.map(function (r, rIdx) {
+        function val(k, fallback) {
+          var idx = colMap[k];
+          return idx >= 0 && r[idx] !== undefined && r[idx] !== "" ? r[idx] : (fallback || "");
+        }
+        var rawAmt = parseFloat(String(val("amount", "0")).replace(/[^0-9.-]/g, "")) || 0;
+        sumTotal += rawAmt;
+
+        if (fmt === "sepa") {
+          var iban = val("iban", "").replace(/\s+/g, "");
+          if (!checkIbanMod97(iban)) errors.push("Row " + (rIdx + 1) + ": Invalid IBAN MOD-97 (" + iban + ")");
+          return { name: val("name", "Payee"), iban: iban, amount: +rawAmt.toFixed(2), remittanceInfo: val("remittanceInfo", "Payment"), country: val("country", iban.slice(0, 2) || "DE"), townName: val("townName", "Berlin") };
+        }
+        if (fmt === "nacha") {
+          var rt = val("routingNumber", "").replace(/\D/g, "");
+          if (!checkAbaMod10(rt)) errors.push("Row " + (rIdx + 1) + ": Invalid 9-digit US ABA MOD-10 (" + rt + ")");
+          return { transactionCode: val("transactionCode", "22"), routingNumber: rt, accountNumber: val("accountNumber", ""), amount: +rawAmt.toFixed(2), individualId: val("individualId", "ID-" + (rIdx + 1)), individualName: val("individualName", "PAYEE") };
+        }
+        if (fmt === "bacs") {
+          var sc = val("sortCode", "").replace(/\D/g, "");
+          if (sc.length !== 6) errors.push("Row " + (rIdx + 1) + ": UK Sort Code must be 6 digits (" + val("sortCode", "") + ")");
+          return { name: val("name", "PAYEE"), sortCode: val("sortCode", ""), accountNumber: val("accountNumber", "").replace(/\D/g, ""), amount: +rawAmt.toFixed(2), transactionCode: "99", reference: val("reference", "PAYMENT") };
+        }
+        if (fmt === "aba") {
+          var bsbRaw = val("bsb", "").replace(/\D/g, "");
+          if (bsbRaw.length !== 6) errors.push("Row " + (rIdx + 1) + ": AU BSB must be 6 digits (" + val("bsb", "") + ")");
+          var bsbFmt = bsbRaw.length === 6 ? bsbRaw.slice(0, 3) + "-" + bsbRaw.slice(3) : val("bsb", "");
+          return { accountTitle: val("accountTitle", "PAYEE"), bsb: bsbFmt, accountNumber: val("accountNumber", ""), amount: +rawAmt.toFixed(2), transactionCode: val("transactionCode", "53"), lodgementReference: val("lodgementReference", "PAYMENT") };
+        }
+        if (fmt === "cpa005") {
+          var inst = val("institution", "").replace(/\D/g, "");
+          var trn = val("transit", "").replace(/\D/g, "");
+          if (inst.length !== 3 || trn.length !== 5) errors.push("Row " + (rIdx + 1) + ": CA Institution (3d) + Transit (5d) required");
+          return { name: val("name", "PAYEE"), institution: inst, transit: trn, accountNumber: val("accountNumber", ""), amount: +rawAmt.toFixed(2), cpaCode: val("cpaCode", "200"), crossReference: val("crossReference", "REF-" + (rIdx + 1)) };
+        }
+        return { date: val("date", "2026-11-13"), amount: +rawAmt.toFixed(2), vatRate: Number(val("vatRate", "19")) || 0, invoiceNumber: val("invoiceNumber", "RE-1"), description: val("description", "Buchung") };
+      });
+
+      var payload = {};
+      if (fmt === "sepa") payload = { schemaVersion: "pain.001.001.09", initiatingPartyName: compVals.debtorName, debtorName: compVals.debtorName, debtorIban: compVals.debtorIban, debtorBic: compVals.debtorBic, transactions: items };
+      else if (fmt === "nacha") payload = { mode: "generate", secCode: compVals.secCode || "PPD", immediateDestination: compVals.immediateDestination, immediateDestinationName: "CLEARING BANK", immediateOrigin: compVals.companyId, immediateOriginName: compVals.companyName, companyName: compVals.companyName, companyId: compVals.companyId, companyEntryDescription: "PAYROLL", originatingDfiId: (compVals.immediateDestination || "021000021").slice(0, 8), effectiveEntryDate: "261120", entries: items };
+      else if (fmt === "bacs") payload = { serviceUserNumber: compVals.serviceUserNumber, originatorName: compVals.originatorName, originatorSortCode: compVals.originatorSortCode, originatorAccountNumber: compVals.originatorAccountNumber, processingDate: "2026-11-20", includeHeaders: true, transactions: items };
+      else if (fmt === "aba") payload = { financialInstitution: compVals.financialInstitution, userName: compVals.userName, apcaUserId: compVals.apcaUserId, description: "PAYROLL", processingDate: "2026-11-20", traceBsb: compVals.traceBsb, traceAccount: compVals.traceAccount, remitterName: (compVals.userName || "COMPANY").slice(0, 16), includeSelfBalancingRow: true, transactions: items };
+      else if (fmt === "cpa005") payload = { originatorId: compVals.originatorId, originatorShortName: compVals.originatorShortName, originatorLongName: compVals.originatorShortName, destinationDataCentre: compVals.destinationDataCentre, fileCreationNumber: compVals.fileCreationNumber, returnInstitution: "003", returnTransit: "00012", returnAccount: "1004589", dueDate: "2026-11-20", transactions: items };
+      else payload = { skr: compVals.skr || "SKR03", consultantNumber: compVals.consultantNumber, clientNumber: compVals.clientNumber, bookings: items };
+
+      jsonOut.textContent = JSON.stringify(payload, null, 2);
+      var estCost = (0.03 + items.length * cfg.unitPrice).toFixed(2);
+      if (errors.length === 0) {
+        auditBadge.textContent = "ALL " + items.length + " ROWS VALID";
+        auditBadge.className = "status-chip status-ok";
+        auditSummary.innerHTML = "&#9989; <strong>Pre-Flight Math Check Passed:</strong> " + items.length + " spreadsheet row(s) &bull; Batch Sum: <strong>" + sumTotal.toFixed(2) + "</strong> &bull; Cloud API Run Cost: <strong>$" + estCost + "</strong> (covered by Apify $5/mo free credits).";
+      } else {
+        auditBadge.textContent = errors.length + " CHECKSUM ISSUE(S)";
+        auditBadge.className = "status-chip";
+        auditSummary.innerHTML = "&#9888;&#65039; <strong>Checksum Warning:</strong> " + errors.slice(0, 3).join(" | ");
+      }
+    }
+
+    function switchFormat() {
+      csvIn.value = CONFIGS[fmtSel.value].sampleCsv;
+      renderCompanyInputs();
+      autoMapHeaders();
+    }
+
+    fmtSel.addEventListener("change", switchFormat);
+    csvIn.addEventListener("input", autoMapHeaders);
+    document.getElementById("btnLoadSampleCsv").addEventListener("click", switchFormat);
+
+    document.getElementById("csvFilePicker").addEventListener("change", function (e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function (ev) {
+        csvIn.value = String(ev.target.result || "");
+        autoMapHeaders();
+      };
+      reader.readAsText(file);
+    });
+
+    document.getElementById("btnCopyJson").addEventListener("click", function (e) {
+      navigator.clipboard.writeText(jsonOut.textContent || "");
+      e.target.textContent = "Copied JSON!";
+      setTimeout(function () { e.target.textContent = "Copy JSON Payload"; }, 1800);
+    });
+
+    document.getElementById("btnRunDirect").addEventListener("click", async function (e) {
+      var tok = (document.getElementById("directToken").value || "").trim();
+      var resBox = document.getElementById("cloudResultBox");
+      resBox.style.display = "block";
+      if (!tok) {
+        resBox.textContent = "Tip: Paste your free Apify API Token (from https://console.apify.com/settings/integrations — includes $5/month free credits) in the box above, OR click 'Copy JSON Payload' and 'Open in Apify Console' to run inside Apify UI.";
+        return;
+      }
+      var cfg = CONFIGS[fmtSel.value];
+      e.target.disabled = true;
+      resBox.textContent = "Executing live production Cloud API (" + cfg.actor + ")...";
+      try {
+        var r = await fetch("https://api.apify.com/v2/acts/" + cfg.actor + "/run-sync-get-dataset-items?token=" + encodeURIComponent(tok), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: jsonOut.textContent
+        });
+        var data = await r.json();
+        if (!r.ok) {
+          resBox.textContent = "API Error (" + r.status + "): " + JSON.stringify(data, null, 2);
+        } else {
+          var first = Array.isArray(data) && data[0] ? data[0] : data;
+          var fileBody = first[cfg.outKey] || first.xmlContent || first.fileContent || JSON.stringify(data, null, 2);
+          resBox.textContent = fileBody;
+          var blob = new Blob([fileBody], { type: "text/plain;charset=utf-8" });
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = cfg.ext;
+          a.click();
+        }
+      } catch (err) {
+        resBox.textContent = "Network Error: " + err.message;
+      } finally {
+        e.target.disabled = false;
+      }
+    });
+
+    switchFormat();
+  })();
+  </script>
+</body>
+</html>

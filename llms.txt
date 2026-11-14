@@ -59,6 +59,7 @@
 - [Multi-Country Global Payroll Bank File Router (US NACHA, EU SEPA XML, UK BACS 18, Australia ABA, Canada CPA-005) & Cost Estimator](https://geornaden.github.io/finops-studio/multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html)
 - [n8n 5-Country Global Payroll Router Blueprint JSON](https://geornaden.github.io/finops-studio/workflows/n8n-global-payroll-sepa-nacha-bacs-aba-cpa005.json)
 - [B2B Pricing, Multi-Client CPA/Payroll Guide & Interactive ROI Calculator](https://geornaden.github.io/finops-studio/for-accounting-firms-payroll-bureaus-and-fintechs.html)
+- [Free 1-Click Excel / CSV Column Mapper & Direct Runner (SEPA XML, US NACHA ACH, UK BACS 18, AU .ABA, CA CPA-005 & German DATEV EXTF)](https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html)
 - [Free Instant Bank File Format Detector & Fixed-Width / XML Line-Length Auditor](https://geornaden.github.io/finops-studio/free-bank-file-format-detector-line-length-auditor.html)
 - [Free Instant Peppol EndpointID EAS Lookup, EU VAT Checker & German XRechnung Leitweg-ID Calculator](https://geornaden.github.io/finops-studio/free-eu-vat-peppol-endpoint-id-validator.html)
 - [Free Instant IBAN MOD-97, US ABA Routing & ISO 20022 Error Code Checker](https://geornaden.github.io/finops-studio/free-iban-routing-number-pain002-validator.html)
