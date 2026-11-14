@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free ISO 20022 pain.002 XML Bank Status &amp; Rejection Viewer + CSV Exporter | FinOps Studio</title>
+  <meta name="description" content="100% client-side ISO 20022 pain.002 (pain.002.001.03 &amp; pain.002.001.10) XML bank rejection viewer and CSV exporter. Decode GrpSts, PmtInfSts, TxSts, and reason codes (BE04, AC04, AM04, BE01, MD01, RC01) into plain-English fixes locally in your browser." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-iso20022-pain002-status-report-viewer.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Free Browser ISO 20022 pain.002 XML Bank Rejection Report Viewer & CSV Exporter | FinOps Studio" />
+  <meta property="og:description" content="Drop or paste raw EBICS / SFTP pain.002.001.03 or pain.002.001.10 XML files to inspect rejected EndToEndIds, plain-English AC04/AM04/BE04 fixes, and export exception CSVs with zero server upload." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-iso20022-pain002-status-report-viewer.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Free ISO 20022 pain.002 XML Bank Status & Rejection Viewer",
+        "url": "https://geornaden.github.io/finops-studio/free-iso20022-pain002-status-report-viewer.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD",
+          "description": "Free client-side ISO 20022 pain.002.001.03 / .10 XML status decoder & CSV exporter; $0/mo + $0.02/tx Cloud API on Apify Store for automated SFTP/EBICS exception alerts."
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why does an ISO 20022 pain.002 status file show PART at the group or batch level?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PART (Partially Accepted) in OrgnlGrpInfAndSts/GrpSts or OrgnlPmtInfAndSts/PmtInfSts means the bank accepted valid transactions in your pain.001 or pain.008 file while rejecting specific individual payments (marked RJCT inside TxInfAndSts). Inspecting each TxInfAndSts block reveals the exact EndToEndId and 4-letter ISO reason code (such as BE04, AC04, AM04, or BE01)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this pain.002 XML viewer upload confidential bank rejection logs to a server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. XML parsing uses the native browser DOMParser API 100% locally inside your browser tab—beneficiary names, IBANs, EndToEndIds, and amounts never leave your device."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./iso20022-pain002-decoder.html">pain.002 Cloud API</a>
+        <a href="./iso20022-pain002-rejection-codes-ac04-am04-be04-md01-rc01-guide.html">40+ Reason Codes</a>
+        <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">pain.001 Validator</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/iso20022-pain002-status-parser" target="_blank" rel="noopener">Automate pain.002 Alerts &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#128737;&#65039; 100% Local Browser DOMParser &bull; Zero Server Upload &bull; EBICS / Host-to-Host SFTP / CGI-MP</span>
+      <h1>Free ISO 20022 <code>pain.002</code> XML Bank Rejection Viewer &amp; Exception CSV Exporter</h1>
+      <p>Paste or open any raw <strong><code>CustomerPaymentStatusReport</code> (<code>pain.002.001.03</code> through <code>pain.002.001.12</code>)</strong> XML returned by J.P. Morgan Access, HSBCnet, Deutsche Bank, BNP Paribas, CitiDirect, ING, or UBS. Instantly inspect <strong>Group, Batch &amp; Transaction statuses</strong>, translate cryptic 4-letter ISO error codes (<code>BE04</code>, <code>AC04</code>, <code>AM04</code>, <code>BE01</code>, <code>MD01</code>) into <strong>plain-English AP/Payroll fixes</strong>, and export an exception CSV.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnP002Mixed" type="button" class="btn btn-outline">Load PART Batch (BE04 + AC04 + BE01 Exceptions)</button>
+          <button id="btnP002GrpRjct" type="button" class="btn btn-outline">Load Whole-File Group RJCT (FF01 / AM09)</button>
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            &#128194; Open Local pain.002 .XML File
+            <input id="p002FileInput" type="file" accept=".xml,.txt" style="display:none;" />
+          </label>
+          <label style="display:inline-flex;align-items:center;gap:6px;font-size:0.8rem;color:#cbd5e1;padding:0 6px;cursor:pointer;">
+            <input id="chkOnlyExceptions" type="checkbox" />
+            Show only exceptions (<code>RJCT</code> / <code>PART</code> / <code>ACWC</code>)
+          </label>
+        </div>
+        <span id="p002Badge" class="status-chip status-ok">READY</span>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Raw ISO 20022 <code>pain.002</code> Status XML</strong></span>
+            <span id="p002SchemaChip" style="font-size:0.76rem;color:#93c5fd;">pain.002.001.10</span>
+          </div>
+          <textarea id="p002XmlBox" class="code-box" spellcheck="false" style="min-height:310px;font-size:0.74rem;white-space:pre;overflow-x:auto;"></textarea>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>Executive Hierarchy Summary (<code>GrpSts</code> &rarr; <code>PmtInfSts</code> &rarr; <code>TxSts</code>)</strong></span>
+            <span id="p002CountsChip" style="font-size:0.76rem;color:var(--muted);">0 Items</span>
+          </div>
+          <div id="p002SummaryBox" class="code-box" style="min-height:310px;max-height:400px;overflow:auto;font-family:system-ui,-apple-system,sans-serif;font-size:0.84rem;line-height:1.55;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px;">
+          <h3 style="margin:0;font-size:1rem;">Decoded Transaction &amp; Batch Statuses + Plain-English Remediation</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button id="btnExportP002Csv" type="button" class="btn btn-outline">&#8681; Download Exceptions CSV</button>
+            <button id="btnCopyP002Json" type="button" class="btn btn-outline">Copy Cloud API Payload</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:#0b1220;">
+          <table style="width:100%;border-collapse:collapse;font-size:0.81rem;">
+            <thead>
+              <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+                <th style="padding:9px 10px;">Status</th>
+                <th style="padding:9px 10px;">EndToEndId / Batch</th>
+                <th style="padding:9px 10px;">Counterparty &amp; IBAN</th>
+                <th style="padding:9px 10px;text-align:right;">Amount</th>
+                <th style="padding:9px 10px;">ISO Reason</th>
+                <th style="padding:9px 10px;">Plain-English Root Cause &amp; Exact Fix</th>
+              </tr>
+            </thead>
+            <tbody id="p002TableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:14px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.86rem;color:#e2e8f0;">
+          <strong>Receiving automatic <code>pain.002</code> status files over bank SFTP or EBICS?</strong> Route rejected payments straight to Slack, Microsoft Teams, Jira, or your ERP with our Cloud API (<code>$0/month + $0.02/tx</code>, covered by Apify's $5/mo free credit).
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a class="btn btn-outline" href="./workflows/n8n-bank-sftp-bai2-and-pain002-alerts.json" download>Download Slack Alert n8n JSON</a>
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/iso20022-pain002-status-parser" target="_blank" rel="noopener">Launch pain.002 Cloud API &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">How Bank ISO 20022 Status Reporting Works</h2>
+      <div class="grid-3">
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Level 1: GrpSts</span><span class="tag">Syntax &amp; CtrlSum</span></div>
+          <h3>1. Group Header Status (<code>OrgnlGrpInfAndSts</code>)</h3>
+          <p>First-stage technical acknowledgment (<code>ACTC</code>, <code>PART</code>, or <code>RJCT</code>). Whole-file <code>RJCT</code> here usually indicates XSD schema violations (<code>FF01</code>), duplicate <code>MsgId</code> (<code>DU01</code>), or cent-sum mismatch (<code>AM09</code>).</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Level 2: PmtInfSts</span><span class="tag">Debtor Account</span></div>
+          <h3>2. Payment Batch Status (<code>OrgnlPmtInfAndSts</code>)</h3>
+          <p>Validates the originating debtor account, requested execution date (<code>DT01</code>), SEPA scheme eligibility, and batch-level authorization limits (<code>AM04</code> / <code>AG01</code>).</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Level 3: TxInfAndSts</span><span class="tag">VoP &amp; 2026 BE04</span></div>
+          <h3>3. Individual Transaction Exceptions</h3>
+          <p>Pinpoints single failed transfers by <code>OrgnlEndToEndId</code>—such as 2026 EPC missing structured creditor town/country (<code>BE04</code>), Verification of Payee name mismatch (<code>BE01</code>), or closed beneficiary IBAN (<code>AC04</code>).</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./iso20022-pain002-decoder.html">pain.002 Cloud API</a> &bull; <a href="./iso20022-pain002-rejection-codes-ac04-am04-be04-md01-rc01-guide.html">ISO 20022 Rejection Codes</a> &bull; <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">Free SEPA pain.001 Validator</a></div>
+      <div><a href="https://apify.com/finops_studio/iso20022-pain002-status-parser" target="_blank" rel="noopener">Open pain.002 Decoder on Apify Store &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var MIXED_XML = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.002.001.10">',
+        '  <CstmrPmtStsRpt>',
+        '    <GrpHdr>',
+        '      <MsgId>PSR-DBDEFF-20261114-0815</MsgId>',
+        '      <CreDtTm>2026-11-14T08:15:22Z</CreDtTm>',
+        '      <InitgPty><Nm>DEUTSCHE BANK AG</Nm></InitgPty>',
+        '    </GrpHdr>',
+        '    <OrgnlGrpInfAndSts>',
+        '      <OrgnlMsgId>MSG-AP-BATCH-2026-441</OrgnlMsgId>',
+        '      <OrgnlMsgNmId>pain.001.001.09</OrgnlMsgNmId>',
+        '      <OrgnlNbOfTxs>4</OrgnlNbOfTxs>',
+        '      <OrgnlCtrlSum>8420.50</OrgnlCtrlSum>',
+        '      <GrpSts>PART</GrpSts>',
+        '    </OrgnlGrpInfAndSts>',
+        '    <OrgnlPmtInfAndSts>',
+        '      <OrgnlPmtInfId>PMT-EUR-SUPPLIERS-01</OrgnlPmtInfId>',
+        '      <PmtInfSts>PART</PmtInfSts>',
+        '      <TxInfAndSts>',
+        '        <StsId>STS-001</StsId>',
+        '        <OrgnlEndToEndId>E2E-INV-2026-901</OrgnlEndToEndId>',
+        '        <TxSts>ACSC</TxSts>',
+        '        <OrgnlTxRef>',
+        '          <Amt><InstdAmt Ccy="EUR">3200.00</InstdAmt></Amt>',
+        '          <Cdtr><Nm>Nordic Cloud Systems AB</Nm></Cdtr>',
+        '          <CdtrAcct><Id><IBAN>NL91ABNA0417164300</IBAN></Id></CdtrAcct>',
+        '        </OrgnlTxRef>',
+        '      </TxInfAndSts>',
+        '      <TxInfAndSts>',
+        '        <StsId>STS-002</StsId>',
+        '        <OrgnlEndToEndId>E2E-INV-2026-902</OrgnlEndToEndId>',
+        '        <TxSts>RJCT</TxSts>',
+        '        <StsRsnInf>',
+        '          <Rsn><Cd>BE04</Cd></Rsn>',
+        '          <AddtlInf>Unstructured AdrLine rejected under Nov 2026 EPC rule; TwnNm and Ctry required</AddtlInf>',
+        '        </StsRsnInf>',
+        '        <OrgnlTxRef>',
+        '          <Amt><InstdAmt Ccy="EUR">1850.50</InstdAmt></Amt>',
+        '          <Cdtr><Nm>Atelier Lyon SARL</Nm></Cdtr>',
+        '          <CdtrAcct><Id><IBAN>FR7630006000011234567890189</IBAN></Id></CdtrAcct>',
+        '        </OrgnlTxRef>',
+        '      </TxInfAndSts>',
+        '      <TxInfAndSts>',
+        '        <StsId>STS-003</StsId>',
+        '        <OrgnlEndToEndId>E2E-INV-2026-903</OrgnlEndToEndId>',
+        '        <TxSts>RJCT</TxSts>',
+        '        <StsRsnInf>',
+        '          <Rsn><Cd>AC04</Cd></Rsn>',
+        '          <AddtlInf>Beneficiary IBAN account closed at receiving bank</AddtlInf>',
+        '        </StsRsnInf>',
+        '        <OrgnlTxRef>',
+        '          <Amt><InstdAmt Ccy="EUR">2120.00</InstdAmt></Amt>',
+        '          <Cdtr><Nm>Bavaria Precision GmbH</Nm></Cdtr>',
+        '          <CdtrAcct><Id><IBAN>DE89370400440532013000</IBAN></Id></CdtrAcct>',
+        '        </OrgnlTxRef>',
+        '      </TxInfAndSts>',
+        '      <TxInfAndSts>',
+        '        <StsId>STS-004</StsId>',
+        '        <OrgnlEndToEndId>E2E-INV-2026-904</OrgnlEndToEndId>',
+        '        <TxSts>ACWC</TxSts>',
+        '        <StsRsnInf>',
+        '          <Rsn><Cd>BE01</Cd></Rsn>',
+        '          <AddtlInf>Verification of Payee (VoP) close match warning: registered legal name is BRUSSELS LOGISTICS NV</AddtlInf>',
+        '        </StsRsnInf>',
+        '        <OrgnlTxRef>',
+        '          <Amt><InstdAmt Ccy="EUR">1250.00</InstdAmt></Amt>',
+        '          <Cdtr><Nm>Brussels Logistics</Nm></Cdtr>',
+        '          <CdtrAcct><Id><IBAN>BE68539007547034</IBAN></Id></CdtrAcct>',
+        '        </OrgnlTxRef>',
+        '      </TxInfAndSts>',
+        '    </OrgnlPmtInfAndSts>',
+        '  </CstmrPmtStsRpt>',
+        '</Document>'
+      ].join('\n');
+
+      var GRP_RJCT_XML = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03">',
+        '  <CstmrPmtStsRpt>',
+        '    <GrpHdr>',
+        '      <MsgId>PSR-BNPPFR-20261114-0902</MsgId>',
+        '      <CreDtTm>2026-11-14T09:02:10Z</CreDtTm>',
+        '      <InitgPty><Nm>BNP PARIBAS</Nm></InitgPty>',
+        '    </GrpHdr>',
+        '    <OrgnlGrpInfAndSts>',
+        '      <OrgnlMsgId>MSG-BROKEN-CTRLSUM-99</OrgnlMsgId>',
+        '      <OrgnlMsgNmId>pain.001.001.03</OrgnlMsgNmId>',
+        '      <OrgnlNbOfTxs>12</OrgnlNbOfTxs>',
+        '      <OrgnlCtrlSum>45200.01</OrgnlCtrlSum>',
+        '      <GrpSts>RJCT</GrpSts>',
+        '      <StsRsnInf>',
+        '        <Rsn><Cd>AM09</Cd></Rsn>',
+        '        <AddtlInf>GrpHdr CtrlSum 45200.01 does not equal sum of InstdAmt 45200.00 (floating-point rounding error)</AddtlInf>',
+        '      </StsRsnInf>',
+        '    </OrgnlGrpInfAndSts>',
+        '  </CstmrPmtStsRpt>',
+        '</Document>'
+      ].join('\n');
+
+      var REASONS = {
+        AC01: 'Incorrect Account Number / Invalid IBAN MOD-97 checksum -> Run IBAN MOD-97 check and request updated bank details from vendor.',
+        AC04: 'Closed Account Number -> Beneficiary closed this IBAN; hold vendor payout in ERP and request a signed bank-change mandate.',
+        AC06: 'Blocked Account -> Beneficiary or debtor account frozen for compliance or Direct Debit block (B2B/CORE).',
+        AG01: 'Transaction Forbidden -> Payment type (e.g., SEPA Direct Debit or Instant) not permitted on this account.',
+        AM04: 'Insufficient Funds -> Top up originating treasury account or split batch before re-submitting.',
+        AM05: 'Duplication -> Duplicate EndToEndId or MsgId detected; assign a fresh unique ID only after confirming non-settlement.',
+        AM09: 'Wrong Amount / CtrlSum Mismatch -> Header CtrlSum differs from exact cent sum of transactions; regenerate via integer-cent SEPA XML API.',
+        BE01: 'Verification of Payee (VoP) Name Mismatch -> Update ERP vendor legal name to match registered bank account holder name.',
+        BE04: 'Missing Creditor Structured Address (2026 EPC Rule) -> Replace legacy <AdrLine> with structured <TwnNm> + <Ctry> in pain.001.001.09.',
+        DT01: 'Invalid Date -> Requested execution date (ReqdExctnDt) is in the past or falls on a TARGET2 bank holiday.',
+        DU01: 'Duplicate Message ID -> Bank already processed this MsgId; increment MsgId if submitting a genuinely new batch.',
+        FF01: 'Invalid File Format / XSD Schema Violation -> Unescaped XML characters (&, <) or invalid tag order; validate with SEPA pain.001 Auditor.',
+        MD01: 'No Mandate -> Missing or invalid SEPA Direct Debit (pain.008) UMR / signature date.',
+        MD06: 'Refund Request by End Customer -> Authorized SEPA CORE Direct Debit no-questions-asked 8-week chargeback.',
+        MS03: 'Reason Not Specified by Agent -> Contact receiving bank or inspect AddtlInf narrative.',
+        RC01: 'Bank Identifier (BIC/SWIFT) Incorrect -> Verify 8- or 11-character ISO 9362 BIC.',
+        RR04: 'Regulatory / Sanctions Reason -> Ensure full structured originator & beneficiary postal addresses and compliance screening.'
+      };
+
+      var STATUS_LABELS = {
+        ACCC: 'Accepted Settlement Credit',
+        ACCP: 'Accepted Customer Profile',
+        ACSC: 'Accepted Settlement Completed',
+        ACSP: 'Accepted Settlement in Process',
+        ACTC: 'Accepted Technical Validation',
+        ACWC: 'Accepted With Change / Warning',
+        PART: 'Partially Accepted (Check Exceptions)',
+        PDNG: 'Pending Further Approval',
+        RJCT: 'Rejected — Action Required',
+        CANC: 'Cancelled'
+      };
+
+      function textOf(parent, localName) {
+        if (!parent) return '';
+        var all = parent.getElementsByTagName('*');
+        for (var i = 0; i < all.length; i++) {
+          if (all[i].localName === localName) return (all[i].textContent || '').trim();
+        }
+        return '';
+      }
+
+      function directChildrenByLocal(parent, localName) {
+        var out = [];
+        if (!parent || !parent.children) return out;
+        for (var i = 0; i < parent.children.length; i++) {
+          if (parent.children[i].localName === localName) out.push(parent.children[i]);
+        }
+        return out;
+      }
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function csvCell(v) {
+        var s = String(v == null ? '' : v);
+        if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+        return s;
+      }
+
+      var xmlBox = document.getElementById('p002XmlBox');
+      var sumBox = document.getElementById('p002SummaryBox');
+      var tbody = document.getElementById('p002TableBody');
+      var badge = document.getElementById('p002Badge');
+      var schemaChip = document.getElementById('p002SchemaChip');
+      var countsChip = document.getElementById('p002CountsChip');
+      var chkOnly = document.getElementById('chkOnlyExceptions');
+      var decodedRows = [];
+
+      function parsePain002() {
+        var raw = (xmlBox.value || '').trim();
+        if (!raw) {
+          badge.textContent = 'EMPTY';
+          badge.className = 'status-chip';
+          sumBox.innerHTML = '<div style="color:var(--muted);">Paste or open an ISO 20022 <code>pain.002</code> XML file on the left.</div>';
+          tbody.innerHTML = '';
+          decodedRows = [];
+          return;
+        }
+
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(raw, 'application/xml');
+        var parseErr = doc.getElementsByTagName('parsererror')[0];
+        if (parseErr) {
+          badge.textContent = 'INVALID XML SYNTAX';
+          badge.className = 'status-chip status-warn';
+          sumBox.innerHTML = '<div style="color:#fecaca;"><strong>XML Parse Error:</strong> ' + escapeHtml(parseErr.textContent) + '</div>';
+          tbody.innerHTML = '';
+          decodedRows = [];
+          return;
+        }
+
+        var root = doc.documentElement;
+        var ns = root.getAttribute('xmlns') || '';
+        var schemaMatch = ns.match(/pain\.002\.\d+\.\d+/);
+        schemaChip.textContent = schemaMatch ? schemaMatch[0] : 'ISO 20022 pain.002';
+
+        var rpt = root.localName === 'CstmrPmtStsRpt' ? root : directChildrenByLocal(root, 'CstmrPmtStsRpt')[0];
+        if (!rpt) {
+          badge.textContent = 'NOT A PAIN.002 REPORT';
+          badge.className = 'status-chip status-warn';
+          sumBox.innerHTML = '<div style="color:#fecaca;">Missing <code>&lt;CstmrPmtStsRpt&gt;</code> element. For outbound payment files, use the <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">SEPA pain.001 / pain.008 Validator</a>.</div>';
+          tbody.innerHTML = '';
+          decodedRows = [];
+          return;
+        }
+
+        var grpHdr = directChildrenByLocal(rpt, 'GrpHdr')[0];
+        var statusMsgId = textOf(grpHdr, 'MsgId');
+        var creDtTm = textOf(grpHdr, 'CreDtTm');
+        var bankName = textOf(grpHdr, 'Nm');
+
+        var orgGrp = directChildrenByLocal(rpt, 'OrgnlGrpInfAndSts')[0];
+        var orgMsgId = textOf(orgGrp, 'OrgnlMsgId');
+        var orgMsgNm = textOf(orgGrp, 'OrgnlMsgNmId');
+        var grpSts = textOf(orgGrp, 'GrpSts') || 'INFO';
+        var grpRsnCd = textOf(orgGrp, 'Cd') || textOf(orgGrp, 'Prtry');
+        var grpAddtl = [];
+        if (orgGrp) {
+          var addNodes = orgGrp.getElementsByTagName('*');
+          for (var g = 0; g < addNodes.length; g++) {
+            if (addNodes[g].localName === 'AddtlInf') grpAddtl.push(addNodes[g].textContent.trim());
+          }
+        }
+
+        var rows = [];
+        if (grpSts === 'RJCT' || grpRsnCd) {
+          rows.push({
+            level: 'GROUP',
+            status: grpSts,
+            id: orgMsgId || 'WHOLE_FILE',
+            counterparty: bankName || 'File-Level Gate',
+            iban: '—',
+            amount: textOf(orgGrp, 'OrgnlCtrlSum'),
+            currency: '',
+            reasonCode: grpRsnCd || 'RJCT',
+            additionalInfo: grpAddtl.join(' | '),
+            fix: REASONS[grpRsnCd] || (grpAddtl.join(' ') || 'Whole file rejected at syntax/header check.')
+          });
+        }
+
+        var pmtBlocks = directChildrenByLocal(rpt, 'OrgnlPmtInfAndSts');
+        for (var p = 0; p < pmtBlocks.length; p++) {
+          var pmt = pmtBlocks[p];
+          var pmtId = textOf(pmt, 'OrgnlPmtInfId');
+          var pmtSts = textOf(pmt, 'PmtInfSts') || grpSts;
+          var txs = directChildrenByLocal(pmt, 'TxInfAndSts');
+
+          if (txs.length === 0 && (pmtSts === 'RJCT' || pmtSts === 'ACWC')) {
+            var pCode = textOf(pmt, 'Cd') || textOf(pmt, 'Prtry');
+            rows.push({
+              level: 'BATCH',
+              status: pmtSts,
+              id: pmtId || 'BATCH',
+              counterparty: 'Batch ' + (pmtId || '#' + (p + 1)),
+              iban: '—',
+              amount: textOf(pmt, 'OrgnlCtrlSum'),
+              currency: '',
+              reasonCode: pCode || pmtSts,
+              additionalInfo: textOf(pmt, 'AddtlInf'),
+              fix: REASONS[pCode] || textOf(pmt, 'AddtlInf') || 'Entire payment batch rejected.'
+            });
+          }
+
+          for (var t = 0; t < txs.length; t++) {
+            var tx = txs[t];
+            var txSts = textOf(tx, 'TxSts') || pmtSts || grpSts;
+            var e2e = textOf(tx, 'OrgnlEndToEndId') || textOf(tx, 'OrgnlInstrId') || textOf(tx, 'StsId');
+            var rsnInf = directChildrenByLocal(tx, 'StsRsnInf')[0];
+            var rCode = rsnInf ? (textOf(rsnInf, 'Cd') || textOf(rsnInf, 'Prtry')) : '';
+            var addInfos = [];
+            if (rsnInf) {
+              var ai = rsnInf.getElementsByTagName('*');
+              for (var k = 0; k < ai.length; k++) {
+                if (ai[k].localName === 'AddtlInf') addInfos.push(ai[k].textContent.trim());
+              }
+            }
+            var txRef = directChildrenByLocal(tx, 'OrgnlTxRef')[0];
+            var instdNode = null;
+            if (txRef) {
+              var refEls = txRef.getElementsByTagName('*');
+              for (var m = 0; m < refEls.length; m++) {
+                if (refEls[m].localName === 'InstdAmt') { instdNode = refEls[m]; break; }
+              }
+            }
+            var amt = instdNode ? (instdNode.textContent || '').trim() : '';
+            var ccy = instdNode ? (instdNode.getAttribute('Ccy') || 'EUR') : '';
+            var cdtr = txRef ? directChildrenByLocal(txRef, 'Cdtr')[0] : null;
+            var dbtr = txRef ? directChildrenByLocal(txRef, 'Dbtr')[0] : null;
+            var partyName = textOf(cdtr, 'Nm') || textOf(dbtr, 'Nm') || '—';
+            var cdtrAcct = txRef ? directChildrenByLocal(txRef, 'CdtrAcct')[0] : null;
+            var dbtrAcct = txRef ? directChildrenByLocal(txRef, 'DbtrAcct')[0] : null;
+            var iban = textOf(cdtrAcct, 'IBAN') || textOf(dbtrAcct, 'IBAN') || '—';
+
+            var fixText = rCode && REASONS[rCode]
+              ? REASONS[rCode]
+              : (txSts === 'ACSC' || txSts === 'ACSP' || txSts === 'ACCP' || txSts === 'ACTC'
+                ? 'Accepted by bank — no remediation needed.'
+                : (addInfos.join(' ') || 'Review bank status narrative.'));
+            if (addInfos.length && rCode && REASONS[rCode]) {
+              fixText += ' (Bank note: ' + addInfos.join(' ') + ')';
+            }
+
+            rows.push({
+              level: 'TX',
+              status: txSts,
+              id: e2e,
+              batchId: pmtId,
+              counterparty: partyName,
+              iban: iban,
+              amount: amt,
+              currency: ccy,
+              reasonCode: rCode || '—',
+              additionalInfo: addInfos.join(' '),
+              fix: fixText
+            });
+          }
+        }
+
+        var rejectedCount = rows.filter(function (r) { return r.status === 'RJCT'; }).length;
+        var warnCount = rows.filter(function (r) { return r.status === 'ACWC' || r.status === 'PART'; }).length;
+        var visibleRows = chkOnly.checked
+          ? rows.filter(function (r) { return r.status === 'RJCT' || r.status === 'PART' || r.status === 'ACWC' || r.status === 'CANC'; })
+          : rows;
+        decodedRows = visibleRows;
+
+        countsChip.textContent = rows.length + ' Record(s) • ' + rejectedCount + ' Rejected • ' + warnCount + ' Warning';
+
+        if (rejectedCount > 0 || grpSts === 'RJCT') {
+          badge.textContent = (rejectedCount || 1) + ' REJECTION(S) REQUIRE ACTION';
+          badge.className = 'status-chip status-warn';
+        } else {
+          badge.textContent = 'ALL ACCEPTED (' + grpSts + ')';
+          badge.className = 'status-chip status-ok';
+        }
+
+        var sumHtml = '<div style="padding:10px 12px;border-radius:8px;background:rgba(15,23,42,0.85);border:1px solid var(--border);margin-bottom:10px;">' +
+          '<div><strong>Reporting Bank:</strong> ' + escapeHtml(bankName || '—') + ' &bull; <strong>Status MsgId:</strong> <code>' + escapeHtml(statusMsgId || '—') + '</code></div>' +
+          '<div style="margin-top:4px;"><strong>Original File:</strong> <code>' + escapeHtml(orgMsgId || '—') + '</code> (' + escapeHtml(orgMsgNm || 'pain.001') + ') &bull; <strong>Timestamp:</strong> ' + escapeHtml(creDtTm || '—') + '</div>' +
+          '<div style="margin-top:4px;"><strong>Group Status (<code>GrpSts</code>):</strong> <code>' + escapeHtml(grpSts) + '</code> — ' + escapeHtml(STATUS_LABELS[grpSts] || grpSts) + '</div>' +
+          '</div>';
+
+        if (rejectedCount > 0) {
+          sumHtml += '<div style="padding:10px 12px;border-radius:8px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);color:#fecaca;">' +
+            '<strong>&#9888;&#65039; Immediate AP / Treasury Action Queue (' + rejectedCount + ' Rejected):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var r = 0; r < rows.length; r++) {
+            if (rows[r].status === 'RJCT') {
+              sumHtml += '<li style="margin-bottom:5px;"><code>' + escapeHtml(rows[r].id) + '</code> (<strong>' + escapeHtml(rows[r].reasonCode) + '</strong>): ' + escapeHtml(rows[r].fix) + '</li>';
+            }
+          }
+          sumHtml += '</ul></div>';
+        } else {
+          sumHtml += '<div style="padding:10px 12px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#bbf7d0;">&#9989; Zero rejected transactions in this status report.</div>';
+        }
+        sumBox.innerHTML = sumHtml;
+
+        var trs = '';
+        for (var v = 0; v < visibleRows.length; v++) {
+          var item = visibleRows[v];
+          var stColor = item.status === 'RJCT' ? '#fca5a5' : (item.status === 'ACWC' || item.status === 'PART' ? '#fde68a' : '#86efac');
+          trs += '<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">' +
+            '<td style="padding:8px 10px;font-weight:700;color:' + stColor + ';"><code>' + escapeHtml(item.status) + '</code></td>' +
+            '<td style="padding:8px 10px;"><code>' + escapeHtml(item.id) + '</code></td>' +
+            '<td style="padding:8px 10px;"><strong>' + escapeHtml(item.counterparty) + '</strong><br/><span style="font-size:0.75rem;color:var(--muted);font-family:monospace;">' + escapeHtml(item.iban) + '</span></td>' +
+            '<td style="padding:8px 10px;text-align:right;font-family:monospace;">' + escapeHtml(item.amount ? item.amount + ' ' + item.currency : '—') + '</td>' +
+            '<td style="padding:8px 10px;"><code>' + escapeHtml(item.reasonCode) + '</code></td>' +
+            '<td style="padding:8px 10px;font-size:0.79rem;color:#e2e8f0;">' + escapeHtml(item.fix) + '</td>' +
+            '</tr>';
+        }
+        if (!trs) {
+          trs = '<tr><td colspan="6" style="padding:14px;text-align:center;color:var(--muted);">No matching status items to display.</td></tr>';
+        }
+        tbody.innerHTML = trs;
+      }
+
+      document.getElementById('btnP002Mixed').addEventListener('click', function () {
+        xmlBox.value = MIXED_XML;
+        parsePain002();
+      });
+
+      document.getElementById('btnP002GrpRjct').addEventListener('click', function () {
+        xmlBox.value = GRP_RJCT_XML;
+        parsePain002();
+      });
+
+      document.getElementById('p002FileInput').addEventListener('change', function (ev) {
+        var f = ev.target.files && ev.target.files[0];
+        if (!f) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          xmlBox.value = String(e.target.result || '');
+          parsePain002();
+        };
+        reader.readAsText(f);
+      });
+
+      chkOnly.addEventListener('change', parsePain002);
+      xmlBox.addEventListener('input', parsePain002);
+
+      document.getElementById('btnExportP002Csv').addEventListener('click', function () {
+        var header = ['level', 'status', 'end_to_end_or_msg_id', 'counterparty', 'iban', 'amount', 'currency', 'iso_reason_code', 'plain_english_fix'];
+        var lines = [header.join(',')];
+        for (var i = 0; i < decodedRows.length; i++) {
+          var r = decodedRows[i];
+          lines.push([
+            csvCell(r.level),
+            csvCell(r.status),
+            csvCell(r.id),
+            csvCell(r.counterparty),
+            csvCell(r.iban),
+            csvCell(r.amount),
+            csvCell(r.currency),
+            csvCell(r.reasonCode),
+            csvCell(r.fix)
+          ].join(','));
+        }
+        var blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'pain002-bank-exceptions.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
+      document.getElementById('btnCopyP002Json').addEventListener('click', function () {
+        var btn = document.getElementById('btnCopyP002Json');
+        var payload = JSON.stringify({
+          xmlContent: xmlBox.value || '',
+          onlyRejectedOrExceptions: true,
+          includeInlineCsv: true
+        }, null, 2);
+        navigator.clipboard.writeText(payload).then(function () {
+          btn.textContent = 'Copied API Payload!';
+          if (window.finopsTrack) window.finopsTrack('action_copy_curl');
+          setTimeout(function () { btn.textContent = 'Copy Cloud API Payload'; }, 1700);
+        });
+      });
+
+      xmlBox.value = MIXED_XML;
+      parsePain002();
+    })();
+  </script>
+</body>
+</html>

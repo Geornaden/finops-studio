@@ -102,3 +102,4 @@
 - [Free Browser Corporate BAI2 Bank Statement Viewer, Record 49/98/99 Control-Total Auditor & CSV Converter](https://geornaden.github.io/finops-studio/free-bai2-bank-statement-viewer-csv-converter.html)
 - [Deutsche E-Rechnungspflicht (§ 14 UStG): XRechnung 3.0 UBL & ZUGFeRD 2.3 / Factur-X CII XML API + Leitweg-ID Prüfziffer-Rechner](https://geornaden.github.io/finops-studio/xrechnung-3-0-zugferd-leitweg-id-generator-api-deutschland.html)
 - [Retool, Appsmith, Bubble & Supabase Edge Functions / Next.js Fintech Integration Playbook (SEPA XML, NACHA ACH, Peppol, UK BACS, BAI2, DATEV)](https://geornaden.github.io/finops-studio/retool-supabase-bubble-sepa-xml-nacha-peppol-api.html)
+- [Free Browser ISO 20022 pain.002 XML Bank Rejection Report Viewer & Exception CSV Exporter](https://geornaden.github.io/finops-studio/free-iso20022-pain002-status-report-viewer.html)
