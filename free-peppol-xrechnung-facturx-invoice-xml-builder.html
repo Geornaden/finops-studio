@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Peppol BIS 3.0, XRechnung 3.0 &amp; Factur-X E-Invoice Visual Builder &amp; XML API | FinOps Studio</title>
+  <meta name="description" content="Build EN 16931 compliant European B2B &amp; B2G e-invoices visually (Peppol BIS Billing 3.0 UBL, German XRechnung 3.0 with Leitweg-ID, French/DE Factur-X / ZUGFeRD CII) with cent-exact BR-CO-10..16 VAT math, IBAN MOD-97 audit, and 1-click XML generation." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-peppol-xrechnung-facturx-invoice-xml-builder.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Visual Peppol BIS 3.0, XRechnung 3.0 & Factur-X EN 16931 E-Invoice Builder | FinOps Studio" />
+  <meta property="og:description" content="Fill Seller, Buyer & Line Items visually—verify Leitweg-ID, EU VAT, IBAN MOD-97 & cent-exact EN 16931 VAT totals, and generate certified XML in 1 click ($0/mo subscription)." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-peppol-xrechnung-facturx-invoice-xml-builder.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Visual Peppol BIS 3.0, XRechnung 3.0 & Factur-X E-Invoice Builder",
+        "url": "https://geornaden.github.io/finops-studio/free-peppol-xrechnung-facturx-invoice-xml-builder.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (Browser + Cloud REST API)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD",
+          "description": "Free visual EN 16931 invoice builder & BR-CO-10..16 VAT math auditor; $0/mo + $0.05/invoice Cloud XML generation (covered by Apify $5/month free credits)."
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which European mandatory e-invoicing profiles can I build with this tool?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "You can switch between OASIS UBL 2.1 Peppol BIS Billing 3.0 (peppol-ubl-3.0 for Belgium 2026, Netherlands, Nordics, Ireland, Poland, Luxembourg), German KoSIT XRechnung 3.0 (xrechnung-3.0-ubl with BT-10 Leitweg-ID validation), and UN/CEFACT Cross-Industry Invoice EN 16931 (facturx-cii-en16931 for France 2026 Factur-X and Germany ZUGFeRD 2.2)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does FinOps Studio avoid EN 16931 Schematron BR-CO-10 to BR-CO-16 rounding rejections?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Both this visual pre-flight builder and our cloud XML engine group line extensions by VAT rate bucket and calculate TaxAmount, TaxExclusiveAmount, and TaxInclusiveAmount using integer-cent arithmetic—eliminating floating-point 0.01 EUR discrepancies rejected by Peppol Access Points and German ZRE/OZG portals."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./eu-einvoice-xml-generator.html">E-Invoice API</a>
+        <a href="./free-eu-vat-peppol-endpoint-id-validator.html">Peppol / Leitweg-ID Checker</a>
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">CSV Bank Mapper</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Launch Live E-Invoice API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#129534; EN 16931 Visual Form Builder &bull; Peppol BIS 3.0 &bull; XRechnung 3.0 &bull; Factur-X / ZUGFeRD &bull; &euro;0 / $0 Monthly Fee</span>
+      <h1>Visual EU E-Invoice Builder &rarr; <code>Peppol UBL</code>, <code>XRechnung 3.0</code> &amp; <code>Factur-X CII</code></h1>
+      <p>Build compliant European B2B &amp; B2G e-invoices for <strong>Belgium 2026 Peppol</strong>, <strong>Germany XRechnung / ZUGFeRD</strong>, <strong>France 2026 Factur-X</strong>, <strong>Benelux</strong>, and <strong>Nordics EHF</strong>. Audit <code>BR-CO-10..16</code> VAT rounding, <code>Leitweg-ID</code>, and <code>IBAN MOD-97</code> live—and download certified XML in one click.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:14px;">
+        <div>
+          <label style="font-size:0.76rem;color:var(--muted);display:block;margin-bottom:3px;"><strong>EN 16931 Output Profile</strong></label>
+          <select id="invFormat" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-weight:600;">
+            <option value="peppol-ubl-3.0">Peppol BIS Billing 3.0 (UBL 2.1)</option>
+            <option value="xrechnung-3.0-ubl">German XRechnung 3.0 (UBL + Leitweg-ID)</option>
+            <option value="facturx-cii-en16931">Factur-X / ZUGFeRD 2.2 (UN/CEFACT CII)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.76rem;color:var(--muted);display:block;margin-bottom:3px;">Invoice Number (BT-1)</label>
+          <input id="invNumber" value="INV-2026-1042" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;" />
+        </div>
+        <div>
+          <label style="font-size:0.76rem;color:var(--muted);display:block;margin-bottom:3px;">Issue Date (BT-2)</label>
+          <input id="invIssue" type="date" value="2026-11-14" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;" />
+        </div>
+        <div>
+          <label style="font-size:0.76rem;color:var(--muted);display:block;margin-bottom:3px;">Due Date (BT-9)</label>
+          <input id="invDue" type="date" value="2026-12-14" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;" />
+        </div>
+        <div>
+          <label style="font-size:0.76rem;color:var(--muted);display:block;margin-bottom:3px;">Buyer Ref / Leitweg-ID (BT-10)</label>
+          <input id="invRef" value="PO-2026-8841" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;" />
+        </div>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div style="padding:12px;border-radius:8px;background:rgba(15,23,42,0.65);border:1px solid rgba(148,163,184,0.16);margin-bottom:12px;">
+            <strong style="font-size:0.84rem;color:#38bdf8;display:block;margin-bottom:8px;">Seller / Supplier (BG-4 AccountingSupplierParty)</strong>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <input id="sName" value="TechSolutions GmbH" placeholder="Seller Legal Name" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+              <input id="sVat" value="DE123456789" placeholder="Seller EU VAT ID (BT-31)" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+              <input id="sStreet" value="Friedrichstr. 100" placeholder="Street" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+              <input id="sCity" value="Berlin" placeholder="City" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+              <input id="sZip" value="10115" placeholder="Postal Code" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+              <input id="sCountry" value="DE" maxlength="2" placeholder="ISO Country (DE/BE/FR)" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+              <input id="sIban" value="DE89370400440532013000" placeholder="Settlement IBAN (BT-84)" style="grid-column:span 2;padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+            </div>
+          </div>
+
+          <div style="padding:12px;border-radius:8px;background:rgba(15,23,42,0.65);border:1px solid rgba(148,163,184,0.16);margin-bottom:12px;">
+            <strong style="font-size:0.84rem;color:#34d399;display:block;margin-bottom:8px;">Buyer / Customer (BG-7 AccountingCustomerParty)</strong>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <input id="bName" value="EuroTrade NV" placeholder="Buyer Legal Name" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+              <input id="bVat" value="BE0123456789" placeholder="Buyer EU VAT ID (BT-48)" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+              <input id="bStreet" value="Rue de la Loi 42" placeholder="Street" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+              <input id="bCity" value="Brussels" placeholder="City" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+              <input id="bZip" value="1000" placeholder="Postal Code" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+              <input id="bCountry" value="BE" maxlength="2" placeholder="ISO Country (BE/DE/FR)" style="padding:7px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+            </div>
+          </div>
+
+          <div style="padding:12px;border-radius:8px;background:rgba(15,23,42,0.65);border:1px solid rgba(148,163,184,0.16);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <strong style="font-size:0.84rem;">Invoice Line Items (BG-25)</strong>
+              <button id="btnAddLine" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">+ Add Line Item</button>
+            </div>
+            <div id="linesContainer" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>EN 16931 API Payload &amp; Live Tax Audit</strong></span>
+            <span id="einvBadge" class="status-chip status-ok">EN 16931 READY</span>
+          </div>
+          <div id="einvTotalsBox" style="padding:12px;border-radius:8px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);margin-bottom:10px;font-size:0.83rem;"></div>
+          <pre id="einvJsonOut" class="code-box" style="min-height:285px;font-size:0.77rem;"></pre>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:14px;border-radius:10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:1;">
+          <input id="einvToken" type="password" placeholder="Optional: Paste Apify API Token (apify_api_...) to generate &amp; download EN 16931 XML right here" style="min-width:290px;flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.84rem;" />
+          <button id="btnRunEinv" type="button" class="btn btn-primary">&#9889; Generate &amp; Download EN 16931 XML ($0.05)</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnCopyEinvJson" type="button" class="btn btn-outline">Copy JSON Payload</button>
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Open in Apify Store ($5 Free/Mo) &rarr;</a>
+        </div>
+      </div>
+      <pre id="einvXmlResult" class="code-box" style="display:none;margin-top:12px;min-height:180px;border-color:#34d399;"></pre>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio Home</a> &bull;
+      <a href="./eu-einvoice-xml-generator.html">EU E-Invoice API Spec</a> &bull;
+      <a href="./free-eu-vat-peppol-endpoint-id-validator.html">Peppol EndpointID &amp; Leitweg-ID Validator</a> &bull;
+      <a href="./facturation-electronique-2026-peppol-factur-x-xml.html">FR Factur-X 2026</a> &bull;
+      <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">BE/NL Peppol 2026</a>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var lines = [
+      { description: "Cloud Treasury Automation Licence", quantity: 10, unitPrice: "125.00", vatRate: 19 },
+      { description: "Dedicated Onboarding & ERP Webhook Setup", quantity: 1, unitPrice: "350.00", vatRate: 19 }
+    ];
+
+    function checkIbanMod97(iban) {
+      var c = String(iban || "").replace(/\s+/g, "").toUpperCase();
+      if (c.length < 15 || c.length > 34 || !/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(c)) return false;
+      var rearr = c.slice(4) + c.slice(0, 4);
+      var rem = 0;
+      for (var i = 0; i < rearr.length; i++) {
+        var ch = rearr.charCodeAt(i);
+        var digits = ch >= 65 && ch <= 90 ? String(ch - 55) : rearr[i];
+        for (var j = 0; j < digits.length; j++) rem = (rem * 10 + Number(digits[j])) % 97;
+      }
+      return rem === 1;
+    }
+
+    var linesBox = document.getElementById("linesContainer");
+
+    function renderLines() {
+      linesBox.innerHTML = lines.map(function (ln, idx) {
+        return '<div style="display:grid;grid-template-columns:2fr 65px 95px 75px 32px;gap:6px;align-items:center;">' +
+          '<input data-idx="' + idx + '" data-k="description" value="' + ln.description.replace(/"/g, "&quot;") + '" placeholder="Item description" style="padding:6px 8px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.8rem;" />' +
+          '<input data-idx="' + idx + '" data-k="quantity" type="number" step="1" value="' + ln.quantity + '" title="Qty" style="padding:6px 6px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.8rem;" />' +
+          '<input data-idx="' + idx + '" data-k="unitPrice" value="' + ln.unitPrice + '" title="Unit EUR" style="padding:6px 6px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.8rem;" />' +
+          '<input data-idx="' + idx + '" data-k="vatRate" type="number" value="' + ln.vatRate + '" title="VAT %" style="padding:6px 6px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.8rem;" />' +
+          '<button type="button" data-del="' + idx + '" style="background:transparent;border:1px solid var(--border);color:#94a3b8;border-radius:6px;cursor:pointer;padding:5px;">&times;</button>' +
+        '</div>';
+      }).join("");
+
+      linesBox.querySelectorAll("input").forEach(function (inp) {
+        inp.addEventListener("input", function () {
+          var i = +inp.getAttribute("data-idx");
+          var k = inp.getAttribute("data-k");
+          lines[i][k] = k === "quantity" || k === "vatRate" ? Number(inp.value) : inp.value;
+          updateBuilder();
+        });
+      });
+      linesBox.querySelectorAll("button[data-del]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          if (lines.length > 1) {
+            lines.splice(+btn.getAttribute("data-del"), 1);
+            renderLines();
+            updateBuilder();
+          }
+        });
+      });
+    }
+
+    function g(id) { return document.getElementById(id).value.trim(); }
+
+    function updateBuilder() {
+      var fmt = g("invFormat");
+      var warnings = [];
+      var iban = g("sIban").replace(/\s+/g, "");
+      if (!checkIbanMod97(iban)) warnings.push("Seller IBAN MOD-97 check failed");
+      if (!/^[A-Z]{2}[A-Z0-9]{6,14}$/i.test(g("sVat"))) warnings.push("Seller VAT ID should start with 2-letter EU prefix (e.g. DE123456789)");
+      if (!/^[A-Z]{2}[A-Z0-9]{6,14}$/i.test(g("bVat"))) warnings.push("Buyer VAT ID should start with 2-letter EU prefix (e.g. BE0123456789)");
+      if (fmt === "xrechnung-3.0-ubl" && !/^\d{2,12}-[A-Z0-9-]+-\d{2}$/i.test(g("invRef"))) {
+        warnings.push("XRechnung 3.0 B2G expects a German Leitweg-ID in Buyer Reference (e.g. 991-12345-96)");
+      }
+
+      var buckets = {};
+      var netCents = 0;
+      lines.forEach(function (l) {
+        var lineCents = Math.round((Number(l.quantity) || 0) * (parseFloat(l.unitPrice) || 0) * 100);
+        netCents += lineCents;
+        var rate = Number(l.vatRate) || 0;
+        buckets[rate] = (buckets[rate] || 0) + lineCents;
+      });
+      var vatCents = 0;
+      Object.keys(buckets).forEach(function (r) {
+        vatCents += Math.round(buckets[r] * (Number(r) / 100));
+      });
+      var grossCents = netCents + vatCents;
+
+      var payload = {
+        format: fmt,
+        invoiceNumber: g("invNumber"),
+        issueDate: g("invIssue"),
+        dueDate: g("invDue"),
+        currency: "EUR",
+        buyerReference: g("invRef"),
+        seller: {
+          name: g("sName"),
+          vatId: g("sVat"),
+          street: g("sStreet"),
+          city: g("sCity"),
+          postalCode: g("sZip"),
+          country: g("sCountry").toUpperCase(),
+          iban: iban
+        },
+        buyer: {
+          name: g("bName"),
+          vatId: g("bVat"),
+          street: g("bStreet"),
+          city: g("bCity"),
+          postalCode: g("bZip"),
+          country: g("bCountry").toUpperCase()
+        },
+        lines: lines
+      };
+
+      document.getElementById("einvJsonOut").textContent = JSON.stringify(payload, null, 2);
+      var badge = document.getElementById("einvBadge");
+      var box = document.getElementById("einvTotalsBox");
+      if (warnings.length === 0) {
+        badge.textContent = "EN 16931 VALID";
+        badge.className = "status-chip status-ok";
+        box.innerHTML = "&#9989; <strong>BR-CO-10..16 Cent-Exact Totals:</strong> Net <strong>&euro;" + (netCents / 100).toFixed(2) + "</strong> + VAT <strong>&euro;" + (vatCents / 100).toFixed(2) + "</strong> = Gross Payable <strong>&euro;" + (grossCents / 100).toFixed(2) + "</strong> &bull; Seller IBAN MOD-97 OK.";
+      } else {
+        badge.textContent = warnings.length + " PRE-FLIGHT NOTE(S)";
+        badge.className = "status-chip";
+        box.innerHTML = "<strong>Totals:</strong> Net &euro;" + (netCents / 100).toFixed(2) + " + VAT &euro;" + (vatCents / 100).toFixed(2) + " = <strong>&euro;" + (grossCents / 100).toFixed(2) + "</strong><br/><span style='color:#fcd34d;'>&#9888;&#65039; " + warnings.join(" &bull; ") + "</span>";
+      }
+    }
+
+    ["invFormat","invNumber","invIssue","invDue","invRef","sName","sVat","sStreet","sCity","sZip","sCountry","sIban","bName","bVat","bStreet","bCity","bZip","bCountry"].forEach(function (id) {
+      document.getElementById(id).addEventListener("input", updateBuilder);
+      document.getElementById(id).addEventListener("change", updateBuilder);
+    });
+
+    document.getElementById("btnAddLine").addEventListener("click", function () {
+      lines.push({ description: "Additional Consulting Hours", quantity: 2, unitPrice: "95.00", vatRate: 19 });
+      renderLines();
+      updateBuilder();
+    });
+
+    document.getElementById("btnCopyEinvJson").addEventListener("click", function (e) {
+      navigator.clipboard.writeText(document.getElementById("einvJsonOut").textContent || "");
+      e.target.textContent = "Copied JSON!";
+      setTimeout(function () { e.target.textContent = "Copy JSON Payload"; }, 1800);
+    });
+
+    document.getElementById("btnRunEinv").addEventListener("click", async function (e) {
+      var tok = g("einvToken");
+      var resBox = document.getElementById("einvXmlResult");
+      resBox.style.display = "block";
+      if (!tok) {
+        resBox.textContent = "Tip: Paste your free Apify API Token (includes $5/month free credits = ~60+ certified EN 16931 invoices free every month) above, OR click 'Copy JSON Payload' and 'Open in Apify Store'.";
+        return;
+      }
+      e.target.disabled = true;
+      resBox.textContent = "Generating certified EN 16931 XML via finops_studio~eu-einvoice-xml-generator...";
+      try {
+        var r = await fetch("https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items?token=" + encodeURIComponent(tok), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: document.getElementById("einvJsonOut").textContent
+        });
+        var data = await r.json();
+        if (!r.ok) {
+          resBox.textContent = "API Error (" + r.status + "): " + JSON.stringify(data, null, 2);
+        } else {
+          var first = Array.isArray(data) && data[0] ? data[0] : data;
+          var xml = first.xmlString || first.xmlContent || JSON.stringify(data, null, 2);
+          resBox.textContent = xml;
+          var blob = new Blob([xml], { type: "application/xml;charset=utf-8" });
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = g("invNumber") + "-" + g("invFormat") + ".xml";
+          a.click();
+        }
+      } catch (err) {
+        resBox.textContent = "Network Error: " + err.message;
+      } finally {
+        e.target.disabled = false;
+      }
+    });
+
+    renderLines();
+    updateBuilder();
+  })();
+  </script>
+</body>
+</html>

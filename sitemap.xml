@@ -245,4 +245,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/free-peppol-xrechnung-facturx-invoice-xml-builder.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.94</priority>
+  </url>
 </urlset>
