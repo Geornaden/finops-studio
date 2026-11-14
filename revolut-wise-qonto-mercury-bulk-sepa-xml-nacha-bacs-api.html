@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revolut Business, Wise, Qonto, Mercury, Airwallex &amp; Brex Bulk Payment File Guide (SEPA XML, NACHA ACH, BACS, .ABA) | FinOps Studio</title>
+  <meta name="description" content="Automate bulk payroll and supplier batch uploads into Revolut Business, Wise Batch Payments, Qonto, Mercury, Brex, and Airwallex using 2026 SEPA XML (pain.001), US NACHA ACH (.ach), UK BACS 18, and Australian .ABA files for $0/month." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/revolut-wise-qonto-mercury-bulk-sepa-xml-nacha-bacs-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Revolut Business, Wise, Qonto & Mercury Bulk Payment File Selector & API | FinOps Studio" />
+  <meta property="og:description" content="Generate bank-ready SEPA XML (pain.001.001.09), US NACHA .ACH, UK BACS 18, Australian .ABA, and Canadian CPA-005 batch files for modern business neobanks." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/revolut-wise-qonto-mercury-bulk-sepa-xml-nacha-bacs-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "How to Upload Bulk Payroll & Vendor Payment Files (SEPA XML, NACHA ACH, UK BACS, .ABA) to Revolut Business, Wise, Qonto, Mercury, Brex & Airwallex",
+        "url": "https://geornaden.github.io/finops-studio/revolut-wise-qonto-mercury-bulk-sepa-xml-nacha-bacs-api.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "publisher": { "@type": "Organization", "name": "FinOps Studio" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Does Qonto or Revolut Business accept ISO 20022 SEPA XML (pain.001) bulk transfer files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Qonto ('Virements groupés -> Fichier XML SEPA'), Revolut Business, Holvi, Penta/Finom, and European corporate banks accept ISO 20022 pain.001 Credit Transfer XML files so finance teams can approve up to 400–1,000+ supplier or payroll transfers with a single 2FA signature. FinOps Studio generates 2026 EPC structured-address pain.001.001.09 and classic pain.001.001.03 files with mathematical IBAN MOD-97 verification."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do US startups automate bulk ACH payroll or vendor batches with Mercury, SVB, Column, or Chase?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Generate a strict 94-character Block-10 padded US NACHA (.ach) PPD or CCD batch file using FinOps Studio's US NACHA ACH File Generator API ($0/mo + $0.02/entry), verifying every 9-digit ABA routing number via Federal Reserve MOD-10 math before upload."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">1-Click CSV Mapper</a>
+        <a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Payroll</a>
+        <a href="./google-sheets-excel-apps-script-sepa-nacha-bacs-aba-automation.html">Sheets &amp; Excel Add-In</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs ($5 Free/Mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#128640; Startup &amp; Scale-Up Treasury Stack &bull; Approve 500+ Transfers With One 2FA Tap</span>
+      <h1>Bulk Payment Files for <code>Qonto</code>, <code>Revolut Business</code>, <code>Wise</code>, <code>Mercury</code>, <code>SVB</code> &amp; <code>Airwallex</code></h1>
+      <p>Typing 80 contractor or vendor transfers manually into your business banking dashboard wastes hours and risks costly IBAN/ABA typos. Pick your business account below to get the exact <strong>2026 SEPA XML (<code>pain.001</code>)</strong>, <strong>US NACHA (<code>.ach</code>)</strong>, <strong>UK BACS 18</strong>, or <strong>Australian <code>.ABA</code></strong> batch spec—and generate verified files for <strong>$0/month + $0.02/row</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#neobank-selector">Select Your Business Bank / Neobank &darr;</a>
+        <a class="btn btn-outline" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">Paste Excel / Google Sheets CSV Now &rarr;</a>
+      </div>
+    </section>
+
+    <section id="neobank-selector" class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+        <div>
+          <label for="bankPicker" style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;"><strong>Choose Your Treasury / Business Account Platform:</strong></label>
+          <select id="bankPicker" style="padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.92rem;font-weight:600;">
+            <option value="qonto">&#127466;&#127482; Qonto (FR / DE / IT / ES) &mdash; Bulk SEPA XML (pain.001)</option>
+            <option value="revolut">&#127466;&#127482;&#127468;&#127463; Revolut Business &mdash; Bulk EUR SEPA XML &amp; GBP BACS</option>
+            <option value="wise">&#127757; Wise Business &amp; Multi-Currency Treasury &mdash; SEPA / ACH / BACS / ABA</option>
+            <option value="mercury">&#127482;&#127480; US Startup Banking (SVB / Chase / BofA / Column / Mercury Ops) &mdash; 94-Char NACHA .ACH</option>
+            <option value="airwallex">&#127462;&#127482;&#127468;&#127463; Airwallex / ANZ / UK Treasury &mdash; Australian 120-Char .ABA &amp; UK BACS</option>
+          </select>
+        </div>
+        <a id="bankApiBtn" class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Open Recommended Cloud API &rarr;</a>
+      </div>
+
+      <div id="bankStepsCard" style="padding:14px;border-radius:8px;background:rgba(15,23,42,0.72);border:1px solid rgba(56,189,248,0.28);margin-bottom:14px;font-size:0.88rem;line-height:1.65;color:#e2e8f0;"></div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Recommended Cloud API Payload</strong></span>
+            <button id="btnCopyNeoJson" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">Copy JSON</button>
+          </div>
+          <pre id="neoJsonPre" class="code-box" style="min-height:220px;font-size:0.77rem;"></pre>
+        </div>
+        <div>
+          <div class="pane-label">
+            <span><strong>One-Liner Automation cURL</strong></span>
+            <span class="status-chip status-ok">PRE-FLIGHT CHECKSUMS</span>
+          </div>
+          <pre id="neoCurlPre" class="code-box" style="min-height:220px;font-size:0.77rem;"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">Why Fast-Growing Finance Teams Automate Batch Files via API</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Single 2FA Approval</span><span class="tag">Zero Manual Entry</span></div>
+            <h3>1. Approve 300 Contractors in 15 Seconds</h3>
+            <p>Upload one validated <code>pain.001.001.09</code> XML or <code>.ach</code> file into your banking portal; your CFO reviews the exact batch control total once and signs with a single hardware/mobile 2FA prompt.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">IBAN MOD-97</span><span class="tag">ABA MOD-10</span></div>
+            <h3>2. Catch Bad Bank Details Before Upload</h3>
+            <p>One invalid IBAN or mistyped US routing number often causes the bank portal to reject the entire 200-row batch. Our engine validates every row mathematically before generating the file.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Google Sheets</span><span class="tag">n8n / Make / MCP</span></div>
+            <h3>3. Connect Directly to Notion, Sheets, Deel or Rippling</h3>
+            <p>Trigger from Google Sheets, Excel 365, Airtable, Postgres, or Claude/Cursor MCP with zero monthly SaaS contracts—and your first ~248 rows/month are covered by Apify's free $5 credit.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div><strong>FinOps Studio</strong> &mdash; Deterministic Banking, Payroll &amp; E-Invoicing Cloud APIs (<a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>).</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="./index.html">Home</a>
+          <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">CSV Mapper</a>
+          <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">SEPA Validator</a>
+          <a href="./free-nacha-ach-file-validator-batch-hash-auditor.html">NACHA Validator</a>
+          <a href="./sitemap.xml">Sitemap</a>
+          <a href="./llms.txt">llms.txt</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var PROFILES = {
+      qonto: {
+        actor: "finops_studio~sepa-xml-generator",
+        url: "https://apify.com/finops_studio/sepa-xml-generator",
+        steps: "<strong>Qonto Bulk Transfer Workflow (Up to 400 Transfers/Batch):</strong> In Qonto, navigate to <strong>Business Account &rarr; Transfers &rarr; Bulk transfer &rarr; Upload a .XML file</strong>. Qonto validates ISO 20022 <code>pain.001</code> control sums (<code>CtrlSum</code>), <code>NbOfTxs</code>, and recipient IBAN MOD-97 check digits. Use <code>pain.001.001.09</code> with structured <code>country</code> + <code>townName</code> for 2026 EPC compliance.",
+        payload: {
+          schemaVersion: "pain.001.001.09",
+          initiatingPartyName: "ScaleUp SAS",
+          debtorName: "ScaleUp SAS",
+          debtorIban: "FR7630006000011234567890189",
+          debtorBic: "QNTOFRP1XXX",
+          transactions: [
+            { name: "Studio Design SRL", iban: "BE68539007547034", amount: 1850.00, remittanceInfo: "INV-2026-104", country: "BE", townName: "Brussels" }
+          ]
+        }
+      },
+      revolut: {
+        actor: "finops_studio~sepa-xml-generator",
+        url: "https://apify.com/finops_studio/sepa-xml-generator",
+        steps: "<strong>Revolut Business Bulk EUR &amp; GBP Transfers:</strong> For EUR Eurozone payouts, generate a 2026 structured-address <code>pain.001.001.09</code> SEPA XML batch (with automatic diacritic sanitization and MOD-97 checks). For domestic UK GBP payroll, switch to <a href='./uk-bacs-standard-18-file-generator.html'>UK BACS Standard 18 (100-Char)</a>.",
+        payload: {
+          schemaVersion: "pain.001.001.09",
+          initiatingPartyName: "Revolut Tech Ltd",
+          debtorName: "Revolut Tech Ltd",
+          debtorIban: "IE29AIBK93115212345678",
+          debtorBic: "REVOIE23XXX",
+          transactions: [
+            { name: "Alpine Cloud GmbH", iban: "DE89370400440532013000", amount: 2400.00, remittanceInfo: "Retainer Nov 2026", country: "DE", townName: "Munich" }
+          ]
+        }
+      },
+      wise: {
+        actor: "finops_studio~sepa-xml-generator",
+        url: "https://apify.com/finops_studio",
+        steps: "<strong>Multi-Entity Global Payout Routing (EU / US / UK / AU / CA):</strong> Combine Wise or multi-currency bank accounts with our <a href='./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html'>5-Country Global Payroll Router</a>: pre-validate every IBAN, US ABA routing number, UK Sort Code, Australian BSB, and Canadian CPA-005 transit before initiating local rails.",
+        payload: {
+          schemaVersion: "pain.001.001.09",
+          initiatingPartyName: "Global Ops BV",
+          debtorName: "Global Ops BV",
+          debtorIban: "BE68539007547034",
+          debtorBic: "TRWIBEB1XXX",
+          transactions: [
+            { name: "Nordic Dev AB", iban: "NL91ABNA0417164300", amount: 3200.00, remittanceInfo: "Contractor Sprint 12", country: "NL", townName: "Amsterdam" }
+          ]
+        }
+      },
+      mercury: {
+        actor: "finops_studio~nacha-ach-file-generator",
+        url: "https://apify.com/finops_studio/nacha-ach-file-generator",
+        steps: "<strong>US Commercial &amp; Startup Treasury (SVB, J.P. Morgan Chase, BofA CashPro, Column, Wells Fargo CEO):</strong> Upload strict 94-character Block-10 padded <code>.ach</code> files (<code>CCD</code> for B2B vendors or <code>PPD</code> for W-2/1099 direct deposit) with verified Federal Reserve <code>[3,7,1]</code> ABA MOD-10 routing checksums.",
+        payload: {
+          mode: "generate",
+          secCode: "CCD",
+          immediateDestination: "121140399",
+          immediateDestinationName: "SILICON VALLEY BANK",
+          immediateOrigin: "1943219876",
+          immediateOriginName: "AI LABS INC",
+          companyName: "AI LABS INC",
+          companyId: "1943219876",
+          companyEntryDescription: "VENDORS",
+          originatingDfiId: "12114039",
+          effectiveEntryDate: "261120",
+          entries: [
+            { transactionCode: "22", routingNumber: "021000021", accountNumber: "449012398", amount: 4750.00, individualId: "VEND-109", individualName: "CLOUD INFRA LLC" }
+          ]
+        }
+      },
+      airwallex: {
+        actor: "finops_studio~aba-cemtex-file-generator",
+        url: "https://apify.com/finops_studio/aba-cemtex-file-generator",
+        steps: "<strong>APAC &amp; Australian Direct Entry (<code>.ABA</code> Cemtex 120-Char):</strong> Generate self-balancing 120-character AusPayNet BECS Direct Entry <code>.aba</code> batch files for CBA CommBiz, NAB Connect, Westpac Corporate, ANZ Transactive, and APAC treasury operations.",
+        payload: {
+          financialInstitution: "CBA",
+          userName: "PACIFIC SAAS PTY LTD",
+          apcaUserId: "301500",
+          description: "PAYROLL",
+          processingDate: "2026-11-20",
+          traceBsb: "062-000",
+          traceAccount: "10458921",
+          remitterName: "PACIFIC SAAS",
+          includeSelfBalancingRow: true,
+          transactions: [
+            { accountTitle: "LIAM O CONNOR", bsb: "082-088", accountNumber: "87654321", amount: 3150.00, transactionCode: "53", lodgementReference: "SALARY NOV26" }
+          ]
+        }
+      }
+    };
+
+    var picker = document.getElementById("bankPicker");
+    var apiBtn = document.getElementById("bankApiBtn");
+    var stepsCard = document.getElementById("bankStepsCard");
+    var jsonPre = document.getElementById("neoJsonPre");
+    var curlPre = document.getElementById("neoCurlPre");
+
+    function render() {
+      var p = PROFILES[picker.value];
+      apiBtn.href = p.url;
+      stepsCard.innerHTML = p.steps;
+      jsonPre.textContent = JSON.stringify(p.payload, null, 2);
+      curlPre.textContent =
+        'curl -X POST "https://api.apify.com/v2/acts/' + p.actor + '/run-sync-get-dataset-items?token=$APIFY_TOKEN" \\\n' +
+        '  -H "Content-Type: application/json" \\\n' +
+        "  -d '" + JSON.stringify(p.payload) + "'";
+    }
+
+    picker.addEventListener("change", render);
+    document.getElementById("btnCopyNeoJson").addEventListener("click", function () {
+      var btn = document.getElementById("btnCopyNeoJson");
+      navigator.clipboard.writeText(jsonPre.textContent || "");
+      btn.textContent = "Copied!";
+      if (window.finopsTrack) window.finopsTrack("action_copy_curl");
+      setTimeout(function () { btn.textContent = "Copy JSON"; }, 1600);
+    });
+
+    render();
+  })();
+  </script>
+</body>
+</html>

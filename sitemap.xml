@@ -280,4 +280,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.93</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/revolut-wise-qonto-mercury-bulk-sepa-xml-nacha-bacs-api.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.93</priority>
+  </url>
 </urlset>

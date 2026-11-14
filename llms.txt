@@ -97,3 +97,4 @@
 - [Free Browser SEPA XML (pain.001 / pain.008) Validator: CtrlSum Cent Math, IBAN MOD-97 & 2026 EPC BE04 Structured Postal Address Auditor](https://geornaden.github.io/finops-studio/free-sepa-xml-pain001-xsd-be04-validator.html)
 - [Free Browser US NACHA .ACH File Validator: 94-Character Width, Record 8/9 Entry Hash, ABA MOD-10 & Block-10 Padding Auditor](https://geornaden.github.io/finops-studio/free-nacha-ach-file-validator-batch-hash-auditor.html)
 - [Belgium 2026 Peppol BIS 3.0 (KBO 0208 MOD-97) & France Sep 2026 Factur-X CII (SIRET 0009 Luhn) B2B E-Invoicing API Migration Playbook](https://geornaden.github.io/finops-studio/belgium-2026-peppol-france-facturx-xml-api-migration.html)
+- [Qonto, Revolut Business, Wise, SVB & Airwallex Bulk Payment File Guide (SEPA XML pain.001, US NACHA .ACH, UK BACS 18, Australian .ABA)](https://geornaden.github.io/finops-studio/revolut-wise-qonto-mercury-bulk-sepa-xml-nacha-bacs-api.html)
