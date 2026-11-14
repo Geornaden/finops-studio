@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EU 2026–2028 Mandatory B2B E-Invoicing Deadlines by Country (Peppol, XRechnung, Factur-X, KSeF, ViDA) | FinOps Studio</title>
+  <meta name="description" content="Searchable 20-country European B2B &amp; B2G e-invoicing mandate tracker (Belgium Jan 2026 Peppol, France Sep 2026 Factur-X, Germany EN 16931 XRechnung/ZUGFeRD, Poland KSeF 2026, Croatia, Romania, Spain, EU ViDA 2030) + Interactive XML Format Selector &amp; $0/mo API." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/eu-2026-2027-e-invoicing-mandate-peppol-xrechnung-facturx-matrix.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="EU 2026–2028 Mandatory B2B E-Invoicing Country Matrix & XML Format Selector | FinOps Studio" />
+  <meta property="og:description" content="Check mandatory B2B e-invoicing deadlines across 20 European countries, pick Seller & Buyer countries to get the exact EN 16931 XML profile + Peppol EAS scheme, and generate XML via $0/mo API." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/eu-2026-2027-e-invoicing-mandate-peppol-xrechnung-facturx-matrix.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "European 2026–2028 Mandatory B2B E-Invoicing Deadlines by Country & EN 16931 XML Profile Selector",
+        "url": "https://geornaden.github.io/finops-studio/eu-2026-2027-e-invoicing-mandate-peppol-xrechnung-facturx-matrix.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Country-by-country compliance timeline for EU mandatory B2B e-invoicing (Belgium, France, Germany, Poland, Croatia, Romania, Italy, Spain, Benelux, Nordics, and EU ViDA) with EN 16931 UBL/CII API mapping."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which European countries enforce mandatory B2B e-invoicing in 2026 and 2027?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Belgium enforces mandatory B2B Peppol BIS 3.0 e-invoicing from 1 January 2026; Croatia enforces Fiskalizacija 2.0 EN 16931 B2B e-invoicing from 1 January 2026; Poland rolls out mandatory KSeF B2B e-invoicing from February/April 2026; France mandates universal B2B e-invoice reception + large/mid-cap issuance (Factur-X / UBL / CII) from 1 September 2026 (SMEs September 2027); and Germany requires EN 16931 reception since January 2025 with B2B issuance mandatory in 2027–2028."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are PDF invoices sent by email still legal under EU EN 16931 B2B mandates?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Under EN 16931 mandates (Belgium Peppol, Germany Wachstumschancengesetz E-Rechnung, France Reforme Facturation Electronique, EU ViDA), a plain PDF is no longer a valid tax e-invoice—invoices must be structured machine-readable XML (OASIS UBL 2.1 Peppol BIS 3.0, XRechnung 3.0, or UN/CEFACT CII / hybrid Factur-X)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Visual E-Invoice Builder</a>
+        <a href="./free-eu-vat-peppol-endpoint-id-validator.html">Peppol / Leitweg-ID Checker</a>
+        <a href="./eu-einvoice-xml-generator.html">E-Invoice API</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Launch Live E-Invoice API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127466;&#127482; 20-Country EU Compliance Matrix &bull; EN 16931 UBL &amp; CII &bull; $0/Month API + $0.05/Invoice</span>
+      <h1>EU <code>2026–2028</code> Mandatory B2B E-Invoicing Deadlines &amp; <code>EN 16931</code> XML Profile Selector</h1>
+      <p>Plain PDFs are rapidly losing tax validity across Europe. Check exact B2B &amp; B2G enforcement dates across <strong>Belgium</strong>, <strong>France</strong>, <strong>Germany</strong>, <strong>Poland</strong>, <strong>Romania</strong>, <strong>Italy</strong>, <strong>Spain</strong>, <strong>Nordics</strong>, and <strong>EU ViDA</strong>—and generate compliant <code>Peppol BIS 3.0</code>, <code>XRechnung 3.0</code>, and <code>Factur-X</code> XML via REST or MCP.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Build EN 16931 XML Visually &rarr;</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Open Cloud API ($5 Free Credits/Mo)</a>
+        <a class="btn btn-outline" href="./free-eu-vat-peppol-endpoint-id-validator.html">Check Peppol EndpointID &amp; VAT</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <span class="tag">Interactive Cross-Border &amp; Domestic EN 16931 Recommender</span>
+      <h2 style="margin:10px 0 8px;">Which XML Profile &amp; Peppol <code>schemeID</code> Do I Need?</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:10px;">
+        <div>
+          <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;"><strong>Seller Country</strong></label>
+          <select id="selSeller" style="width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-weight:600;"></select>
+        </div>
+        <div>
+          <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;"><strong>Buyer Country &amp; Sector</strong></label>
+          <select id="selBuyer" style="width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-weight:600;"></select>
+        </div>
+      </div>
+      <div id="recResult" style="margin-top:14px;padding:14px;border-radius:8px;background:rgba(15,23,42,0.85);border:1px solid rgba(52,211,153,0.35);font-size:0.88rem;line-height:1.55;"></div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <h2 style="margin:0;">Searchable 20-Country European B2B &amp; B2G E-Invoicing Mandate Tracker</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline eu-filter" data-st="ALL" style="padding:6px 12px;font-size:0.8rem;">All (20)</button>
+          <button type="button" class="btn btn-outline eu-filter" data-st="LIVE" style="padding:6px 12px;font-size:0.8rem;">Live B2B 2025–2026</button>
+          <button type="button" class="btn btn-outline eu-filter" data-st="PHASED" style="padding:6px 12px;font-size:0.8rem;">2026–2028 Rollout</button>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <input id="euSearch" type="search" placeholder="Search country, standard, or schemeID (e.g. Belgium, Germany, France, Poland, 0208, 0009, XRechnung, Factur-X, Peppol, ViDA)..." style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.92rem;" />
+      </div>
+      <div style="overflow-x:auto;margin-top:14px;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Country</th>
+              <th style="padding:10px;">B2B Mandate Timeline</th>
+              <th style="padding:10px;">Required XML Standard</th>
+              <th style="padding:10px;">Peppol EAS <code>schemeID</code> &amp; API Profile</th>
+            </tr>
+          </thead>
+          <tbody id="euTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">One REST Endpoint — All 3 EN 16931 Profiles</span>
+        <h3 style="margin:10px 0 8px;">Generate Peppol UBL, XRechnung or Factur-X CII</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Switch the <code>format</code> parameter between <code>"peppol-ubl-3.0"</code>, <code>"xrechnung-3.0-ubl"</code>, and <code>"facturx-cii-en16931"</code> with zero monthly licence cost:</p>
+        <pre class="code-box" style="font-size:0.76rem;min-height:200px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "format": "peppol-ubl-3.0",
+    "invoiceNumber": "INV-2026-1042",
+    "issueDate": "2026-11-14",
+    "dueDate": "2026-12-14",
+    "currency": "EUR",
+    "buyerReference": "PO-8841",
+    "seller": { "name": "TechSolutions GmbH", "vatId": "DE123456789", "street": "Friedrichstr. 100", "city": "Berlin", "postalCode": "10115", "country": "DE", "iban": "DE89370400440532013000" },
+    "buyer": { "name": "EuroTrade NV", "vatId": "BE0123456789", "street": "Rue de la Loi 42", "city": "Brussels", "postalCode": "1000", "country": "BE" },
+    "lines": [{ "description": "SaaS Annual Plan", "quantity": 1, "unitPrice": "1200.00", "vatRate": 0 }]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Pair E-Invoicing + SEPA pain.001 Settlement</span>
+        <h3 style="margin:10px 0 8px;">Country Deep-Dive Guides in Local Languages</h3>
+        <ul style="color:var(--muted);font-size:0.86rem;line-height:1.7;margin-top:8px;">
+          <li>&#127463;&#127466;&#127475;&#127473; <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">Belgium &amp; Netherlands Peppol 2026 &amp; SEPA Guide</a></li>
+          <li>&#127467;&#127479; <a href="./facturation-electronique-2026-peppol-factur-x-xml.html">France September 2026 Factur-X &amp; Chorus Pro / PDP Guide</a></li>
+          <li>&#127465;&#127466; <a href="./stripe-shopify-zu-datev-buchungsstapel-konvertieren.html">Germany XRechnung / ZUGFeRD &amp; DATEV EXTF Guide</a></li>
+          <li>&#127477;&#127473; <a href="./ksef-2026-peppol-efaktura-przelewy-sepa-xml-polska.html">Poland KSeF 2026 &amp; Cross-Border Peppol Guide</a></li>
+          <li>&#127470;&#127481; <a href="./fatturazione-elettronica-peppol-bonifico-sepa-xml-italia.html">Italy SDI / Peppol UE &amp; Bonifici SEPA Guide</a></li>
+          <li>&#127466;&#127480; <a href="./facturacion-electronica-2026-peppol-sepa-xml-espana.html">Spain Crea y Crece / Veri*factu &amp; Peppol Guide</a></li>
+          <li>&#127462;&#127481;&#127475;&#127476;&#127480;&#127466; <a href="./sepa-xml-peppol-ehf-finvoice-austria-nordics.html">Austria &amp; Nordics EHF 3.0 / NemHandel Guide</a></li>
+          <li>&#127479;&#127476;&#127464;&#127487;&#127469;&#127482; <a href="./romania-efactura-czechia-hungary-greece-sepa-xml-peppol-api.html">Romania RO e-Factura, Czechia, Hungary &amp; Greece Guide</a></li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio Home</a> &bull;
+      <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Visual E-Invoice Builder</a> &bull;
+      <a href="./eu-einvoice-xml-generator.html">EU E-Invoice API</a> &bull;
+      <a href="./openapi.json">OpenAPI 3.1</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var COUNTRIES = [
+      { iso: "BE", name: "Belgium", st: "LIVE", date: "1 Jan 2026 (Mandatory B2B)", std: "Peppol BIS Billing 3.0 (UBL 2.1)", eas: "0208 (10-digit KBO/BCE) or 9925 (BE VAT)", api: "peppol-ubl-3.0" },
+      { iso: "DE", name: "Germany (B2B)", st: "LIVE", date: "1 Jan 2025 Rx • 2027/2028 Tx", std: "EN 16931: XRechnung 3.0 or ZUGFeRD 2.2 CII", eas: "9930 (DE VAT) or 0204 (Leitweg-ID)", api: "xrechnung-3.0-ubl / facturx-cii-en16931" },
+      { iso: "DE-B2G", name: "Germany (B2G Public Sector)", st: "LIVE", date: "Mandatory Federal/State B2G", std: "KoSIT XRechnung 3.0 (BT-10 Leitweg-ID required)", eas: "0204 (Leitweg-ID) + 9930", api: "xrechnung-3.0-ubl" },
+      { iso: "FR", name: "France", st: "LIVE", date: "1 Sep 2026 Rx + Large/ETI Tx (SME Sep 2027)", std: "Factur-X (CII EN 16931), UBL 2.1, or CII via PDP", eas: "0009 (14-digit SIRET) or 9957 (FR VAT)", api: "facturx-cii-en16931" },
+      { iso: "IT", name: "Italy", st: "LIVE", date: "Live Domestic B2B (SDI) + Peppol B2G/EU", std: "FatturaPA (Domestic SDI) / Peppol BIS 3.0 (EU Cross-Border)", eas: "0211 (IT Partita IVA) or 0210 (CF)", api: "peppol-ubl-3.0" },
+      { iso: "RO", name: "Romania", st: "LIVE", date: "Live Mandatory B2B (ANAF RO e-Factura)", std: "CIUS-RO (OASIS UBL 2.1 EN 16931)", eas: "9947 (RO CUI/CIF VAT)", api: "peppol-ubl-3.0" },
+      { iso: "PL", name: "Poland", st: "LIVE", date: "Feb / Apr 2026 Mandatory B2B (KSeF)", std: "KSeF FA(3) Domestic / Peppol BIS 3.0 & XRechnung for EU Exports", eas: "9945 (PL NIP VAT)", api: "peppol-ubl-3.0" },
+      { iso: "HR", name: "Croatia", st: "LIVE", date: "1 Jan 2026 Mandatory B2B (Fiskalizacija 2.0)", std: "EN 16931 UBL 2.1 (CIUS-HR via Peppol/eRacun)", eas: "9934 (HR OIB)", api: "peppol-ubl-3.0" },
+      { iso: "LV", name: "Latvia", st: "LIVE", date: "2025 B2G • 2026+ B2B EN 16931 Rollout", std: "Peppol BIS Billing 3.0 UBL 2.1", eas: "9939 (LV VAT)", api: "peppol-ubl-3.0" },
+      { iso: "DK", name: "Denmark", st: "LIVE", date: "Live Digital Bookkeeping Law (NemHandel/Peppol)", std: "OIOUBL / Peppol BIS Billing 3.0", eas: "0184 (8-digit CVR) or 0088 (GLN)", api: "peppol-ubl-3.0" },
+      { iso: "NO", name: "Norway", st: "LIVE", date: "De-facto B2B & Mandatory B2G (EHF 3.0)", std: "EHF Billing 3.0 (100% Peppol BIS 3.0 UBL)", eas: "0192 (9-digit Organisasjonsnummer)", api: "peppol-ubl-3.0" },
+      { iso: "SE", name: "Sweden", st: "PHASED", date: "Mandatory B2G + Widespread Peppol B2B", std: "Peppol BIS Billing 3.0 (replaces Svefaktura)", eas: "0007 (10-digit Org.nr) or 9955", api: "peppol-ubl-3.0" },
+      { iso: "FI", name: "Finland", st: "LIVE", date: "Statutory Buyer Right to Demand B2B E-Invoice", std: "Peppol BIS 3.0 UBL / Finvoice 3.0 (EN 16931)", eas: "0216 (OVT ID) or 0212 (Y-tunnus)", api: "peppol-ubl-3.0" },
+      { iso: "NL", name: "Netherlands", st: "PHASED", date: "Mandatory B2G (Simplerinvoicing) • ViDA B2B", std: "NLCIUS / Peppol BIS Billing 3.0 UBL", eas: "0106 (8-digit KvK) or 0190 (OIN)", api: "peppol-ubl-3.0" },
+      { iso: "AT", name: "Austria", st: "PHASED", date: "Mandatory Federal B2G • EU ViDA B2B", std: "Peppol BIS 3.0 / XRechnung / ebInterface", eas: "9914 (ATU VAT)", api: "peppol-ubl-3.0" },
+      { iso: "ES", name: "Spain", st: "PHASED", date: "Veri*factu & Ley Crea y Crece B2B (2026–2027)", std: "Facturae / EN 16931 UBL & CII Syntax", eas: "9920 (ES NIF/CIF)", api: "peppol-ubl-3.0" },
+      { iso: "IE", name: "Ireland", st: "PHASED", date: "Mandatory B2G + Revenue VAT Modernisation", std: "Peppol BIS Billing 3.0 UBL", eas: "9935 (IE VAT)", api: "peppol-ubl-3.0" },
+      { iso: "PT", name: "Portugal", st: "PHASED", date: "Mandatory B2G (eSPap) + Qualified B2B XML", std: "CIUS-PT / Peppol BIS Billing 3.0 UBL", eas: "9946 (PT NIF)", api: "peppol-ubl-3.0" },
+      { iso: "LU", name: "Luxembourg", st: "PHASED", date: "Mandatory B2G via Peppol + Benelux B2B", std: "Peppol BIS Billing 3.0 UBL", eas: "9938 (LU VAT)", api: "peppol-ubl-3.0" },
+      { iso: "EU-VIDA", name: "EU Cross-Border (ViDA)", st: "PHASED", date: "1 July 2030 Intra-EU B2B Mandate", std: "EN 16931 (Peppol BIS UBL / CII within 10 days)", eas: "99xx National VAT / Local EAS", api: "peppol-ubl-3.0" }
+    ];
+
+    var activeSt = "ALL";
+    var searchEl = document.getElementById("euSearch");
+    var tbody = document.getElementById("euTableBody");
+
+    function renderTable() {
+      var q = (searchEl.value || "").trim().toLowerCase();
+      var rows = COUNTRIES.filter(function (c) {
+        if (activeSt !== "ALL" && c.st !== activeSt) return false;
+        if (!q) return true;
+        return (c.iso + " " + c.name + " " + c.date + " " + c.std + " " + c.eas + " " + c.api).toLowerCase().indexOf(q) !== -1;
+      });
+      tbody.innerHTML = rows.map(function (c) {
+        return '<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">' +
+          '<td style="padding:10px;font-weight:700;white-space:nowrap;">' + c.name + ' <span style="color:var(--muted);font-family:monospace;">(' + c.iso + ')</span></td>' +
+          '<td style="padding:10px;color:#34d399;">' + c.date + '</td>' +
+          '<td style="padding:10px;">' + c.std + '</td>' +
+          '<td style="padding:10px;font-family:monospace;font-size:0.79rem;color:#38bdf8;">' + c.eas + ' &rarr; ' + c.api + '</td>' +
+        '</tr>';
+      }).join("");
+    }
+
+    document.querySelectorAll(".eu-filter").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        activeSt = btn.getAttribute("data-st");
+        renderTable();
+      });
+    });
+    searchEl.addEventListener("input", renderTable);
+    renderTable();
+
+    var selSeller = document.getElementById("selSeller");
+    var selBuyer = document.getElementById("selBuyer");
+    var optsHtml = COUNTRIES.filter(function (c) { return c.iso !== "EU-VIDA"; }).map(function (c) {
+      return '<option value="' + c.iso + '">' + c.name + ' (' + c.iso + ')</option>';
+    }).join("");
+    selSeller.innerHTML = optsHtml;
+    selBuyer.innerHTML = optsHtml;
+    selSeller.value = "DE";
+    selBuyer.value = "BE";
+
+    function updateRec() {
+      var s = COUNTRIES.find(function (c) { return c.iso === selSeller.value; }) || COUNTRIES[0];
+      var b = COUNTRIES.find(function (c) { return c.iso === selBuyer.value; }) || COUNTRIES[0];
+      var recFmt = "peppol-ubl-3.0";
+      var note = "Cross-border EU B2B invoices between <strong>" + s.name + "</strong> and <strong>" + b.name + "</strong> should use <code>peppol-ubl-3.0</code> (OASIS UBL 2.1 EN 16931) with VAT category <code>K</code> (0% Intra-Community Reverse Charge) when both parties hold valid VIES VAT IDs.";
+      if (b.iso === "DE-B2G") {
+        recFmt = "xrechnung-3.0-ubl";
+        note = "Invoicing a German public-sector authority requires <code>xrechnung-3.0-ubl</code> with a valid <strong>Leitweg-ID</strong> in <code>buyerReference</code> (BT-10).";
+      } else if (s.iso === "FR" && b.iso === "FR") {
+        recFmt = "facturx-cii-en16931";
+        note = "Domestic French B2B e-invoicing (Reforme Sept 2026) standardizes on <code>facturx-cii-en16931</code> (UN/CEFACT CII EN 16931) with 14-digit SIRET (<code>schemeID=\"0009\"</code>).";
+      } else if (s.iso === "DE" && b.iso === "DE") {
+        recFmt = "xrechnung-3.0-ubl";
+        note = "Domestic German B2B E-Rechnung compliance accepts both <code>xrechnung-3.0-ubl</code> and <code>facturx-cii-en16931</code> (ZUGFeRD 2.2 EN 16931).";
+      } else if (s.iso === b.iso) {
+        note = "Domestic B2B invoices inside <strong>" + b.name + "</strong> (" + b.date + ") align with <code>" + recFmt + "</code> using Buyer Endpoint scheme <code>" + b.eas + "</code>.";
+      }
+      document.getElementById("recResult").innerHTML =
+        "<div><strong>Recommended FinOps Studio API <code>format</code>:</strong> <code style='color:#34d399;font-size:0.95rem;'>\"" + recFmt + "\"</code> &bull; <strong>Buyer Endpoint Scheme:</strong> <code>" + b.eas + "</code></div>" +
+        "<div style='margin-top:6px;color:#cbd5e1;'>" + note + "</div>" +
+        "<div style='margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;'>" +
+          "<a class='btn btn-primary' style='padding:6px 12px;font-size:0.8rem;' href='./free-peppol-xrechnung-facturx-invoice-xml-builder.html'>Build This Invoice Visually &rarr;</a>" +
+          "<a class='btn btn-outline' style='padding:6px 12px;font-size:0.8rem;' href='https://apify.com/finops_studio/eu-einvoice-xml-generator' target='_blank' rel='noopener'>Run via Cloud API ($0.05/inv)</a>" +
+        "</div>";
+    }
+    selSeller.addEventListener("change", updateRec);
+    selBuyer.addEventListener("change", updateRec);
+    updateRec();
+  })();
+  </script>
+</body>
+</html>

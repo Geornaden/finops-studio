@@ -250,4 +250,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.94</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/eu-2026-2027-e-invoicing-mandate-peppol-xrechnung-facturx-matrix.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.93</priority>
+  </url>
 </urlset>
