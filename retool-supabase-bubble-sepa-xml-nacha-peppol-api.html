@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retool, Appsmith, Bubble &amp; Supabase Edge Functions Banking API Integration (SEPA XML, NACHA ACH, Peppol, BAI2) | FinOps Studio</title>
+  <meta name="description" content="Copy-paste Supabase Edge Function / Next.js TypeScript handlers, Retool &amp; Appsmith REST query configs, and Bubble API Connector templates to generate SEPA XML (pain.001), US NACHA (.ach), Peppol/XRechnung XML, UK BACS, and BAI2 CSV inside internal finance portals for $0/month." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/retool-supabase-bubble-sepa-xml-nacha-peppol-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Retool, Appsmith, Bubble & Supabase Edge Functions Fintech API Playbook | FinOps Studio" />
+  <meta property="og:description" content="Add 1-click SEPA XML, US NACHA ACH, UK BACS, Peppol E-Invoicing, and BAI2 statement parsing to Retool, Appsmith, Bubble, or Supabase/Next.js SaaS apps with $0/month fixed cost." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/retool-supabase-bubble-sepa-xml-nacha-peppol-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Retool, Appsmith, Bubble & Supabase Edge Functions Banking API Integration Playbook (SEPA XML, NACHA ACH, Peppol, UK BACS, BAI2)",
+        "url": "https://geornaden.github.io/finops-studio/retool-supabase-bubble-sepa-xml-nacha-peppol-api.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "publisher": { "@type": "Organization", "name": "FinOps Studio" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I generate downloadable SEPA XML or 94-character US NACHA .ACH files from a Retool or Appsmith table?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Import FinOps Studio's OpenAPI 3.1 specification (https://geornaden.github.io/finops-studio/openapi.json) or configure a REST API resource pointing to https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items, pass selected table rows ({{ payoutsTable.selectedSourceRows }}), and trigger utils.downloadFile(query.data[0].xmlContent, 'sepa-batch', 'xml') on query success."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can Supabase Edge Functions or Next.js Route Handlers generate bank files directly from Postgres rows?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Because Supabase Edge Functions (Deno) and Cloudflare/Vercel Edge runtimes use standard Web fetch(), your server function queries approved payout or invoice rows from Postgres, POSTs them to FinOps Studio with Authorization: Bearer Deno.env.get('APIFY_TOKEN'), stores the verified bank file in Supabase Storage, and marks the batch exported."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./openapi.json" target="_blank" rel="noopener">OpenAPI 3.1 Spec</a>
+        <a href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node SDK</a>
+        <a href="./make-zapier-power-automate-sepa-xml-nacha-peppol.html">Make &amp; Zapier</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Get Free API Token ($5/Mo Credit) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#9889; Internal Finance Portals &amp; Vertical SaaS &bull; Retool &bull; Appsmith &bull; Supabase Edge &bull; Next.js &bull; Bubble</span>
+      <h1>Add 1-Click Banking &amp; E-Invoicing Exports to <code>Retool</code>, <code>Supabase</code>, <code>Next.js</code> &amp; <code>Bubble</code></h1>
+      <p>Building an internal treasury ops dashboard in <strong>Retool</strong> or <strong>Appsmith</strong>, or shipping a vertical B2B SaaS on <strong>Supabase + Next.js</strong> or <strong>Bubble</strong>? Skip months of maintaining fragile fixed-width COBOL/ISO 20022 specs—plug in our 9 deterministic banking endpoints via <strong>1-click OpenAPI 3.1 import</strong> or 20-line Edge Functions at <strong>$0/month fixed cost</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#portal-generator">Generate Retool / Supabase / Bubble Config &darr;</a>
+        <a class="btn btn-outline" href="./openapi.json" target="_blank" rel="noopener">Import OpenAPI 3.1 JSON &rarr;</a>
+        <a class="btn btn-outline" href="./workflows/finops-studio-postman-collection.json" download>Download Postman v2.1</a>
+      </div>
+    </section>
+
+    <section id="portal-generator" class="sandbox-card">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:14px;">
+        <div>
+          <label for="stackSel" style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;"><strong>Step 1 — Select Your App Stack:</strong></label>
+          <select id="stackSel" style="width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.88rem;font-weight:600;">
+            <option value="supabase">Supabase Edge Function (Deno TypeScript + Postgres + Storage)</option>
+            <option value="retool">Retool / Appsmith REST Query + 1-Click File Download Handler</option>
+            <option value="nextjs">Next.js 15 App Router Route Handler (app/api/bank-export/route.ts)</option>
+            <option value="bubble">Bubble.io API Connector (Server-Side Action Config)</option>
+          </select>
+        </div>
+        <div>
+          <label for="standardSel" style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;"><strong>Step 2 — Select Banking / Tax Standard:</strong></label>
+          <select id="standardSel" style="width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.88rem;font-weight:600;">
+            <option value="sepa">EU 2026 SEPA Credit Transfer XML (pain.001.001.09)</option>
+            <option value="nacha">US 94-Character NACHA ACH Batch (.ach — PPD / CCD)</option>
+            <option value="einvoice">EU Peppol BIS 3.0 / XRechnung 3.0 / Factur-X XML</option>
+            <option value="bacs">UK 100-Character Pay.UK BACS Standard 18 (.txt)</option>
+            <option value="aba">Australian 120-Character AusPayNet BECS Direct Entry (.aba)</option>
+            <option value="bai2">Corporate Treasury BAI2 Statement Parser (&rarr; JSON &amp; CSV)</option>
+            <option value="datev">German DATEV EXTF v700 Buchungsstapel CSV (SKR03 / SKR04)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span id="leftPaneTitle"><strong>Server / Query Integration Code</strong></span>
+            <button id="btnCopyLeft" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">Copy Code</button>
+          </div>
+          <pre id="leftCodeBox" class="code-box" style="min-height:330px;max-height:440px;overflow:auto;font-size:0.75rem;"></pre>
+        </div>
+        <div>
+          <div class="pane-label">
+            <span id="rightPaneTitle"><strong>Endpoint &amp; Request Body Schema</strong></span>
+            <button id="btnCopyRight" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">Copy JSON</button>
+          </div>
+          <pre id="rightCodeBox" class="code-box" style="min-height:330px;max-height:440px;overflow:auto;font-size:0.75rem;"></pre>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.86rem;color:#e2e8f0;">
+          <strong>1-Click OpenAPI 3.1 Import in Retool &amp; Postman:</strong> Point Retool's <em>Resources &rarr; OpenAPI</em> importer directly to <code>https://geornaden.github.io/finops-studio/openapi.json</code> to auto-discover all 9 synchronous endpoints.
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a class="btn btn-outline" href="./openapi.json" target="_blank" rel="noopener">OpenAPI 3.1 URL</a>
+          <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Apify Storefront &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">Why SaaS &amp; Internal Tool Builders Offload Banking File Specs</h2>
+      <div class="grid-3">
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Zero Browser Token Leak</span><span class="tag">Bearer Auth</span></div>
+          <h3>Server-Side Secret Isolation</h3>
+          <p>Retool Resources, Supabase Edge Secrets (<code>supabase secrets set APIFY_TOKEN=...</code>), Next.js Route Handlers, and Bubble Private Headers keep your API token strictly server-side—never exposed to end-user browsers.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Pre-Flight Checksums</span><span class="tag">Fail-Closed</span></div>
+          <h3>Mathematical Checksum Gates Before Export</h3>
+          <p>Every request validates <code>IBAN MOD-97</code>, <code>ABA MOD-10</code>, <code>2026 EPC BE04</code> structured addresses, <code>Leitweg-ID MOD 97-10</code>, or <code>BAI2 49/98/99</code> control totals before a finance manager ever touches a bank portal.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">$0/Month Fixed Cost</span><span class="tag">$5 Free Credit</span></div>
+          <h3>Usage-Aligned Unit Economics for Vertical SaaS</h3>
+          <p>Instead of paying $499–$1,500/month for enterprise treasury middleware while launching your SaaS feature, pay $0/month fixed and $0.02/payment row ($0.05/e-invoice)—passing pennies per export cleanly into your Pro tier.</p>
+        </article>
+      </div>
+    </section>
+
+    <section style="margin-top:24px;">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h4>How do I download the generated XML, .ACH, or .ABA file in Retool without corrupting UTF-8 or trailing spaces?</h4>
+        <p>In Retool's query <strong>Success</strong> event handler, run a 1-line script: <code>utils.downloadFile(exportBankBatch.data[0].fileContent, exportBankBatch.data[0].fileName, 'text/plain')</code>. Because FinOps Studio returns exact 94-char (NACHA), 100-char (BACS), or 120-char (ABA) lines as an intact string inside JSON, Retool's browser download preserves every space-padded fixed-width column.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Can Bubble.io apps call these synchronous endpoints without hitting Bubble's webhook timeout?</h4>
+        <p>Yes. Synchronous batches up to hundreds of rows execute in <strong>1.2–3.0 seconds</strong> via <code>/run-sync-get-dataset-items</code>, well inside Bubble API Connector's timeout window. For 10,000+ row enterprise payroll runs, call <code>/runs</code> asynchronously with a Bubble backend webhook URL.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./openapi.json">OpenAPI 3.1</a> &bull; <a href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node.js Cookbook</a> &bull; <a href="./github-actions-ci-cd-sepa-nacha-peppol-bank-file-validation.html">GitHub Actions CI/CD</a></div>
+      <div><a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Explore FinOps Studio on Apify Store &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var STANDARDS = {
+        sepa: {
+          actor: 'finops_studio~sepa-xml-generator',
+          outField: 'xmlContent',
+          fileName: 'sepa-credit-transfer.xml',
+          mime: 'application/xml',
+          tableExpr: 'payoutsTable.selectedSourceRows',
+          sampleBody: {
+            schema: 'pain.001.001.09',
+            messageId: 'MSG-PORTAL-2026-01',
+            initiatingPartyName: 'Acme SaaS GmbH',
+            initiatingPartyIban: 'DE89370400440532013000',
+            initiatingPartyBic: 'COBADEFFXXX',
+            executionDate: '2026-11-16',
+            transactions: [
+              {
+                endToEndId: 'E2E-9001',
+                amount: 1450.00,
+                currency: 'EUR',
+                creditorName: 'Nordic Cloud AB',
+                creditorIban: 'NL91ABNA0417164300',
+                creditorAddress: { streetName: 'Keizersgracht', buildingNumber: '120', postCode: '1015 CW', townName: 'Amsterdam', country: 'NL' },
+                remittanceInfo: 'Payout Batch #9001'
+              }
+            ]
+          }
+        },
+        nacha: {
+          actor: 'finops_studio~nacha-ach-file-generator',
+          outField: 'achContent',
+          fileName: 'us-ach-payouts.ach',
+          mime: 'text/plain',
+          tableExpr: 'achPayoutsTable.selectedSourceRows',
+          sampleBody: {
+            mode: 'generate',
+            immediateDestination: '021000021',
+            immediateDestinationName: 'JPMORGAN CHASE',
+            immediateOrigin: '1948201923',
+            immediateOriginName: 'ACME SAAS INC',
+            companyName: 'ACME SAAS INC',
+            companyId: '1948201923',
+            secCode: 'CCD',
+            companyEntryDescription: 'VENDORPAY',
+            effectiveEntryDate: '261116',
+            odfiRoutingNumber: '021000021',
+            entries: [
+              { transactionCode: '22', rdfiRoutingNumber: '121000358', rdfiAccountNumber: '8839201944', amount: 2450.75, individualId: 'VEND-104', individualName: 'APEX LOGISTICS LLC' }
+            ]
+          }
+        },
+        einvoice: {
+          actor: 'finops_studio~eu-einvoice-xml-generator',
+          outField: 'xmlContent',
+          fileName: 'invoice-en16931.xml',
+          mime: 'application/xml',
+          tableExpr: 'invoicesTable.selectedRow',
+          sampleBody: {
+            format: 'peppol-ubl-3.0',
+            invoiceNumber: 'INV-2026-4410',
+            issueDate: '2026-11-14',
+            dueDate: '2026-12-14',
+            currency: 'EUR',
+            buyerReference: 'PO-88412',
+            seller: { name: 'Brussels SaaS SRL', vatId: 'BE0403170701', endpointId: '0403170701', endpointScheme: '0208', street: 'Avenue Louise 240', city: 'Brussels', postalCode: '1050', country: 'BE', iban: 'BE68539007547034' },
+            buyer: { name: 'Antwerp Ops NV', vatId: 'BE0477472701', endpointId: '0477472701', endpointScheme: '0208', street: 'Meir 50', city: 'Antwerpen', postalCode: '2000', country: 'BE' },
+            lines: [{ description: 'Platform Enterprise Plan', quantity: 1, unitPrice: 1200.00, vatRate: 21 }]
+          }
+        },
+        bacs: {
+          actor: 'finops_studio~uk-bacs-standard18-generator',
+          outField: 'bacsContent',
+          fileName: 'uk-bacs-standard18.txt',
+          mime: 'text/plain',
+          tableExpr: 'ukPayrollTable.selectedSourceRows',
+          sampleBody: {
+            serviceUserNumber: '123456',
+            originatingSortCode: '200000',
+            originatingAccountNumber: '12345678',
+            originatingAccountName: 'ACME UK LTD',
+            processingDate: '2026-11-16',
+            includeHeaders: true,
+            payments: [
+              { destinationSortCode: '400515', destinationAccountNumber: '87654321', accountName: 'TAYLOR CONSULTING', amount: 1850.50, reference: 'INV-UK-901', transactionCode: '99' }
+            ]
+          }
+        },
+        aba: {
+          actor: 'finops_studio~aba-cemtex-file-generator',
+          outField: 'abaContent',
+          fileName: 'au-direct-entry.aba',
+          mime: 'text/plain',
+          tableExpr: 'auPayeesTable.selectedSourceRows',
+          sampleBody: {
+            bsb: '062-000',
+            accountNumber: '12345678',
+            accountTitle: 'ACME PTY LTD',
+            userName: 'ACME PTY LTD',
+            apcaUserId: '301500',
+            description: 'SUPPLIER PAY',
+            processingDate: '2026-11-16',
+            includeSelfBalancing: true,
+            transactions: [
+              { bsb: '082-088', accountNumber: '987654321', accountTitle: 'SYDNEY CLOUD PTY LTD', amount: 3200.00, transactionCode: '50', lodgementReference: 'INV AU 441' }
+            ]
+          }
+        },
+        bai2: {
+          actor: 'finops_studio~bai2-bank-statement-parser',
+          outField: 'csvContent',
+          fileName: 'reconciled-bai2.csv',
+          mime: 'text/csv',
+          tableExpr: 'fileDropzone.value[0]',
+          sampleBody: {
+            bai2Content: '01,021000021,ACME,261114,0600,001,80,1,2/\n02,ACME,021000021,1,261114,0600,USD,2/\n03,000088412099,USD,015,15000000,,,/\n16,165,482500,0,REF991,INV-9941/\n88,ORIG CO NAME=NORTHSTAR INC/\n49,15482500,4/\n98,15482500,1,6/\n99,15482500,1,8/',
+            includeCsv: true
+          }
+        },
+        datev: {
+          actor: 'finops_studio~datev-buchungsstapel-generator',
+          outField: 'csvContent',
+          fileName: 'EXTF_Buchungsstapel.csv',
+          mime: 'text/csv',
+          tableExpr: 'bookingsTable.selectedSourceRows',
+          sampleBody: {
+            chartOfAccounts: 'SKR03',
+            consultantNumber: 12998,
+            clientNumber: 55001,
+            fiscalYearStart: '20260101',
+            entries: [
+              { date: '2026-11-14', grossAmount: 1190.00, vatRate: 19, contraAccount: 1200, bookingText: 'Stripe Payout #8812', documentRef: 'RE-2026-8812' }
+            ]
+          }
+        }
+      };
+
+      var stackSel = document.getElementById('stackSel');
+      var standardSel = document.getElementById('standardSel');
+      var leftTitle = document.getElementById('leftPaneTitle');
+      var rightTitle = document.getElementById('rightPaneTitle');
+      var leftBox = document.getElementById('leftCodeBox');
+      var rightBox = document.getElementById('rightCodeBox');
+
+      function render() {
+        var stack = stackSel.value;
+        var cfg = STANDARDS[standardSel.value];
+        var endpointUrl = 'https://api.apify.com/v2/acts/' + cfg.actor + '/run-sync-get-dataset-items';
+        var bodyPretty = JSON.stringify(cfg.sampleBody, null, 2);
+
+        rightTitle.innerHTML = '<strong>POST Endpoint &amp; Sample JSON Body</strong>';
+        rightBox.textContent = '// POST ' + endpointUrl + '\n// Header: Authorization: Bearer YOUR_APIFY_TOKEN\n\n' + bodyPretty;
+
+        if (stack === 'supabase') {
+          leftTitle.innerHTML = '<strong>supabase/functions/bank-export/index.ts (Deno)</strong>';
+          leftBox.textContent = [
+            "// Deploy: supabase secrets set APIFY_TOKEN=apify_api_xxx && supabase functions deploy bank-export",
+            "import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';",
+            "",
+            "Deno.serve(async (req) => {",
+            "  const authHeader = req.headers.get('Authorization')!;",
+            "  const supabase = createClient(",
+            "    Deno.env.get('SUPABASE_URL')!,",
+            "    Deno.env.get('SUPABASE_ANON_KEY')!,",
+            "    { global: { headers: { Authorization: authHeader } } }",
+            "  );",
+            "",
+            "  const payload = await req.json();",
+            "  const apifyRes = await fetch(",
+            "    '" + endpointUrl + "',",
+            "    {",
+            "      method: 'POST',",
+            "      headers: {",
+            "        'Content-Type': 'application/json',",
+            "        'Authorization': `Bearer ${Deno.env.get('APIFY_TOKEN')}`",
+            "      },",
+            "      body: JSON.stringify(payload)",
+            "    }",
+            "  );",
+            "",
+            "  if (!apifyRes.ok) {",
+            "    return new Response(await apifyRes.text(), { status: apifyRes.status });",
+            "  }",
+            "",
+            "  const items = await apifyRes.json();",
+            "  const result = items[0] ?? {};",
+            "  const fileBody = result." + cfg.outField + " || result.fileContent || '';",
+            "",
+            "  // Optional: archive verified bank file into private Supabase Storage bucket",
+            "  const storagePath = `exports/${Date.now()}-" + cfg.fileName + "`;",
+            "  await supabase.storage.from('treasury-files').upload(storagePath, fileBody, {",
+            "    contentType: '" + cfg.mime + "'",
+            "  });",
+            "",
+            "  return Response.json({ ok: true, storagePath, result });",
+            "});"
+          ].join('\n');
+        } else if (stack === 'retool') {
+          leftTitle.innerHTML = '<strong>Retool / Appsmith REST Resource &amp; Download Script</strong>';
+          leftBox.textContent = [
+            "// 1. Retool Resource Setup (Resources -> Create New -> REST API or OpenAPI):",
+            "//    OpenAPI Spec URL: https://geornaden.github.io/finops-studio/openapi.json",
+            "//    Base URL:         https://api.apify.com/v2",
+            "//    Header:           Authorization: Bearer YOUR_APIFY_API_TOKEN",
+            "//    Header:           Content-Type: application/json",
+            "",
+            "// 2. Query Action (POST /acts/" + cfg.actor + "/run-sync-get-dataset-items):",
+            "//    Bind Retool table selection directly inside JSON body:",
+            "//    {{ " + cfg.tableExpr + " }}",
+            "",
+            "// 3. Retool Query 'Success' Event Handler (Run Script):",
+            "const row = exportBankFile.data && exportBankFile.data[0];",
+            "if (!row || row.valid === false) {",
+            "  utils.showNotification({",
+            "    title: 'Bank Pre-Flight Check Failed',",
+            "    description: (row?.errors || ['Invalid bank identifier']).join('; '),",
+            "    notificationType: 'error'",
+            "  });",
+            "} else {",
+            "  const content = row." + cfg.outField + " || row.fileContent;",
+            "  utils.downloadFile(content, '" + cfg.fileName + "', '" + cfg.mime + "');",
+            "  utils.showNotification({ title: 'Verified Bank File Downloaded!', notificationType: 'success' });",
+            "}"
+          ].join('\n');
+        } else if (stack === 'nextjs') {
+          leftTitle.innerHTML = '<strong>app/api/finops-export/route.ts (Next.js App Router)</strong>';
+          leftBox.textContent = [
+            "import { NextRequest, NextResponse } from 'next/server';",
+            "",
+            "export async function POST(req: NextRequest) {",
+            "  // Keep APIFY_TOKEN strictly server-side in .env.local / Vercel Environment Variables",
+            "  const body = await req.json();",
+            "",
+            "  const res = await fetch(",
+            "    '" + endpointUrl + "',",
+            "    {",
+            "      method: 'POST',",
+            "      headers: {",
+            "        'Content-Type': 'application/json',",
+            "        'Authorization': `Bearer ${process.env.APIFY_TOKEN}`",
+            "      },",
+            "      body: JSON.stringify(body),",
+            "      cache: 'no-store'",
+            "    }",
+            "  );",
+            "",
+            "  if (!res.ok) {",
+            "    return NextResponse.json({ error: await res.text() }, { status: res.status });",
+            "  }",
+            "",
+            "  const [item] = await res.json();",
+            "  const fileText = item?." + cfg.outField + " ?? item?.fileContent ?? '';",
+            "",
+            "  return new NextResponse(fileText, {",
+            "    status: 200,",
+            "    headers: {",
+            "      'Content-Type': '" + cfg.mime + "; charset=utf-8',",
+            "      'Content-Disposition': 'attachment; filename=\"" + cfg.fileName + "\"'",
+            "    }",
+            "  });",
+            "}"
+          ].join('\n');
+        } else {
+          leftTitle.innerHTML = '<strong>Bubble.io API Connector Configuration</strong>';
+          leftBox.textContent = [
+            "=== Bubble Plugin: API Connector ===",
+            "API Name:          FinOps Studio Banking Cloud",
+            "Authentication:    Private key in header",
+            "Key Name:          Authorization",
+            "Development/Live:  Bearer apify_api_YOUR_TOKEN",
+            "Shared Header:     Content-Type = application/json",
+            "",
+            "=== API Call Setup ===",
+            "Call Name:         Generate " + cfg.fileName,
+            "Use as:            Action (triggers inside Bubble Workflows)",
+            "Data Type:         JSON",
+            "Method:            POST",
+            "URL:               " + endpointUrl,
+            "",
+            "Body (JSON with Dynamic <tags>):",
+            bodyPretty,
+            "",
+            "Tip: Click 'Initialize call' once in Bubble to map returned fields",
+            "(`valid`, `" + cfg.outField + "`, `errors`, `summary`) into your Bubble Workflow steps!"
+          ].join('\n');
+        }
+      }
+
+      stackSel.addEventListener('change', render);
+      standardSel.addEventListener('change', render);
+
+      document.getElementById('btnCopyLeft').addEventListener('click', function () {
+        var btn = document.getElementById('btnCopyLeft');
+        navigator.clipboard.writeText(leftBox.textContent || '');
+        btn.textContent = 'Copied!';
+        if (window.finopsTrack) window.finopsTrack('action_copy_curl');
+        setTimeout(function () { btn.textContent = 'Copy Code'; }, 1600);
+      });
+
+      document.getElementById('btnCopyRight').addEventListener('click', function () {
+        var btn = document.getElementById('btnCopyRight');
+        navigator.clipboard.writeText(JSON.stringify(STANDARDS[standardSel.value].sampleBody, null, 2));
+        btn.textContent = 'Copied!';
+        if (window.finopsTrack) window.finopsTrack('action_copy_curl');
+        setTimeout(function () { btn.textContent = 'Copy JSON'; }, 1600);
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

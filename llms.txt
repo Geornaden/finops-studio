@@ -101,3 +101,4 @@
 - [Windows PowerShell (Task Scheduler) & Linux Bash Cron Bank SFTP Treasury Automation Scripts (SEPA XML, NACHA ACH, UK BACS, BAI2, pain.002)](https://geornaden.github.io/finops-studio/powershell-bash-cron-sftp-sepa-nacha-bai2-automation.html)
 - [Free Browser Corporate BAI2 Bank Statement Viewer, Record 49/98/99 Control-Total Auditor & CSV Converter](https://geornaden.github.io/finops-studio/free-bai2-bank-statement-viewer-csv-converter.html)
 - [Deutsche E-Rechnungspflicht (§ 14 UStG): XRechnung 3.0 UBL & ZUGFeRD 2.3 / Factur-X CII XML API + Leitweg-ID Prüfziffer-Rechner](https://geornaden.github.io/finops-studio/xrechnung-3-0-zugferd-leitweg-id-generator-api-deutschland.html)
+- [Retool, Appsmith, Bubble & Supabase Edge Functions / Next.js Fintech Integration Playbook (SEPA XML, NACHA ACH, Peppol, UK BACS, BAI2, DATEV)](https://geornaden.github.io/finops-studio/retool-supabase-bubble-sepa-xml-nacha-peppol-api.html)

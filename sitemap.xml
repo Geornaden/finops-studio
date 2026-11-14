@@ -300,4 +300,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.94</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/retool-supabase-bubble-sepa-xml-nacha-peppol-api.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.94</priority>
+  </url>
 </urlset>
