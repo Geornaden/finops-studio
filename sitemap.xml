@@ -270,4 +270,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/free-nacha-ach-file-validator-batch-hash-auditor.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
 </urlset>

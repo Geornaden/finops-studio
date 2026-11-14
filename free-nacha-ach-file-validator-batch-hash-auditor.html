@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free US NACHA .ACH File Validator — Audit 94-Char Width, Record 8/9 Entry Hash, ABA MOD-10 &amp; Block-10 Padding | FinOps Studio</title>
+  <meta name="description" content="100% client-side US NACHA ACH file validator: paste or drop any .ach file to verify exact 94-character line widths, ABA MOD-10 routing checksums, Record 8 &amp; Record 9 Entry Hash math, debit/credit totals, and 9999... Block-10 padding." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-nacha-ach-file-validator-batch-hash-auditor.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Free Browser NACHA .ACH File Validator & Record 8/9 Entry Hash Auditor | FinOps Studio" />
+  <meta property="og:description" content="Audit multi-line US .ach files locally in your browser before uploading to Chase, BofA CashPro, Wells Fargo CEO, CitiDirect, or SVB." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-nacha-ach-file-validator-batch-hash-auditor.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Free US NACHA .ACH Batch File Validator & Entry Hash Auditor",
+        "url": "https://geornaden.github.io/finops-studio/free-nacha-ach-file-validator-batch-hash-auditor.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD",
+          "description": "Free client-side 94-character NACHA .ACH file validator; $0/mo + $0.02/entry Cloud API on Apify Store for automated .ach generation & parsing."
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How is the NACHA Record 8 and Record 9 Entry Hash calculated?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under Nacha Operating Rules, the Entry Hash in Batch Control (Record 8, positions 11–20) is the sum of the 8-digit RDFI Routing/Transit numbers (positions 4–11, excluding the 9th check digit) across every Entry Detail (Record 6) in the batch, right-justified and zero-padded (or truncated to the rightmost 10 digits if exceeding 10 digits). File Control (Record 9, positions 22–31) sums all Batch Control Entry Hashes across the file."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this NACHA .ACH validator upload my payroll or vendor bank accounts to a server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Every 94-character width check, 10-point [3,7,1] ABA MOD-10 routing verification, Entry Hash reconciliation, and Block-10 padding check runs 100% locally inside your browser tab."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./nacha-ach-file-generator.html">NACHA Generator API</a>
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">Excel/CSV &rarr; ACH</a>
+        <a href="./nacha-ach-return-codes-r01-r02-r03-r10-r29-sec-codes-guide.html">R01–R85 Return Codes</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank" rel="noopener">Generate / Parse .ACH via API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#127482;&#127480; 100% Local Browser NACHA Audit &bull; Zero Server Upload &bull; Chase / BofA CashPro / Wells Fargo CEO / SVB</span>
+      <h1>Free Multi-Line US <code>NACHA .ACH</code> File Validator &amp; <code>Record 8/9</code> Entry Hash Auditor</h1>
+      <p>Paste or drop any raw <strong>US NACHA <code>.ach</code></strong> file before uploading to J.P. Morgan Access, Bank of America CashPro, Wells Fargo CEO, CitiDirect, or Silicon Valley Bank. Instantly audit <strong>94-character fixed widths</strong>, <strong>9-digit ABA MOD-10 checksums</strong>, <strong>Batch &amp; File Entry Hash math</strong>, cent-exact debit/credit totals, and <strong>Block-10 <code>9999...</code> padding</strong>.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnAchClean" type="button" class="btn btn-outline">Load Valid 10-Line PPD Payroll .ACH</button>
+          <button id="btnAchBroken" type="button" class="btn btn-outline">Load Broken .ACH (Bad ABA + Wrong Entry Hash + Missing Block-10 Pad)</button>
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            &#128194; Load Local .ACH / .TXT File
+            <input id="achFileInput" type="file" accept=".ach,.txt,.aba" style="display:none;" />
+          </label>
+        </div>
+        <span id="achStatusBadge" class="status-chip status-ok">READY</span>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Paste Raw 94-Character NACHA .ACH File</strong></span>
+            <span id="achLineChip" style="font-size:0.76rem;color:#93c5fd;">0 Lines</span>
+          </div>
+          <textarea id="achRawBox" class="code-box" spellcheck="false" style="min-height:320px;font-size:0.74rem;white-space:pre;overflow-x:auto;"></textarea>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>Pre-Flight NACHA Compliance Report</strong></span>
+            <span id="achTotalsChip" style="font-size:0.76rem;color:var(--muted);">$0.00 Credit / $0.00 Debit</span>
+          </div>
+          <div id="achReportBox" class="code-box" style="min-height:320px;max-height:420px;overflow:auto;font-family:system-ui,-apple-system,sans-serif;font-size:0.84rem;line-height:1.55;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.86rem;color:#e2e8f0;">
+          <strong>Need to generate clean 94-char <code>.ach</code> files or parse ACH batches to JSON automatically?</strong> Use our deterministic Cloud API (<code>$0/month + $0.02/entry</code>, covered by Apify's $5/mo free credit).
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button id="btnCopyAchJson" type="button" class="btn btn-outline">Copy Clean Generator JSON</button>
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/nacha-ach-file-generator" target="_blank" rel="noopener">Launch NACHA Cloud API &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">6 Critical NACHA Rules Checked Automatically</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Record 1, 5, 6, 7, 8, 9</span><span class="tag">94 Columns</span></div>
+            <h3>1. Strict 94-Character Width &amp; Block-10 Padding</h3>
+            <p>Flags any line with 93 or 95+ characters (often caused by unpadded company names or trailing spaces stripped by text editors) and verifies total line count is an exact multiple of <code>10</code> using <code>9999...</code> filler rows.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Positions 4–12</span><span class="tag">[3, 7, 1] MOD-10</span></div>
+            <h3>2. Federal Reserve ABA MOD-10 Routing Math</h3>
+            <p>Verifies Immediate Destination (Record 1) and every RDFI Routing + Check Digit (Record 6 positions 4–12) against the Federal Reserve <code>3(d1+d4+d7) + 7(d2+d5+d8) + (d3+d6+d9) mod 10 = 0</code> formula.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Record 8 &amp; 9</span><span class="tag">Entry Hash &amp; Dollars</span></div>
+            <h3>3. Entry Hash &amp; Debit/Credit Dollar Balancing</h3>
+            <p>Recomputes the 10-digit Entry Hash (rightmost 10 digits of summed 8-digit RDFI transit numbers), Entry/Addenda counts, Block Count, and exact integer-cent Debit (`27`/`37`) &amp; Credit (`22`/`32`) totals.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div><strong>FinOps Studio</strong> &mdash; Deterministic Banking, Payroll &amp; E-Invoicing Cloud APIs (<a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>).</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="./index.html">Home</a>
+          <a href="./nacha-ach-file-generator.html">NACHA API</a>
+          <a href="./nacha-ach-return-codes-r01-r02-r03-r10-r29-sec-codes-guide.html">ACH Return Codes</a>
+          <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">CSV Mapper</a>
+          <a href="./sitemap.xml">Sitemap</a>
+          <a href="./llms.txt">llms.txt</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var PAD94 = "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999";
+    var CLEAN_ACH = [
+      "101 02100002119876543212611140800A094101JPMORGAN CHASE         ACME US CORP                   ",
+      "5220ACME US CORP                        1987654321PPDPAYROLL   261114261118   1021000020000001",
+      "622021000021449012398        0000245000EMP-101        SARAH JENKINS           0021000020000001",
+      "622121000358883920114        0000318075EMP-102        MARCUS VANCE            0021000020000002",
+      "822000000200142000370000000000000000005630751987654321                         021000020000001",
+      "9000001000001000000020014200037000000000000000000563075                                       ",
+      PAD94,
+      PAD94,
+      PAD94,
+      PAD94
+    ].join("\n");
+
+    var BROKEN_ACH = [
+      "101 02100002119876543212611140800A094101JPMORGAN CHASE         ACME US CORP                   ",
+      "5220ACME US CORP                        1987654321PPDPAYROLL   261114261118   1021000020000001",
+      "622021000029449012398        0000245000EMP-101        SARAH JENKINS           0021000020000001",
+      "622121000358883920114        0000318075EMP-102        MARCUS VANCE          0021000020000002",
+      "822000000200999999990000000000000000005000001987654321                         021000020000001",
+      "9000001000001000000020099999999000000000000000000500000                                       "
+    ].join("\n");
+
+    function checkAbaMod10(rt) {
+      var d = String(rt || "").replace(/\D/g, "");
+      if (d.length !== 9) return false;
+      var s = 3 * (+d[0] + +d[3] + +d[6]) + 7 * (+d[1] + +d[4] + +d[7]) + (+d[2] + +d[5] + +d[8]);
+      return s > 0 && s % 10 === 0;
+    }
+
+    function esc(s) {
+      return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    var rawBox = document.getElementById("achRawBox");
+    var reportBox = document.getElementById("achReportBox");
+    var badge = document.getElementById("achStatusBadge");
+    var lineChip = document.getElementById("achLineChip");
+    var totalsChip = document.getElementById("achTotalsChip");
+    var lastGeneratorJson = null;
+
+    function auditAch() {
+      var text = String(rawBox.value || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+      if (text.endsWith("\n")) text = text.slice(0, -1);
+      if (!text.trim()) {
+        reportBox.innerHTML = "<p style='color:var(--muted)'>Paste a 94-character NACHA .ACH file on the left to audit.</p>";
+        return;
+      }
+      var lines = text.split("\n");
+      lineChip.textContent = lines.length + " Lines (" + (lines.length % 10 === 0 ? "Block-10 Aligned" : "Not Multiple of 10") + ")";
+
+      var errors = [];
+      var warnings = [];
+      var passes = [];
+
+      var widthErrors = [];
+      lines.forEach(function (l, i) {
+        if (l.length !== 94) widthErrors.push("Line " + (i + 1) + " (Record <code>" + esc(l[0] || "?") + "</code>) is <strong>" + l.length + "</strong> chars (expected exact <code>94</code>).");
+      });
+      if (widthErrors.length) {
+        widthErrors.forEach(function (e) { errors.push("<strong>Fixed-Width Violation:</strong> " + e); });
+      } else {
+        passes.push("All <strong>" + lines.length + "</strong> physical lines are exact <strong>94-character</strong> width.");
+      }
+
+      if (lines.length % 10 !== 0) {
+        errors.push("<strong>Blocking Factor 10 Violation:</strong> File has <code>" + lines.length + "</code> lines; Nacha rules require padding with <code>9999...</code> filler lines to a multiple of 10 (needs <strong>" + (10 - (lines.length % 10)) + "</strong> filler line(s)).");
+      } else {
+        passes.push("Block-10 padding verified (<code>" + (lines.length / 10) + "</code> physical block(s)).");
+      }
+
+      var rec1 = null, rec5Count = 0, rec8List = [], rec9 = null, padCount = 0;
+      var entryAddendaFileCount = 0;
+      var batchEntryAddenda = 0;
+      var batchHashSum = 0;
+      var fileHashSum = 0;
+      var batchDebitCents = 0, batchCreditCents = 0;
+      var fileDebitCents = 0, fileCreditCents = 0;
+      var extractedEntries = [];
+      var headerMeta = { companyName: "ACME US CORP", companyId: "1987654321", immediateDestination: "021000021", secCode: "PPD" };
+
+      lines.forEach(function (l, idx) {
+        var ln = idx + 1;
+        if (l === PAD94 || /^9{94}$/.test(l)) {
+          padCount++;
+          return;
+        }
+        var type = l[0];
+        if (type === "1") {
+          rec1 = l;
+          var immDest = l.slice(3, 13).trim();
+          headerMeta.immediateDestination = immDest;
+          if (!checkAbaMod10(immDest)) {
+            errors.push("<strong>Record 1 (Line " + ln + ") Invalid Immediate Destination ABA:</strong> <code>" + esc(immDest) + "</code> fails Federal Reserve MOD-10.");
+          } else {
+            passes.push("Record 1 Immediate Destination ABA <code>" + esc(immDest) + "</code> passed MOD-10.");
+          }
+          if (l.slice(34, 37) !== "094" || l.slice(37, 39) !== "10") {
+            warnings.push("Record 1 (Line " + ln + "): Record Size/Blocking Factor is <code>" + esc(l.slice(34, 39)) + "</code> (standard is <code>09410</code>).");
+          }
+        } else if (type === "5") {
+          rec5Count++;
+          batchEntryAddenda = 0;
+          batchHashSum = 0;
+          batchDebitCents = 0;
+          batchCreditCents = 0;
+          headerMeta.companyName = l.slice(4, 20).trim() || headerMeta.companyName;
+          headerMeta.companyId = l.slice(40, 50).trim() || headerMeta.companyId;
+          headerMeta.secCode = l.slice(50, 53).trim() || "PPD";
+        } else if (type === "6") {
+          batchEntryAddenda++;
+          entryAddendaFileCount++;
+          var txCode = l.slice(1, 3);
+          var rdfi8 = l.slice(3, 11);
+          var chkDigit = l.slice(11, 12);
+          var fullAba = rdfi8 + chkDigit;
+          if (!checkAbaMod10(fullAba)) {
+            errors.push("<strong>R13 / R04 Bad ABA Routing (Line " + ln + "):</strong> Entry Detail routing <code>" + esc(fullAba) + "</code> fails 10-point [3,7,1] MOD-10 checksum.");
+          }
+          batchHashSum += parseInt(rdfi8, 10) || 0;
+          var amtCents = parseInt(l.slice(29, 39), 10) || 0;
+          var isDebit = ["27", "28", "29", "37", "38", "39"].indexOf(txCode) !== -1;
+          if (isDebit) {
+            batchDebitCents += amtCents;
+            fileDebitCents += amtCents;
+          } else {
+            batchCreditCents += amtCents;
+            fileCreditCents += amtCents;
+          }
+          extractedEntries.push({
+            transactionCode: txCode,
+            routingNumber: fullAba,
+            accountNumber: l.slice(12, 29).trim(),
+            amount: +(amtCents / 100).toFixed(2),
+            individualId: l.slice(39, 54).trim() || ("ID-" + extractedEntries.length),
+            individualName: l.slice(54, 76).trim() || "PAYEE"
+          });
+        } else if (type === "7") {
+          batchEntryAddenda++;
+          entryAddendaFileCount++;
+        } else if (type === "8") {
+          rec8List.push(l);
+          var declCount = parseInt(l.slice(4, 10), 10) || 0;
+          var declHash = l.slice(10, 20);
+          var expectedHash = String(batchHashSum % 10000000000).padStart(10, "0");
+          fileHashSum += batchHashSum;
+          var declDebit = parseInt(l.slice(20, 32), 10) || 0;
+          var declCredit = parseInt(l.slice(32, 44), 10) || 0;
+
+          if (declCount !== batchEntryAddenda) {
+            errors.push("<strong>Record 8 Entry/Addenda Count Mismatch (Line " + ln + "):</strong> Declared <code>" + declCount + "</code>, actual <code>" + batchEntryAddenda + "</code>.");
+          }
+          if (declHash !== expectedHash) {
+            errors.push("<strong>Record 8 Entry Hash Mismatch (Line " + ln + "):</strong> Declared <code>" + esc(declHash) + "</code>, computed 8-digit RDFI sum is <code>" + expectedHash + "</code>.");
+          } else {
+            passes.push("Batch Control (Record 8) Entry Hash verified (<code>" + expectedHash + "</code>).");
+          }
+          if (declDebit !== batchDebitCents || declCredit !== batchCreditCents) {
+            errors.push("<strong>Record 8 Dollar Total Mismatch (Line " + ln + "):</strong> Declared Credit <code>$" + (declCredit / 100).toFixed(2) + "</code> / Debit <code>$" + (declDebit / 100).toFixed(2) + "</code> vs computed Credit <code>$" + (batchCreditCents / 100).toFixed(2) + "</code> / Debit <code>$" + (batchDebitCents / 100).toFixed(2) + "</code>.");
+          }
+        } else if (type === "9") {
+          rec9 = l;
+          var fBatches = parseInt(l.slice(1, 7), 10) || 0;
+          var fBlocks = parseInt(l.slice(7, 13), 10) || 0;
+          var fEntries = parseInt(l.slice(13, 21), 10) || 0;
+          var fHash = l.slice(21, 31);
+          var expectedFileHash = String(fileHashSum % 10000000000).padStart(10, "0");
+          var fDebit = parseInt(l.slice(31, 43), 10) || 0;
+          var fCredit = parseInt(l.slice(43, 55), 10) || 0;
+          var expectedBlocks = Math.ceil(lines.length / 10);
+
+          if (fBatches !== rec5Count) errors.push("<strong>Record 9 Batch Count Mismatch:</strong> Declared <code>" + fBatches + "</code>, actual <code>" + rec5Count + "</code>.");
+          if (fBlocks !== expectedBlocks) warnings.push("Record 9 Block Count is <code>" + fBlocks + "</code> (expected <code>" + expectedBlocks + "</code> for " + lines.length + " lines).");
+          if (fEntries !== entryAddendaFileCount) errors.push("<strong>Record 9 Entry/Addenda Count Mismatch:</strong> Declared <code>" + fEntries + "</code>, actual <code>" + entryAddendaFileCount + "</code>.");
+          if (fHash !== expectedFileHash) {
+            errors.push("<strong>Record 9 File Entry Hash Mismatch:</strong> Declared <code>" + esc(fHash) + "</code>, expected <code>" + expectedFileHash + "</code>.");
+          } else {
+            passes.push("File Control (Record 9) Entry Hash &amp; totals reconciled (<code>" + expectedFileHash + "</code>).");
+          }
+          if (fDebit !== fileDebitCents || fCredit !== fileCreditCents) {
+            errors.push("<strong>Record 9 File Dollar Total Mismatch:</strong> Declared Credit <code>$" + (fCredit / 100).toFixed(2) + "</code> / Debit <code>$" + (fDebit / 100).toFixed(2) + "</code> vs actual Credit <code>$" + (fileCreditCents / 100).toFixed(2) + "</code> / Debit <code>$" + (fileDebitCents / 100).toFixed(2) + "</code>.");
+          }
+        }
+      });
+
+      if (!rec1) errors.push("Missing File Header Record (<code>1</code>).");
+      if (!rec9) errors.push("Missing File Control Record (<code>9</code>).");
+
+      totalsChip.textContent = "$" + (fileCreditCents / 100).toFixed(2) + " Cr / $" + (fileDebitCents / 100).toFixed(2) + " Dr (" + extractedEntries.length + " entries)";
+      lastGeneratorJson = {
+        mode: "generate",
+        secCode: headerMeta.secCode,
+        immediateDestination: headerMeta.immediateDestination,
+        immediateDestinationName: "CLEARING BANK",
+        immediateOrigin: headerMeta.companyId,
+        immediateOriginName: headerMeta.companyName,
+        companyName: headerMeta.companyName,
+        companyId: headerMeta.companyId,
+        companyEntryDescription: "PAYROLL",
+        originatingDfiId: headerMeta.immediateDestination.slice(0, 8),
+        effectiveEntryDate: "261120",
+        entries: extractedEntries
+      };
+
+      var html = "";
+      if (errors.length === 0 && warnings.length === 0) {
+        badge.textContent = "PASS — BANK UPLOAD READY";
+        badge.className = "status-chip status-ok";
+        html += "<div style='padding:10px 12px;border-radius:8px;background:rgba(16,185,129,0.14);border:1px solid rgba(16,185,129,0.4);color:#6ee7b7;font-weight:700;margin-bottom:10px;'>&#9989; 0 NACHA Structural or Checksum Errors (" + padCount + " Block-10 filler lines)</div>";
+      } else if (errors.length > 0) {
+        badge.textContent = errors.length + " NACHA REJECTION ERROR(S)";
+        badge.className = "status-chip";
+        html += "<div style='padding:10px 12px;border-radius:8px;background:rgba(239,68,68,0.14);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;font-weight:700;margin-bottom:10px;'>&#10060; " + errors.length + " Blocking Bank Rejection Issue(s) Detected</div>";
+      } else {
+        badge.textContent = warnings.length + " ADVISORY WARNING(S)";
+        badge.className = "status-chip";
+      }
+
+      if (errors.length) html += "<div style='margin-bottom:10px;'>" + errors.map(function (e) { return "<div style='margin-bottom:6px;color:#fecaca;'>&#10060; " + e + "</div>"; }).join("") + "</div>";
+      if (warnings.length) html += "<div style='margin-bottom:10px;'>" + warnings.map(function (w) { return "<div style='margin-bottom:6px;color:#fde68a;'>&#9888;&#65039; " + w + "</div>"; }).join("") + "</div>";
+      if (passes.length) html += "<div>" + passes.map(function (p) { return "<div style='margin-bottom:5px;color:#a7f3d0;'>&#9989; " + p + "</div>"; }).join("") + "</div>";
+      reportBox.innerHTML = html;
+    }
+
+    document.getElementById("btnAchClean").addEventListener("click", function () { rawBox.value = CLEAN_ACH; auditAch(); });
+    document.getElementById("btnAchBroken").addEventListener("click", function () { rawBox.value = BROKEN_ACH; auditAch(); });
+    rawBox.addEventListener("input", auditAch);
+
+    document.getElementById("achFileInput").addEventListener("change", function (e) {
+      var f = e.target.files && e.target.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function (ev) { rawBox.value = String(ev.target.result || ""); auditAch(); };
+      reader.readAsText(f);
+    });
+
+    document.getElementById("btnCopyAchJson").addEventListener("click", function () {
+      var btn = document.getElementById("btnCopyAchJson");
+      if (!lastGeneratorJson) return;
+      navigator.clipboard.writeText(JSON.stringify(lastGeneratorJson, null, 2));
+      btn.textContent = "Copied Clean NACHA JSON!";
+      if (window.finopsTrack) window.finopsTrack("action_copy_curl");
+      setTimeout(function () { btn.textContent = "Copy Clean Generator JSON"; }, 1800);
+    });
+
+    rawBox.value = BROKEN_ACH;
+    auditAch();
+  })();
+  </script>
+</body>
+</html>
