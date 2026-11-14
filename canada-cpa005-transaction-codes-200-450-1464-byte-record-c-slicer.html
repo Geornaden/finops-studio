@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canadian CPA-005 Transaction Codes (200, 450, 700), EFT Return Codes (900–920) &amp; 1,464-Byte Record A/C/Z Unpacker | FinOps Studio</title>
+  <meta name="description" content="Searchable Payments Canada Standard 005 (CPA-005) EFT Transaction Codes (200 Payroll, 450 AP, 700 Business PAD), EFT Return Codes (901 NSF, 902, 905, 916), Canadian Bank Institution IDs (001–815) &amp; Free 1,464-Byte Record A/C/D/Z Segment Unpacker." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/canada-cpa005-transaction-codes-200-450-1464-byte-record-c-slicer.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Canadian CPA-005 Transaction Codes (200, 450, 700), Return Codes & 1,464-Byte Segment Unpacker | FinOps Studio" />
+  <meta property="og:description" content="Unpack 1,464-character Payments Canada CPA-005 EFT records (6×240-byte segments), convert MICR XXXXX-YYY to 0YYYXXXXX & 0YYDDD Julian dates, and generate CPA-005 files via $0/mo API." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/canada-cpa005-transaction-codes-200-450-1464-byte-record-c-slicer.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Canadian Payments Canada Standard 005 (CPA-005) Transaction Codes (200, 230, 450, 700), Return Codes (900–920) & 1,464-Byte Segment Unpacker",
+        "url": "https://geornaden.github.io/finops-studio/canada-cpa005-transaction-codes-200-450-1464-byte-record-c-slicer.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Complete Canadian CPA, payroll, treasury, and software engineering guide to 1,464-character CPA-005 EFT Direct Deposit and Pre-Authorized Debit (PAD) files across RBC Express, TD Commercial, BMO, ScotiaConnect, CIBC CMO, National Bank, and Desjardins."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which CPA-005 Transaction Code should I use for Canadian payroll vs vendor AP vs Business PAD?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under Payments Canada Standard 005, use CPA Code 200 for regular employee payroll Direct Deposit (or 201 for special/bonus payroll), CPA Code 450 (Miscellaneous Payment) or 460 (Accounts Payable) for B2B supplier/vendor EFT credits and standard PADs, CPA Code 452 for employee expense reimbursements, and CPA Code 700 for Business Pre-Authorized Debits (Business PAD under Rule H1)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How are six 240-byte payment segments packed inside a 1,464-character CPA-005 Record C or Record D line?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Every CPA-005 Record C (Direct Deposit Credit) or Record D (Pre-Authorized Debit) starts with a 24-character logical header (Record Type, 9-digit Logical Record Count, 10-character Originator ID, and 4-digit File Creation Number) followed by exactly 6 slots of 240 characters each (24 + 6 × 240 = 1,464 characters). Unused trailing slots on the final physical line are padded with ASCII spaces."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between Canadian EFT Return Code 916 and Return Code 920?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under Payments Canada Rule H1, Return Code 916 ('Not in Accordance with Agreement — Personal PAD') applies to consumer Pre-Authorized Debits and carries a 90-calendar-day reimbursement window, whereas Return Code 920 ('Not in Accordance with Agreement — Business PAD', CPA Code 700) applies to B2B commercial debits and carries a much shorter 10-business-day return window."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./canada-cpa-005-eft-file-generator.html">CPA-005 Spec</a>
+        <a href="./csv-to-canada-cpa-005-eft-rbc-td-bmo-scotiabank.html">RBC / TD / BMO Guide</a>
+        <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">CA Transit Converter</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/canada-cpa005-eft-generator" target="_blank" rel="noopener">Launch Live CPA-005 API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127464;&#127462; Payments Canada Standard 005 &amp; Rule H1 Reference &bull; 1,464-Byte EFT API &bull; C$0 / $0 Monthly Fee</span>
+      <h1>Canadian <code>CPA-005</code> Transaction Codes (<code>200</code>, <code>450</code>, <code>700</code>), EFT Returns (<code>900–920</code>) &amp; 1,464-Byte Unpacker</h1>
+      <p>Lookup every <strong>Payments Canada Standard 005</strong> CPA Transaction Code, Rule H1 EFT/PAD Return Reason, and 3-digit Institution ID for <strong>RBC Express</strong>, <strong>TD Web Business Banking</strong>, <strong>BMO Online for Business</strong>, <strong>ScotiaConnect</strong>, <strong>CIBC CMO</strong>, <strong>National Bank</strong>, and <strong>Desjardins</strong>—and unpack 1,464-byte <code>Record A / C / D / Z</code> segments in your browser.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/canada-cpa005-eft-generator" target="_blank" rel="noopener">Generate 1,464-Byte CPA-005 Files ($0.02/row) &rarr;</a>
+        <a class="btn btn-outline" href="./csv-to-canada-cpa-005-eft-rbc-td-bmo-scotiabank.html">RBC / TD / BMO / Scotia CSV Guide</a>
+        <a class="btn btn-outline" href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Convert XXXXX-YYY &harr; 0YYYXXXXX</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <h2 style="margin:0;">Searchable Payments Canada CPA-005, Return &amp; Institution Directory</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline cpa-filter" data-cat="ALL" style="padding:6px 12px;font-size:0.8rem;">All (28)</button>
+          <button type="button" class="btn btn-outline cpa-filter" data-cat="TX" style="padding:6px 12px;font-size:0.8rem;">CPA Codes (200–700)</button>
+          <button type="button" class="btn btn-outline cpa-filter" data-cat="RET" style="padding:6px 12px;font-size:0.8rem;">Returns (900–920)</button>
+          <button type="button" class="btn btn-outline cpa-filter" data-cat="INST" style="padding:6px 12px;font-size:0.8rem;">Bank IDs (001–815)</button>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <input id="cpaSearch" type="search" placeholder="Search code or bank (e.g. 200, 450, 460, 700, 901 NSF, 905, 916, 920, 003 RBC, 004 TD, 815 Desjardins, PAD)..." style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.92rem;" />
+      </div>
+      <div style="overflow-x:auto;margin-top:14px;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+              <th style="padding:10px;">Code</th>
+              <th style="padding:10px;">Category / Window</th>
+              <th style="padding:10px;">Official Payments Canada Meaning</th>
+              <th style="padding:10px;">Actionable Canadian Finance &amp; Engineering Rule</th>
+            </tr>
+          </thead>
+          <tbody id="cpaTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <span class="tag">100% Client-Side 1,464-Byte Record A/C/D/Z Segment Unpacker</span>
+      <h2 style="margin:10px 0 8px;">Instant 1,464-Character <code>CPA-005</code> Record &amp; <code>6&times;240-Byte</code> Segment Slicer</h2>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0;">Paste any 1,464-character physical line from your <code>.eft</code> / <code>.dat</code> file—or click a preset below—to unpack the 24-byte header, decode <code>0YYDDD</code> Julian dates, inspect all 6 packed 240-byte payment segments, and verify <code>0YYYXXXXX</code> routing:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+        <button type="button" class="btn btn-outline cpa-preset" data-kind="A" style="padding:5px 10px;font-size:0.78rem;">Load Record A Header (1,464 bytes)</button>
+        <button type="button" class="btn btn-outline cpa-preset" data-kind="C" style="padding:5px 10px;font-size:0.78rem;">Load Record C (2 Packed Payees, 1,464 bytes)</button>
+        <button type="button" class="btn btn-outline cpa-preset" data-kind="Z" style="padding:5px 10px;font-size:0.78rem;">Load Record Z Control Trailer (1,464 bytes)</button>
+      </div>
+      <textarea id="cpaLineInput" rows="3" spellcheck="false" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#34d399;font-family:monospace;font-size:0.78rem;"></textarea>
+      <pre id="cpaLineOut" class="code-box" style="margin-top:12px;min-height:230px;font-size:0.8rem;"></pre>
+
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(148,163,184,0.16);display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+        <label for="cpaDatePicker" style="font-size:0.85rem;color:var(--muted);"><strong>Calendar &rarr; CPA-005 6-Digit Julian Date (<code>0YYDDD</code>):</strong></label>
+        <input id="cpaDatePicker" type="date" value="2026-11-18" style="padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.85rem;" />
+        <code id="cpaJulianOut" style="padding:6px 12px;border-radius:6px;background:rgba(52,211,153,0.12);color:#34d399;font-size:0.88rem;">CPA Julian: "026322" (Day 322 of 2026)</code>
+      </div>
+    </section>
+
+    <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="sandbox-card">
+        <span class="tag">Production Cloud API ($0/mo + $0.02/row)</span>
+        <h3 style="margin:10px 0 8px;">Generate Strict 1,464-Byte CPA-005 Files via REST</h3>
+        <p style="color:var(--muted);font-size:0.88rem;">Automatically builds <code>0YYYXXXXX</code> routing from 3-digit Institution + 5-digit Transit, converts ISO dates to <code>0YYDDD</code>, packs 6 segments per line, and balances <code>Record Z</code>:</p>
+        <pre class="code-box" style="font-size:0.76rem;min-height:225px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~canada-cpa005-eft-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "originatorId": "MAPLETECH1",
+    "originatorShortName": "MAPLE TECH INC",
+    "originatorLongName": "MAPLE TECH SOLUTIONS INC",
+    "destinationDataCentre": "00300",
+    "fileCreationNumber": "0014",
+    "returnInstitution": "003",
+    "returnTransit": "00012",
+    "returnAccount": "1004589",
+    "dueDate": "2026-11-18",
+    "transactions": [
+      {
+        "name": "SOPHIE TREMBLAY",
+        "institution": "004",
+        "transit": "10242",
+        "accountNumber": "5548912",
+        "amount": 2950.75,
+        "cpaCode": "200",
+        "reference": "PAY-2026-23"
+      }
+    ]
+  }'</pre>
+      </div>
+
+      <div class="sandbox-card">
+        <span class="tag">Official MCP Registry (#1 Global Rank)</span>
+        <h3 style="margin:10px 0 8px;">Top 4 CPA-005 Upload Rejections (Code 900) Solved</h3>
+        <ul style="color:var(--muted);font-size:0.85rem;line-height:1.55;margin-top:6px;">
+          <li><strong>Reversed Cheque MICR Order:</strong> Cheques show <code>Transit-Inst</code> (<code>10242-004</code>), whereas CPA-005 requires <code>0 + Inst + Transit</code> (<code>000410242</code>).</li>
+          <li><strong>Duplicate File Creation Number (FCN):</strong> Cols <code>21–24</code> (<code>0001–9999</code>) must increment on every submission to RBC/TD/BMO.</li>
+          <li><strong>Short Final Record C Line:</strong> Even if your last line has only 1 or 2 payees, bytes <code>0265–1464</code> must be space-padded to exact <code>1,464</code> chars.</li>
+          <li><strong>5-Digit vs 6-Digit Julian Date:</strong> CPA-005 mandates leading <code>'0'</code> (<code>0YYDDD</code>, e.g. <code>026322</code>), unlike UK BACS (<code>' 26322'</code>).</li>
+        </ul>
+        <pre class="code-box" style="font-size:0.76rem;min-height:115px;">{
+  "mcpServers": {
+    "canada-cpa005": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/canada-cpa005-eft-generator",
+      "headers": { "Authorization": "Bearer YOUR_APIFY_API_TOKEN" }
+    }
+  }
+}</pre>
+      </div>
+    </div>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">Frequently Asked Canadian CPA-005 &amp; Rule H1 EFT Questions</h2>
+      <div class="faq-item">
+        <h4>Can the same CPA-005 format handle both CAD and USD Canadian bank accounts?</h4>
+        <p>Yes. Record <code>A</code> columns <code>56–58</code> specify either <code>CAD</code> or <code>USD</code> (note that USD EFT batches must settle between USD-denominated accounts held at Canadian financial institutions under Payments Canada rules).</p>
+      </div>
+      <div class="faq-item">
+        <h4>Why should B2B SaaS &amp; wholesale platforms use CPA Code 700 instead of 450 for commercial Pre-Authorized Debits?</h4>
+        <p>Tagging commercial B2B collections with CPA Code <code>700</code> (<em>Business PAD</em>) classifies the entry under Payments Canada Rule H1 Business PAD rules—limiting unauthorized/dispute return windows (`Code 920`) to <strong>10 business days</strong> instead of the <strong>90 calendar days</strong> granted to consumer Personal PADs (`Code 916`).</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio Home</a> &bull;
+      <a href="./canada-cpa-005-eft-file-generator.html">Canadian CPA-005 API</a> &bull;
+      <a href="./csv-to-canada-cpa-005-eft-rbc-td-bmo-scotiabank.html">RBC / TD / BMO CSV Guide</a> &bull;
+      <a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Global Payroll</a> &bull;
+      <a href="./openapi.json">OpenAPI 3.1</a>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var CODES = [
+      { code: "200", cat: "TX", win: "Record C Credit (Seg 01–03)", name: "Payroll Direct Deposit", fix: "Primary CPA code for regular Canadian employee salary & wage Direct Deposit runs." },
+      { code: "201", cat: "TX", win: "Record C Credit (Seg 01–03)", name: "Special Payroll Deposit", fix: "Used for off-cycle payroll, bonuses, commissions, and retroactive pay adjustments." },
+      { code: "202", cat: "TX", win: "Record C Credit (Seg 01–03)", name: "Vacation Pay Deposit", fix: "Dedicated vacation payout classification." },
+      { code: "230", cat: "TX", win: "Record C Credit (Seg 01–03)", name: "Pension Payment", fix: "Used by pension plans and group RRSP/RPP administrators." },
+      { code: "250", cat: "TX", win: "Record C Credit (Seg 01–03)", name: "Interest Payment", fix: "GIC, bond, or deposit interest distribution." },
+      { code: "260", cat: "TX", win: "Record C Credit (Seg 01–03)", name: "Dividend Payment", fix: "Canadian corporate share dividend credit." },
+      { code: "450", cat: "TX", win: "Record C or D (Seg 01–03)", name: "Miscellaneous Payment (Standard AP / PAD)", fix: "Universal workhorse code accepted by RBC, TD, BMO, Scotiabank & CIBC for supplier AP credits and general PADs." },
+      { code: "451", cat: "TX", win: "Record C Credit (Seg 01–03)", name: "Customer Refund / Rebate", fix: "Consumer or commercial credit refund." },
+      { code: "452", cat: "TX", win: "Record C Credit (Seg 01–03)", name: "Expense Payment / Reimbursement", fix: "Employee travel & expense (T&E) reimbursement credit—keeps T4 payroll (200) separate from non-taxable expenses." },
+      { code: "460", cat: "TX", win: "Record C Credit (Seg 01–03)", name: "Accounts Payable Settlement", fix: "Explicit B2B trade supplier invoice settlement code." },
+      { code: "470", cat: "TX", win: "Record D Debit (Seg 01–03)", name: "Fees or Dues (PAD)", fix: "Recurring membership, association, SaaS subscription, or condo/strata fee Pre-Authorized Debit." },
+      { code: "370", cat: "TX", win: "Record D Debit (Seg 01–03)", name: "Lease or Rent Payment (PAD)", fix: "Residential or commercial property management rent collection." },
+      { code: "700", cat: "TX", win: "Record D Debit (Rule H1 B2B)", name: "Business Pre-Authorized Debit (Business PAD)", fix: "B2B commercial debit between businesses; enforces shorter 10-business-day Rule H1 return window." },
+      { code: "900", cat: "RET", win: "Gateway File / Edit Reject", name: "Edit Reject (Formatting / Routing Error)", fix: "Invalid 1,464-byte record width, duplicate File Creation Number (FCN), bad 0YYYXXXXX routing, or invalid 0YYDDD date." },
+      { code: "901", cat: "RET", win: "Dishonoured Item (1 Bus. Day)", name: "NSF — Non-Sufficient Funds", fix: "Payor account lacked cleared funds. Under Rule H1, you may re-present once within 30 days for the exact same amount." },
+      { code: "902", cat: "RET", win: "Dishonoured Item", name: "Account Not Found", fix: "12-char account number or 5-digit branch transit does not exist at receiving FI. Request VOID cheque / bank letter." },
+      { code: "903", cat: "RET", win: "Dishonoured Item", name: "Payment Stopped / Recalled", fix: "Payor placed a stop payment at their bank; contact customer before attempting any future debit." },
+      { code: "905", cat: "RET", win: "Dishonoured Item", name: "Account Closed", fix: "Bank account is closed; deactivate recurring PAD schedule immediately in ERP/billing." },
+      { code: "907", cat: "RET", win: "Dishonoured Item", name: "No Debit Allowed on Account", fix: "Account is deposit-only or has a corporate PAD debit block; ask customer for chequing account or Originator ID allowlist." },
+      { code: "908", cat: "RET", win: "Dishonoured Item", name: "Funds Not Cleared", fix: "Deposit in payor's account is still on hold; coordinate retry after hold release." },
+      { code: "914", cat: "RET", win: "Dishonoured Item", name: "Payor / Payee Deceased", fix: "Freeze automated debits/credits immediately and route to estate administration." },
+      { code: "916", cat: "RET", win: "90 Calendar Days (Consumer)", name: "Not in Accordance with Agreement (Personal PAD)", fix: "Consumer disputes authorization or notice under Rule H1; maintain signed/electronic PAD mandate audit trail." },
+      { code: "920", cat: "RET", win: "10 Business Days (Commercial)", name: "Not in Accordance with Agreement (Business PAD)", fix: "Corporate payor disputes Business PAD (Code 700) within 10 business days." },
+      { code: "003", cat: "INST", win: "Routing 0003XXXXX • DC 00300", name: "Royal Bank of Canada (RBC Express)", fix: "3-digit Institution 003 (also absorbed former HSBC Bank Canada 016 accounts)." },
+      { code: "004", cat: "INST", win: "Routing 0004XXXXX • DC 00400", name: "TD Canada Trust (Web Business Banking)", fix: "3-digit Institution 004; 5-digit branch transit XXXXX placed at positions 5–9 of 0004XXXXX." },
+      { code: "001", cat: "INST", win: "Routing 0001XXXXX • DC 00100", name: "Bank of Montreal (BMO Online for Business)", fix: "Canada's oldest bank — 3-digit Institution 001." },
+      { code: "002", cat: "INST", win: "Routing 0002XXXXX • DC 00200", name: "Scotiabank (ScotiaConnect)", fix: "3-digit Institution 002 (Tangerine Direct is Institution 614 -> 0614XXXXX)." },
+      { code: "010 / 006 / 815", cat: "INST", win: "0010 / 0006 / 0815XXXXX", name: "CIBC (010), National Bank (006) & Desjardins (815)", fix: "Major commercial clearing institutions across Ontario, Quebec (Caisses Desjardins 815), and national markets." }
+    ];
+
+    var activeCat = "ALL";
+    var searchEl = document.getElementById("cpaSearch");
+    var tbody = document.getElementById("cpaTableBody");
+
+    function renderTable() {
+      var q = (searchEl.value || "").trim().toLowerCase();
+      var rows = CODES.filter(function (item) {
+        if (activeCat !== "ALL" && item.cat !== activeCat) return false;
+        if (!q) return true;
+        return (item.code + " " + item.win + " " + item.name + " " + item.fix).toLowerCase().indexOf(q) !== -1;
+      });
+      tbody.innerHTML = rows.map(function (r) {
+        return '<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">' +
+          '<td style="padding:10px;font-family:monospace;font-weight:700;color:#38bdf8;white-space:nowrap;">' + r.code + '</td>' +
+          '<td style="padding:10px;color:var(--muted);white-space:nowrap;">' + r.win + '</td>' +
+          '<td style="padding:10px;font-weight:600;">' + r.name + '</td>' +
+          '<td style="padding:10px;color:#cbd5e1;">' + r.fix + '</td>' +
+        '</tr>';
+      }).join("") || '<tr><td colspan="4" style="padding:14px;color:var(--muted);">No matching Canadian CPA-005 codes found.</td></tr>';
+    }
+
+    document.querySelectorAll(".cpa-filter").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        activeCat = btn.getAttribute("data-cat");
+        renderTable();
+      });
+    });
+    searchEl.addEventListener("input", renderTable);
+    renderTable();
+
+    function padRight(s, n) { return String(s).slice(0, n).padEnd(n, " "); }
+    function padNum(s, n) { return String(s).slice(0, n).padStart(n, "0"); }
+
+    function makeSeg(code, cents, jul, inst9, acct, trace, shortN, payee, longN, origId, ref, ret9, retAcct) {
+      return (
+        padNum(code, 3) +
+        padNum(cents, 10) +
+        padNum(jul, 6) +
+        padNum(inst9, 9) +
+        padRight(acct, 12) +
+        padNum(trace, 22) +
+        "000" +
+        padRight(shortN, 15) +
+        padRight(payee, 30) +
+        padRight(longN, 30) +
+        padRight(origId, 10) +
+        padRight(ref, 19) +
+        padNum(ret9, 9) +
+        padRight(retAcct, 12) +
+        padRight("", 15) +
+        padRight("", 22) +
+        "  " +
+        "00000000000"
+      );
+    }
+
+    var PRESETS = {
+      A: "A" + "000000001" + padRight("MAPLETECH1", 10) + "0014" + "026317" + "00300" + "".padEnd(20, " ") + "CAD" + "".padEnd(1406, " "),
+      C: "C" + "000000002" + padRight("MAPLETECH1", 10) + "0014" +
+         makeSeg("200", "295075", "026322", "000410242", "5548912", "0003000120014000000001", "MAPLE TECH INC", "SOPHIE TREMBLAY", "MAPLE TECH SOLUTIONS INC", "MAPLETECH1", "PAY-2026-23-01", "000300012", "1004589") +
+         makeSeg("200", "312000", "026322", "000100022", "8891204", "0003000120014000000002", "MAPLE TECH INC", "MARC BOUCHARD", "MAPLE TECH SOLUTIONS INC", "MAPLETECH1", "PAY-2026-23-02", "000300012", "1004589") +
+         "".padEnd(4 * 240, " "),
+      Z: "Z" + "000000003" + padRight("MAPLETECH1", 10) + "0014" + padNum("0", 14) + padNum("0", 8) + padNum("607075", 14) + padNum("2", 8) + "".padEnd(1396, " ")
+    };
+
+    function decodeCpaJulian(j) {
+      var m = /^0(\d{2})(\d{3})$/.exec(j);
+      if (!m) return "ERR (expected 6-digit 0YYDDD)";
+      var yr = 2000 + parseInt(m[1], 10);
+      var doy = parseInt(m[2], 10);
+      if (doy < 1 || doy > 366) return "ERR (invalid day " + doy + ")";
+      var dt = new Date(Date.UTC(yr, 0, doy));
+      return dt.toISOString().slice(0, 10) + " (Day " + doy + " of " + yr + ")";
+    }
+
+    var lineIn = document.getElementById("cpaLineInput");
+    var lineOut = document.getElementById("cpaLineOut");
+
+    function inspectCpa() {
+      var raw = (lineIn.value || "").replace(/\r?\n/g, "");
+      var lenStatus = raw.length === 1464
+        ? "PASS (Exact 1,464 ASCII bytes)"
+        : "FAIL (Length is " + raw.length + " bytes — Payments Canada CPA-005 requires exact 1,464 bytes)";
+      var rType = raw.slice(0, 1);
+      var lrc = raw.slice(1, 10);
+      var origId = raw.slice(10, 20);
+      var fcn = raw.slice(20, 24);
+
+      var headerLines = [
+        "Line Width Check       : " + lenStatus,
+        "[0001]      Record Type: '" + rType + "' (" + (rType === "A" ? "Header" : rType === "C" ? "Direct Deposit Credit" : rType === "D" ? "Pre-Authorized Debit" : rType === "Z" ? "Control Trailer" : "Unknown") + ")",
+        "[0002–0010] Rec Count  : " + lrc,
+        "[0011–0020] Originator : \"" + origId + "\" (10 chars)",
+        "[0021–0024] File Cr No : \"" + fcn + "\" (4-digit FCN)"
+      ];
+
+      if (rType === "A") {
+        var crJul = raw.slice(24, 30);
+        var dc = raw.slice(30, 35);
+        var curr = raw.slice(55, 58);
+        lineOut.textContent = headerLines.concat([
+          "[0025–0030] CreateDate : \"" + crJul + "\" -> " + decodeCpaJulian(crJul),
+          "[0031–0035] DataCentre : \"" + dc + "\" (5-digit Destination Data Centre)",
+          "[0056–0058] Currency   : \"" + curr + "\" (CAD or USD)",
+          "[0059–1464] Filler     : " + (raw.slice(58).length) + " trailing space bytes"
+        ]).join("\n");
+        return;
+      }
+
+      if (rType === "Z") {
+        var drVal = parseInt(raw.slice(24, 38), 10) || 0;
+        var drCnt = parseInt(raw.slice(38, 46), 10) || 0;
+        var crVal = parseInt(raw.slice(46, 60), 10) || 0;
+        var crCnt = parseInt(raw.slice(60, 68), 10) || 0;
+        lineOut.textContent = headerLines.concat([
+          "[0025–0038] Debit Total: C$" + (drVal / 100).toFixed(2) + " (" + raw.slice(24, 38) + " cents across " + drCnt + " D items)",
+          "[0047–0060] CreditTotal: C$" + (crVal / 100).toFixed(2) + " (" + raw.slice(46, 60) + " cents across " + crCnt + " C items)"
+        ]).join("\n");
+        return;
+      }
+
+      var segLines = [];
+      for (var i = 0; i < 6; i++) {
+        var start = 24 + i * 240;
+        var seg = raw.slice(start, start + 240);
+        if (!seg || !seg.trim()) {
+          segLines.push("Segment #" + (i + 1) + " [" + String(start + 1).padStart(4, "0") + "–" + String(start + 240).padStart(4, "0") + "]: (Blank space-padded 240-byte slot)");
+          continue;
+        }
+        var cpa = seg.slice(0, 3);
+        var amt = seg.slice(3, 13);
+        var due = seg.slice(13, 19);
+        var rt9 = seg.slice(19, 28);
+        var acct = seg.slice(28, 40);
+        var payee = seg.slice(80, 110);
+        var xref = seg.slice(150, 169);
+        var inst = rt9.slice(1, 4);
+        var tran = rt9.slice(4, 9);
+        segLines.push(
+          "Segment #" + (i + 1) + " [" + String(start + 1).padStart(4, "0") + "–" + String(start + 240).padStart(4, "0") + "]: CPA " + cpa +
+          " | C$" + ((parseInt(amt, 10) || 0) / 100).toFixed(2) +
+          " | Due " + due + " (" + decodeCpaJulian(due).split(" ")[0] + ")" +
+          "\n   Routing 0YYYXXXXX: " + rt9 + " (Inst " + inst + ", Transit " + tran + " / Cheque MICR " + tran + "-" + inst + ")" +
+          " | Acct: \"" + acct.trim() + "\" | Payee: \"" + payee.trim() + "\" | Ref: \"" + xref.trim() + "\""
+        );
+      }
+      lineOut.textContent = headerLines.concat(["--- Packed 6 × 240-Byte Segments ---"], segLines).join("\n");
+    }
+
+    document.querySelectorAll(".cpa-preset").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var k = btn.getAttribute("data-kind");
+        lineIn.value = PRESETS[k];
+        inspectCpa();
+      });
+    });
+    lineIn.value = PRESETS.C;
+    lineIn.addEventListener("input", inspectCpa);
+    inspectCpa();
+
+    var dtPicker = document.getElementById("cpaDatePicker");
+    var julOut = document.getElementById("cpaJulianOut");
+    function updateCpaJulian() {
+      var val = dtPicker.value;
+      if (!val) return;
+      var parts = val.split("-").map(Number);
+      var d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+      var start = new Date(Date.UTC(parts[0], 0, 0));
+      var doy = Math.round((d - start) / 86400000);
+      var yy = String(parts[0]).slice(-2);
+      var ddd = String(doy).padStart(3, "0");
+      julOut.textContent = 'CPA Julian: "0' + yy + ddd + '" (Day ' + doy + ' of ' + parts[0] + ')';
+    }
+    dtPicker.addEventListener("change", updateCpaJulian);
+    updateCpaJulian();
+  })();
+  </script>
+</body>
+</html>
