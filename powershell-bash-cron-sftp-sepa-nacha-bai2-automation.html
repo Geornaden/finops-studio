@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PowerShell, Windows Task Scheduler, Bash Cron &amp; Bank SFTP Automation (SEPA XML, NACHA ACH, BAI2, pain.002) | FinOps Studio</title>
+  <meta name="description" content="Copy-paste Windows PowerShell (Invoke-RestMethod + WinSCP SFTP) and Linux Bash cron (curl + jq + sftp) scripts to automate nightly SEPA XML, US NACHA ACH, UK BACS, Australian .ABA, BAI2 statement parsing, and pain.002 rejection decoding." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/powershell-bash-cron-sftp-sepa-nacha-bai2-automation.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="PowerShell & Linux Bash Bank SFTP Treasury Automation Playbook | FinOps Studio" />
+  <meta property="og:description" content="Automate headless corporate bank SFTP uploads and nightly BAI2 / pain.002 statement ingestion with zero-dependency PowerShell & Bash scripts ($0/mo subscription)." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/powershell-bash-cron-sftp-sepa-nacha-bai2-automation.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Headless Bank SFTP & Treasury Automation with Windows PowerShell and Linux Bash Cron (SEPA XML, NACHA ACH, BAI2, pain.002)",
+        "url": "https://geornaden.github.io/finops-studio/powershell-bash-cron-sftp-sepa-nacha-bai2-automation.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "publisher": { "@type": "Organization", "name": "FinOps Studio" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can Windows Server Task Scheduler generate SEPA XML or US NACHA .ACH files from SQL Server / ERP CSV exports without installing Python or Node?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Native Windows PowerShell 5.1+ or PowerShell 7 can read your ERP CSV folder, call FinOps Studio's synchronous Cloud API via Invoke-RestMethod over TLS 1.3, save the validated 94-character .ach or ISO 20022 pain.001 XML file locally, and push it to your bank's host-to-host SFTP gateway via OpenSSH sftp or WinSCP."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do treasury teams automate morning BAI2 statement reconciliation and pain.002 rejection alerts via Linux cron?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A 15-line Linux cron script pulls new morning BAI2 (.bai) and ISO 20022 pain.002 (.xml) files from your bank's SFTP inbox at 06:00, posts them to finops_studio~bai2-bank-statement-parser and finops_studio~iso20022-pain002-status-parser, writes normalized ERP CSV/JSON ledgers, and posts plain-English rejection fixes to Slack or Teams."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./github-actions-ci-cd-sepa-nacha-peppol-bank-file-validation.html">GitHub Actions &amp; CI</a>
+        <a href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node SDK</a>
+        <a href="./netsuite-odoo-sap-sepa-xml-bai2-nacha-automation.html">ERP SFTP Guide</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Get Free API Token ($5/Mo Credit) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#128187; Zero-Dependency Corporate IT &amp; Treasury Scripts &bull; Windows PowerShell + Linux Cron + SFTP</span>
+      <h1>Headless Bank <code>SFTP</code> Automation in <code>PowerShell</code> &amp; <code>Bash Cron</code></h1>
+      <p>Running SAP, Dynamics 365, Sage, Oracle, or SQL Server on Windows Server or Linux? Generate bank-verified <strong>SEPA XML (<code>pain.001</code>)</strong>, <strong>US NACHA (<code>.ach</code>)</strong>, <strong>UK BACS 18</strong>, <strong>Australian <code>.ABA</code></strong>, and <strong>Canadian <code>CPA-005</code></strong> outbound files—or parse morning <strong><code>BAI2</code></strong> &amp; <strong><code>pain.002</code></strong> bank SFTP drops—using pure built-in OS commands with <strong>zero SDK dependencies</strong> and <strong>$0/month fixed cost</strong>.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px;">
+        <div>
+          <label for="sftpJobSel" style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;"><strong>Step 1 — Select Treasury / SFTP Job:</strong></label>
+          <select id="sftpJobSel" style="width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.88rem;font-weight:600;">
+            <option value="nacha">Outbound: CSV / ERP &rarr; US 94-Char NACHA .ACH + Bank SFTP Upload</option>
+            <option value="sepa">Outbound: CSV / ERP &rarr; 2026 SEPA XML (pain.001.09) + Bank SFTP Upload</option>
+            <option value="bacs">Outbound: CSV / ERP &rarr; UK 100-Char BACS Standard 18 + SFTP Upload</option>
+            <option value="bai2">Inbound 06:00 AM: Bank SFTP BAI2 Statement &rarr; Reconciled JSON &amp; CSV</option>
+            <option value="pain002">Inbound: Bank SFTP pain.002 XML &rarr; Rejection Decoder &amp; Alert</option>
+          </select>
+        </div>
+        <div>
+          <label for="sftpHostInp" style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;"><strong>Step 2 — Bank SFTP Hostname (Optional):</strong></label>
+          <input id="sftpHostInp" value="sftp.corporatebank.example.com" style="width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.86rem;" />
+        </div>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Windows PowerShell 5.1 / 7 (Task Scheduler Ready)</strong></span>
+            <button id="btnCopyPs1" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">Copy .ps1</button>
+          </div>
+          <pre id="ps1CodeBox" class="code-box" style="min-height:310px;max-height:430px;overflow:auto;font-size:0.76rem;"></pre>
+        </div>
+        <div>
+          <div class="pane-label">
+            <span><strong>Linux / macOS Bash + Cron (<code>curl</code> + <code>jq</code> + <code>sftp</code>)</strong></span>
+            <button id="btnCopyBash" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">Copy .sh</button>
+          </div>
+          <pre id="bashCodeBox" class="code-box" style="min-height:310px;max-height:430px;overflow:auto;font-size:0.76rem;"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">Enterprise Production Hardening Checklist</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Zero Plaintext Secrets</span><span class="tag">Vault / Credential Mgr</span></div>
+            <h3>1. Store Tokens in OS Vault</h3>
+            <p>Read <code>$env:APIFY_TOKEN</code> from Windows Credential Manager / Azure Key Vault / AWS Secrets Manager, and authenticate to bank SFTP gateways using Ed25519 SSH keys with IP allowlisting.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Fail-Closed Gate</span><span class="tag">HTTP 4xx/5xx Halt</span></div>
+            <h3>2. Automatic Checksum Quarantine</h3>
+            <p>If an ERP export contains a mistyped IBAN or US ABA routing number, the API returns structured validation errors and your script halts <em>before</em> touching the bank's SFTP outbound folder.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">OpenAPI 3.1</span><span class="tag">9 Live Endpoints</span></div>
+            <h3>3. Works With Any Internal Tool</h3>
+            <p>Prefer Python, Node.js, GitHub Actions, n8n, or Power Automate? Import our <a href="./openapi.json">OpenAPI 3.1 Spec</a> or <a href="./workflows/finops-studio-postman-collection.json" download>Postman Collection</a> in one click.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div><strong>FinOps Studio</strong> &mdash; Deterministic Banking, Payroll &amp; E-Invoicing Cloud APIs (<a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>).</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="./index.html">Home</a>
+          <a href="./github-actions-ci-cd-sepa-nacha-peppol-bank-file-validation.html">GitHub Actions</a>
+          <a href="./python-nodejs-banking-api-cookbook-sepa-nacha-bai2-peppol.html">Python &amp; Node</a>
+          <a href="./openapi.json">OpenAPI 3.1</a>
+          <a href="./sitemap.xml">Sitemap</a>
+          <a href="./llms.txt">llms.txt</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var JOBS = {
+      nacha: {
+        actor: "finops_studio~nacha-ach-file-generator",
+        outProp: "achContent",
+        outFile: "outbound-payroll.ach",
+        mode: "outbound",
+        sampleJson: '{"mode":"generate","secCode":"PPD","immediateDestination":"021000021","companyName":"ACME US CORP","companyId":"1987654321","csvEntries":"name,routingNumber,accountNumber,amount\\nSARAH JENKINS,021000021,449012398,2450.00"}'
+      },
+      sepa: {
+        actor: "finops_studio~sepa-xml-generator",
+        outProp: "xmlString",
+        outFile: "outbound-sepa-pain001.xml",
+        mode: "outbound",
+        sampleJson: '{"schema":"pain.001.001.09","initiatingPartyName":"Acme Europe GmbH","initiatingPartyIban":"DE89370400440532013000","initiatingPartyBic":"COBADEFFXXX","transactions":[{"name":"Nordic Cloud AB","iban":"NL91ABNA0417164300","amount":1450.00,"country":"NL","townName":"Amsterdam"}]}'
+      },
+      bacs: {
+        actor: "finops_studio~uk-bacs-standard18-generator",
+        outProp: "bacsContent",
+        outFile: "outbound-uk-bacs18.txt",
+        mode: "outbound",
+        sampleJson: '{"serviceUserNumber":"123456","originatingCompanyName":"THAMES CLOUD LTD","originatingSortCode":"20-00-00","originatingAccountNumber":"12345678","payments":[{"name":"OLIVER WRIGHT","sortCode":"40-05-15","accountNumber":"87654321","amount":2845.50,"reference":"SALARY NOV26"}]}'
+      },
+      bai2: {
+        actor: "finops_studio~bai2-bank-statement-parser",
+        outProp: "csvTransactions",
+        outFile: "reconciled-bai2-ledger.csv",
+        inFile: "morning-statement.bai",
+        inProp: "bai2Text",
+        mode: "inbound"
+      },
+      pain002: {
+        actor: "finops_studio~iso20022-pain002-status-parser",
+        outProp: "csvSummary",
+        outFile: "decoded-pain002-rejections.csv",
+        inFile: "bank-status-pain002.xml",
+        inProp: "xmlContent",
+        mode: "inbound"
+      }
+    };
+
+    var jobSel = document.getElementById("sftpJobSel");
+    var hostInp = document.getElementById("sftpHostInp");
+    var ps1Box = document.getElementById("ps1CodeBox");
+    var bashBox = document.getElementById("bashCodeBox");
+
+    function renderScripts() {
+      var j = JOBS[jobSel.value];
+      var host = (hostInp.value || "sftp.corporatebank.example.com").trim();
+      var url = "https://api.apify.com/v2/acts/" + j.actor + "/run-sync-get-dataset-items";
+
+      if (j.mode === "outbound") {
+        ps1Box.textContent = [
+          "# Windows PowerShell Headless Outbound Bank File + SFTP Pipeline",
+          "$ErrorActionPreference = 'Stop'",
+          "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12",
+          "$ApiUrl = '" + url + "?token=' + $env:APIFY_TOKEN",
+          "$Payload = '" + j.sampleJson + "'",
+          "",
+          "$Result = Invoke-RestMethod -Uri $ApiUrl -Method Post -ContentType 'application/json' -Body $Payload",
+          "if (-not $Result -or -not $Result[0]." + j.outProp + ") {",
+          "    throw 'Bank pre-flight checksum validation failed — halting before SFTP upload.'",
+          "}",
+          "$OutPath = Join-Path $PSScriptRoot '" + j.outFile + "'",
+          "[System.IO.File]::WriteAllText($OutPath, $Result[0]." + j.outProp + ", [System.Text.UTF8Encoding]::new($false))",
+          "Write-Output ('Verified bank batch written: ' + $OutPath)",
+          "",
+          "# Upload via built-in Windows OpenSSH SFTP:",
+          "@\"`nput `\"$OutPath`\" /outbound/" + j.outFile + "`nbye`n\"@ | sftp -b - treasury_svc@" + host
+        ].join("\n");
+
+        bashBox.textContent = [
+          "#!/usr/bin/env bash",
+          "# Cron example (Fridays 16:00): 0 16 * * 5 /opt/treasury/run_batch.sh",
+          "set -euo pipefail",
+          "",
+          'API_URL="' + url + '?token=${APIFY_TOKEN}"',
+          "PAYLOAD='" + j.sampleJson + "'",
+          "",
+          'RESPONSE=$(curl -fsSL -X POST "$API_URL" -H "Content-Type: application/json" -d "$PAYLOAD")',
+          'echo "$RESPONSE" | jq -r ".[0].' + j.outProp + '" > "./' + j.outFile + '"',
+          "",
+          'sftp -b - treasury_svc@' + host + " <<EOF",
+          "put ./" + j.outFile + " /outbound/" + j.outFile,
+          "bye",
+          "EOF",
+          'echo "Uploaded verified ' + j.outFile + ' to ' + host + '"'
+        ].join("\n");
+      } else {
+        ps1Box.textContent = [
+          "# Windows PowerShell Inbound Bank SFTP Statement Parser",
+          "$ErrorActionPreference = 'Stop'",
+          "@\"`nget /inbound/" + j.inFile + " ./" + j.inFile + "`nbye`n\"@ | sftp -b - treasury_svc@" + host,
+          "",
+          "$RawContent = Get-Content -Path './" + j.inFile + "' -Raw",
+          "$Body = @{ " + j.inProp + " = $RawContent } | ConvertTo-Json -Depth 4",
+          "$ApiUrl = '" + url + "?token=' + $env:APIFY_TOKEN",
+          "",
+          "$Decoded = Invoke-RestMethod -Uri $ApiUrl -Method Post -ContentType 'application/json' -Body $Body",
+          "[System.IO.File]::WriteAllText('./" + j.outFile + "', $Decoded[0]." + j.outProp + ")",
+          "Write-Output ('Reconciled ERP output saved to ./" + j.outFile + "')"
+        ].join("\n");
+
+        bashBox.textContent = [
+          "#!/usr/bin/env bash",
+          "# Cron example (Weekdays 06:05 AM): 5 6 * * 1-5 /opt/treasury/reconcile_inbound.sh",
+          "set -euo pipefail",
+          "",
+          "sftp -b - treasury_svc@" + host + " <<EOF",
+          "get /inbound/" + j.inFile + " ./" + j.inFile,
+          "bye",
+          "EOF",
+          "",
+          'PAYLOAD=$(jq -Rs \'{ "' + j.inProp + '": . }\' < "./' + j.inFile + '")',
+          'curl -fsSL -X POST "' + url + '?token=${APIFY_TOKEN}" \\',
+          '  -H "Content-Type: application/json" -d "$PAYLOAD" \\',
+          '  | jq -r ".[0].' + j.outProp + '" > "./' + j.outFile + '"',
+          'echo "Saved reconciled output to ./' + j.outFile + '"'
+        ].join("\n");
+      }
+    }
+
+    function wireCopy(btnId, preId, lbl) {
+      var b = document.getElementById(btnId);
+      b.addEventListener("click", function () {
+        navigator.clipboard.writeText(document.getElementById(preId).textContent || "");
+        b.textContent = "Copied!";
+        if (window.finopsTrack) window.finopsTrack("action_copy_curl");
+        setTimeout(function () { b.textContent = lbl; }, 1600);
+      });
+    }
+
+    jobSel.addEventListener("change", renderScripts);
+    hostInp.addEventListener("input", renderScripts);
+    wireCopy("btnCopyPs1", "ps1CodeBox", "Copy .ps1");
+    wireCopy("btnCopyBash", "bashCodeBox", "Copy .sh");
+    renderScripts();
+  })();
+  </script>
+</body>
+</html>

@@ -285,4 +285,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.93</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/powershell-bash-cron-sftp-sepa-nacha-bai2-automation.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.93</priority>
+  </url>
 </urlset>
