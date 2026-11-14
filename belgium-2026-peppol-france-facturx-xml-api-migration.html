@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Belgium 2026 Peppol Mandate (KBO 0208) &amp; France Sep 2026 Factur-X (SIRET 0009 / PA) XML API Guide | FinOps Studio</title>
+  <meta name="description" content="Developer &amp; CFO implementation guide for Belgium's mandatory B2B Peppol BIS 3.0 rollout (KBO/BCE scheme 0208) and France's September 2026 Factur-X EN 16931 CII / PA (formerly PDP) mandate (SIREN 0002 / SIRET 0009)." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/belgium-2026-peppol-france-facturx-xml-api-migration.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Belgium Peppol (KBO 0208) & France Factur-X (SIRET 0009) 2026 B2B E-Invoicing API Playbook | FinOps Studio" />
+  <meta property="og:description" content="Validate Belgian KBO MOD-97 & French SIREN/SIRET Luhn check digits locally and generate EN 16931 Peppol UBL 2.1 or Factur-X CII XML for $0/month + $0.05/invoice." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/belgium-2026-peppol-france-facturx-xml-api-migration.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Belgium 2026 Peppol BIS 3.0 (KBO 0208) & France September 2026 Factur-X (SIREN/SIRET 0009) B2B E-Invoicing API Migration Guide",
+        "url": "https://geornaden.github.io/finops-studio/belgium-2026-peppol-france-facturx-xml-api-migration.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "publisher": { "@type": "Organization", "name": "FinOps Studio" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which Peppol EndpointID schemeID is mandatory for Belgian B2B e-invoices in 2026?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Belgian VAT-registered enterprises on the Peppol network primarily address recipients using their 10-digit KBO / BCE enterprise number under ICD schemeID=\"0208\" (e.g. 0208:0403170701, verified via 97 - (first8Digits mod 97) = last2Digits), alongside schemeID=\"9925\" for BE VAT numbers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What XML format is required for France's September 2026 B2B e-invoicing mandate?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Starting September 1, 2026, all French VAT-liable businesses must be able to receive structured e-invoices—and large/mid-cap companies must issue them—via Plateformes Agréées (PA, formerly PDP) using one of three EN 16931 syntaxes: Factur-X (UN/CEFACT Cross-Industry Invoice CII XML), OASIS UBL 2.1, or UN/CEFACT CII, carrying buyer/seller 9-digit SIREN (0002) or 14-digit SIRET (0009) identifiers."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Visual E-Invoice Builder</a>
+        <a href="./eu-2026-2027-e-invoicing-mandate-peppol-xrechnung-facturx-matrix.html">20-Country EU Matrix</a>
+        <a href="./eu-einvoice-xml-generator.html">E-Invoice API</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Open Live API ($0.05/inv) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#127463;&#127466; Belgium Live Jan 2026 &bull; &#127467;&#127479; France Live Sep 1, 2026 &bull; EN 16931 Certified Math</span>
+      <h1>Belgium <code>Peppol BIS 3.0</code> (<code>KBO 0208</code>) &amp; France <code>Factur-X CII</code> (<code>SIRET 0009</code>) API Migration Playbook</h1>
+      <p>Plain PDF invoices are no longer legal B2B tax invoices in Belgium (since Jan 1, 2026) and enter mandatory phased enforcement across France on <strong>September 1, 2026</strong>. Validate Belgian <strong>KBO/BCE MOD-97</strong> and French <strong>SIREN/SIRET Luhn</strong> identifiers below, and generate cent-exact <code>peppol-ubl-3.0</code> &amp; <code>facturx-cii-en16931</code> XML via API for <strong>$0/month + $0.05/invoice</strong>.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#be-fr-inspector">Test KBO 0208 / SIRET 0009 &amp; Generate Payload &darr;</a>
+        <a class="btn btn-outline" href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Open Full Visual Invoice Builder &rarr;</a>
+      </div>
+    </section>
+
+    <section id="be-fr-inspector" class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+        <div>
+          <label for="jurisdictionSel" style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;"><strong>Select 2026 Compliance Regime:</strong></label>
+          <select id="jurisdictionSel" style="padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.92rem;font-weight:600;">
+            <option value="BE">&#127463;&#127466; Belgium B2B Mandate (Peppol BIS Billing 3.0 UBL + KBO 0208)</option>
+            <option value="FR">&#127467;&#127479; France Sep 2026 Mandate (Factur-X EN 16931 CII + SIRET 0009)</option>
+          </select>
+        </div>
+        <span id="idCheckBadge" class="status-chip status-ok">CHECKSUM VALID</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px;">
+        <div>
+          <label id="sellerIdLabel" for="sellerIdInput" style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;">Seller 10-Digit Belgian KBO / BCE</label>
+          <input id="sellerIdInput" value="0403170701" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.88rem;font-weight:700;" />
+        </div>
+        <div>
+          <label id="buyerIdLabel" for="buyerIdInput" style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;">Buyer 10-Digit Belgian KBO / BCE</label>
+          <input id="buyerIdInput" value="0477472701" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.88rem;font-weight:700;" />
+        </div>
+        <div>
+          <label for="netEurInput" style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:4px;">Net Invoice Amount (EUR)</label>
+          <input id="netEurInput" type="number" step="0.01" value="1250.00" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.88rem;font-weight:700;" />
+        </div>
+      </div>
+
+      <div id="checkDiagnosticBar" style="margin-bottom:14px;padding:10px 12px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.35);font-size:0.83rem;color:#d1fae5;"></div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Ready-to-POST Cloud API JSON Payload</strong></span>
+            <button id="btnCopyBeFrPayload" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">Copy Payload</button>
+          </div>
+          <pre id="beFrPayloadPre" class="code-box" style="min-height:250px;font-size:0.76rem;"></pre>
+        </div>
+        <div>
+          <div class="pane-label">
+            <span><strong>cURL / PA / Peppol Access Point Integration</strong></span>
+            <span class="status-chip status-ok">EN 16931 BR-CO-10..16</span>
+          </div>
+          <pre id="beFrCurlPre" class="code-box" style="min-height:250px;font-size:0.76rem;"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">Side-by-Side Technical Comparison: Belgium vs. France 2026</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Belgium (Live Now)</span><span class="tag">Peppol 4-Corner</span></div>
+            <h3>Belgium: Peppol BIS 3.0 UBL</h3>
+            <p>Mandatory for all domestic Belgian B2B transactions since <strong>Jan 1, 2026</strong> (Law of 6 Feb 2024). Requires OASIS UBL 2.1 XML conforming to Peppol BIS Billing 3.0 (`urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0`) with KBO `0208` EndpointIDs and `21%`/`12%`/`6%` Belgian VAT math.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">France (Sep 1, 2026)</span><span class="tag">Factur-X / PA</span></div>
+            <h3>France: Factur-X EN 16931 CII</h3>
+            <p>Reception mandatory for <strong>all</strong> French companies on <strong>Sep 1, 2026</strong> (issuance Sep 2026 for Large/ETI, Sep 2027 for SMEs). Requires UN/CEFACT Cross-Industry Invoice (`facturx-cii-en16931`) or UBL 2.1 carrying 9-digit SIREN / 14-digit SIRET numbers and `20%`/`10%`/`5.5%` TVA breakdown.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">$0/Mo Subscription</span><span class="tag">Zero Rounding Errors</span></div>
+            <h3>One Unified API for Both</h3>
+            <p>Pass <code>"format": "peppol-ubl-3.0"</code> for Belgian buyers or <code>"format": "facturx-cii-en16931"</code> for French buyers to the exact same endpoint (`finops_studio/eu-einvoice-xml-generator`)—up to <strong>99 e-invoices every month are $0.00</strong> on Apify's free credit tier.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div><strong>FinOps Studio</strong> &mdash; Deterministic Banking, Payroll &amp; E-Invoicing Cloud APIs (<a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>).</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="./index.html">Home</a>
+          <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Visual Builder</a>
+          <a href="./eu-2026-2027-e-invoicing-mandate-peppol-xrechnung-facturx-matrix.html">EU Matrix</a>
+          <a href="./facturation-electronique-2026-peppol-factur-x-xml.html">Guide FR</a>
+          <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">Gids NL/BE</a>
+          <a href="./sitemap.xml">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    function checkBelgianKbo(raw) {
+      var d = String(raw || "").replace(/^BE/i, "").replace(/\D/g, "");
+      if (d.length === 9) d = "0" + d;
+      if (d.length !== 10 || (d[0] !== "0" && d[0] !== "1")) return { valid: false, clean: d, msg: "Must be 10 digits starting with 0 or 1" };
+      var base = parseInt(d.slice(0, 8), 10);
+      var chk = parseInt(d.slice(8, 10), 10);
+      var expected = 97 - (base % 97);
+      return { valid: chk === expected, clean: d, vat: "BE" + d, endpoint: "0208:" + d, msg: chk === expected ? "Valid KBO MOD-97" : ("Expected check digits " + String(expected).padStart(2, "0")) };
+    }
+
+    function checkFrenchSiret(raw) {
+      var d = String(raw || "").replace(/\D/g, "");
+      if (d.length !== 14) return { valid: false, clean: d, msg: "French SIRET must be 14 digits (9-digit SIREN + 5-digit NIC)" };
+      var sum = 0;
+      for (var i = 0; i < 14; i++) {
+        var n = parseInt(d[13 - i], 10);
+        if (i % 2 === 1) { n *= 2; if (n > 9) n -= 9; }
+        sum += n;
+      }
+      var siren = d.slice(0, 9);
+      var vatKey = (12 + 3 * (parseInt(siren, 10) % 97)) % 97;
+      var frVat = "FR" + String(vatKey).padStart(2, "0") + siren;
+      return { valid: sum % 10 === 0, clean: d, vat: frVat, endpoint: "0009:" + d, msg: sum % 10 === 0 ? ("Valid Luhn SIRET -> TVA " + frVat) : "Failed INSEE Luhn checksum" };
+    }
+
+    var jurSel = document.getElementById("jurisdictionSel");
+    var sInput = document.getElementById("sellerIdInput");
+    var bInput = document.getElementById("buyerIdInput");
+    var sLbl = document.getElementById("sellerIdLabel");
+    var bLbl = document.getElementById("buyerIdLabel");
+    var netInp = document.getElementById("netEurInput");
+    var badge = document.getElementById("idCheckBadge");
+    var diagBar = document.getElementById("checkDiagnosticBar");
+    var payloadPre = document.getElementById("beFrPayloadPre");
+    var curlPre = document.getElementById("beFrCurlPre");
+
+    function switchRegime() {
+      if (jurSel.value === "BE") {
+        sLbl.textContent = "Seller 10-Digit Belgian KBO / BCE (0208)";
+        bLbl.textContent = "Buyer 10-Digit Belgian KBO / BCE (0208)";
+        sInput.value = "0403170701";
+        bInput.value = "0477472701";
+      } else {
+        sLbl.textContent = "Seller 14-Digit French SIRET (0009)";
+        bLbl.textContent = "Buyer 14-Digit French SIRET (0009)";
+        sInput.value = "55210055400013";
+        bInput.value = "54206547900966";
+      }
+      updateAll();
+    }
+
+    function updateAll() {
+      var isBe = jurSel.value === "BE";
+      var sCheck = isBe ? checkBelgianKbo(sInput.value) : checkFrenchSiret(sInput.value);
+      var bCheck = isBe ? checkBelgianKbo(bInput.value) : checkFrenchSiret(bInput.value);
+      var net = Math.max(1, parseFloat(netInp.value) || 100);
+      var vatRate = isBe ? 21 : 20;
+
+      if (sCheck.valid && bCheck.valid) {
+        badge.textContent = isBe ? "KBO 0208 MOD-97 VALID" : "SIRET 0009 LUHN VALID";
+        badge.className = "status-chip status-ok";
+        diagBar.innerHTML = "&#9989; <strong>Seller:</strong> <code>" + sCheck.endpoint + "</code> (" + sCheck.vat + ") &bull; <strong>Buyer:</strong> <code>" + bCheck.endpoint + "</code> (" + bCheck.vat + ")";
+      } else {
+        badge.textContent = "IDENTIFIER CHECKSUM WARNING";
+        badge.className = "status-chip";
+        diagBar.innerHTML = "&#9888;&#65039; Seller: " + sCheck.msg + " | Buyer: " + bCheck.msg;
+      }
+
+      var payload = {
+        format: isBe ? "peppol-ubl-3.0" : "facturx-cii-en16931",
+        invoiceNumber: isBe ? "BE-2026-0419" : "FR-2026-0892",
+        issueDate: "2026-11-14",
+        dueDate: "2026-12-14",
+        currency: "EUR",
+        buyerReference: isBe ? "PO-BRUSSELS-77" : "CMD-PARIS-402",
+        seller: {
+          name: isBe ? "Brussels Cloud Solutions SRL" : "Atelier Cloud France SAS",
+          vatId: sCheck.vat || (isBe ? "BE0403170701" : "FR40552100554"),
+          endpointId: sCheck.clean,
+          endpointScheme: isBe ? "0208" : "0009",
+          street: isBe ? "Avenue Louise 240" : "18 Rue de Rivoli",
+          city: isBe ? "Brussels" : "Paris",
+          postalCode: isBe ? "1050" : "75001",
+          country: isBe ? "BE" : "FR",
+          iban: isBe ? "BE68539007547034" : "FR7630006000011234567890189"
+        },
+        buyer: {
+          name: isBe ? "Antwerp Logistics NV" : "Lyon Industrie SA",
+          vatId: bCheck.vat || (isBe ? "BE0477472701" : "FR83542065479"),
+          endpointId: bCheck.clean,
+          endpointScheme: isBe ? "0208" : "0009",
+          street: isBe ? "Meir 50" : "42 Cours Lafayette",
+          city: isBe ? "Antwerpen" : "Lyon",
+          postalCode: isBe ? "2000" : "69003",
+          country: isBe ? "BE" : "FR"
+        },
+        lines: [
+          { description: "Enterprise SaaS Annual Subscription", quantity: 1, unitPrice: +net.toFixed(2), vatRate: vatRate }
+        ]
+      };
+
+      var jsonStr = JSON.stringify(payload, null, 2);
+      payloadPre.textContent = jsonStr;
+      curlPre.textContent =
+        'curl -X POST "https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items?token=$APIFY_TOKEN" \\\n' +
+        '  -H "Content-Type: application/json" \\\n' +
+        "  -d '" + JSON.stringify(payload) + "'";
+    }
+
+    jurSel.addEventListener("change", switchRegime);
+    sInput.addEventListener("input", updateAll);
+    bInput.addEventListener("input", updateAll);
+    netInp.addEventListener("input", updateAll);
+
+    document.getElementById("btnCopyBeFrPayload").addEventListener("click", function () {
+      var btn = document.getElementById("btnCopyBeFrPayload");
+      navigator.clipboard.writeText(payloadPre.textContent || "");
+      btn.textContent = "Copied!";
+      if (window.finopsTrack) window.finopsTrack("action_copy_curl");
+      setTimeout(function () { btn.textContent = "Copy Payload"; }, 1600);
+    });
+
+    updateAll();
+  })();
+  </script>
+</body>
+</html>
