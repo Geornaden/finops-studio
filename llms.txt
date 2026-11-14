@@ -94,3 +94,4 @@
 - [GitHub Actions Scheduled Treasury & Payroll Workflow YAML](https://geornaden.github.io/finops-studio/workflows/github-actions-scheduled-sepa-nacha-peppol.yml)
 - [Google Sheets Apps Script (UrlFetchApp) & Microsoft Excel 365 Office Scripts Bank File Menu Generator (SEPA XML, NACHA ACH, UK BACS, .ABA, CPA-005, DATEV)](https://geornaden.github.io/finops-studio/google-sheets-excel-apps-script-sepa-nacha-bacs-aba-automation.html)
 - [Marketplace, Affiliate & E-Commerce Seller Payouts (Stripe, Shopify, PayPal) to SEPA XML, NACHA ACH, UK BACS & DATEV EXTF API + Fee Savings Calculator](https://geornaden.github.io/finops-studio/stripe-shopify-paypal-payouts-to-sepa-nacha-datev-api.html)
+- [Free Browser SEPA XML (pain.001 / pain.008) Validator: CtrlSum Cent Math, IBAN MOD-97 & 2026 EPC BE04 Structured Postal Address Auditor](https://geornaden.github.io/finops-studio/free-sepa-xml-pain001-xsd-be04-validator.html)

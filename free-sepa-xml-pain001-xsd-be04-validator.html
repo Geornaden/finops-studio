@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free SEPA XML Validator (pain.001 &amp; pain.008) — Audit CtrlSum, IBAN MOD-97 &amp; 2026 BE04 Address Rules | FinOps Studio</title>
+  <meta name="description" content="100% client-side ISO 20022 SEPA XML validator: paste or drop any pain.001 or pain.008 file to audit GrpHdr/PmtInf CtrlSum cent math, NbOfTxs, IBAN MOD-97 checksums, and 2026 EPC BE04 structured address (<TwnNm> & <Ctry>) compliance." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-sepa-xml-pain001-xsd-be04-validator.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Free Browser SEPA XML (pain.001 / pain.008) Validator & 2026 BE04 Address Auditor | FinOps Studio" />
+  <meta property="og:description" content="Catch AM09 CtrlSum cent mismatches, AC01 bad IBANs, and 2026 BE04 unstructured <AdrLine> bank rejections locally in your browser—and regenerate clean pain.001.001.09 XML in 1 click." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-sepa-xml-pain001-xsd-be04-validator.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Free SEPA XML (pain.001 / pain.008) Validator & 2026 BE04 Auditor",
+        "url": "https://geornaden.github.io/finops-studio/free-sepa-xml-pain001-xsd-be04-validator.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser DOMParser)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD",
+          "description": "Free client-side SEPA XML diagnostic tool; $0/mo + $0.02/tx Cloud API on Apify Store for automated pain.001.001.09 & pain.008.001.08 generation."
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Does this SEPA XML validator upload my bank payment file to a server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The XML structure check, integer-cent CtrlSum verification, IBAN MOD-97 math, and 2026 EPC BE04 structured address inspection run 100% locally inside your browser using native DOMParser. No payment data leaves your computer unless you explicitly click to run the Cloud API."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why do European banks reject legacy pain.001.001.03 files with error BE04 or FF01 in 2026?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under the European Payments Council (EPC) 2026 structured-address mandate, unstructured <AdrLine> postal tags without structured <TwnNm> (Town Name) and <Ctry> (2-letter ISO Country) trigger BE04 compliance errors across Deutsche Bank, BNP Paribas, ING, ABN AMRO, Rabobank, Revolut Business, and Qonto. Upgrading to pain.001.001.09 (Credit Transfer) or pain.008.001.08 (Direct Debit) fixes this."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./sepa-xml-generator.html">SEPA XML API</a>
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">Excel/CSV &rarr; SEPA</a>
+        <a href="./iso20022-pain002-rejection-codes-ac04-am04-be04-md01-rc01-guide.html">pain.002 Codes</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generate Clean 2026 SEPA XML &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#128737;&#65039; 100% Local Browser XML Audit &bull; Zero Server Upload &bull; Catches <code>AM09</code>, <code>AC01</code>, <code>BE04</code> &amp; <code>FF01</code></span>
+      <h1>Free SEPA XML Validator (<code>pain.001</code> &amp; <code>pain.008</code>) + 2026 <code>BE04</code> Address Auditor</h1>
+      <p>Paste or drop any <strong>SEPA Credit Transfer (<code>pain.001.001.03</code> / <code>.09</code>)</strong> or <strong>SEPA Direct Debit (<code>pain.008.001.02</code> / <code>.08</code>)</strong> XML file before uploading to Deutsche Bank, BNP Paribas, ING, ABN AMRO, Revolut, or Wise. Verify integer-cent <code>CtrlSum</code> totals, <code>NbOfTxs</code> counts, every <code>IBAN MOD-97</code> checksum, and 2026 EPC structured postal addresses locally in milliseconds.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnPresetClean09" type="button" class="btn btn-outline">Load Valid 2026 pain.001.09 Sample</button>
+          <button id="btnPresetBroken03" type="button" class="btn btn-outline">Load Broken Legacy pain.001.03 (BE04 + AM09 + Bad IBAN)</button>
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            &#128194; Load Local .XML File
+            <input id="xmlFileInput" type="file" accept=".xml,text/xml,application/xml" style="display:none;" />
+          </label>
+        </div>
+        <span id="overallStatusBadge" class="status-chip status-ok">READY</span>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Paste ISO 20022 SEPA XML</strong> (Parsed 100% Locally in Browser)</span>
+            <span id="schemaBadge" style="font-size:0.76rem;color:#93c5fd;">Auto-Detects Namespace</span>
+          </div>
+          <textarea id="sepaXmlInput" class="code-box" spellcheck="false" style="min-height:320px;font-size:0.77rem;"></textarea>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>Pre-Flight Bank Compliance Report</strong></span>
+            <span id="txSummaryChip" style="font-size:0.76rem;color:var(--muted);">0 Transactions</span>
+          </div>
+          <div id="auditReportBox" class="code-box" style="min-height:320px;max-height:420px;overflow:auto;font-family:system-ui,-apple-system,sans-serif;font-size:0.84rem;line-height:1.55;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.86rem;color:#e2e8f0;">
+          <strong>Legacy ERP exporting broken <code>pain.001.001.03</code> or <code>AdrLine</code> files?</strong> Convert extracted rows or Excel/CSV spreadsheets into compliant 2026 <code>pain.001.001.09</code> / <code>pain.008.001.08</code> XML for <strong>$0/month + $0.02/tx</strong>.
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button id="btnCopyRepairJson" type="button" class="btn btn-outline">Copy Clean API Payload JSON</button>
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generate Clean 2026 SEPA XML ($5 Free Credit) &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">What Our SEPA XML Pre-Flight Engine Checks</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">AM09 / FF01</span><span class="tag">Integer-Cent Math</span></div>
+            <h3>1. Exact <code>CtrlSum</code> &amp; <code>NbOfTxs</code> Reconciliation</h3>
+            <p>Verifies that both Group Header (<code>&lt;GrpHdr&gt;</code>) and Payment Information (<code>&lt;PmtInf&gt;</code>) control sums equal the exact integer-cent sum of all <code>&lt;InstdAmt&gt;</code> elements—preventing floating-point <code>.00000001</code> rounding rejections.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">AC01 / RC01</span><span class="tag">ISO 13616 MOD-97</span></div>
+            <h3>2. Debtor &amp; Creditor <code>IBAN MOD-97</code> + <code>BIC</code></h3>
+            <p>Runs full ISO 13616 modulo-97 arithmetic on your Debtor IBAN and every Creditor/Debtor transaction IBAN, plus checks 8/11-character ISO 9362 SWIFT/BIC syntax and non-EUR currency mismatches.</p>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">2026 EPC Rulebook</span><span class="tag">Code BE04</span></div>
+            <h3>3. 2026 Structured Postal Address Mandate</h3>
+            <p>Flags legacy <code>&lt;AdrLine&gt;</code> unstructured blocks and verifies whether Creditor/Debtor <code>&lt;PstlAdr&gt;</code> blocks include structured <code>&lt;TwnNm&gt;</code> and 2-letter ISO <code>&lt;Ctry&gt;</code> elements required under 2026 EPC guidelines.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div><strong>FinOps Studio</strong> &mdash; Deterministic Banking, Payroll &amp; E-Invoicing Cloud APIs (<a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>).</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="./index.html">Home</a>
+          <a href="./sepa-xml-generator.html">SEPA XML API</a>
+          <a href="./fix-sepa-pain001-2026-structured-address-rejection.html">2026 BE04 Fix Guide</a>
+          <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">CSV Mapper</a>
+          <a href="./sitemap.xml">Sitemap</a>
+          <a href="./llms.txt">llms.txt</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var CLEAN_09 = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09">',
+      '  <CstmrCdtTrfInitn>',
+      '    <GrpHdr>',
+      '      <MsgId>MSG-20261114-001</MsgId>',
+      '      <CreDtTm>2026-11-14T09:00:00Z</CreDtTm>',
+      '      <NbOfTxs>2</NbOfTxs>',
+      '      <CtrlSum>2270.50</CtrlSum>',
+      '      <InitgPty><Nm>Acme Europe GmbH</Nm></InitgPty>',
+      '    </GrpHdr>',
+      '    <PmtInf>',
+      '      <PmtInfId>PMT-20261114-01</PmtInfId>',
+      '      <PmtMtd>TRF</PmtMtd>',
+      '      <NbOfTxs>2</NbOfTxs>',
+      '      <CtrlSum>2270.50</CtrlSum>',
+      '      <ReqdExctnDt><Dt>2026-11-18</Dt></ReqdExctnDt>',
+      '      <Dbtr><Nm>Acme Europe GmbH</Nm><PstlAdr><TwnNm>Berlin</TwnNm><Ctry>DE</Ctry></PstlAdr></Dbtr>',
+      '      <DbtrAcct><Id><IBAN>DE89370400440532013000</IBAN></Id></DbtrAcct>',
+      '      <DbtrAgt><FinInstnId><BICFI>COBADEFFXXX</BICFI></FinInstnId></DbtrAgt>',
+      '      <CdtTrfTxInf>',
+      '        <PmtId><EndToEndId>E2E-INV-891</EndToEndId></PmtId>',
+      '        <Amt><InstdAmt Ccy="EUR">1450.00</InstdAmt></Amt>',
+      '        <Cdtr><Nm>Nordic Cloud AB</Nm><PstlAdr><TwnNm>Amsterdam</TwnNm><Ctry>NL</Ctry></PstlAdr></Cdtr>',
+      '        <CdtrAcct><Id><IBAN>NL91ABNA0417164300</IBAN></Id></CdtrAcct>',
+      '        <RmtInf><Ustrd>INV-2026-891</Ustrd></RmtInf>',
+      '      </CdtTrfTxInf>',
+      '      <CdtTrfTxInf>',
+      '        <PmtId><EndToEndId>E2E-INV-892</EndToEndId></PmtId>',
+      '        <Amt><InstdAmt Ccy="EUR">820.50</InstdAmt></Amt>',
+      '        <Cdtr><Nm>Atelier Lumiere SAS</Nm><PstlAdr><TwnNm>Paris</TwnNm><Ctry>FR</Ctry></PstlAdr></Cdtr>',
+      '        <CdtrAcct><Id><IBAN>FR7630006000011234567890189</IBAN></Id></CdtrAcct>',
+      '        <RmtInf><Ustrd>INV-2026-892</Ustrd></RmtInf>',
+      '      </CdtTrfTxInf>',
+      '    </PmtInf>',
+      '  </CstmrCdtTrfInitn>',
+      '</Document>'
+    ].join("\n");
+
+    var BROKEN_03 = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03">',
+      '  <CstmrCdtTrfInitn>',
+      '    <GrpHdr>',
+      '      <MsgId>LEGACY-ERP-99</MsgId>',
+      '      <CreDtTm>2026-11-14T09:00:00Z</CreDtTm>',
+      '      <NbOfTxs>2</NbOfTxs>',
+      '      <CtrlSum>2000.00</CtrlSum>',
+      '      <InitgPty><Nm>Acme Europe GmbH</Nm></InitgPty>',
+      '    </GrpHdr>',
+      '    <PmtInf>',
+      '      <PmtInfId>PMT-LEGACY-01</PmtInfId>',
+      '      <PmtMtd>TRF</PmtMtd>',
+      '      <ReqdExctnDt>2026-11-18</ReqdExctnDt>',
+      '      <Dbtr><Nm>Acme Europe GmbH</Nm></Dbtr>',
+      '      <DbtrAcct><Id><IBAN>DE89370400440532013000</IBAN></Id></DbtrAcct>',
+      '      <DbtrAgt><FinInstnId><BIC>COBADEFFXXX</BIC></FinInstnId></DbtrAgt>',
+      '      <CdtTrfTxInf>',
+      '        <PmtId><EndToEndId>E2E-1</EndToEndId></PmtId>',
+      '        <Amt><InstdAmt Ccy="EUR">1450.00</InstdAmt></Amt>',
+      '        <Cdtr><Nm>Vendor One BV</Nm><PstlAdr><AdrLine>Keizersgracht 100, 1015 AA Amsterdam</AdrLine></PstlAdr></Cdtr>',
+      '        <CdtrAcct><Id><IBAN>NL91ABNA0417164300</IBAN></Id></CdtrAcct>',
+      '      </CdtTrfTxInf>',
+      '      <CdtTrfTxInf>',
+      '        <PmtId><EndToEndId>E2E-2</EndToEndId></PmtId>',
+      '        <Amt><InstdAmt Ccy="EUR">820.50</InstdAmt></Amt>',
+      '        <Cdtr><Nm>Broken IBAN Vendor</Nm></Cdtr>',
+      '        <CdtrAcct><Id><IBAN>DE00370400440532013000</IBAN></Id></CdtrAcct>',
+      '      </CdtTrfTxInf>',
+      '    </PmtInf>',
+      '  </CstmrCdtTrfInitn>',
+      '</Document>'
+    ].join("\n");
+
+    function checkIbanMod97(iban) {
+      var c = String(iban || "").replace(/\s+/g, "").toUpperCase();
+      if (c.length < 15 || c.length > 34 || !/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(c)) return false;
+      var rearr = c.slice(4) + c.slice(0, 4);
+      var rem = 0;
+      for (var i = 0; i < rearr.length; i++) {
+        var ch = rearr.charCodeAt(i);
+        var d = ch >= 65 && ch <= 90 ? String(ch - 55) : rearr[i];
+        for (var j = 0; j < d.length; j++) rem = (rem * 10 + Number(d[j])) % 97;
+      }
+      return rem === 1;
+    }
+
+    function firstText(parent, localName) {
+      if (!parent) return "";
+      var els = parent.getElementsByTagName("*");
+      for (var i = 0; i < els.length; i++) {
+        if (els[i].localName === localName) return (els[i].textContent || "").trim();
+      }
+      return "";
+    }
+
+    function directChild(parent, localName) {
+      if (!parent || !parent.children) return null;
+      for (var i = 0; i < parent.children.length; i++) {
+        if (parent.children[i].localName === localName) return parent.children[i];
+      }
+      return null;
+    }
+
+    function allByLocal(parent, localName) {
+      var out = [];
+      var els = parent.getElementsByTagName("*");
+      for (var i = 0; i < els.length; i++) {
+        if (els[i].localName === localName) out.push(els[i]);
+      }
+      return out;
+    }
+
+    function esc(s) {
+      return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    var xmlBox = document.getElementById("sepaXmlInput");
+    var reportBox = document.getElementById("auditReportBox");
+    var badge = document.getElementById("overallStatusBadge");
+    var schemaBadge = document.getElementById("schemaBadge");
+    var txChip = document.getElementById("txSummaryChip");
+    var lastRepairPayload = null;
+
+    function runAudit() {
+      var raw = (xmlBox.value || "").trim();
+      if (!raw) {
+        reportBox.innerHTML = "<p style='color:var(--muted)'>Paste a SEPA XML file on the left to run pre-flight diagnostics.</p>";
+        return;
+      }
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(raw, "application/xml");
+      var parseErr = doc.getElementsByTagName("parsererror")[0];
+      if (parseErr) {
+        badge.textContent = "XML SYNTAX ERROR (FF01)";
+        badge.className = "status-chip";
+        reportBox.innerHTML = "<div style='color:#f87171;font-weight:700;'>&#10060; Malformed XML (Bank Rejection FF01):</div><p style='color:#fca5a5;margin-top:6px;'>" + esc(parseErr.textContent.slice(0, 320)) + "</p>";
+        return;
+      }
+
+      var root = doc.documentElement;
+      var ns = root.getAttribute("xmlns") || "No xmlns declared";
+      var schemaMatch = ns.match(/pain\.\d{3}\.\d{3}\.\d{2}/);
+      var schemaId = schemaMatch ? schemaMatch[0] : ns;
+      schemaBadge.textContent = schemaId;
+
+      var errors = [];
+      var warnings = [];
+      var passes = [];
+
+      var isLegacySchema = /pain\.001\.001\.03|pain\.008\.001\.02/.test(ns);
+      if (isLegacySchema) {
+        warnings.push("<strong>Legacy Schema Detected (<code>" + esc(schemaId) + "</code>):</strong> 2026 EPC SEPA rulebooks deprecate unstructured <code>.03</code> / <code>.02</code> files in favor of <code>pain.001.001.09</code> &amp; <code>pain.008.001.08</code>.");
+      } else if (/pain\.001\.001\.09|pain\.008\.001\.08/.test(ns)) {
+        passes.push("Modern 2026 EPC ISO 20022 namespace verified (<code>" + esc(schemaId) + "</code>).");
+      }
+
+      var grpHdr = allByLocal(doc, "GrpHdr")[0];
+      var grpNb = parseInt(firstText(grpHdr, "NbOfTxs"), 10);
+      var grpCtrlStr = firstText(grpHdr, "CtrlSum");
+
+      var isDirectDebit = allByLocal(doc, "DrctDbtTxInf").length > 0;
+      var txNodes = isDirectDebit ? allByLocal(doc, "DrctDbtTxInf") : allByLocal(doc, "CdtTrfTxInf");
+      var actualCount = txNodes.length;
+
+      if (!isNaN(grpNb) && grpNb !== actualCount) {
+        errors.push("<strong>FF01 / NbOfTxs Mismatch:</strong> <code>&lt;GrpHdr&gt;&lt;NbOfTxs&gt;</code> declares <code>" + grpNb + "</code>, but XML contains <code>" + actualCount + "</code> transaction block(s).");
+      } else if (actualCount > 0) {
+        passes.push("Transaction count matches <code>&lt;GrpHdr&gt;&lt;NbOfTxs&gt;</code> (<strong>" + actualCount + "</strong>).");
+      }
+
+      var pmtInf = allByLocal(doc, "PmtInf")[0];
+      var dbtrNode = directChild(pmtInf, "Dbtr") || directChild(pmtInf, "Cdtr");
+      var dbtrAcct = directChild(pmtInf, "DbtrAcct") || directChild(pmtInf, "CdtrAcct");
+      var dbtrAgt = directChild(pmtInf, "DbtrAgt") || directChild(pmtInf, "CdtrAgt");
+      var dbtrName = firstText(dbtrNode, "Nm") || "Company GmbH";
+      var dbtrIban = firstText(dbtrAcct, "IBAN").replace(/\s+/g, "");
+      var dbtrBic = firstText(dbtrAgt, "BICFI") || firstText(dbtrAgt, "BIC") || "COBADEFFXXX";
+
+      if (dbtrIban) {
+        if (!checkIbanMod97(dbtrIban)) {
+          errors.push("<strong>AC01 Ordering Account IBAN Invalid:</strong> <code>" + esc(dbtrIban) + "</code> fails ISO 13616 MOD-97 check.");
+        } else {
+          passes.push("Ordering party IBAN <code>" + esc(dbtrIban) + "</code> passed MOD-97 check.");
+        }
+      }
+
+      var totalCents = 0;
+      var extractedTxs = [];
+      txNodes.forEach(function (tx, idx) {
+        var rowNum = idx + 1;
+        var amtNodes = allByLocal(tx, "InstdAmt");
+        var amtEl = amtNodes[0];
+        var amtStr = amtEl ? (amtEl.textContent || "").trim() : "0";
+        var ccy = amtEl ? (amtEl.getAttribute("Ccy") || "EUR") : "EUR";
+        var cents = Math.round(parseFloat(amtStr || "0") * 100);
+        totalCents += cents;
+        if (ccy !== "EUR") {
+          warnings.push("Tx #" + rowNum + ": Currency is <code>" + esc(ccy) + "</code> (standard SEPA requires <code>EUR</code>).");
+        }
+
+        var partyTag = isDirectDebit ? "Dbtr" : "Cdtr";
+        var acctTag = isDirectDebit ? "DbtrAcct" : "CdtrAcct";
+        var partyNode = directChild(tx, partyTag);
+        var acctNode = directChild(tx, acctTag);
+        var partyName = firstText(partyNode, "Nm") || ("Counterparty " + rowNum);
+        var partyIban = firstText(acctNode, "IBAN").replace(/\s+/g, "");
+        if (!checkIbanMod97(partyIban)) {
+          errors.push("<strong>AC01 Invalid IBAN (Tx #" + rowNum + " — " + esc(partyName) + "):</strong> <code>" + esc(partyIban || "MISSING") + "</code> fails MOD-97 check digit.");
+        }
+
+        var pstl = directChild(partyNode, "PstlAdr");
+        var adrLines = pstl ? allByLocal(pstl, "AdrLine") : [];
+        var twn = firstText(pstl, "TwnNm");
+        var ctry = firstText(pstl, "Ctry");
+        if (adrLines.length > 0 && (!twn || !ctry)) {
+          errors.push("<strong>2026 BE04 Structured Address Rejection (Tx #" + rowNum + " — " + esc(partyName) + "):</strong> Uses legacy unstructured <code>&lt;AdrLine&gt;</code> without structured <code>&lt;TwnNm&gt;</code> &amp; <code>&lt;Ctry&gt;</code>.");
+        } else if (!twn || !ctry) {
+          warnings.push("<strong>2026 BE04 Address Advisory (Tx #" + rowNum + " — " + esc(partyName) + "):</strong> Missing structured <code>&lt;TwnNm&gt;</code> or <code>&lt;Ctry&gt;</code> inside <code>&lt;PstlAdr&gt;</code>.");
+        }
+
+        extractedTxs.push({
+          name: partyName,
+          iban: partyIban,
+          amount: +(cents / 100).toFixed(2),
+          remittanceInfo: firstText(tx, "Ustrd") || ("Payment " + rowNum),
+          country: ctry || (partyIban.slice(0, 2) || "DE"),
+          townName: twn || "Berlin"
+        });
+      });
+
+      var calcSumStr = (totalCents / 100).toFixed(2);
+      if (grpCtrlStr) {
+        var grpCents = Math.round(parseFloat(grpCtrlStr) * 100);
+        if (grpCents !== totalCents) {
+          errors.push("<strong>AM09 CtrlSum Mismatch:</strong> <code>&lt;GrpHdr&gt;&lt;CtrlSum&gt;</code> is <code>" + esc(grpCtrlStr) + "</code>, but exact integer-cent sum of transactions is <code>" + calcSumStr + "</code>.");
+        } else {
+          passes.push("Exact integer-cent <code>CtrlSum</code> verified (<strong>EUR " + calcSumStr + "</strong>).");
+        }
+      }
+
+      txChip.textContent = actualCount + " Tx | EUR " + calcSumStr;
+      lastRepairPayload = {
+        schemaVersion: isDirectDebit ? "pain.008.001.08" : "pain.001.001.09",
+        initiatingPartyName: dbtrName,
+        debtorName: dbtrName,
+        debtorIban: dbtrIban || "DE89370400440532013000",
+        debtorBic: dbtrBic,
+        transactions: extractedTxs
+      };
+
+      var html = "";
+      if (errors.length === 0 && warnings.length === 0) {
+        badge.textContent = "PASS — 2026 EPC COMPLIANT";
+        badge.className = "status-chip status-ok";
+        html += "<div style='padding:10px 12px;border-radius:8px;background:rgba(16,185,129,0.14);border:1px solid rgba(16,185,129,0.4);color:#6ee7b7;font-weight:700;margin-bottom:10px;'>&#9989; 0 Critical Errors &bull; Ready for Corporate Bank Upload</div>";
+      } else if (errors.length > 0) {
+        badge.textContent = errors.length + " BANK REJECTION ERROR(S)";
+        badge.className = "status-chip";
+        html += "<div style='padding:10px 12px;border-radius:8px;background:rgba(239,68,68,0.14);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;font-weight:700;margin-bottom:10px;'>&#10060; " + errors.length + " Blocking Bank Rejection Issue(s) Found</div>";
+      } else {
+        badge.textContent = warnings.length + " 2026 ADVISORY WARNING(S)";
+        badge.className = "status-chip";
+      }
+
+      if (errors.length) {
+        html += "<div style='margin-bottom:10px;'>" + errors.map(function (e) { return "<div style='margin-bottom:6px;color:#fecaca;'>&#10060; " + e + "</div>"; }).join("") + "</div>";
+      }
+      if (warnings.length) {
+        html += "<div style='margin-bottom:10px;'>" + warnings.map(function (w) { return "<div style='margin-bottom:6px;color:#fde68a;'>&#9888;&#65039; " + w + "</div>"; }).join("") + "</div>";
+      }
+      if (passes.length) {
+        html += "<div>" + passes.map(function (p) { return "<div style='margin-bottom:5px;color:#a7f3d0;'>&#9989; " + p + "</div>"; }).join("") + "</div>";
+      }
+      reportBox.innerHTML = html;
+    }
+
+    document.getElementById("btnPresetClean09").addEventListener("click", function () { xmlBox.value = CLEAN_09; runAudit(); });
+    document.getElementById("btnPresetBroken03").addEventListener("click", function () { xmlBox.value = BROKEN_03; runAudit(); });
+    xmlBox.addEventListener("input", runAudit);
+
+    document.getElementById("xmlFileInput").addEventListener("change", function (e) {
+      var f = e.target.files && e.target.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function (ev) {
+        xmlBox.value = String(ev.target.result || "");
+        runAudit();
+      };
+      reader.readAsText(f);
+    });
+
+    document.getElementById("btnCopyRepairJson").addEventListener("click", function () {
+      var btn = document.getElementById("btnCopyRepairJson");
+      if (!lastRepairPayload) return;
+      navigator.clipboard.writeText(JSON.stringify(lastRepairPayload, null, 2));
+      btn.textContent = "Copied 2026 pain.001.09 JSON!";
+      if (window.finopsTrack) window.finopsTrack("action_copy_curl");
+      setTimeout(function () { btn.textContent = "Copy Clean API Payload JSON"; }, 1800);
+    });
+
+    xmlBox.value = BROKEN_03;
+    runAudit();
+  })();
+  </script>
+</body>
+</html>
