@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Corporate BAI2 Bank Statement Viewer, Control-Total Auditor &amp; CSV Converter | FinOps Studio</title>
+  <meta name="description" content="100% client-side corporate BAI2 (.bai / .bai2) bank statement viewer, Record 49/98/99 control-total auditor, and CSV converter. Stitches multi-line 88 remittance continuations and formats USD/EUR/JPY/KWD implied decimals locally in your browser." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-bai2-bank-statement-viewer-csv-converter.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Free Browser Corporate BAI2 Bank Statement Viewer, Auditor & CSV Converter | FinOps Studio" />
+  <meta property="og:description" content="Inspect J.P. Morgan Access, BofA CashPro, Wells Fargo CEO, CitiDirect, and HSBCnet BAI2 statements locally: stitch Record 88 continuations, verify Record 49/98/99 control totals, and export UTF-8 CSV." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-bai2-bank-statement-viewer-csv-converter.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Free Corporate BAI2 Bank Statement Viewer, Auditor & CSV Converter",
+        "url": "https://geornaden.github.io/finops-studio/free-bai2-bank-statement-viewer-csv-converter.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD",
+          "description": "Free client-side BAI2 multi-account statement inspector and CSV preview; $0/mo + $0.02/tx Cloud API on Apify Store for automated SFTP/ERP pipelines."
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How are Record 49, Record 98, and Record 99 control totals calculated in a BAI2 file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under the Bank Administration Institute (BAI2) specification, Account Trailer (Record 49) sums all unsigned integer amount fields across Record 03 (summary/status items) and Record 16 (transaction details) for that account, plus the exact physical line count from Record 03 through Record 49 inclusive (including every 88 continuation line). Group Trailer (Record 98) sums all Record 49 Account Control Totals in the group, counts the number of 03 accounts, and counts physical lines from 02 through 98 inclusive. File Trailer (Record 99) sums all Record 98 Group Control Totals, counts 02 groups, and counts total physical lines in the file from 01 through 99 inclusive."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this BAI2 viewer upload confidential corporate bank balances or wire details to a server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Every BAI2 record parse, Record 88 continuation stitch, currency implied-decimal conversion (USD/EUR 2 decimals, JPY 0 decimals, KWD 3 decimals), and Record 49/98/99 trailer audit executes 100% locally inside your browser tab."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./bai2-bank-statement-parser.html">BAI2 Parser API</a>
+        <a href="./bai2-type-codes-165-195-475-jpmorgan-bofa-wells-fargo-citi.html">BAI2 Type Codes (010–699)</a>
+        <a href="./powershell-bash-cron-sftp-sepa-nacha-bai2-automation.html">Bank SFTP Scripts</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/bai2-bank-statement-parser" target="_blank" rel="noopener">Automate BAI2 via Cloud API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#127974; 100% Local Browser Treasury Audit &bull; Zero Server Upload &bull; J.P. Morgan / BofA CashPro / Wells Fargo CEO / CitiDirect / HSBCnet</span>
+      <h1>Free Corporate <code>BAI2</code> Bank Statement Viewer, <code>49/98/99</code> Control Auditor &amp; CSV Converter</h1>
+      <p>Drop or paste any raw <strong>Cash Management <code>.bai</code> / <code>.bai2</code></strong> bank file to inspect multi-account balances (<code>Record 03</code>), stitch multi-line <code>Record 88</code> wire/ACH remittance continuations onto <code>Record 16</code> transactions, verify <strong><code>49</code> / <code>98</code> / <code>99</code> control totals &amp; line counts</strong>, and download clean UTF-8 CSV.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnBaiClean" type="button" class="btn btn-outline">Load Multi-Account USD + JPY BAI2 Statement</button>
+          <button id="btnBaiBroken" type="button" class="btn btn-outline">Load Broken BAI2 (Record 49 Sum Mismatch + Bad 99 Line Count)</button>
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            &#128194; Open Local .BAI / .BAI2 / .TXT
+            <input id="baiFileInput" type="file" accept=".bai,.bai2,.txt,.dat" style="display:none;" />
+          </label>
+        </div>
+        <span id="baiStatusBadge" class="status-chip status-ok">READY</span>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Raw Corporate BAI2 File (<code>01</code>, <code>02</code>, <code>03</code>, <code>16</code>, <code>88</code>, <code>49</code>, <code>98</code>, <code>99</code>)</strong></span>
+            <span id="baiLineChip" style="font-size:0.76rem;color:#93c5fd;">0 Lines</span>
+          </div>
+          <textarea id="baiRawBox" class="code-box" spellcheck="false" style="min-height:330px;font-size:0.75rem;white-space:pre;overflow-x:auto;"></textarea>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>Record <code>49 / 98 / 99</code> Control-Total &amp; Balance Audit</strong></span>
+            <span id="baiSummaryChip" style="font-size:0.76rem;color:var(--muted);">0 Accounts &bull; 0 Transactions</span>
+          </div>
+          <div id="baiReportBox" class="code-box" style="min-height:330px;max-height:420px;overflow:auto;font-family:system-ui,-apple-system,sans-serif;font-size:0.84rem;line-height:1.55;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px;">
+          <h3 style="margin:0;font-size:1rem;">Stitched <code>Record 16 + 88</code> Transactions Preview (Currency-Aware Implied Decimals)</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button id="btnDownloadCsv" type="button" class="btn btn-outline">&#8681; Download Preview CSV</button>
+            <button id="btnCopyApiJson" type="button" class="btn btn-outline">Copy Cloud API JSON Payload</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:#0b1220;">
+          <table style="width:100%;border-collapse:collapse;font-size:0.81rem;">
+            <thead>
+              <tr style="text-align:left;border-bottom:1px solid var(--border);color:var(--muted);">
+                <th style="padding:9px 10px;">Account</th>
+                <th style="padding:9px 10px;">CCY</th>
+                <th style="padding:9px 10px;">BAI Code</th>
+                <th style="padding:9px 10px;">Direction &amp; Type</th>
+                <th style="padding:9px 10px;text-align:right;">Signed Amount</th>
+                <th style="padding:9px 10px;">Bank / Customer Ref</th>
+                <th style="padding:9px 10px;">Stitched <code>88</code> Remittance Text</th>
+              </tr>
+            </thead>
+            <tbody id="baiTxTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:14px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.86rem;color:#e2e8f0;">
+          <strong>Reconciling daily SFTP <code>.bai2</code> files into NetSuite, SAP, Odoo, Snowflake, or Excel?</strong> Automate unlimited multi-account statements via our deterministic REST API &amp; MCP Server (<code>$0/month + $0.02/tx</code>, covered by Apify's $5/mo free credit).
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a class="btn btn-outline" href="./workflows/n8n-bank-sftp-bai2-and-pain002-alerts.json" download>Download SFTP n8n JSON</a>
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/bai2-bank-statement-parser" target="_blank" rel="noopener">Launch BAI2 Cloud API &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">What This Corporate Treasury BAI2 Auditor Verifies</h2>
+      <div class="grid-3">
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Record 49 / 98 / 99</span><span class="tag">BigInt Exact Sum</span></div>
+          <h3>Exact Trailer Control Sums &amp; Physical Line Counts</h3>
+          <p>Sums every unsigned integer amount across <code>Record 03</code> summary codes and <code>Record 16</code> detail transactions using exact 64-bit integer math and verifies physical record counts (including <code>88</code> continuations) at Account, Group, and File levels.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Record 88 Stitching</span><span class="tag">Wire / EDI Remittance</span></div>
+          <h3>Multi-Line <code>88</code> Remittance Continuation Stitching</h3>
+          <p>Automatically concatenates unlimited consecutive <code>88,...</code> continuation lines onto their parent <code>03</code> account header or <code>16</code> transaction so Fedwire <code>OBI=</code>, CHIPS, and ACH <code>CCD+</code> addenda invoice numbers never get truncated.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">USD / EUR / JPY / KWD</span><span class="tag">ISO 4217 Decimals</span></div>
+          <h3>Currency-Aware Implied Decimals &amp; Sign Mapping</h3>
+          <p>Applies 2 implied decimals for <code>USD</code>/<code>EUR</code>/<code>GBP</code>/<code>CAD</code>/<code>AUD</code>, 0 decimals for <code>JPY</code>/<code>KRW</code>, and 3 decimals for <code>KWD</code>/<code>BHD</code>/<code>OMR</code>, while signing credits (<code>100–399</code>) positively and debits (<code>400–699</code>) negatively.</p>
+        </article>
+      </div>
+    </section>
+
+    <section style="margin-top:24px;">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h4>Why does my ERP reject a manually edited BAI2 file on Record 49 or Record 99?</h4>
+        <p>Treasury ERPs (NetSuite Automated Cash Application, SAP S/4HANA Electronic Bank Statement, Kyriba, Workday) validate both the <strong>unsigned integer control total</strong> (which includes <code>Record 03</code> status/summary balances PLUS <code>Record 16</code> transaction amounts) and the <strong>exact physical line count</strong> (counting every <code>88</code> continuation line). Removing or editing a single line without recalculating <code>49</code>, <code>98</code>, and <code>99</code> triggers an immediate trailer checksum rejection.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How do I automate daily BAI2 SFTP parsing without maintaining custom regex scripts?</h4>
+        <p>POST your raw <code>bai2Content</code> string to <code>https://api.apify.com/v2/acts/finops_studio~bai2-bank-statement-parser/run-sync-get-dataset-items</code> from PowerShell, Bash cron, Python, n8n, Make.com, or Claude/Cursor MCP to receive structured JSON accounts, signed transactions, balance checks, and ready-to-import CSV.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./bai2-bank-statement-parser.html">BAI2 Cloud API</a> &bull; <a href="./bai2-type-codes-165-195-475-jpmorgan-bofa-wells-fargo-citi.html">BAI2 Type Codes (010–699)</a> &bull; <a href="./free-nacha-ach-file-validator-batch-hash-auditor.html">Free NACHA .ACH Validator</a></div>
+      <div><a href="https://apify.com/finops_studio/bai2-bank-statement-parser" target="_blank" rel="noopener">Open BAI2 Statement Parser on Apify Store &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var CLEAN_BAI2 = [
+        '01,021000021,ACMEGLOBAL,261114,0615,001,80,1,2/',
+        '02,ACMEGLOBAL,021000021,1,261114,0600,USD,2/',
+        '03,000088412099,USD,010,24500000,,,015,28842550,,,045,28842550,,,/',
+        '88,ACCOUNT NAME=ACME OPERATING CONCENTRATION USD/',
+        '16,165,4825050,0,261114009182,CUST-INV-9941/',
+        '88,ORIG CO NAME=NORTHSTAR HEALTHCARE INC/',
+        '88,ENTRY DESC=EDI PYMNTS INV 2026-9941 AND 2026-9942/',
+        '16,195,1250000,0,FW26111404419,PO-77812/',
+        '88,OBI=CONTOSO GMBH MILESTONE WIRE SETTLEMENT/',
+        '16,475,482500,0,000010482,CHK-10482/',
+        '16,495,1250000,0,FW26111408801,AP-BATCH-44/',
+        '88,BNF=CLOUD INFRASTRUCTURE HOLDINGS LLC/',
+        '49,109650650,11/',
+        '03,000099104410,JPY,015,85000000,,,/',
+        '16,195,15000000,0,JPW26111401,TOKYO-SUB-01/',
+        '88,OBI=ACME JAPAN KK INTERCOMPANY SWEEP/',
+        '49,100000000,4/',
+        '98,209650650,2,17/',
+        '99,209650650,1,19/'
+      ].join('\n');
+
+      var BROKEN_BAI2 = [
+        '01,121000358,ACMEGLOBAL,261114,0615,001,80,1,2/',
+        '02,ACMEGLOBAL,121000358,1,261114,0600,USD,2/',
+        '03,000044192001,USD,015,15000000,,,/',
+        '16,165,325000,0,26111400112,INV-8821/',
+        '88,ORIG CO NAME=APEX LOGISTICS/',
+        '16,455,110000,0,26111400449,TAX-EFTPS/',
+        '49,15215000,6/',
+        '98,15215000,1,7/',
+        '99,15215000,1,12/'
+      ].join('\n');
+
+      var TYPE_NAMES = {
+        '010': 'Opening Ledger Balance',
+        '015': 'Closing Ledger Balance',
+        '040': 'Opening Available Balance',
+        '045': 'Closing Available Balance',
+        '060': 'Current Available Balance',
+        '072': '1-Day Float',
+        '074': '2+ Day Float',
+        '100': 'Total Credits Summary',
+        '115': 'Lockbox Deposit',
+        '142': 'ACH Credit Received',
+        '165': 'Preauthorized ACH Credit',
+        '166': 'ACH Settlement Credit',
+        '175': 'Check Deposit Package',
+        '195': 'Incoming Money Transfer (Wire)',
+        '208': 'Incoming International Wire',
+        '275': 'ZBA Credit Transfer',
+        '399': 'Miscellaneous Credit',
+        '400': 'Total Debits Summary',
+        '451': 'ACH Debit Originated',
+        '455': 'Preauthorized ACH Debit',
+        '469': 'Miscellaneous ACH Debit',
+        '475': 'Check Paid / Cashed',
+        '495': 'Outgoing Money Transfer (Wire)',
+        '508': 'Outgoing International Wire',
+        '575': 'ZBA Debit Transfer',
+        '698': 'Bank Service Fee / Analysis Charge',
+        '699': 'Miscellaneous Debit'
+      };
+
+      function decimalsForCurrency(ccy) {
+        var c = String(ccy || 'USD').toUpperCase();
+        if (c === 'JPY' || c === 'KRW' || c === 'VND' || c === 'CLP' || c === 'ISK') return 0;
+        if (c === 'KWD' || c === 'BHD' || c === 'OMR' || c === 'JOD' || c === 'TND') return 3;
+        return 2;
+      }
+
+      function stripSlash(line) {
+        var trimmed = line.trim();
+        return trimmed.endsWith('/') ? trimmed.slice(0, -1) : trimmed;
+      }
+
+      function formatAmount(rawStr, ccy, signPrefix) {
+        if (!rawStr || !/^-?\d+$/.test(rawStr)) return '0.00';
+        var dec = decimalsForCurrency(ccy);
+        var neg = rawStr.startsWith('-');
+        var digits = neg ? rawStr.slice(1) : rawStr;
+        var out;
+        if (dec === 0) {
+          out = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        } else {
+          var padded = digits.padStart(dec + 1, '0');
+          var whole = padded.slice(0, padded.length - dec).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+          var frac = padded.slice(padded.length - dec);
+          out = whole + '.' + frac;
+        }
+        return (signPrefix || (neg ? '-' : '')) + out;
+      }
+
+      function formatPlainSigned(rawStr, ccy, isDebit) {
+        if (!rawStr || !/^\d+$/.test(rawStr)) return '0.00';
+        var dec = decimalsForCurrency(ccy);
+        var out;
+        if (dec === 0) {
+          out = rawStr;
+        } else {
+          var padded = rawStr.padStart(dec + 1, '0');
+          out = padded.slice(0, padded.length - dec) + '.' + padded.slice(padded.length - dec);
+        }
+        return (isDebit ? '-' : '') + out;
+      }
+
+      function parseFundsShift(fields, startIdx) {
+        var fType = (fields[startIdx] || '').toUpperCase();
+        if (fType === 'S') return 4;
+        if (fType === 'V') return 3;
+        if (fType === 'D') {
+          var pairs = parseInt(fields[startIdx + 1] || '0', 10);
+          return 2 + (isNaN(pairs) ? 0 : pairs * 2);
+        }
+        return 1;
+      }
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function csvCell(v) {
+        var s = String(v == null ? '' : v);
+        if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+        return s;
+      }
+
+      var rawBox = document.getElementById('baiRawBox');
+      var reportBox = document.getElementById('baiReportBox');
+      var txBody = document.getElementById('baiTxTableBody');
+      var badge = document.getElementById('baiStatusBadge');
+      var lineChip = document.getElementById('baiLineChip');
+      var summaryChip = document.getElementById('baiSummaryChip');
+      var lastTransactions = [];
+
+      function auditBai2() {
+        var rawText = rawBox.value || '';
+        var rawLines = rawText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(function (l) {
+          return l.trim().length > 0;
+        });
+        lineChip.textContent = rawLines.length + (rawLines.length === 1 ? ' Line' : ' Lines');
+
+        var errors = [];
+        var passes = [];
+        var accounts = [];
+        var transactions = [];
+
+        if (rawLines.length === 0) {
+          badge.textContent = 'EMPTY';
+          badge.className = 'status-chip';
+          reportBox.innerHTML = '<div style="color:var(--muted);">Paste or open a corporate BAI2 file on the left to run a local control-total &amp; remittance audit.</div>';
+          txBody.innerHTML = '';
+          summaryChip.textContent = '0 Accounts • 0 Transactions';
+          lastTransactions = [];
+          return;
+        }
+
+        var fileLineCount = rawLines.length;
+        var groupCurrency = 'USD';
+        var currentGroup = null;
+        var currentAccount = null;
+        var lastParent = null;
+        var fileGroupCtrlSum = 0n;
+        var totalGroups = 0;
+        var seen01 = false;
+        var seen99 = false;
+
+        for (var i = 0; i < rawLines.length; i++) {
+          var lineNo = i + 1;
+          var clean = stripSlash(rawLines[i]);
+          var parts = clean.split(',');
+          var rec = (parts[0] || '').trim();
+
+          if (!rawLines[i].trim().endsWith('/')) {
+            errors.push('Line ' + lineNo + ' (Record ' + (rec || '?') + '): Missing trailing "/" record delimiter recommended by BAI2 specification.');
+          }
+
+          if (currentGroup) currentGroup.lines += 1;
+          if (currentAccount) currentAccount.lines += 1;
+
+          if (rec === '01') {
+            seen01 = true;
+            var senderId = parts[1] || '';
+            var receiverId = parts[2] || '';
+            var version = parts[8] || '';
+            if (version && version !== '2') {
+              errors.push('Line ' + lineNo + ' (Record 01): Version number is "' + escapeHtml(version) + '" (expected "2" for BAI2).');
+            } else {
+              passes.push('Record 01 File Header verified: Sender <code>' + escapeHtml(senderId) + '</code> &rarr; Receiver <code>' + escapeHtml(receiverId) + '</code> (BAI2 v2).');
+            }
+            lastParent = null;
+          } else if (rec === '02') {
+            totalGroups += 1;
+            groupCurrency = (parts[6] || 'USD').trim() || 'USD';
+            currentGroup = {
+              lineNo: lineNo,
+              originator: parts[2] || '',
+              asOfDate: parts[4] || '',
+              currency: groupCurrency,
+              lines: 1,
+              accountCount: 0,
+              ctrlSum: 0n
+            };
+            lastParent = null;
+          } else if (rec === '03') {
+            if (!currentGroup) {
+              errors.push('Line ' + lineNo + ' (Record 03): Account Identifier appeared before Group Header (Record 02).');
+            } else {
+              currentGroup.accountCount += 1;
+            }
+            var acctNum = (parts[1] || '').trim();
+            var acctCcy = ((parts[2] || '').trim()) || groupCurrency || 'USD';
+            currentAccount = {
+              lineNo: lineNo,
+              accountNumber: acctNum,
+              currency: acctCcy,
+              lines: 1,
+              sumAmounts: 0n,
+              summaries: [],
+              notes: []
+            };
+            accounts.push(currentAccount);
+
+            var idx = 3;
+            while (idx < parts.length) {
+              var sType = (parts[idx] || '').trim();
+              if (!sType) { idx += 1; continue; }
+              var sAmt = (parts[idx + 1] || '').trim();
+              var sItems = (parts[idx + 2] || '').trim();
+              var shift = parseFundsShift(parts, idx + 3);
+              if (sAmt && /^-?\d+$/.test(sAmt)) {
+                var absVal = BigInt(sAmt.startsWith('-') ? '-' + sAmt.slice(1) : sAmt);
+                currentAccount.sumAmounts += absVal;
+              }
+              currentAccount.summaries.push({
+                typeCode: sType,
+                name: TYPE_NAMES[sType] || 'Summary Code ' + sType,
+                rawAmount: sAmt,
+                formatted: sAmt ? formatAmount(sAmt, acctCcy) : '—',
+                itemCount: sItems
+              });
+              idx += 3 + shift;
+            }
+            lastParent = { kind: '03', ref: currentAccount };
+          } else if (rec === '16') {
+            if (!currentAccount) {
+              errors.push('Line ' + lineNo + ' (Record 16): Transaction Detail appeared outside an active Record 03 account.');
+              continue;
+            }
+            var tCode = (parts[1] || '').trim();
+            var tAmt = (parts[2] || '0').trim();
+            var fShift = parseFundsShift(parts, 3);
+            var bankRef = (parts[3 + fShift] || '').trim();
+            var custRef = (parts[4 + fShift] || '').trim();
+            var inlineText = parts.slice(5 + fShift).join(',').trim();
+
+            if (/^\d+$/.test(tAmt)) {
+              currentAccount.sumAmounts += BigInt(tAmt);
+            } else {
+              errors.push('Line ' + lineNo + ' (Record 16): Non-integer BAI2 amount "' + escapeHtml(tAmt) + '" (BAI2 amounts must use implied decimals without ".").');
+            }
+
+            var codeNum = parseInt(tCode, 10);
+            var isDebit = codeNum >= 400 && codeNum <= 699;
+            var txObj = {
+              lineNo: lineNo,
+              accountNumber: currentAccount.accountNumber,
+              currency: currentAccount.currency,
+              typeCode: tCode,
+              typeName: TYPE_NAMES[tCode] || (isDebit ? 'Debit Transaction' : 'Credit Transaction'),
+              direction: isDebit ? 'DEBIT' : 'CREDIT',
+              rawAmount: tAmt,
+              displayAmount: formatAmount(tAmt, currentAccount.currency, isDebit ? '-' : '+'),
+              csvSignedAmount: formatPlainSigned(tAmt, currentAccount.currency, isDebit),
+              bankRef: bankRef,
+              custRef: custRef,
+              remittance: inlineText ? [inlineText] : []
+            };
+            transactions.push(txObj);
+            lastParent = { kind: '16', ref: txObj };
+          } else if (rec === '88') {
+            var contText = parts.slice(1).join(',').trim();
+            if (lastParent && lastParent.kind === '16') {
+              lastParent.ref.remittance.push(contText);
+            } else if (lastParent && lastParent.kind === '03') {
+              lastParent.ref.notes.push(contText);
+            } else {
+              errors.push('Line ' + lineNo + ' (Record 88): Orphaned continuation record without preceding Record 03 or Record 16.');
+            }
+          } else if (rec === '49') {
+            if (!currentAccount) {
+              errors.push('Line ' + lineNo + ' (Record 49): Account Trailer without matching Record 03.');
+              continue;
+            }
+            var declSum49 = (parts[1] || '0').trim();
+            var declLines49 = parseInt((parts[2] || '0').trim(), 10);
+            var expectedSum49 = currentAccount.sumAmounts;
+            var expectedLines49 = currentAccount.lines;
+
+            if (!/^-?\d+$/.test(declSum49) || BigInt(declSum49) !== expectedSum49) {
+              errors.push('Line ' + lineNo + ' (Record 49 Account <code>' + escapeHtml(currentAccount.accountNumber) + '</code>): Declared Control Total <code>' + escapeHtml(declSum49) + '</code> != Computed <code>03+16</code> Sum <code>' + expectedSum49.toString() + '</code>.');
+            } else if (declLines49 !== expectedLines49) {
+              errors.push('Line ' + lineNo + ' (Record 49 Account <code>' + escapeHtml(currentAccount.accountNumber) + '</code>): Declared Record Count <code>' + declLines49 + '</code> != Physical Lines <code>' + expectedLines49 + '</code> (remember to count all <code>88</code> lines).');
+            } else {
+              passes.push('Record 49 Account <code>' + escapeHtml(currentAccount.accountNumber) + '</code> (' + escapeHtml(currentAccount.currency) + ') balanced: Control Sum <code>' + expectedSum49.toString() + '</code> across <code>' + expectedLines49 + '</code> records.');
+            }
+
+            if (currentGroup && /^-?\d+$/.test(declSum49)) {
+              currentGroup.ctrlSum += BigInt(declSum49);
+            }
+            currentAccount = null;
+            lastParent = null;
+          } else if (rec === '98') {
+            if (!currentGroup) {
+              errors.push('Line ' + lineNo + ' (Record 98): Group Trailer without matching Record 02.');
+              continue;
+            }
+            var declSum98 = (parts[1] || '0').trim();
+            var declAccts98 = parseInt((parts[2] || '0').trim(), 10);
+            var declLines98 = parseInt((parts[3] || '0').trim(), 10);
+
+            if (!/^-?\d+$/.test(declSum98) || BigInt(declSum98) !== currentGroup.ctrlSum) {
+              errors.push('Line ' + lineNo + ' (Record 98 Group Trailer): Declared Group Total <code>' + escapeHtml(declSum98) + '</code> != Sum of Record 49s <code>' + currentGroup.ctrlSum.toString() + '</code>.');
+            }
+            if (declAccts98 !== currentGroup.accountCount) {
+              errors.push('Line ' + lineNo + ' (Record 98 Group Trailer): Declared Account Count <code>' + declAccts98 + '</code> != Actual <code>03</code> Accounts <code>' + currentGroup.accountCount + '</code>.');
+            }
+            if (declLines98 !== currentGroup.lines) {
+              errors.push('Line ' + lineNo + ' (Record 98 Group Trailer): Declared Record Count <code>' + declLines98 + '</code> != Physical Group Lines <code>' + currentGroup.lines + '</code>.');
+            }
+            if (/^-?\d+$/.test(declSum98) && BigInt(declSum98) === currentGroup.ctrlSum && declAccts98 === currentGroup.accountCount && declLines98 === currentGroup.lines) {
+              passes.push('Record 98 Group Trailer balanced: Sum <code>' + currentGroup.ctrlSum.toString() + '</code>, <code>' + declAccts98 + '</code> account(s), <code>' + declLines98 + '</code> lines.');
+            }
+            if (/^-?\d+$/.test(declSum98)) {
+              fileGroupCtrlSum += BigInt(declSum98);
+            }
+            currentGroup = null;
+            lastParent = null;
+          } else if (rec === '99') {
+            seen99 = true;
+            var declSum99 = (parts[1] || '0').trim();
+            var declGroups99 = parseInt((parts[2] || '0').trim(), 10);
+            var declLines99 = parseInt((parts[3] || '0').trim(), 10);
+
+            if (!/^-?\d+$/.test(declSum99) || BigInt(declSum99) !== fileGroupCtrlSum) {
+              errors.push('Line ' + lineNo + ' (Record 99 File Trailer): Declared File Control Total <code>' + escapeHtml(declSum99) + '</code> != Sum of Record 98s <code>' + fileGroupCtrlSum.toString() + '</code>.');
+            }
+            if (declGroups99 !== totalGroups) {
+              errors.push('Line ' + lineNo + ' (Record 99 File Trailer): Declared Group Count <code>' + declGroups99 + '</code> != Actual <code>02</code> Groups <code>' + totalGroups + '</code>.');
+            }
+            if (declLines99 !== fileLineCount) {
+              errors.push('Line ' + lineNo + ' (Record 99 File Trailer): Declared File Record Count <code>' + declLines99 + '</code> != Total Physical Lines <code>' + fileLineCount + '</code>.');
+            }
+            if (/^-?\d+$/.test(declSum99) && BigInt(declSum99) === fileGroupCtrlSum && declGroups99 === totalGroups && declLines99 === fileLineCount) {
+              passes.push('Record 99 File Control Trailer balanced: File Total <code>' + fileGroupCtrlSum.toString() + '</code>, <code>' + totalGroups + '</code> group(s), <code>' + fileLineCount + '</code> physical records.');
+            }
+            lastParent = null;
+          } else {
+            errors.push('Line ' + lineNo + ': Unrecognized BAI2 record code "<code>' + escapeHtml(rec) + '</code>" (expected 01, 02, 03, 16, 88, 49, 98, or 99).');
+          }
+        }
+
+        if (!seen01) errors.push('Missing Record 01 (File Header) at top of file.');
+        if (!seen99) errors.push('Missing Record 99 (File Trailer) at bottom of file.');
+        if (currentAccount) errors.push('Account <code>' + escapeHtml(currentAccount.accountNumber) + '</code> is missing its closing Record 49 trailer.');
+        if (currentGroup) errors.push('Open Record 02 Group is missing its closing Record 98 trailer.');
+
+        summaryChip.textContent = accounts.length + (accounts.length === 1 ? ' Account' : ' Accounts') + ' • ' + transactions.length + (transactions.length === 1 ? ' Transaction' : ' Transactions');
+        lastTransactions = transactions;
+
+        if (errors.length === 0) {
+          badge.textContent = 'PASS • BAI2 TRAILERS BALANCED';
+          badge.className = 'status-chip status-ok';
+        } else {
+          badge.textContent = errors.length + (errors.length === 1 ? ' ERROR FOUND' : ' ERRORS FOUND');
+          badge.className = 'status-chip status-warn';
+        }
+
+        var html = '';
+        if (errors.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);color:#fecaca;">';
+          html += '<strong>&#9888;&#65039; Control-Total / Structure Issues Detected (' + errors.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var e = 0; e < errors.length; e++) html += '<li style="margin-bottom:4px;">' + errors[e] + '</li>';
+          html += '</ul></div>';
+        }
+        if (passes.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#bbf7d0;">';
+          html += '<strong>&#9989; Verified BAI2 Controls (' + passes.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var p = 0; p < passes.length; p++) html += '<li style="margin-bottom:3px;">' + passes[p] + '</li>';
+          html += '</ul></div>';
+        }
+        if (accounts.length > 0) {
+          html += '<div style="margin-top:8px;"><strong>Account Summary Balances (<code>Record 03</code>):</strong>';
+          for (var a = 0; a < accounts.length; a++) {
+            var ac = accounts[a];
+            html += '<div style="margin-top:6px;padding:8px 10px;border-radius:7px;background:rgba(15,23,42,0.75);border:1px solid var(--border);">';
+            html += '<div><strong>Acct <code>' + escapeHtml(ac.accountNumber) + '</code></strong> <span class="tag" style="margin-left:6px;">' + escapeHtml(ac.currency) + ' (' + decimalsForCurrency(ac.currency) + ' dec)</span></div>';
+            if (ac.notes.length) {
+              html += '<div style="font-size:0.78rem;color:#93c5fd;margin-top:2px;">' + escapeHtml(ac.notes.join(' | ')) + '</div>';
+            }
+            for (var s = 0; s < ac.summaries.length; s++) {
+              var sm = ac.summaries[s];
+              html += '<div style="font-size:0.8rem;color:var(--muted);margin-top:2px;">&bull; <code>' + escapeHtml(sm.typeCode) + '</code> ' + escapeHtml(sm.name) + ': <strong style="color:#f8fafc;">' + escapeHtml(sm.formatted) + ' ' + escapeHtml(ac.currency) + '</strong></div>';
+            }
+            html += '</div>';
+          }
+          html += '</div>';
+        }
+        reportBox.innerHTML = html;
+
+        var rowsHtml = '';
+        for (var t = 0; t < transactions.length; t++) {
+          var tx = transactions[t];
+          var amtColor = tx.direction === 'DEBIT' ? '#fca5a5' : '#86efac';
+          rowsHtml += '<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">' +
+            '<td style="padding:8px 10px;"><code>' + escapeHtml(tx.accountNumber) + '</code></td>' +
+            '<td style="padding:8px 10px;"><code>' + escapeHtml(tx.currency) + '</code></td>' +
+            '<td style="padding:8px 10px;"><code>' + escapeHtml(tx.typeCode) + '</code></td>' +
+            '<td style="padding:8px 10px;">' + escapeHtml(tx.typeName) + '</td>' +
+            '<td style="padding:8px 10px;text-align:right;font-family:monospace;font-weight:600;color:' + amtColor + ';">' + escapeHtml(tx.displayAmount) + '</td>' +
+            '<td style="padding:8px 10px;font-size:0.78rem;"><code>' + escapeHtml(tx.bankRef || '—') + '</code> / <code>' + escapeHtml(tx.custRef || '—') + '</code></td>' +
+            '<td style="padding:8px 10px;font-size:0.78rem;color:#cbd5e1;">' + escapeHtml(tx.remittance.join(' ') || '—') + '</td>' +
+            '</tr>';
+        }
+        if (!rowsHtml) {
+          rowsHtml = '<tr><td colspan="7" style="padding:14px;text-align:center;color:var(--muted);">No Record 16 detail transactions found in current input.</td></tr>';
+        }
+        txBody.innerHTML = rowsHtml;
+      }
+
+      document.getElementById('btnBaiClean').addEventListener('click', function () {
+        rawBox.value = CLEAN_BAI2;
+        auditBai2();
+      });
+
+      document.getElementById('btnBaiBroken').addEventListener('click', function () {
+        rawBox.value = BROKEN_BAI2;
+        auditBai2();
+      });
+
+      document.getElementById('baiFileInput').addEventListener('change', function (ev) {
+        var file = ev.target.files && ev.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          rawBox.value = String(e.target.result || '');
+          auditBai2();
+        };
+        reader.readAsText(file);
+      });
+
+      rawBox.addEventListener('input', auditBai2);
+
+      document.getElementById('btnDownloadCsv').addEventListener('click', function () {
+        var header = ['account_number', 'currency', 'bai_type_code', 'direction', 'type_description', 'signed_amount', 'bank_reference', 'customer_reference', 'stitched_remittance_88'];
+        var lines = [header.join(',')];
+        for (var i = 0; i < lastTransactions.length; i++) {
+          var tx = lastTransactions[i];
+          lines.push([
+            csvCell(tx.accountNumber),
+            csvCell(tx.currency),
+            csvCell(tx.typeCode),
+            csvCell(tx.direction),
+            csvCell(tx.typeName),
+            csvCell(tx.csvSignedAmount),
+            csvCell(tx.bankRef),
+            csvCell(tx.custRef),
+            csvCell(tx.remittance.join(' '))
+          ].join(','));
+        }
+        var blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'bai2-statement-preview.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
+      document.getElementById('btnCopyApiJson').addEventListener('click', function () {
+        var btn = document.getElementById('btnCopyApiJson');
+        var payload = JSON.stringify({
+          bai2Content: rawBox.value || '',
+          includeCsv: true,
+          strictControlTotals: true
+        }, null, 2);
+        navigator.clipboard.writeText(payload).then(function () {
+          var orig = btn.textContent;
+          btn.textContent = 'Copied Cloud API JSON!';
+          setTimeout(function () { btn.textContent = orig; }, 1800);
+        });
+      });
+
+      rawBox.value = CLEAN_BAI2;
+      auditBai2();
+    })();
+  </script>
+</body>
+</html>

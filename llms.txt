@@ -99,3 +99,4 @@
 - [Belgium 2026 Peppol BIS 3.0 (KBO 0208 MOD-97) & France Sep 2026 Factur-X CII (SIRET 0009 Luhn) B2B E-Invoicing API Migration Playbook](https://geornaden.github.io/finops-studio/belgium-2026-peppol-france-facturx-xml-api-migration.html)
 - [Qonto, Revolut Business, Wise, SVB & Airwallex Bulk Payment File Guide (SEPA XML pain.001, US NACHA .ACH, UK BACS 18, Australian .ABA)](https://geornaden.github.io/finops-studio/revolut-wise-qonto-mercury-bulk-sepa-xml-nacha-bacs-api.html)
 - [Windows PowerShell (Task Scheduler) & Linux Bash Cron Bank SFTP Treasury Automation Scripts (SEPA XML, NACHA ACH, UK BACS, BAI2, pain.002)](https://geornaden.github.io/finops-studio/powershell-bash-cron-sftp-sepa-nacha-bai2-automation.html)
+- [Free Browser Corporate BAI2 Bank Statement Viewer, Record 49/98/99 Control-Total Auditor & CSV Converter](https://geornaden.github.io/finops-studio/free-bai2-bank-statement-viewer-csv-converter.html)

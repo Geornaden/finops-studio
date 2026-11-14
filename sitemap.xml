@@ -290,4 +290,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.93</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/free-bai2-bank-statement-viewer-csv-converter.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
 </urlset>
