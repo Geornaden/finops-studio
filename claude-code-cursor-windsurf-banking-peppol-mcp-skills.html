@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude Code, Cursor &amp; Windsurf Banking MCP Servers &amp; Agent Skill Packs | FinOps Studio</title>
+  <meta name="description" content="Stop AI agents from hallucinating IBAN MOD-97 checksums, 94-character NACHA columns, and IEEE-754 floating-point cent totals. Equip Claude, Cursor, Windsurf &amp; Cline with deterministic FinOps Studio MCP servers &amp; Skill Packs." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/claude-code-cursor-windsurf-banking-peppol-mcp-skills.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="AI Agent Financial Guardrails: Banking MCP Servers &amp; Skill Packs for Claude &amp; Cursor" />
+  <meta property="og:description" content="Side-by-side comparison of raw LLM financial hallucinations vs. deterministic BigInt &amp; MOD-97/MOD-10 FinOps Studio MCP servers and Skill Packs." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/claude-code-cursor-windsurf-banking-peppol-mcp-skills.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Why LLMs Fail Strict Bank File Math — Deterministic MCP Servers & Agent Skill Packs for Claude Code, Cursor & Windsurf",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "url": "https://geornaden.github.io/finops-studio/claude-code-cursor-windsurf-banking-peppol-mcp-skills.html"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why should AI coding agents use an MCP tool instead of generating NACHA .ACH, BACS 18, or SEPA XML text directly?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Token-predicting LLMs routinely miscount fixed-width ASCII spaces (producing 92- or 96-char NACHA lines instead of exact 94-char rows), hallucinate ISO 13616 MOD-97 IBAN or ABA 3-7-1 MOD-10 check digits, and suffer IEEE-754 float drift on CtrlSum and EN 16931 VAT totals. Calling FinOps Studio's deterministic MCP tools guarantees 100% mathematical & column compliance."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Where can I install FinOps Studio MCP servers and offline SKILL.md packs for Claude Code and Cursor?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "You can connect our remote JSON-RPC 2.0 MCP servers and download multi-file Agent Skill Packs on MCPRush (https://mcprush.com/geornaden-2), via the Official MCP Registry (io.github.Geornaden/finops-studio), or through Apify's hosted MCP gateway."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .vs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0 22px;
+    }
+    .vs-pane {
+      background: rgba(15,23,42,0.9);
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .vs-bad { border: 1px solid rgba(248,113,113,0.45); }
+    .vs-good { border: 1px solid rgba(52,211,153,0.45); }
+    .bench-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .bench-tab {
+      background: rgba(15,23,42,0.85);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.87rem;
+      font-weight: 600;
+    }
+    .bench-tab.active {
+      background: rgba(56,189,248,0.18);
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+    @media (max-width: 820px) {
+      .vs-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Multi-Cloud Hub</a>
+        <a href="./regulatory-compliance-radar-2026-2027-sepa-peppol-fedwire-nacha.html">2026–2027 Law Radar</a>
+        <a class="btn btn-primary" href="https://mcprush.com/geornaden-2" target="_blank" rel="noopener">Open on MCPRush &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:12px;">
+      <span class="pill">Model Context Protocol (`MCP`) &amp; `SKILL.md` Packs &bull; Claude Code &bull; Cursor &bull; Windsurf &bull; Cline</span>
+      <h1>Stop AI Agents From Hallucinating Bank Checksums &amp; Fixed-Width Columns</h1>
+      <p style="max-width:830px;margin:0 auto;">LLMs are brilliant at reasoning and mapping messy spreadsheets—but token prediction fails strict 94/100/120-character ASCII padding, `BigInt` cent rounding, and `MOD-97 / MOD-10` bank math. Give your AI agent <strong>deterministic financial hands</strong>.</p>
+    </section>
+
+    <!-- INTERACTIVE BENCHMARK SWITCHER -->
+    <section class="sandbox-card" aria-label="Raw LLM vs Deterministic MCP Comparison">
+      <h2 style="margin-top:0;font-size:1.14rem;">Interactive Failure Mode Benchmark: Raw LLM Prompt vs. FinOps Studio MCP</h2>
+      <div class="bench-tabs" role="tablist">
+        <button type="button" class="bench-tab active" data-b="nacha" onclick="showBench('nacha')">US NACHA .ACH (94-Char + Entry Hash)</button>
+        <button type="button" class="bench-tab" data-b="sepa" onclick="showBench('sepa')">2026 SEPA XML (IBAN MOD-97 + BE04)</button>
+        <button type="button" class="bench-tab" data-b="peppol" onclick="showBench('peppol')">EN 16931 Peppol / XRechnung VAT Math</button>
+        <button type="button" class="bench-tab" data-b="datev" onclick="showBench('datev')">German DATEV EXTF v700 (31-Field Header)</button>
+      </div>
+
+      <div class="vs-grid">
+        <div class="vs-pane vs-bad">
+          <div style="color:#f87171;font-weight:800;margin-bottom:8px;">&#10007; Raw Unassisted LLM Output (Rejected by Bank)</div>
+          <pre id="benchBad" class="code-box" style="min-height:155px;"></pre>
+        </div>
+        <div class="vs-pane vs-good">
+          <div style="color:#34d399;font-weight:800;margin-bottom:8px;">&#10003; FinOps Studio Deterministic MCP / Skill Output</div>
+          <pre id="benchGood" class="code-box" style="min-height:155px;"></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- MCPRUSH SERVERS & SKILL PACKS -->
+    <h2 class="section-title" style="margin-top:32px;">Available Remote MCP Gateways &amp; Downloadable Agent Skill Packs</h2>
+    <div class="grid-3">
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">Remote MCP</span><span class="tag">4 Gateways</span></div>
+          <h3>Managed Streamable HTTP MCP Servers (`&lt;35ms` Edge)</h3>
+          <p>Zero local Docker setup: connect our 9-Tool Banking Suite, Corporate `BAI2` Parser, `EU E-Invoice` Generator, or `DATEV EXTF` Generator directly in `.cursor/mcp.json` or `claude_desktop_config.json`.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://mcprush.com/geornaden-2" target="_blank" rel="noopener">View 4 MCP Servers on MCPRush &rarr;</a>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">Agent Skill Pack</span><span class="tag">Treasury</span></div>
+          <h3>Corporate Treasury Skill Pack (`SEPA`, `NACHA`, `BACS`, `BAI2`)</h3>
+          <p>Offline `SKILL.md` specification + Node.js column/checksum verifier scripts for coding agents building treasury &amp; payroll software.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-outline" href="https://mcprush.com/geornaden-2/finops-corporate-treasury-sepa-nacha-bacs-bai2-pa" target="_blank" rel="noopener">Get Treasury Pack &rarr;</a>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">Agent Skill Pack</span><span class="tag">EU Tax + DNS</span></div>
+          <h3>EU 2026 E-Invoicing (`Peppol / DATEV`) &amp; B2B DNS Skill Packs</h3>
+          <p>Equip Claude Code &amp; Cursor with exact `EN 16931 BR-CO-10..17` rules, `Leitweg-ID` / `KBO` / `SIRET` formulas, and live `MX/SPF/DMARC` enrichment.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-outline" href="https://mcprush.com/geornaden-2/eu-2026-e-invoicing-peppol-xrechnung-factur-x-dat" target="_blank" rel="noopener">EU Tax Pack</a>
+          <a class="btn btn-outline" href="https://mcprush.com/geornaden-2/b2b-email-deliverability-mx-spf-dmarc-domain-inte" target="_blank" rel="noopener">B2B DNS Pack</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>FinOps Studio</strong> &mdash; Official MCP Registry (`io.github.Geornaden/finops-studio`), MCPRush, RapidAPI Hub &amp; Apify Cloud.</p>
+      <p style="font-size:0.84rem;color:var(--muted);">
+        <a href="./index.html">Home</a> &bull;
+        <a href="./how-it-works-simple.html">VIP Simple Guide</a> &bull;
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Multi-Cloud Hub</a> &bull;
+        <a href="./llms.txt">llms.txt</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const BENCH_DATA = {
+      nacha: {
+        bad: `Line 3 length = 91 chars (BANK REJECTS ENTIRE FILE):\n622121000358987654321   0000245000JANE DOE      0021000020000001\n\nRecord 8 Entry Hash = 0000000000 (Hallucinated zeros)\nMissing Block-10 "999999..." padding rows!`,
+        good: `Exact 94-character ASCII width on every row (1/5/6/8/9):\n622121000358987654321        0000245000IND-001        JANE DOE                0021000020000001\n\nABA 121000358: 3-7-1 MOD-10 Verified\nRecord 8/9 Entry Hash: 0012100035 (BigInt exact)\nBlock-10 Padding: 5 x 94-char "9" rows appended`
+      },
+      sepa: {
+        bad: `<PstlAdr>\n  <AdrLine>Mainzer Landstr 16, 60325 Frankfurt</AdrLine>\n</PstlAdr>\n<!-- REJECTED NOV 2026 WITH ERROR BE04: Unstructured AdrLine -->\n<CtrlSum>419.99999999999994</CtrlSum> <!-- IEEE-754 Float Bug -->`,
+        good: `<PstlAdr>\n  <StrtNm>Mainzer Landstr.</StrtNm>\n  <BldgNb>16</BldgNb>\n  <PstCd>60325</PstCd>\n  <TwnNm>Frankfurt am Main</TwnNm>\n  <Ctry>DE</Ctry>\n</PstlAdr>\n<CtrlSum>420.00</CtrlSum> <!-- BigInt Cents + MOD-97 IBAN Verified -->`
+      },
+      peppol: {
+        bad: `Line 1: 3 x 19.995 = 59.99\nTaxTotal: 11.39715 (Invalid 5 decimals -> BR-DEC-14 Fatal Error)\nMissing Peppol EAS schemeID -> Rejected by Access Point`,
+        good: `EN 16931 BR-CO-10..17 Cent-Exact Summation:\nLineExtensionAmount: 60.00 EUR\nTaxAmount (19%): 11.40 EUR\nTaxInclusiveAmount: 71.40 EUR\nEndpointID schemeID="0208": KBO MOD-97 Verified`
+      },
+      datev: {
+        bad: `"Umsatz";"Soll/Haben";"Konto"\n"119.00";"Debit";"8400"\n<!-- REJECTED BY DATEV RECHNUNGSWESEN:\n1. Missing 31-field EXTF;700;21 Zeile-1 Metadata Header\n2. Dot decimal "119.00" instead of German "119,00"\n3. Invalid "Debit" instead of "S" / "H" -->`,
+        good: `"EXTF";700;21;"Buchungsstapel";13;... (Exact 31-Field Zeile 1)\n"Umsatz (ohne Soll/Haben-Kz)";"Soll/Haben-Kennzeichen";...\n119,00;"S";"EUR";;;8400;10000;;"1511";"RE-2026-901"`
+      }
+    };
+
+    function showBench(k) {
+      const b = BENCH_DATA[k] || BENCH_DATA.nacha;
+      document.getElementById('benchBad').textContent = b.bad;
+      document.getElementById('benchGood').textContent = b.good;
+      document.querySelectorAll('.bench-tab').forEach(el => {
+        el.classList.toggle('active', el.getAttribute('data-b') === k);
+      });
+    }
+
+    showBench('nacha');
+  </script>
+</body>
+</html>

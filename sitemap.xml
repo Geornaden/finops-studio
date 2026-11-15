@@ -385,4 +385,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/claude-code-cursor-windsurf-banking-peppol-mcp-skills.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
 </urlset>
