@@ -335,4 +335,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/how-it-works-simple.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.96</priority>
+  </url>
 </urlset>
