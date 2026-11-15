@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deel, Rippling, Gusto, Workday, Personio &amp; BambooHR Direct Bank Payroll File Bridge | FinOps Studio</title>
+  <meta name="description" content="Cut per-employee payroll payout fees across US, Europe, UK, Australia &amp; Canada: convert HRIS CSV/JSON exports from Workday, BambooHR, Personio, HiBob, Deel, or Gusto into direct NACHA .ACH, SEPA XML, UK BACS 18, AU .ABA &amp; CA CPA-005 bank files." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/deel-rippling-gusto-workday-personio-payroll-bank-files-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="HRIS &amp; Global Payroll Direct Bank File Bridge (Workday, Personio, BambooHR, HiBob)" />
+  <meta property="og:description" content="Calculate annual payroll rail savings and convert HRIS gross-to-net exports directly into 5-country bank-upload files ($0.02/employee)." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/deel-rippling-gusto-workday-personio-payroll-bank-files-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Global HRIS & Payroll Direct Bank File Bridge: Workday, Personio, BambooHR, HiBob & Contractor CSVs to NACHA, SEPA XML, UK BACS, AU .ABA & CA CPA-005",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "url": "https://geornaden.github.io/finops-studio/deel-rippling-gusto-workday-personio-payroll-bank-files-api.html"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do multi-entity companies pay employees directly through their own local bank accounts from Workday, Personio, HiBob, or BambooHR?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "When you own local entities and corporate bank accounts in the US, EU, UK, Australia, or Canada, your HRIS or payroll engine calculates net pay CSV rows. FinOps Studio transforms those rows into strict bank-native files—US 94-char NACHA .ACH (PPD 'PAYROLL'), EU 2026 SEPA pain.001.001.09 ('SALA'), UK 100-char BACS Standard 18, Australian 120-char .ABA (Code 53), and Canadian 1,464-byte CPA-005 (Code 200)—eliminating $5–$29/employee middleman payout markups."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does FinOps Studio support the 2026 Nacha mandatory 'PAYROLL' Company Entry Description rule?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Our US NACHA ACH generator enforces the 2026 Nacha PPD wage credit standard ('PAYROLL' in Record 5 columns 54–63), 3-7-1 ABA MOD-10 routing verification, BigInt Record 8/9 Entry Hash totals, and Block-10 '9999...' padding."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .hris-calc {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .hris-calc input, .hris-calc select {
+      width: 100%;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .hris-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .hris-kpi {
+      background: rgba(15,23,42,0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .hris-kpi .lbl {
+      font-size: 0.76rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .hris-kpi .val {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Router</a>
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">1-Click CSV Mapper</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Start Free ($5 Credits) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:12px;">
+      <span class="pill">US &bull; EU &bull; UK &bull; Australia &bull; Canada &bull; Direct-to-Bank Payroll Execution</span>
+      <h1>Workday, Personio, BambooHR, HiBob &amp; Contractor Payroll &rarr; Direct Bank File Bridge</h1>
+      <p style="max-width:830px;margin:0 auto;">Already own local corporate bank accounts (Chase, HSBC, Deutsche Bank, Barclays, CBA CommBiz, RBC)? Stop paying `$8–$29` per contractor/employee disbursement fee—convert your HRIS net-pay CSV straight into exact local bank batch files for `$0.02/row`.</p>
+    </section>
+
+    <!-- INTERACTIVE PAYROLL RAIL SAVINGS CALCULATOR -->
+    <section class="sandbox-card" aria-label="Interactive Payroll Disbursement Savings Calculator">
+      <h2 style="margin-top:0;font-size:1.14rem;">Interactive Global Payroll Rail Savings &amp; Format Calculator</h2>
+      <div class="hris-calc">
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">HRIS / Payroll Source</label>
+          <select id="hrisSrc" onchange="calcPayrollSavings()">
+            <option value="Personio / HiBob">Personio / HiBob</option>
+            <option value="Workday / BambooHR">Workday / BambooHR</option>
+            <option value="Contractor Payout CSV">Global Contractor CSV (vs. $15/payout)</option>
+            <option value="Payroll Bureau Multi-Client">Payroll Bureau / CPA Firm</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">Active Payees / Contractors</label>
+          <input id="hrisHeadcount" type="number" min="1" value="180" oninput="calcPayrollSavings()" />
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">Pay Runs Per Month</label>
+          <select id="hrisFreq" onchange="calcPayrollSavings()">
+            <option value="1">Monthly (12/yr)</option>
+            <option value="2" selected>Semi-Monthly / Bi-Weekly (24/yr)</option>
+            <option value="4">Weekly (52/yr)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">Primary Entity Country Rail</label>
+          <select id="hrisCountry" onchange="calcPayrollSavings()">
+            <option value="us">United States — 94-Char NACHA .ACH (PPD PAYROLL)</option>
+            <option value="eu">Eurozone (36 Countries) — 2026 SEPA pain.001.001.09 (SALA)</option>
+            <option value="uk">United Kingdom — 100-Char BACS Standard 18</option>
+            <option value="au">Australia — 120-Char AusPayNet BECS .ABA (Code 53)</option>
+            <option value="ca">Canada — 1,464-Byte CPA Standard 005 (Code 200)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="hrisKpis" class="hris-kpi-grid" aria-live="polite"></div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <a id="hrisFreeMapper" class="btn btn-primary" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">Map HRIS CSV Now (Free Browser Tool) &rarr;</a>
+        <a id="hrisValidatorLink" class="btn btn-outline" href="./free-nacha-ach-file-validator-batch-hash-auditor.html">Open Country File Validator</a>
+        <a class="btn btn-outline" href="./workflows/n8n-global-payroll-sepa-nacha-bacs-aba-cpa005.json" download>Download 5-Country n8n Payroll Router</a>
+      </div>
+    </section>
+
+    <!-- 5 COUNTRY RAIL CARDS -->
+    <h2 class="section-title" style="margin-top:32px;">Supported Native Salary &amp; Contractor Bank Standards</h2>
+    <div class="grid-3">
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">US Direct Deposit</span><span class="tag">Nacha 2026</span></div>
+          <h3>US `NACHA .ACH` (`PPD` `PAYROLL` &amp; `CCD`)</h3>
+          <p>Exact 94-character blocks for J.P. Morgan Access, BofA CashPro, Wells Fargo CEO, SVB, and Mercury/Column treasury pipelines.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-outline" href="./free-nacha-ach-file-validator-batch-hash-auditor.html">Validate .ACH</a>
+          <a class="btn btn-primary" href="./nacha-ach-file-generator.html">Specs</a>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">EU Salary Batch</span><span class="tag">`CtgyPurp = SALA`</span></div>
+          <h3>EU `SEPA pain.001.001.09` Salary XML</h3>
+          <p>2026 EPC structured-address ISO 20022 salary files across Germany, France, Netherlands, Spain, Belgium, Ireland, and Italy.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-outline" href="./free-sepa-xml-pain001-xsd-be04-validator.html">Validate XML</a>
+          <a class="btn btn-primary" href="./sepa-xml-generator.html">Specs</a>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">UK / AU / CA</span><span class="tag">Fixed-Width</span></div>
+          <h3>UK `BACS 18`, AU `.ABA` &amp; Canada `CPA-005`</h3>
+          <p>100-char UK BACS (`CONTRA`), 120-char Australian `.ABA` (`Code 53` Pay), and 1,464-byte packed Canadian `CPA-005` (`Code 200` Payroll).</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-outline" href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Guide</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>FinOps Studio</strong> &mdash; Deterministic Global Payroll &amp; Treasury Bank File Infrastructure.</p>
+      <p style="font-size:0.84rem;color:var(--muted);">
+        <a href="./index.html">Home</a> &bull;
+        <a href="./how-it-works-simple.html">VIP Simple Guide</a> &bull;
+        <a href="./quickbooks-xero-netsuite-sap-odoo-bank-file-api-directory.html">ERP &times; Bank Matrix</a> &bull;
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">RapidAPI &amp; MCPRush Hub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const COUNTRY_VALIDATORS = {
+      us: { url: './free-nacha-ach-file-validator-batch-hash-auditor.html', label: 'Validate US NACHA .ACH File' },
+      eu: { url: './free-sepa-xml-pain001-xsd-be04-validator.html', label: 'Validate EU SEPA pain.001 XML' },
+      uk: { url: './free-uk-bacs-standard-18-file-validator.html', label: 'Validate UK BACS 18 File' },
+      au: { url: './free-australian-aba-file-validator-record-7-auditor.html', label: 'Validate Australian .ABA File' },
+      ca: { url: './free-canada-cpa005-eft-file-validator.html', label: 'Validate Canadian CPA-005 File' }
+    };
+
+    function calcPayrollSavings() {
+      const hc = Math.max(1, parseInt(document.getElementById('hrisHeadcount').value || '100', 10));
+      const freq = parseInt(document.getElementById('hrisFreq').value || '2', 10);
+      const runsPerYear = freq === 4 ? 52 : (freq === 2 ? 24 : 12);
+      const country = document.getElementById('hrisCountry').value;
+
+      const totalRowsYr = hc * runsPerYear;
+      // Conservative $8/employee/month middleman payout platform fee vs FinOps Studio $0.02/row (minus $60/yr free Apify credits)
+      const legacyAnnual = hc * 8 * 12;
+      const rawApiCost = totalRowsYr * 0.02;
+      const finopsAnnual = Math.max(0, rawApiCost - 60);
+      const netSaved = Math.max(0, legacyAnnual - finopsAnnual);
+
+      document.getElementById('hrisKpis').innerHTML = `
+        <div class="hris-kpi"><div class="lbl">Annual Pay Slip Rows</div><div class="val">${totalRowsYr.toLocaleString()} rows/yr</div></div>
+        <div class="hris-kpi"><div class="lbl">Typical Payout Platform Fee ($8/emp/mo)</div><div class="val" style="color:#f87171;">$${legacyAnnual.toLocaleString()}/yr</div></div>
+        <div class="hris-kpi"><div class="lbl">FinOps Studio API Net Cost</div><div class="val" style="color:#38bdf8;">$${finopsAnnual.toFixed(2)}/yr</div></div>
+        <div class="hris-kpi"><div class="lbl">Estimated Annual Savings</div><div class="val" style="color:#34d399;">$${Math.round(netSaved).toLocaleString()}/yr</div></div>
+      `;
+
+      const v = COUNTRY_VALIDATORS[country] || COUNTRY_VALIDATORS.us;
+      const btn = document.getElementById('hrisValidatorLink');
+      btn.href = v.url;
+      btn.textContent = v.label;
+    }
+
+    calcPayrollSavings();
+  </script>
+</body>
+</html>
