@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Australian ABA File Validator — Audit 120-Char BECS Width, BSBs &amp; Record 7 Totals | FinOps Studio</title>
+  <meta name="description" content="100% client-side Australian AusPayNet BECS Direct Entry (.ABA / Cemtex) file validator: paste or open any 120-character .aba file to verify Record 0 headers, BSB &amp; Account columns, Code 53/50/13 transactions, self-balancing debits, and Record 7 (999-999) net/credit/debit cent totals." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-australian-aba-file-validator-record-7-auditor.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Free Browser Australian .ABA (Cemtex) File Validator & Record 7 Auditor | FinOps Studio" />
+  <meta property="og:description" content="Audit 120-character Australian .ABA files locally in your browser before uploading to CBA CommBiz/NetBank, NAB Connect, Westpac Live, ANZ Transactive, or Macquarie." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-australian-aba-file-validator-record-7-auditor.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Free Australian BECS .ABA File Validator & Record 7 Net-Total Auditor",
+        "url": "https://geornaden.github.io/finops-studio/free-australian-aba-file-validator-record-7-auditor.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "AUD",
+          "description": "Free client-side 120-character Australian .ABA validator; $0/mo + $0.02/row Cloud API on Apify Store for automated BECS Direct Entry file generation."
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why do CBA CommBiz, NetBank, NAB Connect, or Westpac Live reject an Australian .ABA file upload?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The five most common Australian AusPayNet BECS .ABA upload rejections are: (1) lines trimmed below or exceeding exactly 120 ASCII characters due to missing trailing spaces on Record 0 or Record 7, (2) missing hyphens in BSB fields (must be NNN-NNN in columns 02–08 and 81–87), (3) non-numeric or unpadded 6-digit APCA User ID (columns 57–62) or DDMMYY processing date (columns 75–80) in Record 0, (4) missing Code 13 self-balancing debit line when uploading to CBA NetBank or NAB Connect, and (5) Record 7 (999-999) Net, Credit, or Debit cent totals (columns 21–50) or Record 1 count (columns 75–80) not reconciling."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this Australian .ABA file validator send employee payroll or supplier BSB details to any server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Every 120-character column check, NNN-NNN BSB check, Code 53/50/13 audit, and Record 7 BigInt cent reconciliation executes 100% locally in your browser tab."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./aba-cemtex-file-generator.html">Australian .ABA API</a>
+        <a href="./australian-aba-transaction-codes-50-53-13-record-1-column-slicer.html">ABA Codes &amp; Slicer</a>
+        <a href="./xero-myob-csv-to-australian-aba-commbiz-nab-westpac-anz.html">Xero / MYOB &rarr; ABA</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener">Generate .ABA via API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#127462;&#127482; 100% Local Browser AusPayNet BECS Audit &bull; Zero Server Upload &bull; CBA CommBiz / NAB Connect / Westpac Live / ANZ</span>
+      <h1>Free Australian <code>BECS .ABA</code> (Cemtex) File Validator &amp; <code>Record 7</code> Net-Total Auditor</h1>
+      <p>Paste or open any <strong>120-character Australian AusPayNet Direct Entry (<code>.aba</code>)</strong> file before uploading to CBA CommBiz / NetBank, NAB Connect, Westpac Live, ANZ Transactive, Macquarie, Bendigo, or Suncorp. Instantly audit <strong>exact 120-char line widths</strong>, <strong><code>Record 0</code> APCA headers</strong>, <strong><code>NNN-NNN</code> BSBs &amp; Code <code>53/50/13</code> rows</strong>, <strong>self-balancing debits</strong>, and <strong><code>Record 7</code> (<code>999-999</code>) cent totals</strong>.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnAbaValid" type="button" class="btn btn-outline">Load Valid Self-Balanced CBA Payroll .ABA File</button>
+          <button id="btnAbaBroken" type="button" class="btn btn-outline">Load Broken .ABA File (Trimmed Width + Missing BSB Hyphen + Rec 7 Mismatch)</button>
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            &#128194; Open Local .ABA / .TXT File
+            <input id="abaFileInput" type="file" accept=".aba,.txt,.cemtex" style="display:none;" />
+          </label>
+        </div>
+        <span id="abaBadge" class="status-chip status-ok">READY</span>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Raw 120-Character Australian .ABA (Cemtex) File</strong></span>
+            <span id="abaLinesChip" style="font-size:0.76rem;color:#93c5fd;">0 Lines</span>
+          </div>
+          <textarea id="abaRawBox" class="code-box" spellcheck="false" style="min-height:320px;font-size:0.73rem;white-space:pre;overflow-x:auto;"></textarea>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>AusPayNet BECS Pre-Flight Compliance Report</strong></span>
+            <span id="abaTotalsChip" style="font-size:0.76rem;color:var(--muted);">A$0.00 Credit / A$0.00 Debit</span>
+          </div>
+          <div id="abaReportBox" class="code-box" style="min-height:320px;max-height:420px;overflow:auto;font-family:system-ui,-apple-system,sans-serif;font-size:0.84rem;line-height:1.55;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.86rem;color:#e2e8f0;">
+          <strong>Need to convert Xero, MYOB, Employment Hero, KeyPay, or Excel CSVs into strict 120-char <code>.aba</code> files automatically?</strong> Use our deterministic Australian ABA Cloud API (<code>$0/month + $0.02/row</code>, covered by Apify's $5/mo free credit).
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button id="btnCopyAbaApiJson" type="button" class="btn btn-outline">Copy Clean Generator JSON</button>
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener">Launch Australian .ABA Cloud API &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">What This Australian AusPayNet <code>.ABA</code> Auditor Verifies</h2>
+      <div class="grid-3">
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Exact 120 Chars</span><span class="tag">Record 0 Header</span></div>
+          <h3>1. Strict 120-Char Width &amp; <code>Record 0</code> Header</h3>
+          <p>Catches editors or CSV scripts that strip the 40 trailing spaces on <code>Record 0</code> / <code>Record 7</code>, and validates Reel Sequence <code>01</code>, 3-char APCA Bank Code, 6-digit APCA User ID, and <code>DDMMYY</code> date.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">NNN-NNN BSB</span><span class="tag">Codes 53 / 50 / 13</span></div>
+          <h3>2. Hyphenated BSBs, Tax Flags &amp; Tx Codes</h3>
+          <p>Verifies exact <code>NNN-NNN</code> hyphenation on Payee BSB (cols 02–08) &amp; Trace BSB (cols 81–87), 9-char account alignment, Tax Indicators (<code>' '</code>/<code>N</code>/<code>W</code>/<code>X</code>/<code>Y</code>), and Payroll (<code>53</code>) / Supplier (<code>50</code>) / Debit (<code>13</code>) codes.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Record 7 (999-999)</span><span class="tag">Self-Balancing Check</span></div>
+          <h3>3. <code>BigInt</code> Cent &amp; Count Reconciliation</h3>
+          <p>Sums integer AUD cents across all Credit (<code>50–57</code>) and Debit (<code>13</code>) rows, checks <code>|Credit &minus; Debit|</code> against <code>Record 7</code> Net Total (cols 21–30), and confirms item counts (cols 75–80).</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./aba-cemtex-file-generator.html">Australian .ABA API</a> &bull; <a href="./australian-aba-transaction-codes-50-53-13-record-1-column-slicer.html">ABA Codes &amp; Slicer</a> &bull; <a href="./free-uk-bacs-standard-18-file-validator.html">UK BACS 18 Validator</a></div>
+      <div><a href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener">Open Australian .ABA File Generator on Apify Store &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      function padR(s, n) { return String(s || '').slice(0, n).padEnd(n, ' '); }
+      function padAcct(s) { return String(s || '').trim().slice(0, 9).padStart(9, ' '); }
+      function padZ(n, len) { return String(n).replace(/\D/g, '').slice(-len).padStart(len, '0'); }
+
+      function buildRec0(bank, user, apca, desc, ddmmyy) {
+        return '0' + ' '.repeat(17) + '01' + padR(bank, 3) + ' '.repeat(7) + padR(user, 26) + padZ(apca, 6) + padR(desc, 12) + padZ(ddmmyy, 6) + ' '.repeat(40);
+      }
+
+      function buildRec1(bsb, acct, ind, tx, cents, title, lodg, trBsb, trAcct, remit, whtCents) {
+        return '1' + padR(bsb, 7) + padAcct(acct) + padR(ind, 1) + padZ(tx, 2) + padZ(cents, 10) + padR(title, 32) + padR(lodg, 18) + padR(trBsb, 7) + padAcct(trAcct) + padR(remit, 16) + padZ(whtCents || 0, 8);
+      }
+
+      function buildRec7(netCents, crCents, drCents, rec1Count) {
+        return '7' + '999-999' + ' '.repeat(12) + padZ(netCents, 10) + padZ(crCents, 10) + padZ(drCents, 10) + ' '.repeat(24) + padZ(rec1Count, 6) + ' '.repeat(40);
+      }
+
+      var VALID_ABA = [
+        buildRec0('CBA', 'SYDNEY CLOUD PTY LTD', '301500', 'PAYROLL FN22', '161126'),
+        buildRec1('082-140', '88412093', ' ', '53', 315045, 'LIAM O CONNOR', 'FORTNIGHT PAY 22', '062-000', '10458921', 'SYDNEY CLOUD PTY', 0),
+        buildRec1('032-089', '49102844', ' ', '50', 184955, 'HARBOUR IT CONSULTING PTY LTD', 'INV-AU-2026-109', '062-000', '10458921', 'SYDNEY CLOUD PTY', 0),
+        buildRec1('062-000', '10458921', ' ', '13', 500000, 'SYDNEY CLOUD PTY LTD', 'BALANCING DEBIT', '062-000', '10458921', 'SYDNEY CLOUD PTY', 0),
+        buildRec7(0, 500000, 500000, 3)
+      ].join('\n');
+
+      var BROKEN_ABA = [
+        buildRec0('CBA', 'SYDNEY CLOUD PTY LTD', '301500', 'PAYROLL FN22', '161126').trimEnd(),
+        buildRec1('082140 ', '88412093', ' ', '53', 315045, 'LIAM O CONNOR', 'FORTNIGHT PAY 22', '062-000', '10458921', 'SYDNEY CLOUD PTY', 0),
+        buildRec7(315045, 310000, 0, 2)
+      ].join('\n');
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      var rawBox = document.getElementById('abaRawBox');
+      var reportBox = document.getElementById('abaReportBox');
+      var badge = document.getElementById('abaBadge');
+      var linesChip = document.getElementById('abaLinesChip');
+      var totalsChip = document.getElementById('abaTotalsChip');
+      var extractedMeta = {
+        bankCode: 'CBA',
+        userName: 'SYDNEY CLOUD PTY LTD',
+        apcaUserId: '301500',
+        description: 'PAYROLL',
+        traceBsb: '062-000',
+        traceAccount: '10458921',
+        includeSelfBalancingRecord: true
+      };
+      var extractedTransactions = [];
+
+      function auditAba() {
+        var raw = (rawBox.value || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        var lines = raw.split('\n').filter(function (l) { return l.length > 0; });
+        linesChip.textContent = lines.length + (lines.length === 1 ? ' Line' : ' Lines');
+
+        if (lines.length === 0) {
+          badge.textContent = 'EMPTY';
+          badge.className = 'status-chip';
+          reportBox.innerHTML = '<div style="color:var(--muted);">Paste or open a 120-character Australian .ABA file on the left.</div>';
+          totalsChip.textContent = 'A$0.00 Credit / A$0.00 Debit';
+          extractedTransactions = [];
+          return;
+        }
+
+        var errors = [];
+        var passes = [];
+        var creditCents = 0n;
+        var debitCents = 0n;
+        var rec1Count = 0;
+        var rec0Count = 0;
+        var rec7Count = 0;
+        var hasSelfBalancing = false;
+        extractedTransactions = [];
+
+        for (var i = 0; i < lines.length; i++) {
+          var ln = i + 1;
+          var line = lines[i];
+          var recType = line.slice(0, 1);
+
+          if (line.length !== 120) {
+            errors.push('Line ' + ln + ' (<code>Record ' + escapeHtml(recType || '?') + '</code>): Record length is <strong>' + line.length + ' chars</strong> (AusPayNet BECS requires exact <code>120</code> ASCII characters including trailing spaces).');
+          }
+
+          if (recType === '0') {
+            rec0Count += 1;
+            if (i !== 0) errors.push('Line ' + ln + ': <code>Record 0</code> header must appear on Line 1.');
+            var blank17 = line.slice(1, 18);
+            var reel = line.slice(18, 20);
+            var bank = line.slice(20, 23);
+            var blank7 = line.slice(23, 30);
+            var uName = line.slice(30, 56);
+            var apca = line.slice(56, 62);
+            var desc = line.slice(62, 74);
+            var ddmmyy = line.slice(74, 80);
+
+            if (blank17 !== ' '.repeat(17)) errors.push('Line ' + ln + ' (<code>Record 0</code>): Columns 02–18 must be 17 spaces.');
+            if (!/^\d{2}$/.test(reel)) errors.push('Line ' + ln + ' (<code>Record 0</code>): Reel Sequence (cols 19–20) "<code>' + escapeHtml(reel) + '</code>" must be numeric (standard <code>01</code>).');
+            if (!/^[A-Z]{3}$/.test(bank)) errors.push('Line ' + ln + ' (<code>Record 0</code>): APCA Financial Institution Code (cols 21–23) "<code>' + escapeHtml(bank) + '</code>" must be 3 uppercase letters (e.g. <code>CBA</code>, <code>NAB</code>, <code>WBC</code>, <code>ANZ</code>).');
+            if (blank7 !== ' '.repeat(7)) errors.push('Line ' + ln + ' (<code>Record 0</code>): Columns 24–30 must be 7 spaces.');
+            if (!uName.trim()) errors.push('Line ' + ln + ' (<code>Record 0</code>): User Preferred Name (cols 31–56) cannot be blank.');
+            if (!/^\d{6}$/.test(apca)) errors.push('Line ' + ln + ' (<code>Record 0</code>): APCA User ID (cols 57–62) "<code>' + escapeHtml(apca) + '</code>" must be 6 digits (e.g. <code>301500</code>).');
+            if (!/^\d{6}$/.test(ddmmyy)) {
+              errors.push('Line ' + ln + ' (<code>Record 0</code>): Processing Date (cols 75–80) "<code>' + escapeHtml(ddmmyy) + '</code>" must be 6-digit <code>DDMMYY</code>.');
+            } else {
+              var dd = parseInt(ddmmyy.slice(0, 2), 10);
+              var mm = parseInt(ddmmyy.slice(2, 4), 10);
+              if (dd < 1 || dd > 31 || mm < 1 || mm > 12) {
+                errors.push('Line ' + ln + ' (<code>Record 0</code>): Invalid <code>DDMMYY</code> calendar values in "<code>' + escapeHtml(ddmmyy) + '</code>".');
+              } else {
+                passes.push('Record 0 Descriptive Header verified: Bank <code>' + escapeHtml(bank) + '</code> &bull; APCA ID <code>' + escapeHtml(apca) + '</code> &bull; Date <code>' + escapeHtml(ddmmyy) + '</code>.');
+              }
+            }
+
+            extractedMeta.bankCode = bank.trim() || 'CBA';
+            extractedMeta.userName = uName.trim() || 'AUSTRALIAN BUSINESS PTY LTD';
+            extractedMeta.apcaUserId = /^\d{6}$/.test(apca) ? apca : '301500';
+            extractedMeta.description = desc.trim() || 'PAYROLL';
+          } else if (recType === '1') {
+            rec1Count += 1;
+            var bsb = line.slice(1, 8);
+            var acct = line.slice(8, 17);
+            var ind = line.slice(17, 18);
+            var tx = line.slice(18, 20);
+            var amtStr = line.slice(20, 30);
+            var title = line.slice(30, 62).trim();
+            var lodg = line.slice(62, 80).trim();
+            var trBsb = line.slice(80, 87);
+            var trAcct = line.slice(87, 96);
+            var remit = line.slice(96, 112).trim();
+            var whtStr = line.slice(112, 120);
+
+            if (!/^\d{3}-\d{3}$/.test(bsb)) {
+              errors.push('Line ' + ln + ' (<code>Record 1</code>): Payee BSB "<code>' + escapeHtml(bsb) + '</code>" (cols 02–08) must include hyphen as <code>NNN-NNN</code> (e.g. <code>062-000</code>).');
+            }
+            if (!/^[ 0-9-]{9}$/.test(acct) || acct.replace(/\D/g, '').length < 4) {
+              errors.push('Line ' + ln + ' (<code>Record 1</code>): Account Number "<code>' + escapeHtml(acct) + '</code>" (cols 09–17) invalid (must be right-justified 5–9 digits).');
+            }
+            if ([' ', 'N', 'W', 'X', 'Y'].indexOf(ind) === -1) {
+              errors.push('Line ' + ln + ' (<code>Record 1</code>): Invalid Tax Indicator "<code>' + escapeHtml(ind) + '</code>" in col 18 (expected space, N, W, X, or Y).');
+            }
+            if (!/^\d{3}-\d{3}$/.test(trBsb)) {
+              errors.push('Line ' + ln + ' (<code>Record 1</code>): Trace BSB "<code>' + escapeHtml(trBsb) + '</code>" (cols 81–87) must be <code>NNN-NNN</code>.');
+            }
+            if (!/^\d{8}$/.test(whtStr)) {
+              errors.push('Line ' + ln + ' (<code>Record 1</code>): Withholding Tax (cols 113–120) "<code>' + escapeHtml(whtStr) + '</code>" must be 8 zero-padded digits.');
+            }
+            if (!/^\d{10}$/.test(amtStr)) {
+              errors.push('Line ' + ln + ' (<code>Record 1</code>): Amount field "<code>' + escapeHtml(amtStr) + '</code>" (cols 21–30) must be 10 zero-padded AUD cents.');
+              continue;
+            }
+
+            var centsVal = BigInt(amtStr);
+            var isBalRow = tx === '13' && (lodg.toUpperCase().indexOf('BALANC') !== -1 || (bsb === trBsb && acct.trim() === trAcct.trim()));
+            if (isBalRow) hasSelfBalancing = true;
+
+            if (tx === '13') {
+              debitCents += centsVal;
+            } else if (['50', '51', '52', '53', '54', '55', '56', '57'].indexOf(tx) !== -1) {
+              creditCents += centsVal;
+            } else {
+              errors.push('Line ' + ln + ' (<code>Record 1</code>): Unrecognized AusPayNet Transaction Code "<code>' + escapeHtml(tx) + '</code>" in cols 19–20 (expected 53, 50, 13, or 51–57).');
+            }
+
+            if (/^\d{3}-\d{3}$/.test(trBsb)) extractedMeta.traceBsb = trBsb;
+            if (trAcct.trim()) extractedMeta.traceAccount = trAcct.replace(/\D/g, '');
+
+            if (!isBalRow) {
+              extractedTransactions.push({
+                accountTitle: title || 'PAYEE ' + ln,
+                bsb: bsb.trim(),
+                accountNumber: acct.replace(/[^0-9]/g, ''),
+                amountAud: Number((Number(centsVal) / 100).toFixed(2)),
+                transactionCode: tx,
+                lodgementReference: lodg || 'PAYMENT ' + ln,
+                remitterName: remit || extractedMeta.userName.slice(0, 16)
+              });
+            }
+          } else if (recType === '7') {
+            rec7Count += 1;
+            var filler = line.slice(1, 8);
+            var blank12 = line.slice(8, 20);
+            var netStr = line.slice(20, 30);
+            var crStr = line.slice(30, 40);
+            var drStr = line.slice(40, 50);
+            var cntStr = line.slice(74, 80);
+
+            if (filler !== '999-999') {
+              errors.push('Line ' + ln + ' (<code>Record 7</code>): Columns 02–08 must be exact literal <code>999-999</code> (found "<code>' + escapeHtml(filler) + '</code>").');
+            }
+            if (blank12 !== ' '.repeat(12)) {
+              errors.push('Line ' + ln + ' (<code>Record 7</code>): Columns 09–20 must be 12 spaces.');
+            }
+
+            var expectedNet = creditCents >= debitCents ? (creditCents - debitCents) : (debitCents - creditCents);
+            if (!/^\d{10}$/.test(crStr) || BigInt(crStr) !== creditCents) {
+              errors.push('Line ' + ln + ' (<code>Record 7</code>): Declared Credit Total <code>' + escapeHtml(crStr) + '</code>c != Computed Credit Total <code>' + creditCents.toString() + '</code>c.');
+            }
+            if (!/^\d{10}$/.test(drStr) || BigInt(drStr) !== debitCents) {
+              errors.push('Line ' + ln + ' (<code>Record 7</code>): Declared Debit Total <code>' + escapeHtml(drStr) + '</code>c != Computed Debit Total <code>' + debitCents.toString() + '</code>c.');
+            }
+            if (!/^\d{10}$/.test(netStr) || BigInt(netStr) !== expectedNet) {
+              errors.push('Line ' + ln + ' (<code>Record 7</code>): Declared Net Total <code>' + escapeHtml(netStr) + '</code>c != Expected <code>|Credit - Debit|</code> = <code>' + expectedNet.toString() + '</code>c.');
+            }
+            var declCnt = parseInt(cntStr, 10);
+            if (!/^\d{6}$/.test(cntStr) || declCnt !== rec1Count) {
+              errors.push('Line ' + ln + ' (<code>Record 7</code>): Declared Record 1 Count <code>' + escapeHtml(cntStr) + '</code> != Actual Record 1 rows (<code>' + rec1Count + '</code>).');
+            }
+
+            if (filler === '999-999' && /^\d{10}$/.test(crStr) && /^\d{10}$/.test(drStr) && /^\d{10}$/.test(netStr) && BigInt(crStr) === creditCents && BigInt(drStr) === debitCents && BigInt(netStr) === expectedNet && declCnt === rec1Count) {
+              passes.push('Record 7 (<code>999-999</code>) Trailer reconciled: Credits <code>A$' + (Number(creditCents) / 100).toFixed(2) + '</code>, Debits <code>A$' + (Number(debitCents) / 100).toFixed(2) + '</code>, Net <code>A$' + (Number(expectedNet) / 100).toFixed(2) + '</code> across <code>' + rec1Count + '</code> Record 1 line(s).');
+            }
+          } else {
+            errors.push('Line ' + ln + ': Invalid AusPayNet Record Type "<code>' + escapeHtml(recType) + '</code>" in column 1 (expected <code>0</code>, <code>1</code>, or <code>7</code>).');
+          }
+        }
+
+        if (rec0Count === 0) errors.push('Missing opening <code>Record 0</code> Descriptive Header.');
+        if (rec1Count === 0) errors.push('File contains zero <code>Record 1</code> payment detail rows.');
+        if (rec7Count === 0) errors.push('Missing closing <code>Record 7</code> (<code>999-999</code>) File Total Trailer.');
+
+        extractedMeta.includeSelfBalancingRecord = hasSelfBalancing;
+        if (hasSelfBalancing && creditCents === debitCents && creditCents > 0n) {
+          passes.push('Self-balancing Code <code>13</code> debit entry matches total Credits (<code>A$' + (Number(creditCents) / 100).toFixed(2) + '</code> &rarr; Net Total <code>A$0.00</code>, ready for CBA NetBank / CommBiz &amp; NAB Connect).');
+        } else if (!hasSelfBalancing && creditCents > 0n && debitCents === 0n) {
+          passes.push('Unbalanced credit batch detected (Net Total = Credit Total = <code>A$' + (Number(creditCents) / 100).toFixed(2) + '</code>; accepted by ANZ Transactive &amp; Westpac profiles configured without balancing lines).');
+        }
+
+        totalsChip.textContent = 'A$' + (Number(creditCents) / 100).toFixed(2) + ' Credit / A$' + (Number(debitCents) / 100).toFixed(2) + ' Debit';
+
+        if (errors.length === 0) {
+          badge.textContent = 'PASS • 120-CHAR .ABA VALID';
+          badge.className = 'status-chip status-ok';
+        } else {
+          badge.textContent = errors.length + (errors.length === 1 ? ' ISSUE DETECTED' : ' ISSUES DETECTED');
+          badge.className = 'status-chip status-warn';
+        }
+
+        var html = '';
+        if (errors.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);color:#fecaca;">' +
+            '<strong>&#9888;&#65039; AusPayNet BECS .ABA Errors (' + errors.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var e = 0; e < errors.length; e++) html += '<li style="margin-bottom:4px;">' + errors[e] + '</li>';
+          html += '</ul></div>';
+        }
+        if (passes.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#bbf7d0;">' +
+            '<strong>&#9989; Verified BECS Controls (' + passes.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var p = 0; p < passes.length; p++) html += '<li style="margin-bottom:3px;">' + passes[p] + '</li>';
+          html += '</ul></div>';
+        }
+        if (extractedTransactions.length > 0) {
+          html += '<div style="margin-top:8px;"><strong>Extracted Payee Instructions (' + extractedTransactions.length + '):</strong>';
+          for (var k = 0; k < extractedTransactions.length; k++) {
+            var txItem = extractedTransactions[k];
+            html += '<div style="margin-top:5px;padding:7px 10px;border-radius:7px;background:rgba(15,23,42,0.75);border:1px solid var(--border);font-size:0.8rem;">' +
+              '<strong>' + escapeHtml(txItem.accountTitle) + '</strong> &bull; BSB <code>' + escapeHtml(txItem.bsb) + '</code> / Acct <code>' + escapeHtml(txItem.accountNumber) + '</code> &bull; Code <code>' + escapeHtml(txItem.transactionCode) + '</code> &bull; <strong style="color:#86efac;">A$' + txItem.amountAud.toFixed(2) + '</strong> (<code>' + escapeHtml(txItem.lodgementReference) + '</code>)' +
+              '</div>';
+          }
+          html += '</div>';
+        }
+        reportBox.innerHTML = html;
+      }
+
+      document.getElementById('btnAbaValid').addEventListener('click', function () {
+        rawBox.value = VALID_ABA;
+        auditAba();
+      });
+
+      document.getElementById('btnAbaBroken').addEventListener('click', function () {
+        rawBox.value = BROKEN_ABA;
+        auditAba();
+      });
+
+      document.getElementById('abaFileInput').addEventListener('change', function (ev) {
+        var f = ev.target.files && ev.target.files[0];
+        if (!f) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          rawBox.value = String(e.target.result || '');
+          auditAba();
+        };
+        reader.readAsText(f);
+      });
+
+      rawBox.addEventListener('input', auditAba);
+
+      document.getElementById('btnCopyAbaApiJson').addEventListener('click', function () {
+        var btn = document.getElementById('btnCopyAbaApiJson');
+        var payload = JSON.stringify({
+          bankCode: extractedMeta.bankCode,
+          userName: extractedMeta.userName,
+          apcaUserId: extractedMeta.apcaUserId,
+          description: extractedMeta.description,
+          processingDate: '2026-11-16',
+          traceBsb: extractedMeta.traceBsb,
+          traceAccount: extractedMeta.traceAccount,
+          includeSelfBalancingRecord: extractedMeta.includeSelfBalancingRecord,
+          transactions: extractedTransactions
+        }, null, 2);
+        navigator.clipboard.writeText(payload).then(function () {
+          btn.textContent = 'Copied Clean JSON!';
+          if (window.finopsTrack) window.finopsTrack('action_copy_curl');
+          setTimeout(function () { btn.textContent = 'Copy Clean Generator JSON'; }, 1700);
+        });
+      });
+
+      rawBox.value = VALID_ABA;
+      auditAba();
+    })();
+  </script>
+</body>
+</html>
