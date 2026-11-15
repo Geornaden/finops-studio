@@ -370,4 +370,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.94</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/regulatory-compliance-radar-2026-2027-sepa-peppol-fedwire-nacha.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
 </urlset>
