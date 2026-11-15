@@ -2,7 +2,13 @@
 
 [![Live Hub](https://img.shields.io/badge/Live_Sandbox_&_Docs-finops--studio-10b981?style=for-the-badge)](https://geornaden.github.io/finops-studio/)
 [![Apify Store](https://img.shields.io/badge/Cloud_APIs-Apify_Store-38bdf8?style=for-the-badge)](https://apify.com/finops_studio)
+[![RapidAPI Hub](https://img.shields.io/badge/REST_APIs-RapidAPI_Hub-0284c7?style=for-the-badge)](https://rapidapi.com/user/Geornaden)
 [![MCP Ready](https://img.shields.io/badge/MCP-Claude_%7C_Cursor_%7C_Windsurf-8b5cf6?style=for-the-badge)](#model-context-protocol-mcp-for-ai-agents)
+
+[![FinOps Studio — 9 Live Banking, Payroll & E-Invoice APIs MCP on mcprush](https://mcprush.com/badge/finops-studio-banking-payroll-e-invoicing-mcp/score.svg)](https://mcprush.com/to/finops-studio-banking-payroll-e-invoicing-mcp?ref=badge)
+[![EU E-Invoice XML Generator MCP on mcprush](https://mcprush.com/badge/eu-e-invoice-xml-generator-peppol-xrechnung-mcp/score.svg)](https://mcprush.com/to/eu-e-invoice-xml-generator-peppol-xrechnung-mcp?ref=badge)
+[![Corporate BAI2 Bank Statement Parser MCP on mcprush](https://mcprush.com/badge/corporate-bai2-bank-statement-parser-to-json-mcp/score.svg)](https://mcprush.com/to/corporate-bai2-bank-statement-parser-to-json-mcp?ref=badge)
+[![German DATEV Buchungsstapel CSV Generator MCP on mcprush](https://mcprush.com/badge/german-datev-buchungsstapel-extf-csv-generato-mcp/score.svg)](https://mcprush.com/to/german-datev-buchungsstapel-extf-csv-generato-mcp?ref=badge)
 
 **Zero-hallucination banking, payroll, cash-management, and tax e-invoicing file engines** for CFOs, accounting firms, ERP integrators (**NetSuite, SAP, Odoo, QuickBooks, Xero, Dynamics 365**), workflow builders (**n8n, Make.com, Zapier**), and **AI Agents (MCP)**.
 
