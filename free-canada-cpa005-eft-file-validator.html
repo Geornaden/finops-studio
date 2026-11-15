@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Canadian CPA-005 EFT File Validator — Audit 1,464-Byte Records, 0IIITTTTT Routing &amp; Record Z Totals | FinOps Studio</title>
+  <meta name="description" content="100% client-side Canadian Payments Canada Standard 005 (CPA-005) EFT file validator: paste or open any 1,464-character .eft / .dat file to audit Record A headers, 6x240-byte Record C/D segments, 0IIITTTTT routing numbers, 0YYDDD Julian dates, and Record Z cent/count totals." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-canada-cpa005-eft-file-validator.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Free Browser Canadian CPA-005 (1,464-Byte) EFT File Validator & Record Z Auditor | FinOps Studio" />
+  <meta property="og:description" content="Audit 1,464-byte Canadian CPA-005 EFT files locally in your browser before uploading to RBC Express, TD Commercial, BMO, ScotiaConnect, CIBC CMO, or Desjardins." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-canada-cpa005-eft-file-validator.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Free Canadian CPA-005 (1,464-Byte) EFT File Validator & Record Z Auditor",
+        "url": "https://geornaden.github.io/finops-studio/free-canada-cpa005-eft-file-validator.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "CAD",
+          "description": "Free client-side 1,464-byte Canadian CPA-005 EFT validator; $0/mo + $0.02/row Cloud API on Apify Store for automated EFT Direct Deposit & PAD file generation."
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why do RBC Express, TD Web Business Banking, BMO, or ScotiaConnect reject a Canadian CPA-005 EFT file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The five most common Payments Canada Standard 005 (CPA-005) upload rejections are: (1) logical lines trimmed below or exceeding exact 1,464 ASCII bytes (24-byte header + six 240-byte segments), (2) Canadian routing numbers entered in cheque MICR order (XXXXX-YYY) instead of electronic 9-digit 0IIITTTTT order (leading zero + 3-digit Institution + 5-digit Branch Transit), (3) invalid 6-digit 0YYDDD Julian dates, (4) broken Logical Record Count sequencing (1..N) or mismatched Originator ID / File Creation Number (FCN), and (5) Record Z trailer 14-digit cent totals or 8-digit item counts not reconciling."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this Canadian CPA-005 EFT validator upload employee payroll or vendor bank accounts to any server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Every 1,464-byte width check, 6x240-byte segment unpack, 0IIITTTTT routing verification, and Record Z BigInt cent reconciliation runs 100% locally in your browser tab."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./canada-cpa-005-eft-file-generator.html">CPA-005 EFT API</a>
+        <a href="./canada-cpa005-transaction-codes-200-450-1464-byte-record-c-slicer.html">CPA Codes &amp; Unpacker</a>
+        <a href="./csv-to-canada-cpa-005-eft-rbc-td-bmo-scotiabank.html">RBC / TD / BMO Guide</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/canada-cpa005-eft-generator" target="_blank" rel="noopener">Generate CPA-005 via API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#127464;&#127462; 100% Local Browser Payments Canada Standard 005 Audit &bull; Zero Server Upload &bull; RBC / TD / BMO / ScotiaConnect / CIBC</span>
+      <h1>Free Canadian <code>CPA-005</code> (1,464-Byte) EFT File Validator &amp; <code>Record Z</code> Trailer Auditor</h1>
+      <p>Paste or open any <strong>1,464-character Canadian Payments Association Standard 005 (<code>.eft</code> / <code>.dat</code>)</strong> Direct Deposit or Pre-Authorized Debit (PAD) file before uploading to RBC Express, TD Commercial Banking, BMO Online for Business, ScotiaConnect, CIBC CMO, or Desjardins. Instantly audit <strong>exact 1,464-byte widths</strong>, <strong><code>6 &times; 240</code>-byte packed segments</strong>, <strong><code>0IIITTTTT</code> routing</strong>, <strong><code>0YYDDD</code> Julian dates</strong>, and <strong><code>Record Z</code> cent/count totals</strong>.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnCpaValid" type="button" class="btn btn-outline">Load Valid 1,464-Byte CAD Payroll EFT File</button>
+          <button id="btnCpaBroken" type="button" class="btn btn-outline">Load Broken EFT File (Trimmed Width + Bad Routing + Record Z Mismatch)</button>
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            &#128194; Open Local .EFT / .DAT / .TXT File
+            <input id="cpaFileInput" type="file" accept=".eft,.dat,.txt,.cpa" style="display:none;" />
+          </label>
+        </div>
+        <span id="cpaBadge" class="status-chip status-ok">READY</span>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Raw 1,464-Byte Canadian CPA-005 File (Record A + C/D + Z)</strong></span>
+            <span id="cpaLinesChip" style="font-size:0.76rem;color:#93c5fd;">0 Records</span>
+          </div>
+          <textarea id="cpaRawBox" class="code-box" spellcheck="false" style="min-height:320px;font-size:0.73rem;white-space:pre;overflow-x:auto;"></textarea>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>Payments Canada Standard 005 Pre-Flight Report</strong></span>
+            <span id="cpaTotalsChip" style="font-size:0.76rem;color:var(--muted);">C$0.00 Credits / C$0.00 Debits</span>
+          </div>
+          <div id="cpaReportBox" class="code-box" style="min-height:320px;max-height:420px;overflow:auto;font-family:system-ui,-apple-system,sans-serif;font-size:0.84rem;line-height:1.55;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.86rem;color:#e2e8f0;">
+          <strong>Need to convert QuickBooks, Xero, Ceridian Dayforce, or Excel CSVs into strict 1,464-byte CPA-005 files automatically?</strong> Use our deterministic Canadian CPA-005 Cloud API (<code>$0/month + $0.02/row</code>, covered by Apify's $5/mo free credit).
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button id="btnCopyCpaJson" type="button" class="btn btn-outline">Copy Clean Generator JSON</button>
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/canada-cpa005-eft-generator" target="_blank" rel="noopener">Launch Canadian CPA-005 API &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">What This Canadian <code>CPA-005</code> Pre-Flight Auditor Verifies</h2>
+      <div class="grid-3">
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Exact 1,464 Bytes</span><span class="tag">Record A Header</span></div>
+          <h3>1. 1,464-Byte Logical Width &amp; Sequence</h3>
+          <p>Flags trailing-space truncation on <code>Record A / C / D / Z</code>, checks strict <code>000000001..N</code> logical record numbering, and verifies consistent 10-char Originator ID + 4-digit File Creation Number (<code>FCN</code>).</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">6 &times; 240 Segments</span><span class="tag">0IIITTTTT + 0YYDDD</span></div>
+          <h3>2. Segment Unpacking, Routing &amp; Julian Dates</h3>
+          <p>Unpacks up to six 240-byte payment slots per <code>Record C / D</code>, validates 9-digit <code>0IIITTTTT</code> routing (`0` + 3-digit Institution + 5-digit Transit), and verifies 6-digit <code>0YYDDD</code> Julian due dates.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Record Z Trailer</span><span class="tag">14-Digit Cents</span></div>
+          <h3>3. <code>BigInt</code> Cent &amp; Item-Count Reconciliation</h3>
+          <p>Sums integer CAD/USD cents across every active Credit (`Record C`) and Debit (`Record D`) segment and reconciles them against <code>Record Z</code> columns 25–68.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./canada-cpa-005-eft-file-generator.html">CPA-005 EFT API</a> &bull; <a href="./canada-cpa005-transaction-codes-200-450-1464-byte-record-c-slicer.html">CPA Codes &amp; Slicer</a> &bull; <a href="./free-australian-aba-file-validator-record-7-auditor.html">AU .ABA Validator</a></div>
+      <div><a href="https://apify.com/finops_studio/canada-cpa005-eft-generator" target="_blank" rel="noopener">Open Canadian CPA-005 EFT Generator on Apify Store &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      function padR(s, n) { return String(s || '').slice(0, n).padEnd(n, ' '); }
+      function padZ(n, len) { return String(n).replace(/\D/g, '').slice(-len).padStart(len, '0'); }
+
+      function buildSeg(cpaCode, cents, julDue, routing9, acct, trace, shortName, payee, longName, origId, xref, retRouting9, retAcct) {
+        return padZ(cpaCode, 3) +
+          padZ(cents, 10) +
+          padZ(julDue, 6) +
+          padZ(routing9, 9) +
+          padR(acct, 12) +
+          padR(trace, 22) +
+          '000' +
+          padR(shortName, 15) +
+          padR(payee, 30) +
+          padR(longName, 30) +
+          padR(origId, 10) +
+          padR(xref, 19) +
+          padZ(retRouting9, 9) +
+          padR(retAcct, 12) +
+          ' '.repeat(15) +
+          ' '.repeat(22) +
+          '  ' +
+          '0'.repeat(11);
+      }
+
+      var origId = 'MAPLETECH1';
+      var fcn = '0042';
+      var jul = '026320';
+      var recA = ('A' + padZ(1, 9) + origId + fcn + jul + '00300' + ' '.repeat(20) + 'CAD').padEnd(1464, ' ');
+      var seg1 = buildSeg('200', 342500, jul, '000300012', '1049281', origId + fcn + '00000001', 'MAPLE TECH INC', 'CHLOE TREMBLAY', 'MAPLE TECH SOLUTIONS INC', origId, 'PAY-2026-NOV-01', '000300012', '1004589');
+      var seg2 = buildSeg('450', 187550, jul, '000410202', '7741902', origId + fcn + '00000002', 'MAPLE TECH INC', 'NORTHERN CLOUD SERVICES LTD', 'MAPLE TECH SOLUTIONS INC', origId, 'INV-CA-8841', '000300012', '1004589');
+      var recC = 'C' + padZ(2, 9) + origId + fcn + seg1 + seg2 + ' '.repeat(240 * 4);
+      var recZ = ('Z' + padZ(3, 9) + origId + fcn + padZ(0, 14) + padZ(0, 8) + padZ(530050, 14) + padZ(2, 8)).padEnd(1464, ' ');
+
+      var VALID_CPA = [recA, recC, recZ].join('\n');
+
+      var badSeg = buildSeg('200', 342500, '263200', '100012003', '1049281', origId + fcn + '00000001', 'MAPLE TECH INC', 'CHLOE TREMBLAY', 'MAPLE TECH SOLUTIONS INC', origId, 'PAY-2026-NOV-01', '000300012', '1004589');
+      var BROKEN_CPA = [
+        recA.trimEnd(),
+        'C' + padZ(2, 9) + origId + fcn + badSeg + ' '.repeat(240 * 5),
+        ('Z' + padZ(3, 9) + origId + fcn + padZ(0, 14) + padZ(0, 8) + padZ(340000, 14) + padZ(2, 8)).padEnd(1464, ' ')
+      ].join('\n');
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      var rawBox = document.getElementById('cpaRawBox');
+      var reportBox = document.getElementById('cpaReportBox');
+      var badge = document.getElementById('cpaBadge');
+      var linesChip = document.getElementById('cpaLinesChip');
+      var totalsChip = document.getElementById('cpaTotalsChip');
+      var extractedMeta = {
+        originatorId: 'MAPLETECH1',
+        fileCreationNumber: '0042',
+        destinationDataCentre: '00300',
+        originatorShortName: 'MAPLE TECH INC',
+        originatorLongName: 'MAPLE TECH SOLUTIONS INC',
+        returnInstitution: '003',
+        returnTransit: '00012',
+        returnAccount: '1004589'
+      };
+      var extractedTx = [];
+
+      function auditCpa() {
+        var raw = (rawBox.value || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        var lines = raw.split('\n').filter(function (l) { return l.length > 0; });
+        linesChip.textContent = lines.length + (lines.length === 1 ? ' Record' : ' Records');
+
+        if (lines.length === 0) {
+          badge.textContent = 'EMPTY';
+          badge.className = 'status-chip';
+          reportBox.innerHTML = '<div style="color:var(--muted);">Paste or open a 1,464-byte Canadian CPA-005 EFT file on the left.</div>';
+          totalsChip.textContent = 'C$0.00 Credits / C$0.00 Debits';
+          extractedTx = [];
+          return;
+        }
+
+        var errors = [];
+        var passes = [];
+        var creditCents = 0n;
+        var debitCents = 0n;
+        var creditCount = 0;
+        var debitCount = 0;
+        var seenA = false;
+        var seenZ = false;
+        var headerOrigId = '';
+        var headerFcn = '';
+        extractedTx = [];
+
+        for (var i = 0; i < lines.length; i++) {
+          var ln = i + 1;
+          var line = lines[i];
+          var rType = line.slice(0, 1);
+          var seqStr = line.slice(1, 10);
+          var recOrig = line.slice(10, 20);
+          var recFcn = line.slice(20, 24);
+
+          if (line.length !== 1464) {
+            errors.push('Record ' + ln + ' (<code>Record ' + escapeHtml(rType || '?') + '</code>): Physical line length is <strong>' + line.length + ' bytes</strong> (Payments Canada Standard 005 requires exact <code>1,464</code> characters padded with trailing spaces).');
+          }
+
+          if (!/^\d{9}$/.test(seqStr) || parseInt(seqStr, 10) !== ln) {
+            errors.push('Record ' + ln + ' (<code>Record ' + escapeHtml(rType) + '</code>): Logical Record Count "<code>' + escapeHtml(seqStr) + '</code>" (cols 02–10) must equal sequential line <code>' + padZ(ln, 9) + '</code>.');
+          }
+
+          if (rType === 'A') {
+            seenA = true;
+            headerOrigId = recOrig;
+            headerFcn = recFcn;
+            var createJul = line.slice(24, 30);
+            var dataCtr = line.slice(30, 35);
+            var curr = line.slice(55, 58).trim() || 'CAD';
+
+            if (!/^0\d{2}\d{3}$/.test(createJul) || parseInt(createJul.slice(3, 6), 10) < 1 || parseInt(createJul.slice(3, 6), 10) > 366) {
+              errors.push('Record ' + ln + ' (<code>Record A</code>): Creation Date "<code>' + escapeHtml(createJul) + '</code>" (cols 25–30) must be 6-digit <code>0YYDDD</code> Julian format.');
+            }
+            if (!/^\d{5}$/.test(dataCtr)) {
+              errors.push('Record ' + ln + ' (<code>Record A</code>): Destination Data Centre "<code>' + escapeHtml(dataCtr) + '</code>" (cols 31–35) must be 5 digits.');
+            }
+            if (/^0\d{5}$/.test(createJul) && /^\d{5}$/.test(dataCtr)) {
+              passes.push('Record A Header verified: Originator <code>' + escapeHtml(recOrig.trim()) + '</code> &bull; FCN <code>' + escapeHtml(recFcn) + '</code> &bull; Julian <code>' + escapeHtml(createJul) + '</code> &bull; Data Centre <code>' + escapeHtml(dataCtr) + '</code> (' + escapeHtml(curr) + ').');
+            }
+            extractedMeta.originatorId = recOrig.trim() || 'MAPLETECH1';
+            extractedMeta.fileCreationNumber = /^\d{4}$/.test(recFcn) ? recFcn : '0001';
+            extractedMeta.destinationDataCentre = /^\d{5}$/.test(dataCtr) ? dataCtr : '00300';
+          } else if (rType === 'C' || rType === 'D') {
+            if (headerOrigId && recOrig !== headerOrigId) {
+              errors.push('Record ' + ln + ' (<code>Record ' + rType + '</code>): Originator ID "<code>' + escapeHtml(recOrig) + '</code>" does not match Record A Originator ID.');
+            }
+            if (headerFcn && recFcn !== headerFcn) {
+              errors.push('Record ' + ln + ' (<code>Record ' + rType + '</code>): FCN "<code>' + escapeHtml(recFcn) + '</code>" does not match Record A FCN "<code>' + escapeHtml(headerFcn) + '</code>".');
+            }
+
+            for (var s = 0; s < 6; s++) {
+              var start = 24 + s * 240;
+              var seg = line.slice(start, start + 240);
+              if (!seg || !seg.trim()) continue;
+              if (seg.length !== 240) {
+                errors.push('Record ' + ln + ' Segment ' + (s + 1) + ': Truncated segment length ' + seg.length + ' (expected 240 bytes).');
+                continue;
+              }
+              var cpaCode = seg.slice(0, 3);
+              var amtStr = seg.slice(3, 13);
+              var dueJul = seg.slice(13, 19);
+              var route9 = seg.slice(19, 28);
+              var acct = seg.slice(28, 40).trim();
+              var sName = seg.slice(65, 80).trim();
+              var pName = seg.slice(80, 110).trim();
+              var lName = seg.slice(110, 140).trim();
+              var xref = seg.slice(150, 169).trim();
+              var retRoute = seg.slice(169, 178);
+              var retAcct = seg.slice(178, 190).trim();
+
+              if (!/^\d{3}$/.test(cpaCode)) {
+                errors.push('Record ' + ln + ' Seg ' + (s + 1) + ': Invalid 3-digit CPA Transaction Code "<code>' + escapeHtml(cpaCode) + '</code>".');
+              }
+              if (!/^0\d{8}$/.test(route9)) {
+                errors.push('Record ' + ln + ' Seg ' + (s + 1) + ': Invalid Canadian routing number "<code>' + escapeHtml(route9) + '</code>" (must be 9-digit <code>0IIITTTTT</code> starting with leading <code>0</code>, e.g. <code>000300012</code>).');
+              }
+              if (!/^0\d{2}\d{3}$/.test(dueJul) || parseInt(dueJul.slice(3, 6), 10) < 1 || parseInt(dueJul.slice(3, 6), 10) > 366) {
+                errors.push('Record ' + ln + ' Seg ' + (s + 1) + ': Invalid 6-digit <code>0YYDDD</code> Julian due date "<code>' + escapeHtml(dueJul) + '</code>".');
+              }
+              if (!acct || acct.replace(/\D/g, '').length < 5) {
+                errors.push('Record ' + ln + ' Seg ' + (s + 1) + ': Invalid payee Canadian account number "<code>' + escapeHtml(acct) + '</code>".');
+              }
+              if (!/^\d{10}$/.test(amtStr)) {
+                errors.push('Record ' + ln + ' Seg ' + (s + 1) + ': Invalid 10-digit cent amount "<code>' + escapeHtml(amtStr) + '</code>".');
+                continue;
+              }
+
+              var cents = BigInt(amtStr);
+              if (rType === 'C') {
+                creditCents += cents;
+                creditCount += 1;
+              } else {
+                debitCents += cents;
+                debitCount += 1;
+              }
+
+              if (sName) extractedMeta.originatorShortName = sName;
+              if (lName) extractedMeta.originatorLongName = lName;
+              if (/^0\d{8}$/.test(retRoute)) {
+                extractedMeta.returnInstitution = retRoute.slice(1, 4);
+                extractedMeta.returnTransit = retRoute.slice(4, 9);
+              }
+              if (retAcct) extractedMeta.returnAccount = retAcct;
+
+              extractedTx.push({
+                name: pName || ('PAYEE ' + (extractedTx.length + 1)),
+                institution: /^0\d{8}$/.test(route9) ? route9.slice(1, 4) : '003',
+                transit: /^0\d{8}$/.test(route9) ? route9.slice(4, 9) : '00012',
+                routing9: route9,
+                accountNumber: acct,
+                amount: Number((Number(cents) / 100).toFixed(2)),
+                cpaCode: cpaCode,
+                reference: xref || ('EFT-' + (extractedTx.length + 1)),
+                recordType: rType
+              });
+            }
+          } else if (rType === 'Z') {
+            seenZ = true;
+            var drValStr = line.slice(24, 38);
+            var drCntStr = line.slice(38, 46);
+            var crValStr = line.slice(46, 60);
+            var crCntStr = line.slice(60, 68);
+
+            if (!/^\d{14}$/.test(drValStr) || BigInt(drValStr) !== debitCents) {
+              errors.push('Record ' + ln + ' (<code>Record Z</code>): Declared Debit Value <code>' + escapeHtml(drValStr) + '</code>c != Computed Debit Cents <code>' + debitCents.toString() + '</code>c.');
+            }
+            if (!/^\d{8}$/.test(drCntStr) || parseInt(drCntStr, 10) !== debitCount) {
+              errors.push('Record ' + ln + ' (<code>Record Z</code>): Declared Debit Count <code>' + escapeHtml(drCntStr) + '</code> != Computed Debit Segments <code>' + debitCount + '</code>.');
+            }
+            if (!/^\d{14}$/.test(crValStr) || BigInt(crValStr) !== creditCents) {
+              errors.push('Record ' + ln + ' (<code>Record Z</code>): Declared Credit Value <code>' + escapeHtml(crValStr) + '</code>c != Computed Credit Cents <code>' + creditCents.toString() + '</code>c.');
+            }
+            if (!/^\d{8}$/.test(crCntStr) || parseInt(crCntStr, 10) !== creditCount) {
+              errors.push('Record ' + ln + ' (<code>Record Z</code>): Declared Credit Count <code>' + escapeHtml(crCntStr) + '</code> != Computed Credit Segments <code>' + creditCount + '</code>.');
+            }
+
+            if (/^\d{14}$/.test(drValStr) && /^\d{14}$/.test(crValStr) && BigInt(drValStr) === debitCents && BigInt(crValStr) === creditCents && parseInt(drCntStr, 10) === debitCount && parseInt(crCntStr, 10) === creditCount) {
+              passes.push('Record Z Control Trailer reconciled: Credits <code>C$' + (Number(creditCents) / 100).toFixed(2) + '</code> (' + creditCount + ' segs) &amp; Debits <code>C$' + (Number(debitCents) / 100).toFixed(2) + '</code> (' + debitCount + ' segs).');
+            }
+          } else {
+            errors.push('Record ' + ln + ': Unrecognized CPA-005 Record Type "<code>' + escapeHtml(rType) + '</code>" in column 1 (expected <code>A</code>, <code>C</code>, <code>D</code>, or <code>Z</code>).');
+          }
+        }
+
+        if (!seenA) errors.push('Missing opening <code>Record A</code> File Header.');
+        if (!seenZ) errors.push('Missing closing <code>Record Z</code> File Control Trailer.');
+        if (extractedTx.length > 0 && errors.length === 0) {
+          passes.push('Unpacked <strong>' + extractedTx.length + ' payment segment(s)</strong> with valid <code>0IIITTTTT</code> routing &amp; <code>0YYDDD</code> Julian dates.');
+        }
+
+        totalsChip.textContent = 'C$' + (Number(creditCents) / 100).toFixed(2) + ' Credits / C$' + (Number(debitCents) / 100).toFixed(2) + ' Debits';
+
+        if (errors.length === 0) {
+          badge.textContent = 'PASS • 1,464-BYTE CPA-005 VALID';
+          badge.className = 'status-chip status-ok';
+        } else {
+          badge.textContent = errors.length + (errors.length === 1 ? ' ISSUE DETECTED' : ' ISSUES DETECTED');
+          badge.className = 'status-chip status-warn';
+        }
+
+        var html = '';
+        if (errors.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);color:#fecaca;">' +
+            '<strong>&#9888;&#65039; CPA-005 Validation Errors (' + errors.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var e = 0; e < errors.length; e++) html += '<li style="margin-bottom:4px;">' + errors[e] + '</li>';
+          html += '</ul></div>';
+        }
+        if (passes.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#bbf7d0;">' +
+            '<strong>&#9989; Verified Payments Canada Controls (' + passes.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var p = 0; p < passes.length; p++) html += '<li style="margin-bottom:3px;">' + passes[p] + '</li>';
+          html += '</ul></div>';
+        }
+        if (extractedTx.length > 0) {
+          html += '<div style="margin-top:8px;"><strong>Unpacked 240-Byte Payment Segments (' + extractedTx.length + '):</strong>';
+          for (var k = 0; k < extractedTx.length; k++) {
+            var t = extractedTx[k];
+            html += '<div style="margin-top:5px;padding:7px 10px;border-radius:7px;background:rgba(15,23,42,0.75);border:1px solid var(--border);font-size:0.8rem;">' +
+              '<strong>' + escapeHtml(t.name) + '</strong> &bull; Routing <code>' + escapeHtml(t.routing9) + '</code> (Inst <code>' + escapeHtml(t.institution) + '</code> / Transit <code>' + escapeHtml(t.transit) + '</code>) &bull; Acct <code>' + escapeHtml(t.accountNumber) + '</code> &bull; CPA <code>' + escapeHtml(t.cpaCode) + '</code> &bull; <strong style="color:#86efac;">C$' + t.amount.toFixed(2) + '</strong>' +
+              '</div>';
+          }
+          html += '</div>';
+        }
+        reportBox.innerHTML = html;
+      }
+
+      document.getElementById('btnCpaValid').addEventListener('click', function () {
+        rawBox.value = VALID_CPA;
+        auditCpa();
+      });
+
+      document.getElementById('btnCpaBroken').addEventListener('click', function () {
+        rawBox.value = BROKEN_CPA;
+        auditCpa();
+      });
+
+      document.getElementById('cpaFileInput').addEventListener('change', function (ev) {
+        var f = ev.target.files && ev.target.files[0];
+        if (!f) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          rawBox.value = String(e.target.result || '');
+          auditCpa();
+        };
+        reader.readAsText(f);
+      });
+
+      rawBox.addEventListener('input', auditCpa);
+
+      document.getElementById('btnCopyCpaJson').addEventListener('click', function () {
+        var btn = document.getElementById('btnCopyCpaJson');
+        var payload = JSON.stringify({
+          originatorId: extractedMeta.originatorId,
+          fileCreationNumber: extractedMeta.fileCreationNumber,
+          originatorShortName: extractedMeta.originatorShortName,
+          originatorLongName: extractedMeta.originatorLongName,
+          destinationDataCentre: extractedMeta.destinationDataCentre,
+          returnInstitution: extractedMeta.returnInstitution,
+          returnTransit: extractedMeta.returnTransit,
+          returnAccount: extractedMeta.returnAccount,
+          dueDate: '2026-11-16',
+          transactions: extractedTx.map(function (x) {
+            return {
+              name: x.name,
+              institution: x.institution,
+              transit: x.transit,
+              accountNumber: x.accountNumber,
+              amount: x.amount,
+              cpaCode: x.cpaCode,
+              reference: x.reference
+            };
+          })
+        }, null, 2);
+        navigator.clipboard.writeText(payload).then(function () {
+          btn.textContent = 'Copied Clean JSON!';
+          if (window.finopsTrack) window.finopsTrack('action_copy_curl');
+          setTimeout(function () { btn.textContent = 'Copy Clean Generator JSON'; }, 1700);
+        });
+      });
+
+      rawBox.value = VALID_CPA;
+      auditCpa();
+    })();
+  </script>
+</body>
+</html>
