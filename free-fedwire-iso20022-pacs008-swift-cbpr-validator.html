@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free ISO 20022 pacs.008 Fedwire Funds &amp; SWIFT CBPR+ Wire XML Validator (UETR, AppHdr &amp; USABA) | FinOps Studio</title>
+  <meta name="description" content="Validate ISO 20022 pacs.008.001.08 + head.001.001.02 AppHdr wire transfer XML locally in your browser: check RFC 4122 UUID v4 UETRs, 9-digit USABA MOD-10 &amp; BICFI codes, IntrBkSttlmAmt cent totals, and 2026 structured addresses." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-fedwire-iso20022-pacs008-swift-cbpr-validator.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Free ISO 20022 pacs.008 Fedwire &amp; SWIFT CBPR+ Wire XML Validator" />
+  <meta property="og:description" content="100% browser-based RTGS wire XML inspector checking AppHdr head.001, UUID v4 UETR, USABA MOD-10 / BICFI routing, cent-exact TtlIntrBkSttlmAmt, and 2026 structured PstlAdr compliance." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-fedwire-iso20022-pacs008-swift-cbpr-validator.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Free Browser ISO 20022 pacs.008 Fedwire Funds & SWIFT CBPR+ Wire XML Validator",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser)",
+        "url": "https://geornaden.github.io/finops-studio/free-fedwire-iso20022-pacs008-swift-cbpr-validator.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why do Fedwire Funds ISO 20022 and SWIFT CBPR+ wire XML messages get rejected before settlement?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The top 4 pre-settlement rejection causes in pacs.008.001.08 wire messages are: (1) missing or uppercase/non-v4 UUID in <UETR>, (2) invalid 9-digit USABA 3-7-1 MOD-10 routing checksum or malformed 8/11-char BICFI, (3) cent mismatch between <TtlIntrBkSttlmAmt> and the sum of <IntrBkSttlmAmt> elements, and (4) unstructured <AdrLine> postal addresses instead of mandatory 2026 <TwnNm> and <Ctry> tags."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this pacs.008 XML validator upload sensitive wire instructions to a server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Validation runs 100% locally inside your browser using native JavaScript DOMParser and BigInt cent arithmetic. Zero wire payloads leave your device."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .wire-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .wire-stat {
+      background: rgba(15,23,42,0.85);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .wire-stat .lbl {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .wire-stat .val {
+      font-size: 1.08rem;
+      font-weight: 700;
+      margin-top: 4px;
+      word-break: break-all;
+    }
+    .tx-wrap {
+      overflow-x: auto;
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    table.wire-tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+    table.wire-tbl th, table.wire-tbl td {
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      white-space: nowrap;
+    }
+    table.wire-tbl th {
+      background: rgba(30,41,59,0.85);
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html">pacs.008 Wire API</a>
+        <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">SEPA pain.001 Validator</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/global-bank-iban-aba-sort-code-bsb-and-vat-validator" target="_blank" rel="noopener">Automate via API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:12px;">
+      <span class="pill">100% Client-Side Browser Inspector &bull; Fedwire Funds (`FDW`) &bull; SWIFT CBPR+ &bull; CHAPS &bull; TARGET2</span>
+      <h1>Free ISO 20022 `pacs.008` Fedwire &amp; SWIFT CBPR+ Wire XML Validator</h1>
+      <p style="max-width:820px;margin:0 auto;">Audit high-value RTGS wire envelopes (`BusMsg` / `head.001.001.02` + `pacs.008.001.08`) locally in your browser before transmitting to Federal Reserve Fedwire or SWIFT: verify <strong>RFC 4122 UUID v4 `UETR`</strong>, <strong>9-digit `USABA` MOD-10 &amp; `BICFI`</strong>, <strong>integer-cent `TtlIntrBkSttlmAmt`</strong>, and <strong>2026 structured `<PstlAdr>`</strong> tags.</p>
+    </section>
+
+    <section class="sandbox-card" aria-label="ISO 20022 pacs.008 Interactive Validator">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <h2 style="margin:0;font-size:1.14rem;">Paste or Upload `pacs.008.001.08` / `BusMsg` Wire XML</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" onclick="loadPacsSample('validFedwire')">Load Valid Fedwire XML</button>
+          <button type="button" class="btn btn-outline" onclick="loadPacsSample('brokenCbpr')">Test Broken UETR / ABA / Address</button>
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            Upload .XML
+            <input type="file" accept=".xml,text/xml" style="display:none" onchange="handlePacsUpload(event)" />
+          </label>
+        </div>
+      </div>
+
+      <textarea id="pacsInput" class="code-box" rows="12" style="width:100%;font-family:monospace;white-space:pre;overflow-x:auto;" spellcheck="false"></textarea>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button type="button" class="btn btn-primary" onclick="validatePacs008()">Audit pacs.008 Wire XML</button>
+      </div>
+
+      <div id="pacsStats" class="wire-stats" aria-live="polite"></div>
+      <div id="pacsIssues" style="margin-top:10px;"></div>
+      <div id="pacsTable" class="tx-wrap" style="display:none;"></div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Need Deterministic `pacs.008`, `SEPA pain.001`, `US NACHA`, or `ABA / IBAN` Validation via REST or MCP?</h2>
+      <p style="color:var(--muted);font-size:0.94rem;">Generate schema-compliant RTGS wire instructions and validate global routing numbers in &lt;10ms across <strong>RapidAPI Hub</strong>, <strong>MCPRush</strong>, and <strong>Apify Cloud</strong>.</p>
+      <div class="hero-actions" style="justify-content:flex-start;">
+        <a class="btn btn-primary" href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html">pacs.008 Generator Specs &rarr;</a>
+        <a class="btn btn-outline" href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Open Multi-Cloud API &amp; MCP Hub</a>
+        <a class="btn btn-outline" href="./free-iso20022-pain002-status-report-viewer.html">Free pain.002 Rejection Viewer</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>FinOps Studio</strong> &mdash; Deterministic Treasury, RTGS Wire, Payroll &amp; E-Invoicing Infrastructure.</p>
+      <p style="font-size:0.84rem;color:var(--muted);">
+        <a href="./index.html">Home</a> &bull;
+        <a href="./how-it-works-simple.html">VIP Simple Guide</a> &bull;
+        <a href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html">pacs.008 API</a> &bull;
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">RapidAPI &amp; MCPRush Hub</a> &bull;
+        <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const PACS_SAMPLES = {
+      validFedwire: `<?xml version="1.0" encoding="UTF-8"?>
+<BusMsg xmlns="urn:iso:std:iso:20022:tech:xsd:busmsg">
+  <AppHdr xmlns="urn:iso:std:iso:20022:tech:xsd:head.001.001.02">
+    <Fr><FIId><FinInstnId><BICFI>CHASUS33XXX</BICFI><ClrSysMmbId><ClrSysId><Cd>USABA</Cd></ClrSysId><MmbId>021000021</MmbId></ClrSysMmbId></FinInstnId></FIId></Fr>
+    <To><FIId><FinInstnId><BICFI>BOFAUS3NXXX</BICFI><ClrSysMmbId><ClrSysId><Cd>USABA</Cd></ClrSysId><MmbId>026009593</MmbId></ClrSysMmbId></FinInstnId></FIId></To>
+    <BizMsgIdr>MSG-20261115-9A4F1C</BizMsgIdr>
+    <MsgDefIdr>pacs.008.001.08</MsgDefIdr>
+    <BizSvc>fedwirefunds.01</BizSvc>
+    <CreDt>2026-11-15T14:00:00Z</CreDt>
+  </AppHdr>
+  <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">
+    <FIToFICstmrCdtTrf>
+      <GrpHdr>
+        <MsgId>MSG-20261115-9A4F1C</MsgId>
+        <CreDtTm>2026-11-15T14:00:00Z</CreDtTm>
+        <NbOfTxs>1</NbOfTxs>
+        <TtlIntrBkSttlmAmt Ccy="USD">125000.00</TtlIntrBkSttlmAmt>
+        <IntrBkSttlmDt>2026-11-16</IntrBkSttlmDt>
+        <SttlmInf><SttlmMtd>CLRG</SttlmMtd><ClrSys><Cd>FDW</Cd></ClrSys></SttlmInf>
+      </GrpHdr>
+      <CdtTrfTxInf>
+        <PmtId>
+          <InstrId>FEDWIRE-20261115-001</InstrId>
+          <EndToEndId>ESCROW-CLOSING-8841</EndToEndId>
+          <UETR>f47ac10b-58cc-4372-a567-0e02b2c3d479</UETR>
+        </PmtId>
+        <IntrBkSttlmAmt Ccy="USD">125000.00</IntrBkSttlmAmt>
+        <ChrgBr>SLEV</ChrgBr>
+        <Dbtr>
+          <Nm>PACIFIC ESCROW HOLDINGS LLC</Nm>
+          <PstlAdr><StrtNm>400 South Hope St</StrtNm><PstCd>90071</PstCd><TwnNm>Los Angeles</TwnNm><CtrySubDvsn>CA</CtrySubDvsn><Ctry>US</Ctry></PstlAdr>
+        </Dbtr>
+        <DbtrAgt><FinInstnId><ClrSysMmbId><ClrSysId><Cd>USABA</Cd></ClrSysId><MmbId>021000021</MmbId></ClrSysMmbId></FinInstnId></DbtrAgt>
+        <CdtrAgt><FinInstnId><ClrSysMmbId><ClrSysId><Cd>USABA</Cd></ClrSysId><MmbId>026009593</MmbId></ClrSysMmbId></FinInstnId></CdtrAgt>
+        <Cdtr>
+          <Nm>APEX INDUSTRIAL PARTNERS INC</Nm>
+          <PstlAdr><StrtNm>100 North Tryon St</StrtNm><PstCd>28202</PstCd><TwnNm>Charlotte</TwnNm><CtrySubDvsn>NC</CtrySubDvsn><Ctry>US</Ctry></PstlAdr>
+        </Cdtr>
+      </CdtTrfTxInf>
+    </FIToFICstmrCdtTrf>
+  </Document>
+</BusMsg>`,
+      brokenCbpr: `<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">
+  <FIToFICstmrCdtTrf>
+    <GrpHdr>
+      <MsgId>WIRE-ERR-901</MsgId>
+      <NbOfTxs>1</NbOfTxs>
+      <TtlIntrBkSttlmAmt Ccy="USD">50000.00</TtlIntrBkSttlmAmt>
+      <IntrBkSttlmDt>2026-11-16</IntrBkSttlmDt>
+      <SttlmInf><SttlmMtd>CLRG</SttlmMtd><ClrSys><Cd>FDW</Cd></ClrSys></SttlmInf>
+    </GrpHdr>
+    <CdtTrfTxInf>
+      <PmtId>
+        <InstrId>WIRE-01</InstrId>
+        <EndToEndId>INV-991</EndToEndId>
+        <UETR>NOT-A-VALID-UUID-V4</UETR>
+      </PmtId>
+      <IntrBkSttlmAmt Ccy="USD">49500.00</IntrBkSttlmAmt>
+      <ChrgBr>SLEV</ChrgBr>
+      <Dbtr><Nm>ACME CORP</Nm><PstlAdr><AdrLine>123 Main Street New York</AdrLine></PstlAdr></Dbtr>
+      <DbtrAgt><FinInstnId><ClrSysMmbId><ClrSysId><Cd>USABA</Cd></ClrSysId><MmbId>021000029</MmbId></ClrSysMmbId></FinInstnId></DbtrAgt>
+      <CdtrAgt><FinInstnId><BICFI>INVALIDBIC1</BICFI></FinInstnId></CdtrAgt>
+      <Cdtr><Nm>BETA LTD</Nm><PstlAdr><Ctry>GB</Ctry></PstlAdr></Cdtr>
+    </CdtTrfTxInf>
+  </FIToFICstmrCdtTrf>
+</Document>`
+    };
+
+    function isValidAba(aba) {
+      if (!/^\d{9}$/.test(aba)) return false;
+      const d = aba.split('').map(Number);
+      const sum = 3 * (d[0] + d[3] + d[6]) + 7 * (d[1] + d[4] + d[7]) + (d[2] + d[5] + d[8]);
+      return sum > 0 && sum % 10 === 0;
+    }
+
+    function isValidBic(bic) {
+      return /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(bic);
+    }
+
+    function isUuidV4(u) {
+      return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(u);
+    }
+
+    function parseDecimalCents(str) {
+      const m = /^(\d+)(?:\.(\d{1,2}))?$/.exec((str || '').trim());
+      if (!m) return null;
+      const whole = BigInt(m[1]);
+      const frac = BigInt((m[2] || '').padEnd(2, '0'));
+      return whole * 100n + frac;
+    }
+
+    function fmtCents2(c) {
+      const whole = c / 100n;
+      const frac = String(c % 100n).padStart(2, '0');
+      return whole.toString() + '.' + frac;
+    }
+
+    function firstText(parent, localName) {
+      if (!parent) return '';
+      const els = parent.getElementsByTagNameNS('*', localName);
+      return els && els.length ? (els[0].textContent || '').trim() : '';
+    }
+
+    function loadPacsSample(k) {
+      document.getElementById('pacsInput').value = PACS_SAMPLES[k] || PACS_SAMPLES.validFedwire;
+      validatePacs008();
+    }
+
+    function handlePacsUpload(ev) {
+      const f = ev.target.files && ev.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        document.getElementById('pacsInput').value = String(r.result || '');
+        validatePacs008();
+      };
+      r.readAsText(f, 'UTF-8');
+    }
+
+    function validatePacs008() {
+      const xmlStr = document.getElementById('pacsInput').value.trim();
+      const issues = [];
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(xmlStr, 'application/xml');
+      const parseErr = doc.getElementsByTagName('parsererror');
+      if (parseErr && parseErr.length > 0) {
+        document.getElementById('pacsStats').innerHTML = '';
+        document.getElementById('pacsTable').style.display = 'none';
+        document.getElementById('pacsIssues').innerHTML = '<div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);padding:12px 16px;border-radius:10px;"><strong>XML Syntax Error:</strong> Malformed XML document. Check unclosed tags or unescaped `&amp;` characters.</div>';
+        return;
+      }
+
+      const appHdrs = doc.getElementsByTagNameNS('*', 'AppHdr');
+      const hasAppHdr = appHdrs.length > 0;
+      const bizSvc = hasAppHdr ? firstText(appHdrs[0], 'BizSvc') : 'Missing AppHdr';
+      if (!hasAppHdr) {
+        issues.push('Missing `head.001.001.02` `<AppHdr>` Business Application Header (mandatory for Federal Reserve Fedwire `fedwirefunds.01` and SWIFT CBPR+ `swift.cbprplus.02`).');
+      }
+
+      const grpHdrs = doc.getElementsByTagNameNS('*', 'GrpHdr');
+      if (!grpHdrs.length) {
+        issues.push('Missing `<GrpHdr>` inside `FIToFICstmrCdtTrf`.');
+      }
+      const grp = grpHdrs[0];
+      const msgId = firstText(grp, 'MsgId') || '--';
+      const nbOfTxsDecl = parseInt(firstText(grp, 'NbOfTxs') || '0', 10);
+      const ttlEl = grp ? grp.getElementsByTagNameNS('*', 'TtlIntrBkSttlmAmt')[0] : null;
+      const ttlStr = ttlEl ? (ttlEl.textContent || '').trim() : '';
+      const ttlCcy = ttlEl ? (ttlEl.getAttribute('Ccy') || '') : '';
+      const ttlCents = parseDecimalCents(ttlStr);
+      const clrCd = firstText(grp, 'Cd') || 'SWIFT/CBPR+';
+
+      const txNodes = Array.from(doc.getElementsByTagNameNS('*', 'CdtTrfTxInf'));
+      if (txNodes.length !== nbOfTxsDecl) {
+        issues.push(`Header <NbOfTxs> declares ${nbOfTxsDecl} wire(s), but ${txNodes.length} <CdtTrfTxInf> transaction block(s) were found.`);
+      }
+
+      let calcCents = 0n;
+      const rows = [];
+
+      txNodes.forEach((tx, i) => {
+        const idx = i + 1;
+        const endToEnd = firstText(tx, 'EndToEndId') || '--';
+        const uetr = firstText(tx, 'UETR');
+        if (!uetr) {
+          issues.push(`Wire #${idx} (${endToEnd}): Missing mandatory <UETR> tag (UUID v4 required by Fedwire & SWIFT GPI).`);
+        } else if (!isUuidV4(uetr)) {
+          issues.push(`Wire #${idx} (${endToEnd}): Invalid <UETR> "${uetr}" — must be a lowercase RFC 4122 version-4 UUID.`);
+        }
+
+        const amtEl = tx.getElementsByTagNameNS('*', 'IntrBkSttlmAmt')[0];
+        const amtStr = amtEl ? (amtEl.textContent || '').trim() : '0.00';
+        const amtCcy = amtEl ? (amtEl.getAttribute('Ccy') || '') : '';
+        const c = parseDecimalCents(amtStr);
+        if (c === null) {
+          issues.push(`Wire #${idx}: Invalid <IntrBkSttlmAmt> "${amtStr}".`);
+        } else {
+          calcCents += c;
+        }
+
+        // Check Debtor & Creditor structured addresses
+        ['Dbtr', 'Cdtr'].forEach(role => {
+          const party = tx.getElementsByTagNameNS('*', role)[0];
+          if (!party) {
+            issues.push(`Wire #${idx}: Missing <${role}> party block.`);
+            return;
+          }
+          const adr = party.getElementsByTagNameNS('*', 'PstlAdr')[0];
+          if (adr) {
+            const adrLines = adr.getElementsByTagNameNS('*', 'AdrLine');
+            const twn = firstText(adr, 'TwnNm');
+            const ctry = firstText(adr, 'Ctry');
+            if (adrLines.length > 0 && !twn) {
+              issues.push(`Wire #${idx} <${role}>: Uses legacy unstructured <AdrLine> without <TwnNm>; 2026 Fedwire & CBPR+ rules require structured <TwnNm> + <Ctry>.`);
+            } else if (!twn || !ctry) {
+              issues.push(`Wire #${idx} <${role}>: Structured <PstlAdr> is missing mandatory <TwnNm> (Town/City) or <Ctry> (2-letter ISO country).`);
+            }
+          }
+        });
+
+        // Check Debtor Agent & Creditor Agent ABA / BIC
+        ['DbtrAgt', 'CdtrAgt'].forEach(agtRole => {
+          const agt = tx.getElementsByTagNameNS('*', agtRole)[0];
+          if (!agt) return;
+          const bic = firstText(agt, 'BICFI');
+          const mmb = firstText(agt, 'MmbId');
+          const sysCd = firstText(agt, 'Cd');
+          if (bic && !isValidBic(bic)) {
+            issues.push(`Wire #${idx} <${agtRole}>: Invalid <BICFI> "${bic}" (must be 8 or 11 uppercase ISO 9362 characters).`);
+          }
+          if (sysCd === 'USABA' || (mmb && /^\d{9}$/.test(mmb))) {
+            if (!isValidAba(mmb)) {
+              issues.push(`Wire #${idx} <${agtRole}>: USABA routing number "${mmb}" FAILED Federal Reserve 3-7-1 MOD-10 checksum.`);
+            }
+          }
+        });
+
+        rows.push({
+          idx,
+          endToEnd,
+          uetr: uetr || 'MISSING',
+          uetrOk: isUuidV4(uetr),
+          dbtr: firstText(tx.getElementsByTagNameNS('*', 'Dbtr')[0], 'Nm') || '--',
+          cdtr: firstText(tx.getElementsByTagNameNS('*', 'Cdtr')[0], 'Nm') || '--',
+          amount: amtStr + ' ' + amtCcy
+        });
+      });
+
+      if (ttlCents !== null && ttlCents !== calcCents) {
+        issues.push(`Settlement Total Mismatch: <TtlIntrBkSttlmAmt> declares ${ttlStr} ${ttlCcy}, while individual <IntrBkSttlmAmt> wires sum to ${fmtCents2(calcCents)} ${ttlCcy}.`);
+      }
+
+      const okBadge = issues.length === 0 && txNodes.length > 0
+        ? '<span style="color:#34d399;">&#10003; RTGS WIRE READY</span>'
+        : `<span style="color:#f87171;">&#9888; ${issues.length} ISSUE(S)</span>`;
+
+      document.getElementById('pacsStats').innerHTML = `
+        <div class="wire-stat"><div class="lbl">Audit Status</div><div class="val">${okBadge}</div></div>
+        <div class="wire-stat"><div class="lbl">Clearing / BizSvc</div><div class="val">${clrCd} &bull; ${bizSvc}</div></div>
+        <div class="wire-stat"><div class="lbl">MsgId / Wires</div><div class="val">${msgId} (${txNodes.length})</div></div>
+        <div class="wire-stat"><div class="lbl">Total Settlement</div><div class="val">${fmtCents2(calcCents)} ${ttlCcy || 'USD'}</div></div>
+      `;
+
+      const issuesEl = document.getElementById('pacsIssues');
+      if (issues.length > 0) {
+        issuesEl.innerHTML = '<div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);padding:12px 16px;border-radius:10px;font-size:0.9rem;"><strong>Pre-Settlement Validation Errors:</strong><ul style="margin:6px 0 0 18px;">' +
+          issues.map(x => `<li>${x.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</li>`).join('') + '</ul></div>';
+      } else {
+        issuesEl.innerHTML = '<div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.4);padding:12px 16px;border-radius:10px;font-size:0.9rem;color:#6ee7b7;">&#10003; Passed all checks: `head.001.001.02` AppHdr present, RFC 4122 UUID v4 UETR verified, USABA MOD-10 / BICFI routing valid, structured `<PstlAdr>` compliant, and settlement cent totals match.</div>';
+      }
+
+      const tbl = document.getElementById('pacsTable');
+      if (rows.length > 0) {
+        tbl.style.display = 'block';
+        tbl.innerHTML = `<table class="wire-tbl">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>EndToEndId</th>
+              <th>UETR (UUID v4)</th>
+              <th>Debtor</th>
+              <th>Creditor</th>
+              <th>Settlement Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td>${r.idx}</td>
+                <td><code>${r.endToEnd}</code></td>
+                <td style="color:${r.uetrOk ? '#34d399' : '#f87171'};"><code>${r.uetr}</code></td>
+                <td>${r.dbtr}</td>
+                <td>${r.cdtr}</td>
+                <td><strong>${r.amount}</strong></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>`;
+      } else {
+        tbl.style.display = 'none';
+      }
+    }
+
+    loadPacsSample('validFedwire');
+  </script>
+</body>
+</html>
