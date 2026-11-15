@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free US Bank Positive Pay File Validator — Audit 80-Char CashPro, Wells Fargo CEO, PNC &amp; Chase CSV | FinOps Studio</title>
+  <meta name="description" content="100% client-side US commercial bank Payee Positive Pay check-issue file validator: paste or open Bank of America CashPro (80-char), Wells Fargo CEO ARP (*03/320/370/&amp;), PNC PINACLE (80-char), or J.P. Morgan Chase CSV files to catch duplicate check serials, width errors, and trailer mismatches." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-us-positive-pay-check-file-validator.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Free Browser US Bank Payee Positive Pay Check File Validator (Chase, BofA CashPro, Wells Fargo, PNC) | FinOps Studio" />
+  <meta property="og:description" content="Audit 80-character fixed-width & CSV Payee Positive Pay check registers locally in your browser before uploading to BofA CashPro, Wells Fargo CEO, J.P. Morgan Access, or PNC PINACLE." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-us-positive-pay-check-file-validator.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "FinOps Studio Free US Corporate Bank Payee Positive Pay File Validator",
+        "url": "https://geornaden.github.io/finops-studio/free-us-positive-pay-check-file-validator.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD",
+          "description": "Free client-side 80-char & CSV US Positive Pay check-issue validator; Cloud API available via RapidAPI Hub & Apify Store."
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why do Bank of America CashPro, Wells Fargo CEO ARP, PNC PINACLE, or J.P. Morgan Access reject a Positive Pay check upload?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The five most frequent commercial bank Positive Pay upload rejections are: (1) fixed-width lines trimmed below exact 80 ASCII characters when trailing spaces after short payee names are stripped, (2) duplicate check serial numbers in the same issue batch, (3) missing payee name strings on Payee Positive Pay accounts, (4) Wells Fargo CEO ARP (&) or BofA CashPro (T) trailer cent totals including or excluding VOID (370 / V) items inconsistently, and (5) wrong calendar date format (YYYYMMDD vs MMDDYY vs MM/DD/YYYY)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this US Positive Pay check validator upload corporate bank account numbers or check serials to any server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Every 80-character column inspection, duplicate check-serial scan, void/issue status check, and BigInt trailer reconciliation runs 100% locally in your browser memory."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">Positive Pay Guide</a>
+        <a href="./quickbooks-xero-csv-to-sepa-nacha-positive-pay.html">QuickBooks &rarr; Positive Pay</a>
+        <a href="./free-nacha-ach-file-validator-batch-hash-auditor.html">US NACHA Validator</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Launch Positive Pay Cloud API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#127482;&#127480; 100% Local Browser Check Fraud Pre-Flight &bull; Zero Server Upload &bull; BofA CashPro / Wells Fargo CEO / Chase / PNC</span>
+      <h1>Free US Bank <code>Payee Positive Pay</code> Check File Validator &amp; Trailer Auditor</h1>
+      <p>Auto-detect and audit <strong>80-character Bank of America CashPro (<code>H/D/T</code>)</strong>, <strong>Wells Fargo CEO ARP (<code>*03 / 320 / 370 / &amp;</code>)</strong>, <strong>PNC PINACLE (<code>I/V/T</code>)</strong>, and <strong>J.P. Morgan Access / Chase Commercial CSV</strong> check-issue files locally in your browser—catching <strong>trimmed 80-char widths</strong>, <strong>duplicate check serials</strong>, <strong>blank payees</strong>, and <strong>trailer cent mismatches</strong> before bank cut-off.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnPpBofa" type="button" class="btn btn-outline">Load BofA CashPro 80-Char (Valid)</button>
+          <button id="btnPpWells" type="button" class="btn btn-outline">Load Wells Fargo CEO ARP (*03 / 320 / 370)</button>
+          <button id="btnPpChase" type="button" class="btn btn-outline">Load Chase / JPM CSV</button>
+          <button id="btnPpBroken" type="button" class="btn btn-outline">Load Broken File (Trimmed Width + Duplicate Check + Bad Trailer)</button>
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            &#128194; Open Local .TXT / .CSV
+            <input id="ppFileInput" type="file" accept=".txt,.csv,.dat,.arp" style="display:none;" />
+          </label>
+        </div>
+        <span id="ppBadge" class="status-chip status-ok">READY</span>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>Raw US Positive Pay Check-Issue File (80-Char Fixed-Width or CSV)</strong></span>
+            <span id="ppProfileChip" style="font-size:0.76rem;color:#93c5fd;">Auto-Detect</span>
+          </div>
+          <textarea id="ppRawBox" class="code-box" spellcheck="false" style="min-height:320px;font-size:0.73rem;white-space:pre;overflow-x:auto;"></textarea>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>Commercial Bank Check-Fraud Pre-Flight Report</strong></span>
+            <span id="ppTotalsChip" style="font-size:0.76rem;color:var(--muted);">$0.00 Issued (0 Checks)</span>
+          </div>
+          <div id="ppReportBox" class="code-box" style="min-height:320px;max-height:420px;overflow:auto;font-family:system-ui,-apple-system,sans-serif;font-size:0.84rem;line-height:1.55;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.86rem;color:#e2e8f0;">
+          <strong>Replace $495/yr desktop Positive Pay software:</strong> Convert QuickBooks, NetSuite, Xero, or CSV check registers into 80-char CashPro, Wells Fargo CEO, PNC, or Chase files via our Cloud Edge API!
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button id="btnCopyPpJson" type="button" class="btn btn-outline">Copy Clean Generator JSON</button>
+          <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Open Cloud Banking API &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">What This US Payee Positive Pay Pre-Flight Auditor Checks</h2>
+      <div class="grid-3">
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Exact 80 Chars</span><span class="tag">4 US Bank Profiles</span></div>
+          <h3>1. Strict 80-Column Fixed-Width &amp; CSV</h3>
+          <p>Automatically detects <strong>BofA CashPro (<code>H/D/T</code>)</strong>, <strong>Wells Fargo CEO ARP (<code>*03</code>)</strong>, <strong>PNC PINACLE (<code>I/V/T</code>)</strong>, and <strong>J.P. Morgan Chase CSV</strong>, flagging any line where trailing payee spaces were stripped below 80 characters.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Duplicate Serials</span><span class="tag">Check-Washing Defense</span></div>
+          <h3>2. Duplicate Serials &amp; Payee Presence</h3>
+          <p>Blocks duplicate check numbers inside the same register batch, verifies non-empty Payee Positive Pay strings, and distinguishes active <code>ISSUE</code> checks (<code>I</code> / <code>320</code>) from <code>VOID</code> checks (<code>V</code> / <code>370</code>).</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Trailer Totals</span><span class="tag">BigInt Cent Math</span></div>
+          <h3>3. Bank-Specific Trailer Reconciliation</h3>
+          <p>Verifies BofA CashPro &amp; PNC active-issue cent totals (excluding voids) and Wells Fargo CEO ARP total register cents &amp; item counts to the exact penny.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">All 12 Financial Tools</a> &bull; <a href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">US Positive Pay Guide</a> &bull; <a href="./free-nacha-ach-file-validator-batch-hash-auditor.html">US NACHA .ACH Validator</a> &bull; <a href="./free-bai2-bank-statement-viewer-csv-converter.html">BAI2 Statement Viewer</a></div>
+      <div><a href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Open Corporate Banking Cloud Suite on RapidAPI Hub &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      function padR(s, n) { return String(s || '').slice(0, n).padEnd(n, ' '); }
+      function padZ(n, len) { return String(n).replace(/\D/g, '').slice(-len).padStart(len, '0'); }
+
+      var BOFA_VALID = [
+        'H' + padZ('4491028831', 12) + '20261116' + padR('PACIFIC MANUFACTURING CORP', 40) + ' '.repeat(19),
+        'D' + padZ('4491028831', 12) + 'I' + padZ('104821', 10) + padZ(482550, 10) + '20261116' + padR('APEX INDUSTRIAL SUPPLY LLC', 38),
+        'D' + padZ('4491028831', 12) + 'I' + padZ('104822', 10) + padZ(129000, 10) + '20261116' + padR('WEST COAST FREIGHT SYSTEMS INC', 38),
+        'D' + padZ('4491028831', 12) + 'V' + padZ('104823', 10) + padZ(0, 10) + '20261116' + padR('VOID SPOILED CHECK', 38),
+        'T' + padZ('4491028831', 12) + padZ(3, 8) + padZ(611550, 12) + padZ(1, 8) + ' '.repeat(39)
+      ].join('\n');
+
+      var WELLS_VALID = [
+        '*0300001' + padZ('4491028831', 15) + '111626' + ' '.repeat(51),
+        padZ('104821', 10) + '111626' + padZ('4491028831', 15) + '320' + padZ(482550, 10) + padR('APEX INDUSTRIAL SUPPLY LLC', 36),
+        padZ('104822', 10) + '111626' + padZ('4491028831', 15) + '320' + padZ(129000, 10) + padR('WEST COAST FREIGHT SYSTEMS INC', 36),
+        padZ('104823', 10) + '111626' + padZ('4491028831', 15) + '370' + padZ(50000, 10) + padR('CANCELLED VENDOR CHECK', 36),
+        '&' + ' '.repeat(13) + padZ(3, 5) + '   ' + padZ(661550, 10) + ' '.repeat(48)
+      ].join('\n');
+
+      var CHASE_VALID = [
+        'RecordType,AccountNumber,CheckNumber,IssueDate,Amount,VoidIndicator,PayeeName',
+        'D,4491028831,104821,11/16/2026,4825.50,I,"APEX INDUSTRIAL SUPPLY LLC"',
+        'D,4491028831,104822,11/16/2026,1290.00,I,"WEST COAST FREIGHT SYSTEMS INC"',
+        'D,4491028831,104823,11/16/2026,0.00,V,"VOID SPOILED CHECK"'
+      ].join('\n');
+
+      var BROKEN_PP = [
+        'H' + padZ('4491028831', 12) + '20261116' + padR('PACIFIC MANUFACTURING CORP', 40),
+        ('D' + padZ('4491028831', 12) + 'I' + padZ('104821', 10) + padZ(482550, 10) + '20261116' + padR('APEX INDUSTRIAL SUPPLY LLC', 38)).trimEnd(),
+        'D' + padZ('4491028831', 12) + 'I' + padZ('104821', 10) + padZ(129000, 10) + '20261116' + ' '.repeat(38),
+        'T' + padZ('4491028831', 12) + padZ(2, 8) + padZ(600000, 12) + padZ(0, 8) + ' '.repeat(39)
+      ].join('\n');
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      var rawBox = document.getElementById('ppRawBox');
+      var reportBox = document.getElementById('ppReportBox');
+      var badge = document.getElementById('ppBadge');
+      var profileChip = document.getElementById('ppProfileChip');
+      var totalsChip = document.getElementById('ppTotalsChip');
+      var detectedProfile = 'BOFA_CASHPRO_80';
+      var detectedAccount = '4491028831';
+      var extractedChecks = [];
+
+      function parseCsvLine(line) {
+        var res = [];
+        var cur = '';
+        var inQ = false;
+        for (var i = 0; i < line.length; i++) {
+          var ch = line[i];
+          if (ch === '"') {
+            if (inQ && line[i + 1] === '"') { cur += '"'; i++; }
+            else inQ = !inQ;
+          } else if (ch === ',' && !inQ) {
+            res.push(cur);
+            cur = '';
+          } else {
+            cur += ch;
+          }
+        }
+        res.push(cur);
+        return res;
+      }
+
+      function auditPositivePay() {
+        var raw = (rawBox.value || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        var lines = raw.split('\n').filter(function (l) { return l.length > 0; });
+
+        if (lines.length === 0) {
+          badge.textContent = 'EMPTY';
+          badge.className = 'status-chip';
+          profileChip.textContent = 'Empty';
+          totalsChip.textContent = '$0.00 Issued (0 Checks)';
+          reportBox.innerHTML = '<div style="color:var(--muted);">Paste or open a US Positive Pay check-issue file on the left.</div>';
+          extractedChecks = [];
+          return;
+        }
+
+        var errors = [];
+        var passes = [];
+        var seenSerials = {};
+        var activeIssueCents = 0n;
+        var allChecksCents = 0n;
+        var voidCount = 0;
+        extractedChecks = [];
+
+        var first = lines[0];
+        if (first.indexOf(',') !== -1) {
+          detectedProfile = 'CHASE_JPM_CSV';
+          profileChip.textContent = 'J.P. Morgan / Chase CSV (' + lines.length + ' lines)';
+          var startIdx = first.toLowerCase().indexOf('checknumber') !== -1 || first.toLowerCase().indexOf('recordtype') !== -1 ? 1 : 0;
+          if (startIdx === 1) passes.push('Chase / J.P. Morgan CSV header row detected.');
+
+          for (var cIdx = startIdx; cIdx < lines.length; cIdx++) {
+            var cols = parseCsvLine(lines[cIdx]);
+            var lnCsv = cIdx + 1;
+            if (cols.length < 7) {
+              errors.push('Line ' + lnCsv + ': Expected 7 CSV columns (<code>RecordType,AccountNumber,CheckNumber,IssueDate,Amount,VoidIndicator,PayeeName</code>), found ' + cols.length + '.');
+              continue;
+            }
+            var acct = cols[1].replace(/\D/g, '');
+            var serial = String(parseInt(cols[2].replace(/\D/g, ''), 10) || '');
+            var dt = cols[3].trim();
+            var amtNum = parseFloat(cols[4].replace(/[$,\s]/g, ''));
+            var vInd = cols[5].trim().toUpperCase();
+            var payee = cols[6].trim();
+
+            if (!acct || acct.length < 5) errors.push('Line ' + lnCsv + ': Invalid bank account number.');
+            else detectedAccount = acct;
+
+            if (!serial) errors.push('Line ' + lnCsv + ': Invalid check serial number "<code>' + escapeHtml(cols[2]) + '</code>".');
+            else if (seenSerials[serial]) errors.push('Line ' + lnCsv + ': Duplicate check serial number <code>#' + escapeHtml(serial) + '</code> (already seen on Line ' + seenSerials[serial] + ').');
+            else seenSerials[serial] = lnCsv;
+
+            if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dt) && !/^\d{4}-\d{2}-\d{2}$/.test(dt)) {
+              errors.push('Line ' + lnCsv + ': Invalid IssueDate "<code>' + escapeHtml(dt) + '</code>" (expected MM/DD/YYYY).');
+            }
+            if (vInd !== 'I' && vInd !== 'V') errors.push('Line ' + lnCsv + ': VoidIndicator "<code>' + escapeHtml(vInd) + '</code>" must be <code>I</code> or <code>V</code>.');
+            if (!payee) errors.push('Line ' + lnCsv + ': Missing PayeeName required for Payee Positive Pay check-washing protection.');
+            if (isNaN(amtNum) || (vInd === 'I' && amtNum <= 0)) errors.push('Line ' + lnCsv + ': Issued check amount must be > $0.00.');
+
+            var cts = BigInt(Math.round((amtNum || 0) * 100));
+            allChecksCents += cts;
+            if (vInd === 'V') voidCount += 1;
+            else activeIssueCents += cts;
+
+            extractedChecks.push({
+              checkNumber: serial || String(cIdx),
+              issueDate: /^\d{2}\/\d{2}\/\d{4}$/.test(dt) ? (dt.slice(6, 10) + '-' + dt.slice(0, 2) + '-' + dt.slice(3, 5)) : '2026-11-16',
+              amount: Number((Number(cts) / 100).toFixed(2)),
+              payeeName: payee || 'UNKNOWN PAYEE',
+              status: vInd === 'V' ? 'VOID' : 'ISSUE'
+            });
+          }
+          if (errors.length === 0 && extractedChecks.length > 0) {
+            passes.push('All <strong>' + extractedChecks.length + ' Chase CSV check rows</strong> have unique serials, valid dates, and non-empty Payee Positive Pay names.');
+          }
+        } else if (first.slice(0, 3) === '*03') {
+          detectedProfile = 'WELLS_FARGO_CEO_80';
+          profileChip.textContent = 'Wells Fargo CEO ARP 80-Char (' + lines.length + ' lines)';
+          var seenWfTrailer = false;
+          for (var w = 0; w < lines.length; w++) {
+            var wLn = w + 1;
+            var wLine = lines[w];
+            if (wLine.length !== 80) {
+              errors.push('Line ' + wLn + ': Record width is <strong>' + wLine.length + ' chars</strong> (Wells Fargo CEO ARP requires exact <code>80</code> characters).');
+            }
+            if (wLine.slice(0, 3) === '*03') {
+              detectedAccount = wLine.slice(8, 23).replace(/^0+/, '') || '4491028831';
+              passes.push('Wells Fargo <code>*03</code> ARP Header verified (Account <code>' + escapeHtml(detectedAccount) + '</code>).');
+            } else if (wLine.slice(0, 1) === '&') {
+              seenWfTrailer = true;
+              var wfCnt = parseInt(wLine.slice(14, 19), 10);
+              var wfTotStr = wLine.slice(22, 32);
+              if (wfCnt !== extractedChecks.length) {
+                errors.push('Line ' + wLn + ' (<code>&amp;</code> Trailer): Declared check count <code>' + wfCnt + '</code> != Actual detail rows <code>' + extractedChecks.length + '</code>.');
+              }
+              if (!/^\d{10}$/.test(wfTotStr) || BigInt(wfTotStr) !== allChecksCents) {
+                errors.push('Line ' + wLn + ' (<code>&amp;</code> Trailer): Declared total cents <code>' + escapeHtml(wfTotStr) + '</code> != Computed register cents <code>' + allChecksCents.toString() + '</code>.');
+              } else if (wfCnt === extractedChecks.length) {
+                passes.push('Wells Fargo <code>&amp;</code> Trailer reconciled: <code>' + wfCnt + '</code> checks totaling <code>$' + (Number(allChecksCents) / 100).toFixed(2) + '</code>.');
+              }
+            } else {
+              var wSer = String(parseInt(wLine.slice(0, 10), 10) || '');
+              var wDt = wLine.slice(10, 16);
+              var wCode = wLine.slice(31, 34);
+              var wAmt = wLine.slice(34, 44);
+              var wPayee = wLine.slice(44, 80).trim();
+
+              if (!wSer) errors.push('Line ' + wLn + ': Invalid 10-digit check serial in cols 01–10.');
+              else if (seenSerials[wSer]) errors.push('Line ' + wLn + ': Duplicate check serial <code>#' + escapeHtml(wSer) + '</code>.');
+              else seenSerials[wSer] = wLn;
+
+              if (wCode !== '320' && wCode !== '370') errors.push('Line ' + wLn + ': Wells Fargo ARP transaction code "<code>' + escapeHtml(wCode) + '</code>" must be <code>320</code> (Issue) or <code>370</code> (Cancel/Void).');
+              if (!wPayee) errors.push('Line ' + wLn + ': Missing Payee Positive Pay name in cols 45–80.');
+              if (!/^\d{10}$/.test(wAmt)) continue;
+
+              var wCts = BigInt(wAmt);
+              allChecksCents += wCts;
+              if (wCode === '370') voidCount += 1;
+              else activeIssueCents += wCts;
+
+              extractedChecks.push({
+                checkNumber: wSer || String(wLn),
+                issueDate: /^\d{6}$/.test(wDt) ? ('20' + wDt.slice(4, 6) + '-' + wDt.slice(0, 2) + '-' + wDt.slice(2, 4)) : '2026-11-16',
+                amount: Number((Number(wCts) / 100).toFixed(2)),
+                payeeName: wPayee || 'UNKNOWN PAYEE',
+                status: wCode === '370' ? 'VOID' : 'ISSUE'
+              });
+            }
+          }
+          if (!seenWfTrailer) errors.push('Missing closing Wells Fargo <code>&amp;</code> Trailer record.');
+        } else {
+          var isPnc = first.slice(0, 1) === 'I' || first.slice(0, 1) === 'V';
+          detectedProfile = isPnc ? 'PNC_PINACLE_80' : 'BOFA_CASHPRO_80';
+          profileChip.textContent = (isPnc ? 'PNC PINACLE 80-Char (' : 'BofA CashPro 80-Char (') + lines.length + ' lines)';
+          var seenTrailer = false;
+
+          for (var b = 0; b < lines.length; b++) {
+            var bLn = b + 1;
+            var bLine = lines[b];
+            var tag = bLine.slice(0, 1);
+
+            if (bLine.length !== 80) {
+              errors.push('Line ' + bLn + ' (<code>' + escapeHtml(tag) + '</code>): Record length is <strong>' + bLine.length + ' chars</strong> (must be exact <code>80</code> ASCII characters padded with trailing spaces).');
+            }
+
+            if (!isPnc && tag === 'H') {
+              detectedAccount = bLine.slice(1, 13).replace(/^0+/, '') || '4491028831';
+              var hDate = bLine.slice(13, 21);
+              if (!/^\d{8}$/.test(hDate)) errors.push('Line ' + bLn + ' (<code>H</code> Header): Invalid YYYYMMDD date "<code>' + escapeHtml(hDate) + '</code>".');
+              else passes.push('BofA CashPro <code>H</code> Header verified (Account <code>' + escapeHtml(detectedAccount) + '</code>, Date <code>' + hDate + '</code>).');
+            } else if (!isPnc && tag === 'D') {
+              var bStatus = bLine.slice(13, 14);
+              var bSer = String(parseInt(bLine.slice(14, 24), 10) || '');
+              var bAmt = bLine.slice(24, 34);
+              var bDt = bLine.slice(34, 42);
+              var bPayee = bLine.slice(42, 80).trim();
+
+              if (bStatus !== 'I' && bStatus !== 'V') errors.push('Line ' + bLn + ': Issue/Void indicator (col 14) "<code>' + escapeHtml(bStatus) + '</code>" must be <code>I</code> or <code>V</code>.');
+              if (!bSer) errors.push('Line ' + bLn + ': Invalid check serial number in cols 15–24.');
+              else if (seenSerials[bSer]) errors.push('Line ' + bLn + ': Duplicate check serial <code>#' + escapeHtml(bSer) + '</code> (already issued on Line ' + seenSerials[bSer] + ').');
+              else seenSerials[bSer] = bLn;
+
+              if (!bPayee) errors.push('Line ' + bLn + ': Blank Payee Name in cols 43–80 (Payee Positive Pay requires payee text to prevent check washing).');
+              if (!/^\d{10}$/.test(bAmt)) continue;
+
+              var bCts = BigInt(bAmt);
+              allChecksCents += bCts;
+              if (bStatus === 'V') voidCount += 1;
+              else activeIssueCents += bCts;
+
+              extractedChecks.push({
+                checkNumber: bSer || String(bLn),
+                issueDate: /^\d{8}$/.test(bDt) ? (bDt.slice(0, 4) + '-' + bDt.slice(4, 6) + '-' + bDt.slice(6, 8)) : '2026-11-16',
+                amount: Number((Number(bCts) / 100).toFixed(2)),
+                payeeName: bPayee || 'UNKNOWN PAYEE',
+                status: bStatus === 'V' ? 'VOID' : 'ISSUE'
+              });
+            } else if (isPnc && (tag === 'I' || tag === 'V')) {
+              detectedAccount = bLine.slice(1, 11).replace(/^0+/, '') || '4491028831';
+              var pSer = String(parseInt(bLine.slice(11, 21), 10) || '');
+              var pAmt = bLine.slice(21, 31);
+              var pDt = bLine.slice(31, 39);
+              var pPayee = bLine.slice(39, 80).trim();
+
+              if (!pSer) errors.push('Line ' + bLn + ': Invalid PNC check serial.');
+              else if (seenSerials[pSer]) errors.push('Line ' + bLn + ': Duplicate check serial <code>#' + escapeHtml(pSer) + '</code>.');
+              else seenSerials[pSer] = pLn;
+
+              if (!pPayee) errors.push('Line ' + bLn + ': Missing Payee Name in cols 40–80.');
+              if (!/^\d{10}$/.test(pAmt)) continue;
+
+              var pCts = BigInt(pAmt);
+              if (tag === 'V') voidCount += 1;
+              else activeIssueCents += pCts;
+
+              extractedChecks.push({
+                checkNumber: pSer || String(bLn),
+                issueDate: /^\d{8}$/.test(pDt) ? (pDt.slice(4, 8) + '-' + pDt.slice(0, 2) + '-' + pDt.slice(2, 4)) : '2026-11-16',
+                amount: Number((Number(pCts) / 100).toFixed(2)),
+                payeeName: pPayee || 'UNKNOWN PAYEE',
+                status: tag === 'V' ? 'VOID' : 'ISSUE'
+              });
+            } else if (tag === 'T') {
+              seenTrailer = true;
+              if (!isPnc) {
+                var tCnt = parseInt(bLine.slice(13, 21), 10);
+                var tTotStr = bLine.slice(21, 33);
+                var tVoids = parseInt(bLine.slice(33, 41), 10);
+                if (tCnt !== extractedChecks.length) errors.push('Line ' + bLn + ' (<code>T</code> Trailer): Declared check count <code>' + tCnt + '</code> != Actual detail rows <code>' + extractedChecks.length + '</code>.');
+                if (!/^\d{12}$/.test(tTotStr) || BigInt(tTotStr) !== activeIssueCents) {
+                  errors.push('Line ' + bLn + ' (<code>T</code> Trailer): Declared active issue cents <code>' + escapeHtml(tTotStr) + '</code>c != Computed active issue cents <code>' + activeIssueCents.toString() + '</code>c.');
+                }
+                if (tVoids !== voidCount) errors.push('Line ' + bLn + ' (<code>T</code> Trailer): Declared void count <code>' + tVoids + '</code> != Actual voids <code>' + voidCount + '</code>.');
+                if (tCnt === extractedChecks.length && /^\d{12}$/.test(tTotStr) && BigInt(tTotStr) === activeIssueCents && tVoids === voidCount) {
+                  passes.push('BofA CashPro <code>T</code> Trailer reconciled: <code>' + extractedChecks.length + '</code> checks (<code>' + voidCount + '</code> void), Active Issue Total <code>$' + (Number(activeIssueCents) / 100).toFixed(2) + '</code>.');
+                }
+              } else {
+                var ptCnt = parseInt(bLine.slice(11, 21), 10);
+                var ptTot = bLine.slice(21, 33);
+                if (ptCnt !== extractedChecks.length || !/^\d{12}$/.test(ptTot) || BigInt(ptTot) !== activeIssueCents) {
+                  errors.push('Line ' + bLn + ' (<code>T</code> Trailer): PNC count or active cent total mismatch.');
+                } else {
+                  passes.push('PNC PINACLE <code>T</code> Trailer reconciled: <code>$' + (Number(activeIssueCents) / 100).toFixed(2) + '</code>.');
+                }
+              }
+            } else {
+              errors.push('Line ' + bLn + ': Unrecognized record identifier "<code>' + escapeHtml(tag) + '</code>".');
+            }
+          }
+          if (!seenTrailer) errors.push('Missing closing <code>T</code> Trailer record.');
+        }
+
+        totalsChip.textContent = '$' + (Number(activeIssueCents) / 100).toFixed(2) + ' Active (' + extractedChecks.length + ' Checks, ' + voidCount + ' Void)';
+
+        if (errors.length === 0) {
+          badge.textContent = 'PASS • POSITIVE PAY VALID';
+          badge.className = 'status-chip status-ok';
+        } else {
+          badge.textContent = errors.length + (errors.length === 1 ? ' ISSUE DETECTED' : ' ISSUES DETECTED');
+          badge.className = 'status-chip status-warn';
+        }
+
+        var html = '';
+        if (errors.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);color:#fecaca;">' +
+            '<strong>&#9888;&#65039; Positive Pay Check-Register Errors (' + errors.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var e = 0; e < errors.length; e++) html += '<li style="margin-bottom:4px;">' + errors[e] + '</li>';
+          html += '</ul></div>';
+        }
+        if (passes.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#bbf7d0;">' +
+            '<strong>&#9989; Verified Check-Fraud Controls (' + passes.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var p = 0; p < passes.length; p++) html += '<li style="margin-bottom:3px;">' + passes[p] + '</li>';
+          html += '</ul></div>';
+        }
+        if (extractedChecks.length > 0) {
+          html += '<div style="margin-top:8px;"><strong>Extracted Check Register (' + extractedChecks.length + '):</strong>';
+          for (var k = 0; k < extractedChecks.length; k++) {
+            var chk = extractedChecks[k];
+            var col = chk.status === 'VOID' ? '#fca5a5' : '#86efac';
+            html += '<div style="margin-top:5px;padding:7px 10px;border-radius:7px;background:rgba(15,23,42,0.75);border:1px solid var(--border);font-size:0.8rem;">' +
+              '<strong>Check #' + escapeHtml(chk.checkNumber) + '</strong> &bull; <code>' + escapeHtml(chk.status) + '</code> &bull; ' + escapeHtml(chk.payeeName) + ' &bull; <strong style="color:' + col + ';">$' + chk.amount.toFixed(2) + '</strong> (' + escapeHtml(chk.issueDate) + ')' +
+              '</div>';
+          }
+          html += '</div>';
+        }
+        reportBox.innerHTML = html;
+      }
+
+      document.getElementById('btnPpBofa').addEventListener('click', function () { rawBox.value = BOFA_VALID; auditPositivePay(); });
+      document.getElementById('btnPpWells').addEventListener('click', function () { rawBox.value = WELLS_VALID; auditPositivePay(); });
+      document.getElementById('btnPpChase').addEventListener('click', function () { rawBox.value = CHASE_VALID; auditPositivePay(); });
+      document.getElementById('btnPpBroken').addEventListener('click', function () { rawBox.value = BROKEN_PP; auditPositivePay(); });
+
+      document.getElementById('ppFileInput').addEventListener('change', function (ev) {
+        var f = ev.target.files && ev.target.files[0];
+        if (!f) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          rawBox.value = String(e.target.result || '');
+          auditPositivePay();
+        };
+        reader.readAsText(f);
+      });
+
+      rawBox.addEventListener('input', auditPositivePay);
+
+      document.getElementById('btnCopyPpJson').addEventListener('click', function () {
+        var btn = document.getElementById('btnCopyPpJson');
+        var payload = JSON.stringify({
+          bankProfile: detectedProfile,
+          accountNumber: detectedAccount,
+          companyName: 'PACIFIC MANUFACTURING CORP',
+          fileDate: '2026-11-16',
+          checks: extractedChecks
+        }, null, 2);
+        navigator.clipboard.writeText(payload).then(function () {
+          btn.textContent = 'Copied Clean JSON!';
+          if (window.finopsTrack) window.finopsTrack('action_copy_curl');
+          setTimeout(function () { btn.textContent = 'Copy Clean Generator JSON'; }, 1700);
+        });
+      });
+
+      rawBox.value = BOFA_VALID;
+      auditPositivePay();
+    })();
+  </script>
+</body>
+</html>
