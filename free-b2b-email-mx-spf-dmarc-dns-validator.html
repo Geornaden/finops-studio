@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free B2B Email Deliverability, Live MX, SPF &amp; DMARC DNS Policy Checker + Disposable Domain Filter | FinOps Studio</title>
+  <meta name="description" content="Audit any B2B email address or corporate domain in real time via DNS-over-HTTPS: inspect MX mail servers (Google Workspace, Microsoft 365, Proofpoint), SPF v=spf1 rules, DMARC p=reject/quarantine policies, and disposable/role accounts." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-b2b-email-mx-spf-dmarc-dns-validator.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Free Live B2B Email Deliverability &amp; MX / SPF / DMARC DNS Inspector" />
+  <meta property="og:description" content="Instant browser DNS-over-HTTPS audit for MX mail gateways, SPF mechanisms, DMARC enforcement (p=reject), role accounts, and disposable domains." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-b2b-email-mx-spf-dmarc-dns-validator.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Free Live B2B Email Deliverability & MX / SPF / DMARC DNS Policy Checker",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All (Live Browser DNS-over-HTTPS)",
+        "url": "https://geornaden.github.io/finops-studio/free-b2b-email-mx-spf-dmarc-dns-validator.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How can I verify if a B2B customer or vendor email domain has valid MX, SPF, and DMARC records?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Enter any email address or domain into this live DNS-over-HTTPS inspector. It queries Cloudflare's 1.1.1.1 DNS resolver in real time to verify active MX mail exchangers, fingerprint the email gateway (Google Workspace, Microsoft 365, Proofpoint, Mimecast), audit v=spf1 authorization, check _dmarc policy enforcement (p=reject, p=quarantine, or p=none), and flag disposable or role-based addresses."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I automate B2B email and MX/DMARC enrichment via REST API or Claude/Cursor Skill Pack?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. FinOps Studio provides a sub-25ms Cloudflare Edge REST API on RapidAPI Hub (B2B Email Deliverability, MX, DMARC and Domain Enricher) as well as an offline Agent Skill Pack on MCPRush."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .dns-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .dns-box {
+      background: rgba(15,23,42,0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .dns-box .lbl {
+      font-size: 0.77rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .dns-box .val {
+      font-size: 1.04rem;
+      font-weight: 700;
+      margin-top: 4px;
+      word-break: break-word;
+    }
+    .input-row-dns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+    .input-row-dns input {
+      flex: 1 1 320px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-size: 0.98rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Multi-Cloud API Hub</a>
+        <a href="./index.html#suite">All 12 Tools</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/b2b-email-deliverability-mx-dmarc-and-domain-enricher" target="_blank" rel="noopener">Subscribe on RapidAPI &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:12px;">
+      <span class="pill">Live DNS-over-HTTPS (`1.1.1.1`) &bull; MX Gateway Fingerprint &bull; SPF &amp; DMARC Security Score</span>
+      <h1>Free B2B Email Deliverability, Live `MX / SPF / DMARC` Policy Inspector &amp; Fraud Domain Filter</h1>
+      <p style="max-width:820px;margin:0 auto;">Verify corporate signup emails, supplier invoicing contacts, and treasury vendor domains in real time: inspect live <strong>`MX` mail exchangers</strong>, <strong>`SPF` (`v=spf1`)</strong>, <strong>`_dmarc` (`p=reject / quarantine / none`)</strong>, disposable burner domains, and role accounts.</p>
+    </section>
+
+    <section class="sandbox-card" aria-label="Live B2B Email and DNS Inspector">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <h2 style="margin:0;font-size:1.14rem;">Enter Any B2B Email Address or Corporate Domain</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" onclick="testEmailSample('treasury@stripe.com')">Test stripe.com</button>
+          <button type="button" class="btn btn-outline" onclick="testEmailSample('ap@microsoft.com')">Test microsoft.com</button>
+          <button type="button" class="btn btn-outline" onclick="testEmailSample('temp@mailinator.com')">Test Burner Domain</button>
+        </div>
+      </div>
+
+      <div class="input-row-dns">
+        <input id="emailDnsInput" type="text" value="treasury@stripe.com" placeholder="e.g. billing@acme.com or cloudflare.com" aria-label="Email address or domain" />
+        <button type="button" class="btn btn-primary" onclick="runLiveDnsAudit()">Run Live DNS Audit</button>
+      </div>
+
+      <div id="dnsSummaryGrid" class="dns-grid" aria-live="polite"></div>
+      <div id="dnsRawDetails" style="margin-top:14px;"></div>
+    </section>
+
+    <!-- API UPSELL -->
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Automate B2B Signup Enrichment &amp; Vendor Fraud Screening via API (`&lt;25ms` Global Edge)</h2>
+      <p style="color:var(--muted);font-size:0.94rem;">Block burner signups, enrich CRM leads with mail provider intelligence, and verify supplier billing domains before issuing wire or ACH payments using our production edge API on <strong>RapidAPI Hub</strong> or our <strong>MCPRush Agent Skill Pack</strong>:</p>
+      <pre class="code-box">curl -X POST "https://b2b-email-deliverability-mx-dmarc-and-domain-enricher.p.rapidapi.com/v1/email/verify" \
+  -H "Content-Type: application/json" \
+  -H "X-RapidAPI-Host: b2b-email-deliverability-mx-dmarc-and-domain-enricher.p.rapidapi.com" \
+  -H "X-RapidAPI-Key: YOUR_RAPIDAPI_KEY" \
+  -d '{"email": "treasury@stripe.com"}'</pre>
+      <div class="hero-actions" style="justify-content:flex-start;margin-top:14px;">
+        <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/b2b-email-deliverability-mx-dmarc-and-domain-enricher" target="_blank" rel="noopener">Get Free RapidAPI Key (50 req/mo Free) &rarr;</a>
+        <a class="btn btn-outline" href="https://mcprush.com/geornaden-2/b2b-email-deliverability-mx-spf-dmarc-domain-inte" target="_blank" rel="noopener">Claude / Cursor Skill Pack on MCPRush</a>
+        <a class="btn btn-outline" href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">All Cloud APIs &amp; MCP Gateways</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>FinOps Studio</strong> &mdash; Deterministic Banking, Payroll, Treasury, E-Invoicing &amp; B2B Verification APIs.</p>
+      <p style="font-size:0.84rem;color:var(--muted);">
+        <a href="./index.html">Home</a> &bull;
+        <a href="./how-it-works-simple.html">VIP Simple Guide</a> &bull;
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Multi-Cloud API Hub</a> &bull;
+        <a href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">RapidAPI Hub</a> &bull;
+        <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const DISPOSABLE_DOMAINS = new Set([
+      'mailinator.com', 'guerrillamail.com', '10minutemail.com', 'tempmail.com',
+      'yopmail.com', 'sharklasers.com', 'trashmail.com', 'getnada.com', 'maildrop.cc'
+    ]);
+
+    const FREE_CONSUMER_DOMAINS = new Set([
+      'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'aol.com', 'proton.me', 'protonmail.com'
+    ]);
+
+    const ROLE_PREFIXES = new Set([
+      'admin', 'billing', 'treasury', 'ap', 'accounts', 'finance', 'info', 'support', 'sales', 'noreply', 'no-reply', 'security', 'invoice', 'invoices'
+    ]);
+
+    function detectMailProvider(mxHosts) {
+      const joined = mxHosts.join(' ').toLowerCase();
+      if (!joined) return 'None (No MX)';
+      if (joined.includes('google.com') || joined.includes('googlemail.com')) return 'Google Workspace';
+      if (joined.includes('protection.outlook.com') || joined.includes('mail.eo.outlook.com')) return 'Microsoft 365';
+      if (joined.includes('pphosted.com')) return 'Proofpoint Enterprise';
+      if (joined.includes('mimecast.com')) return 'Mimecast Security';
+      if (joined.includes('protonmail.ch')) return 'Proton Enterprise';
+      if (joined.includes('zoho.com')) return 'Zoho Mail';
+      if (joined.includes('amazonses.com') || joined.includes('awsapps.com')) return 'Amazon SES / WorkMail';
+      if (joined.includes('yahoodns.net')) return 'Yahoo Mail';
+      return 'Custom / Dedicated SMTP';
+    }
+
+    async function queryDoh(name, type) {
+      const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${encodeURIComponent(type)}`;
+      const res = await fetch(url, { headers: { 'Accept': 'application/dns-json' } });
+      if (!res.ok) return [];
+      const data = await res.json();
+      return Array.isArray(data.Answer) ? data.Answer : [];
+    }
+
+    function testEmailSample(val) {
+      document.getElementById('emailDnsInput').value = val;
+      runLiveDnsAudit();
+    }
+
+    async function runLiveDnsAudit() {
+      const raw = (document.getElementById('emailDnsInput').value || '').trim().toLowerCase();
+      const grid = document.getElementById('dnsSummaryGrid');
+      const details = document.getElementById('dnsRawDetails');
+
+      let localPart = '';
+      let domain = raw;
+      if (raw.includes('@')) {
+        const parts = raw.split('@');
+        localPart = parts[0];
+        domain = parts[1] || '';
+      }
+      domain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+
+      if (!domain || !/^[a-z0-9.-]+\.[a-z]{2,}$/.test(domain)) {
+        grid.innerHTML = '';
+        details.innerHTML = '<div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);padding:12px 16px;border-radius:10px;">Please enter a valid email address (e.g. <code>treasury@stripe.com</code>) or domain name.</div>';
+        return;
+      }
+
+      grid.innerHTML = '<div class="dns-box"><div class="lbl">Querying Live DNS (1.1.1.1)...</div><div class="val">Checking MX, SPF &amp; _dmarc...</div></div>';
+
+      try {
+        const [mxAns, txtAns, dmarcAns] = await Promise.all([
+          queryDoh(domain, 'MX'),
+          queryDoh(domain, 'TXT'),
+          queryDoh('_dmarc.' + domain, 'TXT')
+        ]);
+
+        const mxRecords = mxAns
+          .filter(r => r.type === 15 && r.data)
+          .map(r => r.data.trim())
+          .sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+
+        const txtStrings = txtAns
+          .filter(r => r.type === 16 && r.data)
+          .map(r => r.data.replace(/^"|"$/g, '').replace(/"\s*"/g, ''));
+
+        const spfRecord = txtStrings.find(s => s.toLowerCase().startsWith('v=spf1')) || null;
+
+        const dmarcStrings = dmarcAns
+          .filter(r => r.type === 16 && r.data)
+          .map(r => r.data.replace(/^"|"$/g, '').replace(/"\s*"/g, ''));
+        const dmarcRecord = dmarcStrings.find(s => s.toLowerCase().startsWith('v=dmarc1')) || null;
+
+        let dmarcPolicy = 'missing';
+        if (dmarcRecord) {
+          const pm = /(?:^|;\s*)p=([a-z]+)/i.exec(dmarcRecord);
+          dmarcPolicy = pm ? pm[1].toLowerCase() : 'present';
+        }
+
+        const isDisposable = DISPOSABLE_DOMAINS.has(domain);
+        const isFreeMail = FREE_CONSUMER_DOMAINS.has(domain);
+        const isRole = localPart ? ROLE_PREFIXES.has(localPart) : false;
+        const provider = detectMailProvider(mxRecords);
+
+        let score = 0;
+        if (mxRecords.length > 0) score += 35;
+        if (spfRecord) score += 25;
+        if (dmarcPolicy === 'reject') score += 30;
+        else if (dmarcPolicy === 'quarantine') score += 22;
+        else if (dmarcRecord) score += 10;
+        if (!isDisposable && !isFreeMail) score += 10;
+        if (isDisposable) score = Math.min(score, 15);
+
+        const verdictColor = isDisposable || mxRecords.length === 0
+          ? '#f87171'
+          : (score >= 80 ? '#34d399' : '#fbbf24');
+
+        const verdictLabel = isDisposable
+          ? 'HIGH RISK (DISPOSABLE)'
+          : (mxRecords.length === 0 ? 'UNDELIVERABLE (NO MX)' : (isFreeMail ? 'CONSUMER WEBMAIL' : 'VERIFIED B2B DOMAIN'));
+
+        grid.innerHTML = `
+          <div class="dns-box"><div class="lbl">B2B Trust Verdict</div><div class="val" style="color:${verdictColor};">${verdictLabel} (${score}/100)</div></div>
+          <div class="dns-box"><div class="lbl">Email Gateway Fingerprint</div><div class="val">${provider}</div></div>
+          <div class="dns-box"><div class="lbl">DMARC Spoof Protection</div><div class="val" style="color:${dmarcPolicy === 'reject' || dmarcPolicy === 'quarantine' ? '#34d399' : '#fbbf24'};">p=${dmarcPolicy.toUpperCase()}</div></div>
+          <div class="dns-box"><div class="lbl">Account Classification</div><div class="val">${isDisposable ? 'Burner / Temp' : (isRole ? 'Role Inbox (' + localPart + '@)' : (isFreeMail ? 'Personal Mailbox' : 'Corporate Domain'))}</div></div>
+        `;
+
+        details.innerHTML = `<pre class="code-box" style="min-height:130px;">${JSON.stringify({
+          input: raw,
+          domain,
+          b2bTrustScore: score,
+          deliverableMx: mxRecords.length > 0,
+          mailProvider: provider,
+          isDisposable,
+          isFreeWebmail: isFreeMail,
+          isRoleAccount: isRole,
+          mxRecords,
+          spfRecord: spfRecord || 'NONE FOUND',
+          dmarcPolicy,
+          dmarcRecord: dmarcRecord || 'NONE FOUND'
+        }, null, 2)}</pre>`;
+      } catch (err) {
+        details.innerHTML = '<div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);padding:12px 16px;border-radius:10px;">Live DNS lookup error: ' + String(err.message || err) + '</div>';
+      }
+    }
+
+    runLiveDnsAudit();
+  </script>
+</body>
+</html>
