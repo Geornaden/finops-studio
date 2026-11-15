@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickBooks, Xero, NetSuite, SAP S/4HANA, Odoo &amp; Sage to Bank File API Directory | FinOps Studio</title>
+  <meta name="description" content="Interactive ERP &amp; Accounting Software to Bank File Matrix: map QuickBooks Online, Xero, Oracle NetSuite, SAP S/4HANA, Odoo, Sage, and Stripe exports into SEPA XML, US NACHA ACH, UK BACS 18, AU .ABA, CA CPA-005, Positive Pay, BAI2 &amp; Peppol." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/quickbooks-xero-netsuite-sap-odoo-bank-file-api-directory.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="QuickBooks, Xero, NetSuite, SAP, Odoo &amp; Sage Bank File API Directory" />
+  <meta property="og:description" content="Pick your ERP + target country bank rail to generate exact CSV column mappings, REST payloads, and n8n/Make blueprints." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/quickbooks-xero-netsuite-sap-odoo-bank-file-api-directory.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "QuickBooks Online, Xero, NetSuite, SAP S/4HANA, Odoo & Sage to Global Bank & Tax File API Directory",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "url": "https://geornaden.github.io/finops-studio/quickbooks-xero-netsuite-sap-odoo-bank-file-api-directory.html"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can QuickBooks Online or Xero generate native 94-char NACHA .ACH, 2026 SEPA pain.001.001.09, or Payee Positive Pay files without expensive ERP add-ons?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Standard QuickBooks Online and Xero plans either omit direct bank-portal batch files or charge monthly treasury add-on fees per entity. Exporting a standard CSV/JSON bill, payroll, or check register into FinOps Studio generates bank-compliant NACHA .ACH, SEPA pain.001.001.09, UK BACS 18, Australian .ABA, Canadian CPA-005, or Payee Positive Pay files at $0/mo + $0.02/row (or $14.99/mo unlimited-team plans on RapidAPI)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do NetSuite, Odoo, and SAP teams reconcile incoming BAI2 and Spanish Norma 43 bank statements?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Send daily SFTP BAI2 or 80-character Spanish AEB Norma 43 (.n43) bank files to FinOps Studio's deterministic parsers to receive normalized JSON and UTF-8 CSV rows with cent-verified opening/closing balances ready for ERP journal import."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .erp-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 14px 0 18px;
+    }
+    .erp-selector select {
+      width: 100%;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-size: 0.96rem;
+    }
+    .map-grid-erp {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .map-card-erp {
+      background: rgba(15,23,42,0.86);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .map-card-erp .lbl {
+      font-size: 0.76rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .map-card-erp .val {
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    @media (max-width: 720px) {
+      .erp-selector { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">1-Click CSV Mapper</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Multi-Cloud Hub</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Start Free ($5 Credits) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:12px;">
+      <span class="pill">Replace $300–$1,500/Mo ERP Treasury Modules &bull; Works With Every Accounting System</span>
+      <h1>QuickBooks, Xero, NetSuite, SAP, Odoo &amp; Sage &rarr; Bank &amp; Tax File Integration Directory</h1>
+      <p style="max-width:830px;margin:0 auto;">Select your current accounting/ERP platform and target country banking standard below to see the exact exported columns, savings vs. legacy ERP add-ons, and ready-to-run API payload.</p>
+    </section>
+
+    <section class="sandbox-card" aria-label="Interactive ERP to Bank Format Configurator">
+      <h2 style="margin-top:0;font-size:1.14rem;">Interactive ERP &times; Country Bank Rail Configurator</h2>
+      <div class="erp-selector">
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">1. Select Your ERP / Accounting / Billing Platform</label>
+          <select id="selErp" onchange="renderErpPlan()">
+            <option value="qbo">QuickBooks Online / QuickBooks Desktop</option>
+            <option value="xero">Xero Accounting</option>
+            <option value="netsuite">Oracle NetSuite ERP</option>
+            <option value="odoo">Odoo 16 / 17 / 18 Accounting</option>
+            <option value="sap">SAP S/4HANA &amp; SAP Business One</option>
+            <option value="sage">Sage Intacct / Sage 50 / BrightPay</option>
+            <option value="stripe">Stripe / Shopify / Custom Postgres DB</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">2. Select Target Bank or Tax Standard</label>
+          <select id="selRail" onchange="renderErpPlan()">
+            <option value="nacha">US NACHA .ACH (94-Char Payroll &amp; Vendor Batch)</option>
+            <option value="pospay">US Payee Positive Pay (80-Char Chase / BofA / Wells Fargo)</option>
+            <option value="sepa">EU 2026 SEPA XML (pain.001.001.09 / pain.008)</option>
+            <option value="einvoice">EU Peppol BIS 3.0 / XRechnung / Factur-X XML</option>
+            <option value="bacs">UK BACS Standard 18 (100-Char Barclays / HSBC / NatWest)</option>
+            <option value="aba">Australia BECS .ABA (120-Char CommBiz / NAB / Westpac)</option>
+            <option value="cpa005">Canada CPA-005 EFT (1,464-Byte RBC / TD / BMO)</option>
+            <option value="datev">Germany DATEV EXTF v700 Buchungsstapel CSV</option>
+            <option value="bai2">Inbound Corporate BAI2 / Norma 43 Statement Reconciliation</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="erpSummaryCards" class="map-grid-erp" aria-live="polite"></div>
+
+      <h3 style="margin:14px 0 8px;font-size:0.98rem;">Exported ERP Fields &rarr; FinOps Studio API Mapping:</h3>
+      <pre id="erpMappingCode" class="code-box" style="min-height:165px;"></pre>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <a id="erpValidatorBtn" class="btn btn-primary" href="./free-nacha-ach-file-validator-batch-hash-auditor.html">Open Matching Free Browser Validator &rarr;</a>
+        <a class="btn btn-outline" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">1-Click CSV-to-JSON Mapper</a>
+        <a class="btn btn-outline" href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">RapidAPI, MCPRush &amp; Apify Endpoints</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Ready-to-Import ERP Automation Blueprints (`n8n` &amp; `Make.com`)</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">QuickBooks &amp; Xero</span><span class="tag">US Treasury</span></div>
+            <h3>QBO / Xero Checks &amp; Bills &rarr; Positive Pay + NACHA ACH</h3>
+            <p>Export approved bills and check runs directly into Chase/BofA Positive Pay and 94-character NACHA files.</p>
+          </div>
+          <div class="card-actions">
+            <a class="btn btn-outline" href="./workflows/n8n-quickbooks-checks-to-positive-pay-and-ach.json" download>Download n8n JSON</a>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">NetSuite / Odoo / SAP</span><span class="tag">EU + Treasury</span></div>
+            <h3>ERP SFTP &rarr; 2026 SEPA XML &amp; Daily BAI2 Reconciliation</h3>
+            <p>Generate structured-address pain.001.001.09 payment files and reconcile morning BAI2 statements automatically.</p>
+          </div>
+          <div class="card-actions">
+            <a class="btn btn-outline" href="./workflows/n8n-netsuite-odoo-erp-to-sepa-and-bai2.json" download>Download n8n JSON</a>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Stripe &amp; Shopify</span><span class="tag">DE + EU Tax</span></div>
+            <h3>Stripe Paid Invoices &rarr; Peppol UBL + DATEV EXTF v700</h3>
+            <p>Dual-emit EN 16931 e-invoices and SKR03/SKR04 DATEV accounting batches on every webhook event.</p>
+          </div>
+          <div class="card-actions">
+            <a class="btn btn-outline" href="./workflows/n8n-stripe-to-datev-and-einvoice.json" download>Download n8n JSON</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>FinOps Studio</strong> &mdash; Universal Bank &amp; Tax File Layer for QuickBooks, Xero, NetSuite, SAP, Odoo &amp; Sage.</p>
+      <p style="font-size:0.84rem;color:var(--muted);">
+        <a href="./index.html">Home</a> &bull;
+        <a href="./how-it-works-simple.html">VIP Simple Guide</a> &bull;
+        <a href="./regulatory-compliance-radar-2026-2027-sepa-peppol-fedwire-nacha.html">2026–2027 Law Radar</a> &bull;
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Multi-Cloud API Hub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const ERP_META = {
+      qbo: { name: 'QuickBooks Online / Desktop', exportSrc: 'Vendor Bill / Check Register CSV or QBO REST API (`BillPayment`, `Check`)', addonCost: '$150–$400/mo 3rd-party ACH/Positive Pay add-ons' },
+      xero: { name: 'Xero Accounting', exportSrc: 'Batch Payments CSV Export or Xero `BankTransactions` / `Invoices` API', addonCost: '$90–$250/mo multi-region batch bank apps' },
+      netsuite: { name: 'Oracle NetSuite', exportSrc: 'Saved Search CSV / SuiteScript RESTlet (`vendorpayment`, `customerrefund`)', addonCost: '$800–$1,500/mo NetSuite Electronic Bank Payments module' },
+      odoo: { name: 'Odoo 16 / 17 / 18', exportSrc: '`account.payment` / `account.move` JSON-RPC or CSV Export (Community & Enterprise)', addonCost: 'Enterprise-only SEPA/ABA localization lock-in' },
+      sap: { name: 'SAP S/4HANA & Business One', exportSrc: 'F110 Payment Run IDoc / CSV Export & EBS Bank Statement Import', addonCost: ' costly DMEE tree consulting per country format' },
+      sage: { name: 'Sage Intacct / Sage 50', exportSrc: 'AP Payment Register / Payroll CSV Export', addonCost: '$200–$500/mo per-bank connector fees' },
+      stripe: { name: 'Stripe / Shopify / Postgres', exportSrc: '`invoice.paid` / `payout.paid` Webhook JSON or SQL query rows', addonCost: '$0.25–$2.00 per payout via managed payout rails' }
+    };
+
+    const RAIL_META = {
+      nacha: {
+        label: '94-Char US NACHA .ACH (`PPD` / `CCD`)',
+        validator: './free-nacha-ach-file-validator-batch-hash-auditor.html',
+        endpoint: 'POST /v1/nacha/generate (RapidAPI) or finops_studio/nacha-ach-file-generator (Apify)',
+        fields: 'Vendor/Employee Name -> individualName (22 chars)\nRouting Number -> receivingDfiId (MOD-10 checked)\nAccount Number -> dfiAccountNumber\nNet Amount -> amount (BigInt cents + Record 8/9 Entry Hash)'
+      },
+      pospay: {
+        label: '80-Char / CSV US Payee Positive Pay',
+        validator: './free-us-positive-pay-check-file-validator.html',
+        endpoint: 'finops_studio/us-positive-pay-check-generator',
+        fields: 'Check Number -> checkNumber (zero-padded 10 digits)\nCheck Date -> issueDate (MMDDYYYY / YYMMDD)\nCheck Amount -> amount (integer cents)\nPayee Name -> payeeName (Chase / BofA CashPro / Wells Fargo ARP / PNC)'
+      },
+      sepa: {
+        label: '2026 EPC SEPA XML (`pain.001.001.09` / `pain.008`)',
+        validator: './free-sepa-xml-pain001-xsd-be04-validator.html',
+        endpoint: 'POST /v1/sepa/credit-transfer (RapidAPI) or finops_studio/sepa-xml-generator (Apify)',
+        fields: 'Supplier Name -> creditorName\nSupplier IBAN -> creditorIban (ISO 13616 MOD-97 checked)\nTown + Country -> creditorAddress.{townName, country} (Mandatory Nov 2026 BE04 fix)\nBill Amount -> amount (Cent-exact CtrlSum)'
+      },
+      einvoice: {
+        label: 'EN 16931 Peppol BIS 3.0 / XRechnung / Factur-X XML',
+        validator: './free-peppol-xrechnung-facturx-invoice-xml-builder.html',
+        endpoint: 'POST /v1/einvoice/generate (RapidAPI) or /mcp/einvoice (MCPRush)',
+        fields: 'Customer VAT / KBO / SIRET / Leitweg-ID -> customer.endpointId\nInvoice Lines (Qty, UnitPrice, VAT%) -> lines[] (BR-CO-10..17 cent-exact rounding)\nSupplier IBAN -> supplier.iban'
+      },
+      bacs: {
+        label: '100-Char UK Pay.UK BACS Standard 18',
+        validator: './free-uk-bacs-standard-18-file-validator.html',
+        endpoint: 'finops_studio/uk-bacs-standard18-generator',
+        fields: '6-Digit Sort Code -> destSortCode\n8-Digit Account Number -> destAccountNumber\nPayee Name -> destAccountName (18 chars)\nAmount GBP -> amount (Auto-generates VOL1/HDR1/UHL1/CONTRA/UTL1)'
+      },
+      aba: {
+        label: '120-Char Australian AusPayNet BECS `.ABA`',
+        validator: './free-australian-aba-file-validator-record-7-auditor.html',
+        endpoint: 'finops_studio/aba-cemtex-file-generator',
+        fields: 'BSB (NNN-NNN) -> bsb\nAccount Number (9 chars) -> accountNumber\nTransaction Code (53 Pay / 50 Credit) -> transactionCode\nAmount AUD -> amount (Auto-calculates Record 7 999-999 Net/Credit/Debit)'
+      },
+      cpa005: {
+        label: '1,464-Byte Canadian Payments Canada `CPA-005`',
+        validator: './free-canada-cpa005-eft-file-validator.html',
+        endpoint: 'finops_studio/canada-cpa005-eft-generator',
+        fields: '3-Digit Institution + 5-Digit Transit -> 0IIITTTTT routing\nAccount Number (12 chars) -> payeeAccount\nPayment Date -> 0YYDDD Julian Date\nAmount CAD -> Packed 6x240-byte Record C + Record Z Trailer'
+      },
+      datev: {
+        label: 'German `DATEV EXTF v700 Buchungsstapel` CSV',
+        validator: './free-datev-extf-v700-buchungsstapel-csv-validator.html',
+        endpoint: 'finops_studio/datev-buchungsstapel-generator or /mcp/datev (MCPRush)',
+        fields: 'Gross Amount -> Umsatz (comma decimal)\nDebit/Credit -> Soll/Haben-Kennzeichen (S/H)\nRevenue & Debtor Accounts -> Konto / Gegenkonto (SKR03 / SKR04 + BU-Schlüssel)\nInvoice Date -> TTMM Belegdatum + 31-field EXTF;700;21 Header'
+      },
+      bai2: {
+        label: 'Corporate `BAI2` & Spanish `Norma 43` Statement Parser',
+        validator: './free-bai2-bank-statement-viewer-csv-converter.html',
+        endpoint: 'POST /v1/bai2/parse (RapidAPI) or /mcp/bai2 (MCPRush)',
+        fields: 'Inbound Bank Statement (.bai2 / .n43) -> Normalized JSON + UTF-8 CSV\nRecord 16 + 88 / Record 22 + 23 -> Stitched ERP Remittance Description\nRecord 49/98/99 & Record 33 -> Verified Opening/Closing Ledger Balance'
+      }
+    };
+
+    function renderErpPlan() {
+      const erp = ERP_META[document.getElementById('selErp').value] || ERP_META.qbo;
+      const rail = RAIL_META[document.getElementById('selRail').value] || RAIL_META.nacha;
+
+      document.getElementById('erpSummaryCards').innerHTML = `
+        <div class="map-card-erp"><div class="lbl">Source System</div><div class="val">${erp.name}</div></div>
+        <div class="map-card-erp"><div class="lbl">Target Output</div><div class="val">${rail.label}</div></div>
+        <div class="map-card-erp"><div class="lbl">Typical Legacy Add-On Cost</div><div class="val" style="color:#f87171;">${erp.addonCost}</div></div>
+        <div class="map-card-erp"><div class="lbl">FinOps Studio Cost</div><div class="val" style="color:#34d399;">$0/mo ($5 Free Credits) or $14.99/mo</div></div>
+      `;
+
+      document.getElementById('erpMappingCode').textContent =
+        `# Source Export: ${erp.exportSrc}\n# Cloud Endpoint: ${rail.endpoint}\n\n${rail.fields}`;
+
+      document.getElementById('erpValidatorBtn').href = rail.validator;
+    }
+
+    renderErpPlan();
+  </script>
+</body>
+</html>

@@ -380,4 +380,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.94</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/quickbooks-xero-netsuite-sap-odoo-bank-file-api-directory.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
 </urlset>
