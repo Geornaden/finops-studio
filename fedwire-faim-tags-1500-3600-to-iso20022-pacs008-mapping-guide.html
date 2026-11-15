@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fedwire FAIM Tags ({1500}, {2000}, {3100}, {3400}, {4200}, {6000}) to ISO 20022 pacs.008 XML Mapping Guide | FinOps Studio</title>
+  <meta name="description" content="Interactive Federal Reserve Fedwire Funds legacy FAIM tag-value ({1500}, {1510}, {2000}, {3100}, {3320}, {3400}, {3600}, {4200}, {5000}, {6000}) to ISO 20022 pacs.008.001.08 + head.001 AppHdr XPath mapping &amp; parser." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/fedwire-faim-tags-1500-3600-to-iso20022-pacs008-mapping-guide.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Legacy Fedwire FAIM {1500}/{3600}/{4200} to ISO 20022 pacs.008 XML Mapper" />
+  <meta property="og:description" content="Search every legacy Fedwire FAIM tag or paste a raw {1500}...{6000} wire string to translate it into an ISO 20022 pacs.008.001.08 JSON/XML structure." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/fedwire-faim-tags-1500-3600-to-iso20022-pacs008-mapping-guide.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Fedwire FAIM Tags ({1500} to {6500}) to ISO 20022 pacs.008.001.08 XPath Mapping Reference & Interactive Converter",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "url": "https://geornaden.github.io/finops-studio/fedwire-faim-tags-1500-3600-to-iso20022-pacs008-mapping-guide.html"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do legacy Fedwire FAIM tags {2000}, {3100}, {3400}, {4200}, and {5000} map to ISO 20022 pacs.008?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Tag {2000} (12-digit implied-cent wire amount) maps to <IntrBkSttlmAmt Ccy='USD'> in decimal dollars; {3100} (Sender ABA) maps to <DbtrAgt><FinInstnId><ClrSysMmbId><MmbId>; {3400} (Receiver ABA) maps to <CdtrAgt><FinInstnId><ClrSysMmbId><MmbId>; {4200} (Beneficiary D/account + name/address) maps to <CdtrAcct> and structured <Cdtr><PstlAdr>; and {5000} (Originator) maps to <DbtrAcct> and structured <Dbtr><PstlAdr>."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What replaced Fedwire Type/Subtype {1510} 1000 (Customer Transfer) and 1002 (Bank-to-Bank)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Customer credit transfers ({1510} 1000) map to ISO 20022 pacs.008.001.08 (FIToFICstmrCdtTrf), while financial institution bank-to-bank transfers (1600) map to pacs.009.001.08, both wrapped inside a head.001.001.02 Business Application Header (<AppHdr>) with BizSvc set to fedwirefunds.01."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .map-table-wrap {
+      overflow-x: auto;
+      margin: 14px 0 24px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    table.map-tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+    table.map-tbl th, table.map-tbl td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+    table.map-tbl th {
+      background: rgba(30,41,59,0.88);
+      color: #94a3b8;
+    }
+    .search-bar-faim {
+      width: 100%;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 14px;
+      color: var(--text);
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./free-fedwire-iso20022-pacs008-swift-cbpr-validator.html">Free pacs.008 Validator</a>
+        <a href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html">pacs.008 API</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/global-bank-iban-aba-sort-code-bsb-and-vat-validator" target="_blank" rel="noopener">USABA API (&lt;10ms) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:12px;">
+      <span class="pill">&#127482;&#127480; US Treasury, Real Estate Escrow &amp; Core Banking &bull; Fedwire FAIM &rarr; ISO 20022 `pacs.008`</span>
+      <h1>Legacy Fedwire FAIM (`{1500}`–`{6500}`) to ISO 20022 `pacs.008.001.08` XPath Mapping Guide &amp; Converter</h1>
+      <p style="max-width:830px;margin:0 auto;">Migrating real estate title/escrow software, ERP wire modules, or bank middleware off legacy Federal Reserve FAIM `{tag}` strings? Search every FAIM tag below or paste a raw `{1500}...{6000}` wire to unpack it into a clean ISO 20022 `pacs.008` API payload.</p>
+    </section>
+
+    <!-- INTERACTIVE FAIM STRING UNPACKER -->
+    <section class="sandbox-card" aria-label="Interactive FAIM Wire String Unpacker">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <h2 style="margin:0;font-size:1.14rem;">Interactive Legacy FAIM `{tag}` String &rarr; `pacs.008` JSON Unpacker</h2>
+        <button type="button" class="btn btn-outline" onclick="loadSampleFaim()">Load Sample Escrow Closing Wire</button>
+      </div>
+      <textarea id="faimInput" class="code-box" rows="5" style="width:100%;font-family:monospace;" oninput="convertFaimToPacs()"></textarea>
+      <p style="color:var(--muted);font-size:0.86rem;margin:10px 0 6px;">Mapped ISO 20022 `pacs.008.001.08` Payload + USABA Checksum Audit:</p>
+      <pre id="faimJsonOut" class="code-box" style="min-height:190px;"></pre>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button type="button" class="btn btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('faimJsonOut').textContent)">Copy Mapped JSON</button>
+        <a class="btn btn-outline" href="./free-fedwire-iso20022-pacs008-swift-cbpr-validator.html">Validate Generated pacs.008 XML &rarr;</a>
+        <a class="btn btn-outline" href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html">Cloud pacs.008 XML API</a>
+      </div>
+    </section>
+
+    <!-- SEARCHABLE XPATH DICTIONARY -->
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">Searchable Fedwire FAIM `{Tag}` &rarr; ISO 20022 XPath Dictionary</h2>
+      <input id="faimSearch" type="text" class="search-bar-faim" placeholder="Filter by FAIM tag (e.g. 2000, 3100, 3400, 3600, 4200, 5000, 6000, IMAD, UETR)..." oninput="renderFaimTable()" />
+      <div class="map-table-wrap">
+        <table class="map-tbl">
+          <thead>
+            <tr>
+              <th>Legacy FAIM Tag</th>
+              <th>Field Name</th>
+              <th>ISO 20022 `head.001` / `pacs.008.001.08` Target XPath</th>
+              <th>2026 Migration Rule</th>
+            </tr>
+          </thead>
+          <tbody id="faimTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>FinOps Studio</strong> &mdash; Deterministic US Fedwire, NACHA ACH, Positive Pay, BAI2 &amp; Global ISO 20022 Infrastructure.</p>
+      <p style="font-size:0.84rem;color:var(--muted);">
+        <a href="./index.html">Home</a> &bull;
+        <a href="./how-it-works-simple.html">VIP Simple Guide</a> &bull;
+        <a href="./free-fedwire-iso20022-pacs008-swift-cbpr-validator.html">Free pacs.008 Validator</a> &bull;
+        <a href="./nacha-ach-file-generator.html">US NACHA ACH</a> &bull;
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">RapidAPI &amp; MCPRush Hub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const FAIM_DICTIONARY = [
+      { tag: '{1500}', name: 'Sender Supplied Info (Format Version 30)', xpath: 'AppHdr/MsgDefIdr = "pacs.008.001.08" + BizSvc = "fedwirefunds.01"', rule: 'Replaced by ISO 20022 Business Application Header (head.001.001.02).' },
+      { tag: '{1510}', name: 'Type / Subtype Code (1000, 1002, 1600)', xpath: 'FIToFICstmrCdtTrf (1000) or FICdtTrf pacs.009 (1600) + LclInstrm/Prtry', rule: 'Customer wires use pacs.008; bank-to-bank settlement uses pacs.009.' },
+      { tag: '{1520}', name: 'Input Message Accountability Data (IMAD)', xpath: 'GrpHdr/MsgId & CdtTrfTxInf/PmtId/InstrId', rule: 'Preserve unique cycle date + source + sequence reference up to 35 chars.' },
+      { tag: '{2000}', name: 'Amount (12 Digits Implied Cents)', xpath: 'CdtTrfTxInf/IntrBkSttlmAmt[@Ccy="USD"]', rule: 'Convert zero-padded 12-digit cents (e.g. 000012500000) to decimal string "125000.00".' },
+      { tag: '{3100}', name: 'Sender DI (9-Digit ABA + Short Name)', xpath: 'AppHdr/Fr/.../MmbId & DbtrAgt/FinInstnId/ClrSysMmbId/MmbId (ClrSysId/Cd="USABA")', rule: 'Must pass 9-digit Federal Reserve 3-7-1 MOD-10 checksum.' },
+      { tag: '{3320}', name: 'Sender Reference (16 Chars)', xpath: 'CdtTrfTxInf/PmtId/EndToEndId', rule: 'Up to 35 characters in ISO 20022 (expanded from legacy 16-char limit).' },
+      { tag: '{3400}', name: 'Receiver DI (9-Digit ABA + Short Name)', xpath: 'AppHdr/To/.../MmbId & CdtrAgt/FinInstnId/ClrSysMmbId/MmbId (ClrSysId/Cd="USABA")', rule: 'Must pass 9-digit Federal Reserve 3-7-1 MOD-10 checksum.' },
+      { tag: '{3600}', name: 'Business Function Code (CTR, BTR, DRC, FFR)', xpath: 'PmtTpInf/LclInstrm/Prtry + CdtTrfTxInf/PmtId/UETR', rule: 'CTR -> Customer Credit Transfer; mandatory lowercase RFC 4122 UUID v4 <UETR> added.' },
+      { tag: '{3620}', name: 'Payment Notification / UETR Tracking', xpath: 'CdtTrfTxInf/PmtId/UETR', rule: '36-char lowercase UUID v4 shared across Fedwire Funds and SWIFT GPI.' },
+      { tag: '{4100}', name: 'Beneficiary FI (Intermediary / Credited Bank)', xpath: 'CdtrAgt or IntrmyAgt1/FinInstnId', rule: 'Structured BICFI or ClrSysMmbId + structured PstlAdr.' },
+      { tag: '{4200}', name: 'Beneficiary (ID Code D + Account + Name + 3 Lines)', xpath: 'CdtrAcct/Id/Othr/Id + Cdtr/Nm + Cdtr/PstlAdr/{StrtNm,PstCd,TwnNm,CtrySubDvsn,Ctry}', rule: 'Unstructured 3x35 address lines MUST be parsed into structured <TwnNm> & <Ctry> tags.' },
+      { tag: '{5000}', name: 'Originator (ID Code D + Account + Name + 3 Lines)', xpath: 'DbtrAcct/Id/Othr/Id + Dbtr/Nm + Dbtr/PstlAdr/{StrtNm,PstCd,TwnNm,CtrySubDvsn,Ctry}', rule: 'Structured debtor address required to prevent compliance holds.' },
+      { tag: '{6000}', name: 'Originator to Beneficiary Info (OBI, 4x35 Chars)', xpath: 'CdtTrfTxInf/RmtInf/Ustrd (up to 140 chars) or Strd/CdtrRefInf', rule: 'Maps cleanly to <RmtInf><Ustrd> or structured invoice remittance blocks.' },
+      { tag: '{6500}', name: 'FI to FI Information', xpath: 'CdtTrfTxInf/InstrForNxtAgt/InstrInf', rule: 'Agent-to-agent settlement instructions.' }
+    ];
+
+    function checkAba(aba) {
+      if (!/^\d{9}$/.test(aba)) return false;
+      const d = aba.split('').map(Number);
+      const s = 3 * (d[0] + d[3] + d[6]) + 7 * (d[1] + d[4] + d[7]) + (d[2] + d[5] + d[8]);
+      return s > 0 && s % 10 === 0;
+    }
+
+    function renderFaimTable() {
+      const q = (document.getElementById('faimSearch').value || '').toLowerCase().trim();
+      const filtered = FAIM_DICTIONARY.filter(r =>
+        !q || r.tag.toLowerCase().includes(q) || r.name.toLowerCase().includes(q) || r.xpath.toLowerCase().includes(q) || r.rule.toLowerCase().includes(q)
+      );
+      document.getElementById('faimTableBody').innerHTML = filtered.map(r => `
+        <tr>
+          <td><code><strong>${r.tag}</strong></code></td>
+          <td>${r.name}</td>
+          <td><code>${r.xpath}</code></td>
+          <td style="color:var(--muted);">${r.rule}</td>
+        </tr>
+      `).join('');
+    }
+
+    function loadSampleFaim() {
+      document.getElementById('faimInput').value =
+        '{1500}30{1510}1000{1520}20261115MMQFMP000042{2000}000012500000{3100}021000021JPMORGAN CHASE{3320}ESCROW-8841{3400}026009593BANK OF AMERICA{3600}CTR{4200}D9876543210*APEX INDUSTRIAL PARTNERS INC*100 NORTH TRYON ST*CHARLOTTE NC 28202 US{5000}D1122334455*PACIFIC ESCROW HOLDINGS LLC*400 SOUTH HOPE ST*LOS ANGELES CA 90071 US{6000}CLOSING ESCROW FILE 2026-8841 PROPERTY APN 4412';
+      convertFaimToPacs();
+    }
+
+    function convertFaimToPacs() {
+      const raw = document.getElementById('faimInput').value || '';
+      const tags = {};
+      const re = /\{(\d{4})\}([^{]*)/g;
+      let m;
+      while ((m = re.exec(raw)) !== null) {
+        tags[m[1]] = m[2].trim();
+      }
+
+      const rawAmt = (tags['2000'] || '0').replace(/\D/g, '');
+      const cents = BigInt(rawAmt || '0');
+      const dollars = (cents / 100n).toString() + '.' + String(cents % 100n).padStart(2, '0');
+
+      const senderAba = (tags['3100'] || '').slice(0, 9);
+      const recvAba = (tags['3400'] || '').slice(0, 9);
+
+      const benParts = (tags['4200'] || '').split('*');
+      const origParts = (tags['5000'] || '').split('*');
+
+      const out = {
+        migrationAudit: {
+          faimTagsDetected: Object.keys(tags).map(k => '{' + k + '}'),
+          senderAbaValidMod10: checkAba(senderAba),
+          receiverAbaValidMod10: checkAba(recvAba),
+          targetMessageDef: 'head.001.001.02 + pacs.008.001.08 (fedwirefunds.01)'
+        },
+        pacs008Payload: {
+          messageId: tags['1520'] || 'FEDWIRE-MSG-001',
+          settlementDate: '2026-11-16',
+          clearingSystem: 'FDW',
+          currency: 'USD',
+          wires: [
+            {
+              instructionId: tags['1520'] || 'INSTR-001',
+              endToEndId: tags['3320'] || 'NOTPROVIDED',
+              uetr: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+              amount: dollars,
+              debtorAgentAba: senderAba,
+              creditorAgentAba: recvAba,
+              debtorAccount: (origParts[0] || '').replace(/^D/, ''),
+              debtorName: origParts[1] || 'ORIGINATOR NAME',
+              debtorStreet: origParts[2] || '',
+              debtorCityStateZip: origParts[3] || '',
+              creditorAccount: (benParts[0] || '').replace(/^D/, ''),
+              creditorName: benParts[1] || 'BENEFICIARY NAME',
+              creditorStreet: benParts[2] || '',
+              creditorCityStateZip: benParts[3] || '',
+              remittanceInfo: tags['6000'] || ''
+            }
+          ]
+        }
+      };
+
+      document.getElementById('faimJsonOut').textContent = JSON.stringify(out, null, 2);
+    }
+
+    renderFaimTable();
+    loadSampleFaim();
+  </script>
+</body>
+</html>
