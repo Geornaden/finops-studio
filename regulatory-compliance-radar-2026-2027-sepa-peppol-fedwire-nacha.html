@@ -132,7 +132,7 @@
         <h2 style="margin:0;font-size:1.14rem;">Filter 2026–2027 Rulebook Changes by Jurisdiction or Standard</h2>
       </div>
       <div class="radar-filters" role="tablist">
-        <button type="button" class="radar-btn active" data-reg="all" onclick="filterRadar('all')">All Mandates (10)</button>
+        <button type="button" class="radar-btn active" data-reg="all" onclick="filterRadar('all')">All Mandates (11)</button>
         <button type="button" class="radar-btn" data-reg="sepa-swift" onclick="filterRadar('sepa-swift')">SEPA &amp; SWIFT ISO 20022</button>
         <button type="button" class="radar-btn" data-reg="eu-tax" onclick="filterRadar('eu-tax')">EU E-Invoicing &amp; Tax</button>
         <button type="button" class="radar-btn" data-reg="us-banking" onclick="filterRadar('us-banking')">US Nacha, Fedwire &amp; Check</button>
@@ -159,36 +159,47 @@
     const MANDATES = [
       {
         cat: 'sepa-swift',
-        date: 'Nov 22, 2026',
-        badge: 'ENFORCED NOV 2026',
+        date: '2026–2027 Active',
+        badge: 'EPC v1.2 / v2.2 UPDATE',
         badgeCls: 'st-urgent',
-        title: 'EPC SEPA Credit Transfer & Direct Debit Structured Address Cutover (pain.001.001.09 / pain.008.001.08)',
-        desc: 'Unstructured <AdrLine>-only postal addresses are retired across 36 SEPA countries. Banks enforce structured <TwnNm> + <Ctry> tags or reject batches with ISO code BE04.',
+        title: 'EPC SEPA Credit Transfer & Direct Debit Structured / Hybrid Address Transition (pain.001.001.09 / pain.008.001.08)',
+        desc: 'EPC Scheme Rulebook v1.2 & Address Guidance v2.2 suspended the hard Nov 15, 2026 unstructured sunset date while enforcing structured <TwnNm> + <Ctry> and hybrid address readiness across 36+ SEPA countries and deprecating legacy pain.001.001.03.',
         validatorUrl: './free-sepa-xml-pain001-xsd-be04-validator.html',
         validatorLabel: 'Free SEPA BE04 Validator',
         apiUrl: './sepa-xml-generator.html'
       },
       {
         cat: 'sepa-swift',
-        date: 'Nov 22, 2026',
-        badge: 'ENFORCED NOV 2026',
+        date: 'Nov 2026 -> Nov 2027',
+        badge: 'FRFS & SWIFT UPDATE',
         badgeCls: 'st-urgent',
-        title: 'SWIFT CBPR+ & High-Value RTGS Structured / Hybrid Postal Address & UETR Mandate (pacs.008.001.08)',
-        desc: 'Cross-border SWIFT CBPR+, TARGET2, and CHAPS wires require structured TownName (<TwnNm>), Country (<Ctry>), and lowercase RFC 4122 UUID v4 <UETR>.',
+        title: 'SWIFT CBPR+ & Fedwire ISO 20022 Structured / Hybrid Postal Address & UETR Rules (pacs.008.001.08)',
+        desc: 'FRFS (Aug 2026 notice) & SWIFT rescheduled hard unstructured address rejection to Nov 2027; cross-border CBPR+, Fedwire, TARGET2 & CHAPS wires actively require UUID v4 <UETR> and structured/hybrid <TwnNm> + <Ctry> migration.',
         validatorUrl: './free-fedwire-iso20022-pacs008-swift-cbpr-validator.html',
         validatorLabel: 'Free pacs.008 Validator',
         apiUrl: './fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html'
       },
       {
         cat: 'us-banking',
-        date: 'Mar & Jun 2026',
-        badge: 'ACTIVE IN 2026',
+        date: 'Mar 20 & Jun 22, 2026',
+        badge: 'ENFORCED 2026',
         badgeCls: 'st-live',
-        title: 'US Nacha 2026 Risk Management & Company Entry Description Rules (PAYROLL & PURCHASE)',
-        desc: 'Standardized Company Entry Descriptions ("PAYROLL" for PPD wage credits, "PURCHASE" for e-commerce WEB debits) plus mandatory pre-batch routing & fraud validation.',
-        validatorUrl: './free-nacha-ach-file-validator-batch-hash-auditor.html',
-        validatorLabel: 'Free NACHA .ACH Auditor',
+        title: 'US Nacha 2026 Phase 1 & Phase 2 Fraud Monitoring Rules + PAYROLL / PURCHASE Descriptions',
+        desc: 'Active documented ACH fraud monitoring required across Originators, TPSPs, ODFIs & RDFIs (Phase 2 live Jun 19/22, 2026) alongside standardized "PAYROLL" (PPD) and "PURCHASE" (WEB) entry descriptions.',
+        validatorUrl: './vendor-onboarding-iban-aba-bsb-vat-mx-dmarc-fraud-api.html',
+        validatorLabel: 'AP BEC & Nacha Firewall',
         apiUrl: './nacha-ach-file-generator.html'
+      },
+      {
+        cat: 'eu-tax',
+        date: 'Feb 2026 – 2027 (API v2.9)',
+        badge: 'ACTIVE MANDATE',
+        badgeCls: 'st-live',
+        title: 'Poland National e-Invoicing System KSeF 2.0 (FA(3) Schema, 10-Digit NIP & Peppol 9945)',
+        desc: 'Mandatory KSeF 2.0 invoice reception live since Feb 2026 with phased issuance and KSeF API v2.9.0 validation rules; requires strict 10-digit NIP 6-5-7-2-3-4-5-6-7 MOD-11 checksums and PL IBAN routing.',
+        validatorUrl: './nip-validator-ksef-peppol-sepa-xml-polska-api.html',
+        validatorLabel: 'Poland NIP & KSeF Tool',
+        apiUrl: './eu-einvoice-xml-generator.html'
       },
       {
         cat: 'us-banking',

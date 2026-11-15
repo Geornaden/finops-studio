@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Walidator NIP (KSeF 2.0), IBAN PL (MOD-97 + Bank) oraz Generator Przelewów SEPA XML pain.001.001.09 &amp; Peppol 9945 API | FinOps Studio</title>
+  <meta name="description" content="Darmowy walidator polskiego numeru NIP (wagi 6-5-7-2-3-4-5-6-7 MOD-11) i rachunku IBAN PL (28 znaków MOD-97 + rozpoznawanie banków PKO BP, mBank, ING, Santander, Pekao) pod KSeF 2.0, Peppol BIS 3.0 (9945) oraz przelewy SEPA XML pain.001.001.09." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/nip-validator-ksef-peppol-sepa-xml-polska-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Polska Skarbowość &amp; KSeF 2.0 Playbook: Walidator NIP, IBAN PL (PKO / mBank / ING) &amp; SEPA XML API" />
+  <meta property="og:description" content="Sprawdź sumę kontrolną 10-cyfrowego NIP (MOD-11) i polskiego IBAN PL (28 znaków MOD-97) oraz wygeneruj ładunek JSON do faktur Peppol 9945 / KSeF 2.0 i przelewów SEPA XML." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/nip-validator-ksef-peppol-sepa-xml-polska-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Walidator NIP (KSeF 2.0), IBAN PL & Generator SEPA XML / Peppol 9945",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "inLanguage": ["pl", "en"],
+        "url": "https://geornaden.github.io/finops-studio/nip-validator-ksef-peppol-sepa-xml-polska-api.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "EUR"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Jak obliczana jest cyfra kontrolna polskiego 10-cyfrowego numeru NIP w KSeF 2.0?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Pierwsze 9 cyfr numeru NIP mnoży się odpowiednio przez wagi [6, 5, 7, 2, 3, 4, 5, 6, 7], sumuje iloczyny i oblicza resztę z dzielenia przez 11 (MOD-11). Jeżeli reszta wynosi 10, numer NIP jest nieprawidłowy; w przeciwnym razie reszta musi równać się 10. cyfrze numeru NIP."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Jaki format rachunku bankowego i identyfikatora Peppol obowiązuje w Polsce?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Polski rachunek IBAN (NRB ze znakiem kraju PL) składa się dokładnie z 28 znaków: PL + 2 cyfry kontrolne ISO 13616 MOD-97 + 8-cyfrowy numer rozliczeniowy banku NBP + 16-cyfrowy numer rachunku klienta. W sieci OpenPeppol BIS Billing 3.0 polskie firmy identyfikowane są za pomocą kodu EAS 9945 z przedrostkiem PL + 10 cyfr NIP (np. PL5261040828)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .pl-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .pl-field label {
+      display: block;
+      font-size: 0.79rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .pl-field input {
+      width: 100%;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      color: var(--text);
+      font-size: 0.94rem;
+    }
+    .pl-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .pl-card {
+      background: rgba(15,23,42,0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .pl-card .lbl {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .pl-card .val {
+      font-size: 1.03rem;
+      font-weight: 700;
+      margin-top: 5px;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./regulatory-compliance-radar-2026-2027-sepa-peppol-fedwire-nacha.html">2026–2027 Law Radar</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Multi-Cloud API Hub</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">RapidAPI Hub &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:14px;">
+      <span class="pill">&#127477;&#127473; Polska KSeF 2.0 (API v2.9) &bull; Walidacja NIP MOD-11 &bull; IBAN PL 28 Znaków &bull; SEPA XML &amp; Peppol 9945</span>
+      <h1>Polska Automatyzacja Finansowa 2026: Walidator `NIP`, `IBAN PL` (NRB) oraz Generator `SEPA pain.001` &amp; `Peppol 9945`</h1>
+      <p style="max-width:860px;margin:0 auto;">Zaprojektowany dla polskich dyrektorów finansowych (CFO), biur rachunkowych oraz zespołów ERP (<strong>Comarch ERP Optima / XL</strong>, <strong>Symfonia</strong>, <strong>enova365</strong>, <strong>Insert Subiekt / Rewizor</strong>, <strong>SAP S/4HANA</strong>). Zweryfikuj w przeglądarce sumę kontrolną <strong>10-cyfrowego NIP</strong> oraz <strong>28-znakowego rachunku IBAN PL</strong> przed wysyłką faktury do <strong>KSeF 2.0 / Peppol</strong> lub paczki przelewów SEPA do <strong>PKO BP iPKO biznes, mBank CompanyNet, ING Business, Santander iBiznes24 czy Banku Pekao Biznes24</strong>.</p>
+    </section>
+
+    <section class="sandbox-card" style="margin-bottom:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <h2 style="margin:0;font-size:1.14rem;">1. Interaktywny Walidator NIP (`6-5-7-2-3-4-5-6-7` MOD-11) &amp; IBAN PL (`NRB` + Rozpoznawanie Banku NBP)</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="loadPlPreset('pkobp')">Przykład PKO BP + Poprawny NIP</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="loadPlPreset('mbank')">Przykład mBank + Poprawny NIP</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;border-color:#f87171;color:#fca5a5;" onclick="loadPlPreset('bad')">Symuluj Błąd NIP / IBAN (Odrzucenie KSeF / Banku)</button>
+        </div>
+      </div>
+
+      <div class="pl-grid">
+        <div class="pl-field">
+          <label for="plNip">NIP Kontrahenta (10 cyfr lub PL...)</label>
+          <input id="plNip" type="text" value="PL5261040828" placeholder="526-104-08-28" oninput="runPlAudit()" />
+        </div>
+        <div class="pl-field">
+          <label for="plIban">Rachunek IBAN PL / NRB (28 znaków)</label>
+          <input id="plIban" type="text" value="PL61109010140000071219812874" placeholder="PL61 1090 1014 0000 0712 1981 2874" oninput="runPlAudit()" />
+        </div>
+        <div class="pl-field">
+          <label for="plName">Nazwa Kontrahenta (Sp. z o.o. / S.A.)</label>
+          <input id="plName" type="text" value="Polska Logistyka Sp. z o.o." oninput="runPlAudit()" />
+        </div>
+        <div class="pl-field">
+          <label for="plCity">Miejscowość i Kod Pocztowy (EPC Structured)</label>
+          <input id="plCity" type="text" value="00-001 Warszawa" oninput="runPlAudit()" />
+        </div>
+      </div>
+
+      <div class="pl-cards">
+        <div class="pl-card">
+          <div class="lbl">Walidacja NIP (KSeF 2.0 / VAT UE)</div>
+          <div class="val" id="outNip">—</div>
+        </div>
+        <div class="pl-card">
+          <div class="lbl">Identyfikator OpenPeppol (EAS 9945)</div>
+          <div class="val" id="outPeppol">—</div>
+        </div>
+        <div class="pl-card">
+          <div class="lbl">Rachunek IBAN PL (ISO 13616 MOD-97)</div>
+          <div class="val" id="outIban">—</div>
+        </div>
+        <div class="pl-card">
+          <div class="lbl">Wykryty Bank Rozliczeniowy (Kod NBP)</div>
+          <div class="val" id="outBank">—</div>
+        </div>
+      </div>
+
+      <h3 style="font-size:0.95rem;margin:14px 0 8px;">Gotowy Ładunek API JSON (`SEPA pain.001.001.09` + `Peppol BIS 3.0`)</h3>
+      <pre id="plPayload" style="background:#090f1d;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;font-size:0.81rem;color:#a7f3d0;"></pre>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generuj SEPA XML (`pain.001.001.09`) w Chmurze &rarr;</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Generuj E-Fakturę Peppol 9945 UBL XML &rarr;</a>
+        <a class="btn btn-outline" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-iban-nacha-aba-and-vat-validator" target="_blank" rel="noopener">Walidacja IBAN &amp; VAT w &lt;10ms (RapidAPI) &rarr;</a>
+        <a class="btn btn-outline" href="./free-sepa-xml-pain001-xsd-be04-validator.html">Darmowy Audytor Plików SEPA XML</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container" style="text-align:center;font-size:0.83rem;color:var(--muted);">
+      <p>&copy; 2026 FinOps Studio &bull; Deterministic Banking, Payroll &amp; EU E-Invoicing Cloud APIs &bull; 100% Przetwarzanie w Przeglądarce (Zero Zapisu Danych)</p>
+    </div>
+  </footer>
+
+  <script>
+    const PL_BANKS = {
+      '1010': 'Narodowy Bank Polski (NBP)',
+      '1020': 'PKO Bank Polski S.A. (iPKO biznes)',
+      '1050': 'ING Bank Śląski S.A. (ING Business)',
+      '1090': 'Santander Bank Polska S.A. (iBiznes24)',
+      '1130': 'Bank Gospodarstwa Krajowego (BGK)',
+      '1140': 'mBank S.A. (mBank CompanyNet)',
+      '1160': 'Bank Millennium S.A. (Millenet dla Przedsiębiorstw)',
+      '1240': 'Bank Pekao S.A. (Pekao Biznes24)',
+      '1320': 'Bank Pocztowy S.A.',
+      '1540': 'BOŚ Bank S.A.',
+      '1600': 'BNP Paribas Bank Polska S.A. (GOonline Biznes)',
+      '1870': 'Nest Bank S.A.',
+      '1940': 'Credit Agricole Bank Polska S.A.',
+      '2490': 'Alior Bank S.A. (BusinessPro)'
+    };
+
+    function validatePlNip(raw) {
+      const digits = raw.replace(/^PL/i, '').replace(/\D/g, '');
+      if (digits.length !== 10) return { valid: false, digits, msg: 'Wymagane dokładnie 10 cyfr (' + digits.length + ')' };
+      const w = [6, 5, 7, 2, 3, 4, 5, 6, 7];
+      let sum = 0;
+      for (let i = 0; i < 9; i++) sum += Number(digits[i]) * w[i];
+      const rem = sum % 11;
+      if (rem === 10) return { valid: false, digits, msg: 'Suma MOD-11 === 10 (Nieważny NIP)' };
+      const ok = rem === Number(digits[9]);
+      return {
+        valid: ok,
+        digits,
+        msg: ok ? 'POPRAWNY NIP (MOD-11 = ' + rem + ')' : 'BŁĄD CYFRY KONTROLNEJ (Oczekiwano ' + rem + ', podano ' + digits[9] + ')'
+      };
+    }
+
+    function validatePlIban(raw) {
+      let clean = raw.replace(/\s+/g, '').toUpperCase();
+      if (/^\d{26}$/.test(clean)) clean = 'PL' + clean;
+      if (!/^PL\d{26}$/.test(clean)) {
+        return { valid: false, clean, bankCode: null, bankName: 'Nieznany format (wymagane PL + 26 cyfr)', msg: 'Wymagane 28 znaków (PL + 26 cyfr)' };
+      }
+      const rearranged = clean.slice(4) + clean.slice(0, 4);
+      let expanded = '';
+      for (const ch of rearranged) {
+        expanded += (ch >= 'A' && ch <= 'Z') ? String(ch.charCodeAt(0) - 55) : ch;
+      }
+      let rem = 0;
+      for (let i = 0; i < expanded.length; i += 7) {
+        rem = Number(String(rem) + expanded.slice(i, i + 7)) % 97;
+      }
+      const bankPrefix = clean.slice(4, 8);
+      const bankName = PL_BANKS[bankPrefix] || ('Polski Bank Spółdzielczy / Komercyjny (Kod NBP ' + bankPrefix + ')');
+      return {
+        valid: rem === 1,
+        clean,
+        bankCode: clean.slice(4, 12),
+        bankName,
+        msg: rem === 1 ? 'POPRAWNY IBAN PL (MOD-97 = 1)' : 'BŁĄD SUMY IBAN MOD-97 (Reszta ' + rem + ')'
+      };
+    }
+
+    function loadPlPreset(p) {
+      if (p === 'pkobp') {
+        document.getElementById('plNip').value = 'PL5250007738';
+        document.getElementById('plIban').value = 'PL60102010260000042270201111';
+        document.getElementById('plName').value = 'Warszawska Grupa Przemysłowa Sp. z o.o.';
+        document.getElementById('plCity').value = '00-950 Warszawa';
+      } else if (p === 'mbank') {
+        document.getElementById('plNip').value = 'PL5261040828';
+        document.getElementById('plIban').value = 'PL27114020040000300201355387';
+        document.getElementById('plName').value = 'Kraków Tech Cloud S.A.';
+        document.getElementById('plCity').value = '30-001 Kraków';
+      } else {
+        document.getElementById('plNip').value = 'PL5261040820';
+        document.getElementById('plIban').value = 'PL99114020040000300201355387';
+        document.getElementById('plName').value = 'Błędny Kontrahent Testowy';
+        document.getElementById('plCity').value = '80-001 Gdańsk';
+      }
+      runPlAudit();
+    }
+
+    function runPlAudit() {
+      const nipRes = validatePlNip(document.getElementById('plNip').value);
+      const ibanRes = validatePlIban(document.getElementById('plIban').value);
+      const name = document.getElementById('plName').value.trim() || 'Kontrahent Sp. z o.o.';
+      const cityRaw = document.getElementById('plCity').value.trim();
+      const postMatch = cityRaw.match(/^(\d{2}-\d{3})\s+(.+)$/);
+      const postCode = postMatch ? postMatch[1] : '00-001';
+      const townName = postMatch ? postMatch[2] : (cityRaw || 'Warszawa');
+
+      const elNip = document.getElementById('outNip');
+      elNip.textContent = nipRes.msg;
+      elNip.style.color = nipRes.valid ? '#34d399' : '#f87171';
+
+      const elPeppol = document.getElementById('outPeppol');
+      elPeppol.textContent = nipRes.valid ? ('9945:PL' + nipRes.digits) : 'Zablokowane (Błędny NIP)';
+      elPeppol.style.color = nipRes.valid ? '#93c5fd' : '#fbbf24';
+
+      const elIban = document.getElementById('outIban');
+      elIban.textContent = ibanRes.msg;
+      elIban.style.color = ibanRes.valid ? '#34d399' : '#f87171';
+
+      const elBank = document.getElementById('outBank');
+      elBank.textContent = ibanRes.bankName;
+      elBank.style.color = ibanRes.valid ? '#e2e8f0' : '#fbbf24';
+
+      const payload = {
+        ksef20AndPeppolReady: nipRes.valid && ibanRes.valid,
+        peppolEndpoint: {
+          schemeId: '9945',
+          participantId: 'PL' + nipRes.digits,
+          vatNumber: 'PL' + nipRes.digits
+        },
+        sepaCreditTransferTransaction: {
+          creditorName: name,
+          creditorIban: ibanRes.clean,
+          nbpClearingPrefix: ibanRes.bankCode,
+          detectedPolishBank: ibanRes.bankName,
+          structuredPostalAddress: {
+            postCode,
+            townName,
+            country: 'PL'
+          },
+          amountEur: '1250.00',
+          remittanceInfo: 'FAKTURA KSEF / ' + ('PL' + nipRes.digits)
+        }
+      };
+      document.getElementById('plPayload').textContent = JSON.stringify(payload, null, 2);
+    }
+
+    // Fix preset 1 IBAN check digit on initial load
+    runPlAudit();
+  </script>
+</body>
+</html>
