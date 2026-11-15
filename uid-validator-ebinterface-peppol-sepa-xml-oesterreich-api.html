@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="de-AT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Österreich Treasury &amp; E-Rechnung Playbook: ATU UID-Prüfung, AT-IBAN (BLZ Erste Bank / Raiffeisen / Bank Austria), Peppol 9914 &amp; BMD/DATEV API | FinOps Studio</title>
+  <meta name="description" content="Kostenloser Browser-Validator für österreichische UID-Nummern (ATU + 8 Ziffern Luhn+4), 20-stellige AT-IBANs (MOD-97 + Bankleitzahl BLZ Erkennung für Erste Bank, Raiffeisen, Bank Austria, BAWAG) sowie SEPA XML pain.001.001.09, Peppol 9914 / ebInterface &amp; DATEV EXTF API." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/uid-validator-ebinterface-peppol-sepa-xml-oesterreich-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Österreich Treasury &amp; E-Rechnung Validator: ATU UID, AT-IBAN BLZ, SEPA XML &amp; Peppol 9914 API" />
+  <meta property="og:description" content="Prüfen Sie österreichische ATU-UIDs (Luhn+4) und 20-stellige AT-IBANs (Erste Bank, Raiffeisen, Bank Austria, BAWAG) lokal im Browser und generieren Sie SEPA XML &amp; Peppol 9914 Payloads." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/uid-validator-ebinterface-peppol-sepa-xml-oesterreich-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Österreich ATU UID-Validator, AT-IBAN BLZ-Prüfer & SEPA XML / Peppol 9914 Generator",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "inLanguage": ["de-AT", "en"],
+        "url": "https://geornaden.github.io/finops-studio/uid-validator-ebinterface-peppol-sepa-xml-oesterreich-api.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "EUR"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Wie wird die Prüfziffer einer österreichischen Umsatzsteuer-Identifikationsnummer (ATU-Nummer) berechnet?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Eine österreichische UID beginnt mit ATU gefolgt von exakt 8 Ziffern. Die ersten 7 Ziffern werden abwechselnd mit den Gewichten [1, 2, 1, 2, 1, 2, 1] multipliziert (Quersumme bei Ergebnissen über 9), aufsummiert, um die Konstante +4 erhöht und Modulo 10 genommen: Prüfziffer C8 = (10 - ((Summe + 4) mod 10)) mod 10."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Wie ist eine österreichische IBAN (AT) für Telebanking Pro, George Business und Raiffeisen ELBA aufgebaut?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Eine österreichische IBAN hat exakt 20 Zeichen: AT + 2 Prüfziffern nach ISO 13616 MOD-97 + 5-stellige österreichische Bankleitzahl (BLZ, z. B. 20111 Erste Bank, 32000 Raiffeisenlandesbank NÖ-Wien, 12000 UniCredit Bank Austria, 14000 BAWAG) + 11-stellige Kontonummer."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .at-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .at-field label {
+      display: block;
+      font-size: 0.79rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .at-field input {
+      width: 100%;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      color: var(--text);
+      font-size: 0.94rem;
+    }
+    .at-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .at-card {
+      background: rgba(15,23,42,0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .at-card .lbl {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .at-card .val {
+      font-size: 1.02rem;
+      font-weight: 700;
+      margin-top: 5px;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./regulatory-compliance-radar-2026-2027-sepa-peppol-fedwire-nacha.html">2026–2027 Law Radar</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Multi-Cloud API Hub</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Start Free ($5 Credits) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:14px;">
+      <span class="pill">&#127462;&#127481; Österreich B2G/B2B E-Rechnung (`erb.gv.at` / Peppol `9914`) &bull; `ATU` UID-Prüfung &bull; `AT-IBAN` BLZ &bull; BMD &amp; DATEV</span>
+      <h1>Österreich Corporate Treasury &amp; E-Rechnung Playbook: `ATU-UID`, `AT-IBAN` (`BLZ`), `SEPA pain.001` &amp; `Peppol 9914`</h1>
+      <p style="max-width:860px;margin:0 auto;">Gebaut für österreichische Finanzabteilungen, Steuerberatungskanzleien und ERP-Teams mit <strong>BMD NTCS</strong>, <strong>RZL</strong>, <strong>DATEV Österreich</strong>, <strong> Mesonic WinLine</strong>, <strong>SAP</strong> und <strong>Odoo</strong>. Prüfen Sie `ATU`-Umsatzsteuer-IDs sowie 20-stellige `AT`-IBANs für <strong>Erste Bank / Sparkasse (George Business / Telebanking Pro), Raiffeisen (Mein ELBA / Infinity), UniCredit Bank Austria und BAWAG</strong> direkt im Browser.</p>
+    </section>
+
+    <section class="sandbox-card" style="margin-bottom:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <h2 style="margin:0;font-size:1.14rem;">1. Interaktiver Österreich-Validator: `ATU-UID` (`Luhn+4`) &amp; `AT-IBAN` (`BLZ` + `MOD-97`)</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadAtPreset('erste')">Erste Bank Wien + Gültige ATU</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadAtPreset('raiff')">Raiffeisen + Gültige ATU</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadAtPreset('ba')">Bank Austria + Gültige ATU</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;border-color:#f87171;color:#fca5a5;" onclick="loadAtPreset('bad')">Fehler-Simulation (Ungültige ATU &amp; IBAN)</button>
+        </div>
+      </div>
+
+      <div class="at-grid">
+        <div class="at-field">
+          <label for="atUid">Österreichische UID-Nummer (`ATU` + 8 Ziffern)</label>
+          <input id="atUid" type="text" value="ATU10223006" oninput="runAtAudit()" />
+        </div>
+        <div class="at-field">
+          <label for="atIban">Österreichische IBAN (`AT` + 18 Ziffern)</label>
+          <input id="atIban" type="text" value="AT832011182912345678" oninput="runAtAudit()" />
+        </div>
+        <div class="at-field">
+          <label for="atName">Lieferant / Empfänger (GmbH / AG)</label>
+          <input id="atName" type="text" value="AlpenTech Solutions GmbH" oninput="runAtAudit()" />
+        </div>
+        <div class="at-field">
+          <label for="atCity">PLZ &amp; Ort (EPC Structured Address)</label>
+          <input id="atCity" type="text" value="1010 Wien" oninput="runAtAudit()" />
+        </div>
+      </div>
+
+      <div class="at-cards">
+        <div class="at-card">
+          <div class="lbl">ATU UID-Prüfung (Luhn + 4)</div>
+          <div class="val" id="outAtUid">—</div>
+        </div>
+        <div class="at-card">
+          <div class="lbl">Peppol / erb.gv.at Endpoint (9914)</div>
+          <div class="val" id="outAtPeppol">—</div>
+        </div>
+        <div class="at-card">
+          <div class="lbl">AT-IBAN Prüfung (20 Zeichen MOD-97)</div>
+          <div class="val" id="outAtIban">—</div>
+        </div>
+        <div class="at-card">
+          <div class="lbl">Erkannte Bankleitzahl (OeNB BLZ)</div>
+          <div class="val" id="outAtBank">—</div>
+        </div>
+      </div>
+
+      <h3 style="font-size:0.95rem;margin:14px 0 8px;">Fertiger Cloud-API Payload (`SEPA pain.001.001.09` + `Peppol 9914` + `DATEV EXTF`)</h3>
+      <pre id="atJson" style="background:#090f1d;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;font-size:0.81rem;color:#a7f3d0;"></pre>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">SEPA `pain.001.001.09` XML Generieren &rarr;</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Peppol `9914` / B2G E-Rechnung XML &rarr;</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio/datev-buchungsstapel-generator" target="_blank" rel="noopener">DATEV Buchungsstapel CSV API &rarr;</a>
+        <a class="btn btn-outline" href="./sepa-xml-peppol-ehf-finvoice-austria-nordics.html">Österreich &amp; Nordics Übersicht</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container" style="text-align:center;font-size:0.83rem;color:var(--muted);">
+      <p>&copy; 2026 FinOps Studio &bull; Deterministic Banking, Payroll &amp; DACH E-Invoicing Cloud APIs &bull; 100% Lokale Browser-Prüfung</p>
+    </div>
+  </footer>
+
+  <script>
+    function checkAtu(raw) {
+      const clean = raw.replace(/\s+/g, '').toUpperCase();
+      const m = clean.match(/^ATU(\d{8})$/);
+      if (!m) return { valid: false, clean, msg: 'Erwartet Format ATU + 8 Ziffern (z. B. ATU10223006)' };
+      const d = m[1];
+      let s = 0;
+      for (let i = 0; i < 7; i++) {
+        let v = Number(d[i]) * (i % 2 === 1 ? 2 : 1);
+        if (v > 9) v = Math.floor(v / 10) + (v % 10);
+        s += v;
+      }
+      const expected = (10 - ((s + 4) % 10)) % 10;
+      const ok = expected === Number(d[7]);
+      return {
+        valid: ok,
+        clean,
+        msg: ok ? ('GÜLTIGE ATU-UID (Prüfziffer = ' + expected + ')') : ('PRÜFZIFFER-FEHLER (Erwartet ' + expected + ', angegeben ' + d[7] + ')')
+      };
+    }
+
+    function checkAtIban(raw) {
+      const clean = raw.replace(/\s+/g, '').toUpperCase();
+      if (!/^AT\d{18}$/.test(clean)) {
+        return { valid: false, clean, blz: null, bank: 'Ungültige Länge (AT + 18 Ziffern = 20 Zeichen Pflicht)', msg: 'Erwartet exakt 20 Zeichen AT-IBAN' };
+      }
+      const rearranged = clean.slice(4) + clean.slice(0, 4);
+      let expanded = '';
+      for (const ch of rearranged) expanded += (ch >= 'A' && ch <= 'Z') ? String(ch.charCodeAt(0) - 55) : ch;
+      let rem = 0;
+      for (let i = 0; i < expanded.length; i += 7) rem = Number(String(rem) + expanded.slice(i, i + 7)) % 97;
+
+      const blz = clean.slice(4, 9);
+      let bank = 'Österreichisches Kreditinstitut (BLZ ' + blz + ')';
+      if (blz === '20111' || blz.startsWith('20')) bank = 'Erste Bank / Sparkassengruppe (BLZ ' + blz + ')';
+      else if (blz.startsWith('32') || blz.startsWith('31') || blz.startsWith('34') || blz.startsWith('38')) bank = 'Raiffeisen Bankengruppe Österreich (BLZ ' + blz + ')';
+      else if (blz === '12000' || blz.startsWith('12')) bank = 'UniCredit Bank Austria AG (BLZ ' + blz + ')';
+      else if (blz === '14000' || blz.startsWith('14')) bank = 'BAWAG P.S.K. (BLZ ' + blz + ')';
+      else if (blz === '15000' || blz.startsWith('15')) bank = 'Oberbank AG (BLZ ' + blz + ')';
+
+      return {
+        valid: rem === 1,
+        clean,
+        blz,
+        bank,
+        msg: rem === 1 ? 'GÜLTIGE AT-IBAN (MOD-97 = 1)' : ('IBAN MOD-97 FEHLER (Rest ' + rem + ')')
+      };
+    }
+
+    function loadAtPreset(p) {
+      if (p === 'erste') {
+        document.getElementById('atUid').value = 'ATU10223006';
+        document.getElementById('atIban').value = 'AT832011182912345678';
+        document.getElementById('atName').value = 'AlpenTech Solutions GmbH';
+        document.getElementById('atCity').value = '1010 Wien';
+      } else if (p === 'raiff') {
+        document.getElementById('atUid').value = 'ATU37675002';
+        document.getElementById('atIban').value = 'AT263200000012345678';
+        document.getElementById('atName').value = 'Donau Logistik KG';
+        document.getElementById('atCity').value = '4020 Linz';
+      } else if (p === 'ba') {
+        document.getElementById('atUid').value = 'ATU10223006';
+        document.getElementById('atIban').value = 'AT661200010012345678';
+        document.getElementById('atName').value = 'Steiermark Maschinenbau AG';
+        document.getElementById('atCity').value = '8010 Graz';
+      } else {
+        document.getElementById('atUid').value = 'ATU10223009';
+        document.getElementById('atIban').value = 'AT992011182912345678';
+        document.getElementById('atName').value = 'Fehlerhafter Lieferant Test';
+        document.getElementById('atCity').value = '5020 Salzburg';
+      }
+      runAtAudit();
+    }
+
+    function runAtAudit() {
+      const uidRes = checkAtu(document.getElementById('atUid').value.trim());
+      const ibanRes = checkAtIban(document.getElementById('atIban').value.trim());
+      const name = document.getElementById('atName').value.trim() || 'Lieferant GmbH';
+      const cityRaw = document.getElementById('atCity').value.trim();
+      const pm = cityRaw.match(/^(\d{4})\s+(.+)$/);
+      const postCode = pm ? pm[1] : '1010';
+      const townName = pm ? pm[2] : (cityRaw || 'Wien');
+
+      const elUid = document.getElementById('outAtUid');
+      elUid.textContent = uidRes.msg;
+      elUid.style.color = uidRes.valid ? '#34d399' : '#f87171';
+
+      const elPep = document.getElementById('outAtPeppol');
+      elPep.textContent = uidRes.valid ? ('9914:' + uidRes.clean) : 'Blockiert (Ungültige ATU)';
+      elPep.style.color = uidRes.valid ? '#93c5fd' : '#fbbf24';
+
+      const elIban = document.getElementById('outAtIban');
+      elIban.textContent = ibanRes.msg;
+      elIban.style.color = ibanRes.valid ? '#34d399' : '#f87171';
+
+      const elBank = document.getElementById('outAtBank');
+      elBank.textContent = ibanRes.bank;
+      elBank.style.color = ibanRes.valid ? '#e2e8f0' : '#fbbf24';
+
+      const payload = {
+        austriaCompliant: uidRes.valid && ibanRes.valid,
+        peppolAndErbEndpoint: {
+          schemeId: '9914',
+          participantId: uidRes.clean,
+          ustIdNr: uidRes.clean
+        },
+        sepaCreditTransferPain00100109: {
+          creditorName: name,
+          creditorIban: ibanRes.clean,
+          oenbBankleitzahl: ibanRes.blz,
+          detectedAustrianBank: ibanRes.bank,
+          structuredPostalAddress: {
+            postCode,
+            townName,
+            country: 'AT'
+          },
+          amountEur: '1680.00',
+          remittanceInfo: 'ER-2026-AT / ' + uidRes.clean
+        }
+      };
+      document.getElementById('atJson').textContent = JSON.stringify(payload, null, 2);
+    }
+
+    runAtAudit();
+  </script>
+</body>
+</html>
