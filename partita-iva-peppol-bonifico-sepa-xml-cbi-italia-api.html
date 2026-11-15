@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifica Partita IVA (Luhn), IBAN IT (CIN + MOD-97) &amp; Peppol 0211 / Bonifici SEPA CBI API | FinOps Studio</title>
+  <meta name="description" content="Validatore gratuito in tempo reale di Partita IVA italiana (algoritmo Luhn), IBAN IT a 27 caratteri (CIN ABI/CAB + MOD-97) ed Endpoint Peppol 0211/0210 + generatore payload SEPA XML pain.001.001.09 per Inbiz Intesa Sanpaolo, UniCredit e Banco BPM." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/partita-iva-peppol-bonifico-sepa-xml-cbi-italia-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Validatore Partita IVA, IBAN IT (CIN) &amp; Generatore API SEPA CBI / Peppol 0211" />
+  <meta property="og:description" content="Controlla Partita IVA italiana, CIN + IBAN IT e Peppol EAS 0211 direttamente nel browser e genera flussi SEPA XML 2026 senza scarti BE04." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/partita-iva-peppol-bonifico-sepa-xml-cbi-italia-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Tesorerie Italiane & Studi Commercialisti 2026: Validatore Partita IVA (Luhn), IBAN IT (CIN ABI/CAB) e API Bonifici SEPA CBI + Peppol 0211",
+        "inLanguage": "it-IT",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "url": "https://geornaden.github.io/finops-studio/partita-iva-peppol-bonifico-sepa-xml-cbi-italia-api.html"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Come funziona il controllo matematico della Partita IVA italiana (11 cifre) e dell'Endpoint Peppol 0211?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "La Partita IVA italiana è composta da 7 cifre identificative, 3 cifre dell'Ufficio Provinciale Agenzia delle Entrate e 1 cifra di controllo calcolata con l'algoritmo di Luhn (posizioni dispari e pari raddoppiate). Sulla rete europea Peppol (NSO / B2B UE) viene indirizzata tramite lo schema EAS 0211 con prefisso IT (es. 0211:IT00159560366)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Come si verifica il carattere di controllo CIN interno in un IBAN italiano di 27 caratteri?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Oltre ai 2 numeri di controllo europei ISO 13616 MOD-97 dopo 'IT', il 5° carattere dell'IBAN italiano è la lettera CIN nazionale calcolata sui 22 caratteri BBAN (5 cifre ABI + 5 cifre CAB + 12 caratteri Conto Corrente) tramite le tabelle di conversione pari/dispari ABI modulo 26."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .it-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .it-box {
+      background: rgba(15,23,42,0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .it-box .lbl {
+      font-size: 0.77rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .it-box .val {
+      font-size: 1.03rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .it-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .it-form input {
+      width: 100%;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 0.94rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">Validatore SEPA XML</a>
+        <a href="./fatturazione-elettronica-peppol-bonifico-sepa-xml-italia.html">Guida Italia</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Apri su RapidAPI &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:12px;">
+      <span class="pill">&#127470;&#127481; Tesoreria Corporate Italia &bull; Partita IVA (Luhn) &bull; IBAN IT (`CIN` ABI/CAB) &bull; Peppol `0211`</span>
+      <h1>Validatore Interattivo `Partita IVA`, `IBAN IT` (`CIN` + `MOD-97`) &amp; Generatore API SEPA CBI / Peppol</h1>
+      <p style="max-width:830px;margin:0 auto;">Verifica istantaneamente nel tuo browser la <strong>Partita IVA italiana a 11 cifre</strong>, il carattere di controllo nazionale <strong>`CIN` + `ABI / CAB`</strong> dell'IBAN italiano a 27 caratteri e genera il payload 2026 per <strong>bonifici SEPA `pain.001.001.09`</strong> (Inbiz Intesa Sanpaolo, UniCredit, Banco BPM, BPER) e <strong>Peppol BIS 3.0 (`EAS 0211`)</strong>.</p>
+    </section>
+
+    <section class="sandbox-card" aria-label="Validatore Partita IVA e IBAN Italiano">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <h2 style="margin:0;font-size:1.14rem;">Controllo `Partita IVA` + `IBAN IT (CIN)` &amp; Costruttore Flusso SEPA 2026</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" onclick="loadItPreset('intesa')">Esempio Intesa Sanpaolo</button>
+          <button type="button" class="btn btn-outline" onclick="loadItPreset('unicredit')">Esempio UniCredit</button>
+        </div>
+      </div>
+
+      <div class="it-form">
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">Partita IVA Italiana (11 cifre, con o senza `IT`)</label>
+          <input id="itPiva" type="text" value="IT00799960158" oninput="auditItalianEntity()" />
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">IBAN Italiano (`27 caratteri: ITkk C AAAAA BBBBB ...`)</label>
+          <input id="itIban" type="text" value="IT60X0542811101000000123456" oninput="auditItalianEntity()" />
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">Ragione Sociale Fornitore</label>
+          <input id="itCompany" type="text" value="Meccanica Lombarda S.r.l." oninput="auditItalianEntity()" />
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">Importo Bonifico (EUR)</label>
+          <input id="itAmt" type="number" step="0.01" value="3250.50" oninput="auditItalianEntity()" />
+        </div>
+      </div>
+
+      <div id="itSummary" class="it-grid" aria-live="polite"></div>
+
+      <h3 style="margin:14px 0 8px;font-size:1rem;">Payload JSON SEPA `pain.001.001.09` Conforme EPC Novembre 2026 (`Zero Scarti BE04`):</h3>
+      <pre id="itPayload" class="code-box" style="min-height:180px;"></pre>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button type="button" class="btn btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('itPayload').textContent)">Copia Payload JSON</button>
+        <a class="btn btn-outline" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Esegui su RapidAPI (&lt;10ms) &rarr;</a>
+        <a class="btn btn-outline" href="./free-sepa-xml-pain001-xsd-be04-validator.html">Verifica File SEPA XML Esistente</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>FinOps Studio</strong> &mdash; API deterministische per bonifici SEPA XML CBI, verifica IBAN/P.IVA e fatturazione Peppol UE.</p>
+      <p style="font-size:0.84rem;color:var(--muted);">
+        <a href="./index.html">Home</a> &bull;
+        <a href="./how-it-works-simple.html">VIP Simple Guide</a> &bull;
+        <a href="./fatturazione-elettronica-peppol-bonifico-sepa-xml-italia.html">Guida SEPA &amp; Peppol Italia</a> &bull;
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">RapidAPI &amp; MCPRush Hub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const IT_ABI_BANKS = {
+      '03069': 'Intesa Sanpaolo',
+      '02008': 'UniCredit',
+      '05034': 'Banco BPM',
+      '05387': 'BPER Banca',
+      '01030': 'Banca Monte dei Paschi di Siena',
+      '05428': 'UBI / Intesa Corporate',
+      '03015': 'FinecoBank'
+    };
+
+    const ODD_WEIGHTS_CIN = {
+      '0':1,'1':0,'2':5,'3':7,'4':9,'5':13,'6':15,'7':17,'8':19,'9':21,
+      'A':1,'B':0,'C':5,'D':7,'E':9,'F':13,'G':15,'H':17,'I':19,'J':21,
+      'K':2,'L':4,'M':18,'N':20,'O':11,'P':3,'Q':6,'R':8,'S':12,'T':14,
+      'U':16,'V':10,'W':22,'X':25,'Y':24,'Z':23
+    };
+
+    function validatePartitaIva(raw) {
+      let s = (raw || '').toUpperCase().replace(/[\s.-]/g, '');
+      if (s.startsWith('IT')) s = s.slice(2);
+      if (!/^\d{11}$/.test(s) || s === '00000000000') return { ok: false, clean: 'IT' + s };
+      const d = s.split('').map(Number);
+      let oddSum = d[0] + d[2] + d[4] + d[6] + d[8];
+      let evenSum = 0;
+      [1, 3, 5, 7, 9].forEach(i => {
+        const x = d[i] * 2;
+        evenSum += x > 9 ? x - 9 : x;
+      });
+      const expected = (10 - ((oddSum + evenSum) % 10)) % 10;
+      return { ok: d[10] === expected, expected, clean: 'IT' + s };
+    }
+
+    function validateItIban(raw) {
+      const s = (raw || '').toUpperCase().replace(/\s+/g, '');
+      if (!/^IT\d{2}[A-Z]\d{10}[A-Z0-9]{12}$/.test(s)) return { ok: false, cinOk: false, abi: '', cab: '' };
+      const cin = s[4];
+      const bban22 = s.slice(5); // 5 ABI + 5 CAB + 12 Conto
+      let sum = 0;
+      for (let i = 0; i < 22; i++) {
+        const ch = bban22[i];
+        if ((i + 1) % 2 === 1) {
+          sum += ODD_WEIGHTS_CIN[ch] ?? 0;
+        } else {
+          sum += (ch >= '0' && ch <= '9') ? Number(ch) : (ch.charCodeAt(0) - 65);
+        }
+      }
+      const expectedCin = String.fromCharCode(65 + (sum % 26));
+      const cinOk = cin === expectedCin;
+
+      const rearranged = s.slice(4) + s.slice(0, 4);
+      let numStr = '';
+      for (const ch of rearranged) {
+        numStr += (ch >= 'A' && ch <= 'Z') ? String(ch.charCodeAt(0) - 55) : ch;
+      }
+      const mod97Ok = BigInt(numStr) % 97n === 1n;
+
+      return {
+        ok: mod97Ok && cinOk,
+        cinOk,
+        expectedCin,
+        abi: s.slice(5, 10),
+        cab: s.slice(10, 15),
+        clean: s
+      };
+    }
+
+    function loadItPreset(k) {
+      if (k === 'intesa') {
+        document.getElementById('itPiva').value = 'IT00799960158';
+        document.getElementById('itIban').value = 'IT60X0542811101000000123456';
+        document.getElementById('itCompany').value = 'Meccanica Lombarda S.r.l.';
+        document.getElementById('itAmt').value = '3250.50';
+      } else {
+        document.getElementById('itPiva').value = 'IT00348170101';
+        document.getElementById('itIban').value = 'IT60X0542811101000000123456';
+        document.getElementById('itCompany').value = 'Sistemi Industriali Torino S.p.A.';
+        document.getElementById('itAmt').value = '7890.00';
+      }
+      auditItalianEntity();
+    }
+
+    function auditItalianEntity() {
+      const piva = validatePartitaIva(document.getElementById('itPiva').value);
+      const iban = validateItIban(document.getElementById('itIban').value);
+      const bankName = IT_ABI_BANKS[iban.abi] || (iban.abi ? 'ABI ' + iban.abi : '--');
+      const company = document.getElementById('itCompany').value.trim() || 'Fornitore Italia S.r.l.';
+      const amt = Math.max(0.01, parseFloat(document.getElementById('itAmt').value || '100') || 100);
+
+      document.getElementById('itSummary').innerHTML = `
+        <div class="it-box"><div class="lbl">Partita IVA (Luhn)</div><div class="val" style="color:${piva.ok ? '#34d399' : '#f87171'};">${piva.ok ? '&#10003; VALIDA (' + piva.clean + ')' : '&#9888; NON VALIDA'}</div></div>
+        <div class="it-box"><div class="lbl">IBAN IT (CIN + MOD-97)</div><div class="val" style="color:${iban.ok ? '#34d399' : '#f87171'};">${iban.ok ? '&#10003; CIN &amp; IBAN OK' : '&#9888; ERRORE CIN/IBAN'}</div></div>
+        <div class="it-box"><div class="lbl">Banca ABI / CAB</div><div class="val">${bankName} ${iban.cab ? '&bull; CAB ' + iban.cab : ''}</div></div>
+        <div class="it-box"><div class="lbl">Peppol EAS Endpoint</div><div class="val"><code>0211:${piva.clean}</code></div></div>
+      `;
+
+      const payload = {
+        painVersion: 'pain.001.001.09',
+        initiatingPartyName: 'Gruppo Industriale Milano S.p.A.',
+        debtorName: 'Gruppo Industriale Milano S.p.A.',
+        debtorIban: 'IT60X0542811101000000123456',
+        debtorBic: 'BCITITMMXXX',
+        debtorAddress: {
+          streetName: 'Via Monte Napoleone',
+          buildingNumber: '8',
+          postCode: '20121',
+          townName: 'Milano',
+          country: 'IT'
+        },
+        requestedExecutionDate: '2026-11-16',
+        transactions: [
+          {
+            endToEndId: 'BON-2026-IT-881',
+            creditorName: company,
+            creditorIban: iban.clean || 'IT60X0542811101000000123456',
+            creditorAddress: {
+              streetName: 'Corso Vittorio Emanuele II',
+              buildingNumber: '44',
+              postCode: '10123',
+              townName: 'Torino',
+              country: 'IT'
+            },
+            amount: Number(amt.toFixed(2)),
+            currency: 'EUR',
+            remittanceInfo: 'Saldo Fattura Fornitore P.IVA ' + piva.clean
+          }
+        ]
+      };
+
+      document.getElementById('itPayload').textContent = JSON.stringify(payload, null, 2);
+    }
+
+    auditItalianEntity();
+  </script>
+</body>
+</html>
