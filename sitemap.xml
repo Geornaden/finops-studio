@@ -415,4 +415,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/swiss-qr-iban-sps-pain001-uid-ubs-zkb-postfinance-api.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
 </urlset>
