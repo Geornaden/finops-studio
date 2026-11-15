@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peppol Simplerinvoicing (KVK 0106, OIN 0190 &amp; NL BTW) + SEPA XML pain.001.001.09 API Nederland | FinOps Studio</title>
+  <meta name="description" content="Gratis interactieve Nederlandse KVK (0106), BTW-identificatienummer (MOD-97) &amp; NL IBAN validator + SEPA XML pain.001.001.09 en Peppol BIS 3.0 UBL API voor ING Zakelijk, Rabobank, ABN AMRO, Exact Online en AFAS." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/peppol-simplerinvoicing-kvk-sepa-xml-ing-rabobank-nederland.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Nederland SEPA XML (ING / Rabobank / ABN AMRO) &amp; Peppol KVK 0106 / BTW Validator" />
+  <meta property="og:description" content="Controleer NL BTW-nummers (MOD-97), KVK 0106 Peppol endpoints en Nederlandse IBANs in uw browser en genereer foutloze pain.001.001.09 &amp; Peppol UBL bestanden." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/peppol-simplerinvoicing-kvk-sepa-xml-ing-rabobank-nederland.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Nederland Corporate Treasury & E-Facturatie Playbook: SEPA XML pain.001.001.09 (ING, Rabobank, ABN AMRO) & Peppol BIS 3.0 (KVK 0106 / NL BTW)",
+        "inLanguage": "nl-NL",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "url": "https://geornaden.github.io/finops-studio/peppol-simplerinvoicing-kvk-sepa-xml-ing-rabobank-nederland.html"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Welk Peppol EAS EndpointID gebruikt een Nederlands bedrijf of overheidsinstantie (Rijksoverheid)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Nederlandse bedrijven gebruiken standaard hun 8-cijferige KVK-nummer met Peppol EAS code 0106 (bijv. 0106:12345678) of hun Nederlandse btw-identificatienummer met code 9944 (NL...B01). Nederlandse overheden (Rijksoverheid / gemeenten) gebruiken het 20-cijferige OIN-nummer onder EAS code 0190."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Wat verandert er in november 2026 voor SEPA verzamelbetalingen bij ING, Rabobank en ABN AMRO?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Vanaf 22 november 2026 vervalt het ongestructureerde <AdrLine> adresveld definitief volgens de EPC SEPA-regels. Zakelijke SEPA pain.001.001.09 en pain.008.001.08 bestanden moeten gestructureerde <TwnNm> (plaatsnaam) en <Ctry> (landcode) tags bevatten om afkeuring met foutcode BE04 te voorkomen."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .nl-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .nl-box {
+      background: rgba(15,23,42,0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .nl-box .lbl {
+      font-size: 0.77rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .nl-box .val {
+      font-size: 1.03rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .nl-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .nl-form input {
+      width: 100%;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 0.94rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">Gratis SEPA Validator</a>
+        <a href="./belgium-2026-peppol-france-facturx-xml-api-migration.html">België KBO 0208</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Start via RapidAPI &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:12px;">
+      <span class="pill">&#127475;&#127473; Nederland Zakelijk Bankieren &amp; E-Facturatie &bull; ING / Rabobank / ABN AMRO &bull; Peppol KVK `0106`</span>
+      <h1>Nederland SEPA XML (`pain.001.001.09`) &amp; Peppol Simplerinvoicing (`KVK 0106` / `NL BTW`) API Playbook</h1>
+      <p style="max-width:830px;margin:0 auto;">Controleer direct Nederlandse <strong>KVK-nummers (`0106`)</strong>, <strong>BTW-identificatienummers (`NL...B01` MOD-97)</strong> en <strong>NL IBAN-rekeningen</strong>, en genereer kant-en-klare 2026 SEPA verzamelbetalingen en Peppol BIS 3.0 UBL-facturen vanuit Exact Online, AFAS, Twinfield, Odoo of n8n.</p>
+    </section>
+
+    <section class="sandbox-card" aria-label="Interactieve Nederlandse KVK, BTW en IBAN Validator">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <h2 style="margin:0;font-size:1.14rem;">Interactieve `KVK 0106` + `NL BTW-id` + `NL IBAN` Checker &amp; API Builder</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" onclick="loadNlPreset('abn')">Voorbeeld ABN AMRO B.V.</button>
+          <button type="button" class="btn btn-outline" onclick="loadNlPreset('ing')">Voorbeeld ING Zakelijk</button>
+          <button type="button" class="btn btn-outline" onclick="loadNlPreset('rabo')">Voorbeeld Rabobank</button>
+        </div>
+      </div>
+
+      <div class="nl-form">
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">8-Cijferig KVK-nummer (`EAS 0106`)</label>
+          <input id="nlKvk" type="text" value="34334259" oninput="auditDutchEntity()" />
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">NL BTW-identificatienummer (`NL999999999B01`)</label>
+          <input id="nlBtw" type="text" value="NL004495445B01" oninput="auditDutchEntity()" />
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">Nederlands IBAN (`18 tekens`)</label>
+          <input id="nlIban" type="text" value="NL91ABNA0417164300" oninput="auditDutchEntity()" />
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">Bedrijfsnaam / Crediteur</label>
+          <input id="nlName" type="text" value="Randstad Cloud Systems B.V." oninput="auditDutchEntity()" />
+        </div>
+      </div>
+
+      <div id="nlSummary" class="nl-grid" aria-live="polite"></div>
+
+      <h3 style="margin:14px 0 8px;font-size:1rem;">2026 EPC Gestructureerde SEPA `pain.001.001.09` API Payload (`ING` / `Rabobank` / `ABN AMRO`):</h3>
+      <pre id="nlPayload" class="code-box" style="min-height:180px;"></pre>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button type="button" class="btn btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('nlPayload').textContent)">Kopieer JSON Payload</button>
+        <a class="btn btn-outline" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Uitvoeren op RapidAPI (&lt;10ms) &rarr;</a>
+        <a class="btn btn-outline" href="./free-sepa-xml-pain001-xsd-be04-validator.html">Test Bestaand SEPA XML Bestand</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>FinOps Studio</strong> &mdash; Deterministische SEPA XML, Peppol UBL &amp; Treasury APIs voor de Benelux.</p>
+      <p style="font-size:0.84rem;color:var(--muted);">
+        <a href="./index.html">Home</a> &bull;
+        <a href="./how-it-works-simple.html">VIP Simple Guide</a> &bull;
+        <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">SEPA &amp; Peppol Benelux</a> &bull;
+        <a href="./belgium-2026-peppol-france-facturx-xml-api-migration.html">België Peppol 2026</a> &bull;
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">RapidAPI &amp; MCPRush Hub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const NL_BANKS = {
+      ABNA: { name: 'ABN AMRO Bank', bic: 'ABNANL2AXXX' },
+      INGB: { name: 'ING Bank', bic: 'INGBNL2AXXX' },
+      RABO: { name: 'Rabobank', bic: 'RABONL2UXXX' },
+      BUNQ: { name: 'bunq', bic: 'BUNQNL2AXXX' },
+      SNSB: { name: 'SNS / de Volksbank', bic: 'SNSBNL2AXXX' },
+      TRIO: { name: 'Triodos Bank', bic: 'TRIONL2UXXX' },
+      KNAB: { name: 'Knab', bic: 'KNABNL2HXXX' }
+    };
+
+    function validateNlIban(raw) {
+      const s = (raw || '').toUpperCase().replace(/\s+/g, '');
+      if (!/^NL\d{2}[A-Z]{4}\d{10}$/.test(s)) return { ok: false, bankCode: '' };
+      const rearranged = s.slice(4) + s.slice(0, 4);
+      let numStr = '';
+      for (const ch of rearranged) {
+        if (ch >= 'A' && ch <= 'Z') numStr += String(ch.charCodeAt(0) - 55);
+        else numStr += ch;
+      }
+      return { ok: BigInt(numStr) % 97n === 1n, bankCode: s.slice(4, 8), clean: s };
+    }
+
+    // Dutch BTW-id since 2020 uses ISO 7064 MOD 97-10 on 'NL' + 9 digits + 'B' + 2 digits (or legacy 11-proef)
+    function validateNlBtw(raw) {
+      const s = (raw || '').toUpperCase().replace(/[\s.]/g, '');
+      if (!/^NL\d{9}B\d{2}$/.test(s)) return false;
+      // Check ISO 7064 MOD 97-10 ('N'=23, 'L'=21, 'B'=11)
+      const mod97Input = '2321' + s.slice(2, 11) + '11' + s.slice(12, 14);
+      if (BigInt(mod97Input) % 97n === 1n) return true;
+      // Fallback legacy 11-proef on 9 digits
+      const d = s.slice(2, 11).split('').map(Number);
+      const sum = 9*d[0] + 8*d[1] + 7*d[2] + 6*d[3] + 5*d[4] + 4*d[5] + 3*d[6] + 2*d[7] - d[8];
+      return sum > 0 && sum % 11 === 0;
+    }
+
+    function loadNlPreset(kind) {
+      if (kind === 'abn') {
+        document.getElementById('nlKvk').value = '34334259';
+        document.getElementById('nlBtw').value = 'NL004495445B01';
+        document.getElementById('nlIban').value = 'NL91ABNA0417164300';
+        document.getElementById('nlName').value = 'Randstad Cloud Systems B.V.';
+      } else if (kind === 'ing') {
+        document.getElementById('nlKvk').value = '33031431';
+        document.getElementById('nlBtw').value = 'NL123456782B01';
+        document.getElementById('nlIban').value = 'NL20INGB0001234567';
+        document.getElementById('nlName').value = 'Amsterdam Logistics Group B.V.';
+      } else {
+        document.getElementById('nlKvk').value = '30046259';
+        document.getElementById('nlBtw').value = 'NL004495445B01';
+        document.getElementById('nlIban').value = 'NL44RABO0123456789';
+        document.getElementById('nlName').value = 'Utrecht Agritech Solutions B.V.';
+      }
+      auditDutchEntity();
+    }
+
+    function auditDutchEntity() {
+      const kvk = (document.getElementById('nlKvk').value || '').replace(/\D/g, '');
+      const kvkOk = /^\d{8}$/.test(kvk);
+      const btw = (document.getElementById('nlBtw').value || '').toUpperCase().replace(/[\s.]/g, '');
+      const btwOk = validateNlBtw(btw);
+      const ibanRes = validateNlIban(document.getElementById('nlIban').value);
+      const bankInfo = NL_BANKS[ibanRes.bankCode] || { name: ibanRes.bankCode || 'Onbekend', bic: 'ABNANL2AXXX' };
+      const name = document.getElementById('nlName').value.trim() || 'Nederlandse B.V.';
+
+      document.getElementById('nlSummary').innerHTML = `
+        <div class="nl-box"><div class="lbl">Peppol KVK Endpoint (0106)</div><div class="val" style="color:${kvkOk ? '#34d399' : '#f87171'};">${kvkOk ? '&#10003; 0106:' + kvk : '&#9888; 8 Cijfers Vereist'}</div></div>
+        <div class="nl-box"><div class="lbl">NL BTW-id Controle</div><div class="val" style="color:${btwOk ? '#34d399' : '#f87171'};">${btwOk ? '&#10003; GELDIG (' + btw + ')' : '&#9888; ONGELDIG BTW-ID'}</div></div>
+        <div class="nl-box"><div class="lbl">NL IBAN &amp; Bank</div><div class="val" style="color:${ibanRes.ok ? '#34d399' : '#f87171'};">${ibanRes.ok ? '&#10003; ' + bankInfo.name : '&#9888; MOD-97 FOUT'}</div></div>
+        <div class="nl-box"><div class="lbl">Afgeleide BIC</div><div class="val"><code>${bankInfo.bic}</code></div></div>
+      `;
+
+      const payload = {
+        painVersion: 'pain.001.001.09',
+        initiatingPartyName: 'Holding Nederland B.V.',
+        debtorName: 'Holding Nederland B.V.',
+        debtorIban: 'NL91ABNA0417164300',
+        debtorBic: 'ABNANL2AXXX',
+        debtorAddress: {
+          streetName: 'Zuidas Gustav Mahlerlaan',
+          buildingNumber: '10',
+          postCode: '1082 PP',
+          townName: 'Amsterdam',
+          country: 'NL'
+        },
+        requestedExecutionDate: '2026-11-16',
+        transactions: [
+          {
+            endToEndId: 'KVK-' + (kvk || '00000000') + '-INV901',
+            creditorName: name,
+            creditorIban: ibanRes.clean || 'NL91ABNA0417164300',
+            creditorBic: bankInfo.bic,
+            creditorAddress: {
+              streetName: 'Coolsingel',
+              buildingNumber: '120',
+              postCode: '3011 AG',
+              townName: 'Rotterdam',
+              country: 'NL'
+            },
+            amount: 2420.00,
+            currency: 'EUR',
+            remittanceInfo: 'Factuur 2026-901 BTW ' + btw
+          }
+        ]
+      };
+
+      document.getElementById('nlPayload').textContent = JSON.stringify(payload, null, 2);
+    }
+
+    auditDutchEntity();
+  </script>
+</body>
+</html>
