@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Cloud API &amp; MCP Hub Directory — RapidAPI, MCPRush &amp; Apify Store | FinOps Studio</title>
+  <meta name="description" content="Connect FinOps Studio deterministic banking, payroll, IBAN/ABA/BSB/VAT validation, BAI2, Peppol &amp; DATEV APIs via RapidAPI Hub, MCPRush Remote MCP Servers, Agent Skill Packs, or Apify Cloud." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/rapidapi-mcprush-claude-cursor-banking-api-hub.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Multi-Cloud Banking API &amp; AI Agent MCP Hub Directory | FinOps Studio" />
+  <meta property="og:description" content="One deterministic banking engine across 4 developer ecosystems: RapidAPI Hub REST APIs, MCPRush Remote MCP Subscriptions &amp; Skill Packs, Apify Cloud Pay-Per-Event APIs, and Official MCP Registry." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/rapidapi-mcprush-claude-cursor-banking-api-hub.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "FinOps Studio Multi-Cloud Banking API & AI Agent MCP Hub Directory (RapidAPI, MCPRush & Apify Store)",
+    "description": "Developer integration hub and interactive config builder for FinOps Studio banking, payroll, treasury, e-invoicing, and B2B verification endpoints across RapidAPI Hub, MCPRush, and Apify Cloud.",
+    "author": { "@type": "Organization", "name": "FinOps Studio" },
+    "url": "https://geornaden.github.io/finops-studio/rapidapi-mcprush-claude-cursor-banking-api-hub.html"
+  }
+  </script>
+  <style>
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 16px;
+      margin: 20px 0 30px;
+    }
+    .hub-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .hub-card h3 {
+      margin: 8px 0;
+      font-size: 1.08rem;
+    }
+    .snippet-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .snippet-tab {
+      background: rgba(15,23,42,0.8);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .snippet-tab.active {
+      background: rgba(56,189,248,0.18);
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">1-Click Excel Mapper</a>
+        <a href="./index.html#suite">All 12 Tools</a>
+        <a href="./for-accounting-firms-payroll-bureaus-and-fintechs.html">Pricing</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Start Free ($5 Credits) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:14px;">
+      <span class="pill">4 Cloud Ecosystems &bull; Sub-10ms Edge Latency &bull; Zero-Hallucination Banking Math</span>
+      <h1>Multi-Cloud Banking API &amp; AI Agent MCP Hub Directory</h1>
+      <p style="max-width:820px;margin:0 auto;">Integrate FinOps Studio through whichever billing and authentication standard your engineering team already uses: <strong>RapidAPI Hub</strong> monthly REST subscriptions, <strong>MCPRush</strong> remote MCP gateways &amp; downloadable Claude/Cursor Skill Packs, or <strong>Apify Cloud</strong> pay-per-event batch Actors.</p>
+    </section>
+
+    <!-- INTERACTIVE CODE CONFIG SWITCHER -->
+    <section class="sandbox-card" aria-label="Interactive API and MCP Config Generator">
+      <h2 style="margin-top:0;">Interactive Multi-Cloud Quickstart Switcher</h2>
+      <p style="color:var(--muted);font-size:0.94rem;">Select your target platform below to generate copy-paste REST or Model Context Protocol (`MCP`) client code:</p>
+      <div class="snippet-tabs" role="tablist">
+        <button type="button" class="snippet-tab active" data-mode="rapidapi-iban" onclick="switchHubSnippet('rapidapi-iban')">RapidAPI: Global IBAN / ABA / VAT</button>
+        <button type="button" class="snippet-tab" data-mode="rapidapi-suite" onclick="switchHubSnippet('rapidapi-suite')">RapidAPI: SEPA / NACHA / BAI2 / Peppol</button>
+        <button type="button" class="snippet-tab" data-mode="rapidapi-email" onclick="switchHubSnippet('rapidapi-email')">RapidAPI: B2B MX / SPF / DMARC</button>
+        <button type="button" class="snippet-tab" data-mode="mcp-unified" onclick="switchHubSnippet('mcp-unified')">Claude / Cursor: Unified 9-Tool MCP</button>
+        <button type="button" class="snippet-tab" data-mode="apify-batch" onclick="switchHubSnippet('apify-batch')">Apify REST: High-Volume Batch</button>
+      </div>
+      <pre id="hubCodeBox" class="code-box" style="min-height:195px;"></pre>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button type="button" class="btn btn-primary" onclick="copyHubCode()">Copy Snippet</button>
+        <a id="hubDirectBtn" class="btn btn-outline" href="https://rapidapi.com/Geornaden/api/global-bank-iban-aba-sort-code-bsb-and-vat-validator" target="_blank" rel="noopener">Open Endpoint on RapidAPI Hub &rarr;</a>
+      </div>
+    </section>
+
+    <!-- SECTION 1: RAPIDAPI HUB -->
+    <h2 class="section-title" style="margin-top:34px;">1. RapidAPI Hub — Sub-10ms Global Edge REST Subscriptions</h2>
+    <p class="section-sub">Single `X-RapidAPI-Key` header across 300+ global Cloudflare V8 edge PoPs. Includes free `BASIC` sandbox tier (`50 req/mo` hard cap) plus `PRO` (`$14.99/mo`), `ULTRA` (`$49.99/mo`), and `MEGA` (`$149/mo`).</p>
+    <div class="hub-grid">
+      <div class="hub-card">
+        <div>
+          <div class="tag-row"><span class="tag">RapidAPI Live</span><span class="tag">&lt;10ms Edge</span></div>
+          <h3>Global Bank IBAN, ABA, Sort Code, BSB &amp; EU VAT Validator</h3>
+          <p style="color:var(--muted);font-size:0.91rem;">Deterministic ISO 13616 MOD-97 IBAN verification, US 9-digit ABA Fedwire/ACH MOD-10 checksums, UK 6-digit Sort Codes, Australian BSBs, Canadian CPA-005 routing, and EU VAT syntax checks.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/global-bank-iban-aba-sort-code-bsb-and-vat-validator" target="_blank" rel="noopener">Subscribe on RapidAPI &rarr;</a>
+        </div>
+      </div>
+
+      <div class="hub-card">
+        <div>
+          <div class="tag-row"><span class="tag">RapidAPI Live</span><span class="tag">Treasury &amp; Tax</span></div>
+          <h3>Corporate Banking SEPA XML, NACHA ACH, BAI2 &amp; Peppol Suite</h3>
+          <p style="color:var(--muted);font-size:0.91rem;">Synchronous JSON-to-bank-file edge endpoints for 2026 EPC `pain.001.001.09` SEPA XML, 94-character US NACHA `.ACH`, `BAI2` corporate statement parsing, and EN 16931 Peppol / XRechnung UBL XML.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Subscribe on RapidAPI &rarr;</a>
+        </div>
+      </div>
+
+      <div class="hub-card">
+        <div>
+          <div class="tag-row"><span class="tag">RapidAPI Live</span><span class="tag">DNS-over-HTTPS</span></div>
+          <h3>B2B Email Deliverability, MX, SPF, DMARC &amp; Domain Enricher</h3>
+          <p style="color:var(--muted);font-size:0.91rem;">Real-time live DNS-over-HTTPS verification of `MX`, `SPF`, and `DMARC` policies, disposable-domain blocking, role-account detection, and mail-provider fingerprinting (Google Workspace, Microsoft 365, Proofpoint).</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/b2b-email-deliverability-mx-dmarc-and-domain-enricher" target="_blank" rel="noopener">Subscribe on RapidAPI &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: MCPRUSH REMOTE SERVERS & AGENT SKILL PACKS -->
+    <h2 class="section-title">2. MCPRush — Remote MCP Gateways &amp; Offline Agent Skill Packs</h2>
+    <p class="section-sub">Purpose-built for Claude Code, Cursor, Windsurf, Cline, and autonomous treasury agents (`https://mcprush.com/geornaden-2`).</p>
+    <div class="hub-grid">
+      <div class="hub-card">
+        <div>
+          <div class="tag-row"><span class="tag">Remote MCP</span><span class="tag">JSON-RPC 2.0</span></div>
+          <h3>4 Managed Remote Banking &amp; E-Invoicing MCP Servers</h3>
+          <p style="color:var(--muted);font-size:0.91rem;">Streamable HTTP JSON-RPC 2.0 MCP servers (`2024-11-05`) covering the Full 9-Tool Banking Suite, Corporate `BAI2` Statement Parser, EU `Peppol / XRechnung` XML Generator, and German `DATEV EXTF v700` CSV Generator.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://mcprush.com/geornaden-2" target="_blank" rel="noopener">View MCPRush Publisher Hub &rarr;</a>
+        </div>
+      </div>
+
+      <div class="hub-card">
+        <div>
+          <div class="tag-row"><span class="tag">Skill Pack</span><span class="tag">Claude / Cursor</span></div>
+          <h3>Corporate Treasury Skill Pack (SEPA, NACHA, BACS &amp; BAI2)</h3>
+          <p style="color:var(--muted);font-size:0.91rem;">Multi-file offline `SKILL.md` rulebook + deterministic Node.js checksum audit scripts so coding agents never misalign 94/100/120-character bank columns or miscalculate `CtrlSum`.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-outline" href="https://mcprush.com/geornaden-2/finops-corporate-treasury-sepa-nacha-bacs-bai2-pa" target="_blank" rel="noopener">View Treasury Skill Pack &rarr;</a>
+        </div>
+      </div>
+
+      <div class="hub-card">
+        <div>
+          <div class="tag-row"><span class="tag">Skill Pack</span><span class="tag">EN 16931 + DATEV</span></div>
+          <h3>EU 2026 E-Invoicing (Peppol, XRechnung, Factur-X &amp; DATEV)</h3>
+          <p style="color:var(--muted);font-size:0.91rem;">Complete `BR-CO-10..17` cent-rounding rules, `Leitweg-ID` MOD 97-10, Belgian KBO `0208`, French SIRET `0009`, and German `EXTF v700` `SKR03/SKR04` agent instructions.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-outline" href="https://mcprush.com/geornaden-2/eu-2026-e-invoicing-peppol-xrechnung-factur-x-dat" target="_blank" rel="noopener">View EU Tax Skill Pack &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: APIFY STORE & OFFICIAL MCP REGISTRY -->
+    <h2 class="section-title">3. Apify Store &amp; Official MCP Registry (`io.github.Geornaden/*`)</h2>
+    <p class="section-sub">Zero monthly commitment (`$0/mo` + `$0.02/record`) with `$5.00` free monthly platform credits (~250 bank payment or tax records every month at `$0`).</p>
+    <div class="hub-grid">
+      <div class="hub-card">
+        <div>
+          <div class="tag-row"><span class="tag">Apify Cloud</span><span class="tag">9 Public Actors</span></div>
+          <h3>Pay-Per-Event Batch REST APIs + Key-Value File Downloads</h3>
+          <p style="color:var(--muted);font-size:0.91rem;">Ideal for n8n, Make.com, Zapier, GitHub Actions, and SFTP cron pipelines processing 50 to 50,000+ rows per batch with downloadable `.xml`, `.ach`, `.aba`, `.bacs`, and `.csv` artifacts.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Apify Storefront &rarr;</a>
+          <a class="btn btn-outline" href="./openapi.json" target="_blank" rel="noopener">OpenAPI 3.1 Spec</a>
+        </div>
+      </div>
+
+      <div class="hub-card">
+        <div>
+          <div class="tag-row"><span class="tag">Browser Pre-Flight</span><span class="tag">100% Client-Side</span></div>
+          <h3>12 Free Instant Browser File Validators &amp; Checksum Auditors</h3>
+          <p style="color:var(--muted);font-size:0.91rem;">Audit `SEPA pain.001`, `US NACHA .ACH`, `UK BACS 18`, `Australian .ABA`, `Canadian CPA-005`, `DATEV EXTF v700`, `Payee Positive Pay`, `BAI2`, and `pain.002` locally in your browser before uploading to your bank.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">1-Click CSV Mapper</a>
+          <a class="btn btn-outline" href="./free-bank-file-format-detector-line-length-auditor.html">Format Detector</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>FinOps Studio</strong> &mdash; Deterministic Banking, Payroll, Treasury &amp; E-Invoicing Infrastructure across Apify Cloud, RapidAPI Hub &amp; MCPRush.</p>
+      <p style="font-size:0.84rem;color:var(--muted);">
+        <a href="./index.html">Home</a> &bull;
+        <a href="./how-it-works-simple.html">VIP Simple Guide</a> &bull;
+        <a href="./openapi.json">OpenAPI 3.1</a> &bull;
+        <a href="./llms.txt">llms.txt</a> &bull;
+        <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a> &bull;
+        <a href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">RapidAPI Hub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const HUB_SNIPPETS = {
+      'rapidapi-iban': {
+        url: 'https://rapidapi.com/Geornaden/api/global-bank-iban-aba-sort-code-bsb-and-vat-validator',
+        label: 'Open IBAN / ABA / VAT API on RapidAPI Hub \u2192',
+        code: `curl -X POST "https://global-bank-iban-aba-sort-code-bsb-and-vat-validator.p.rapidapi.com/v1/validate/routing-bundle" \\
+  -H "Content-Type: application/json" \\
+  -H "X-RapidAPI-Host: global-bank-iban-aba-sort-code-bsb-and-vat-validator.p.rapidapi.com" \\
+  -H "X-RapidAPI-Key: YOUR_RAPIDAPI_KEY" \\
+  -d '{
+    "iban": "DE89370400440532013000",
+    "abaRouting": "021000021",
+    "ukSortCode": "20-00-00",
+    "auBsb": "062-000",
+    "euVat": "DE123456789"
+  }'`
+      },
+      'rapidapi-suite': {
+        url: 'https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite',
+        label: 'Open Corporate Banking Suite on RapidAPI Hub \u2192',
+        code: `curl -X POST "https://corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite.p.rapidapi.com/v1/sepa/credit-transfer" \\
+  -H "Content-Type: application/json" \\
+  -H "X-RapidAPI-Host: corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite.p.rapidapi.com" \\
+  -H "X-RapidAPI-Key: YOUR_RAPIDAPI_KEY" \\
+  -d '{
+    "painVersion": "pain.001.001.09",
+    "initiatingPartyName": "Acme Europe GmbH",
+    "debtorName": "Acme Europe GmbH",
+    "debtorIban": "DE89370400440532013000",
+    "debtorBic": "COBADEFFXXX",
+    "transactions": [
+      { "creditorName": "Nordic Cloud AB", "creditorIban": "NL91ABNA0417164300", "amount": 1450.75, "remittanceInfo": "INV-2026-901" }
+    ]
+  }'`
+      },
+      'rapidapi-email': {
+        url: 'https://rapidapi.com/Geornaden/api/b2b-email-deliverability-mx-dmarc-and-domain-enricher',
+        label: 'Open B2B Email & DNS Enricher on RapidAPI Hub \u2192',
+        code: `curl -X POST "https://b2b-email-deliverability-mx-dmarc-and-domain-enricher.p.rapidapi.com/v1/email/verify" \\
+  -H "Content-Type: application/json" \\
+  -H "X-RapidAPI-Host: b2b-email-deliverability-mx-dmarc-and-domain-enricher.p.rapidapi.com" \\
+  -H "X-RapidAPI-Key: YOUR_RAPIDAPI_KEY" \\
+  -d '{
+    "email": "treasury@stripe.com"
+  }'`
+      },
+      'mcp-unified': {
+        url: 'https://mcprush.com/geornaden-2',
+        label: 'Open FinOps Studio on MCPRush \u2192',
+        code: `{
+  "mcpServers": {
+    "finops-studio": {
+      "url": "https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser,finops_studio/uk-bacs-standard18-generator,finops_studio/canada-cpa005-eft-generator",
+      "headers": {
+        "Authorization": "Bearer YOUR_APIFY_API_TOKEN"
+      }
+    }
+  }
+}`
+      },
+      'apify-batch': {
+        url: 'https://apify.com/finops_studio',
+        label: 'Open Apify Storefront ($5 Free Credits) \u2192',
+        code: `curl -X POST "https://api.apify.com/v2/acts/finops_studio~nacha-ach-file-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "immediateDestination": "021000021",
+    "immediateDestinationName": "JPMORGAN CHASE",
+    "companyName": "ACME PAYROLL INC",
+    "companyId": "1943281920",
+    "secCode": "PPD",
+    "companyEntryDescription": "PAYROLL",
+    "entries": [
+      { "receivingDfiId": "121000358", "dfiAccountNumber": "987654321", "amount": 2450.00, "individualName": "JANE DOE", "transactionCode": "22" }
+    ]
+  }'`
+      }
+    };
+
+    function switchHubSnippet(mode) {
+      const item = HUB_SNIPPETS[mode] || HUB_SNIPPETS['rapidapi-iban'];
+      document.getElementById('hubCodeBox').textContent = item.code;
+      const btn = document.getElementById('hubDirectBtn');
+      btn.href = item.url;
+      btn.textContent = item.label;
+      document.querySelectorAll('.snippet-tab').forEach(el => {
+        el.classList.toggle('active', el.getAttribute('data-mode') === mode);
+      });
+    }
+
+    function copyHubCode() {
+      const txt = document.getElementById('hubCodeBox').textContent;
+      navigator.clipboard.writeText(txt);
+    }
+
+    switchHubSnippet('rapidapi-iban');
+  </script>
+</body>
+</html>
