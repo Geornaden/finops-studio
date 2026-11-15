@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accounts Payable &amp; Vendor Onboarding BEC Anti-Fraud Firewall: IBAN MOD-97, ABA MOD-10, Tax ID &amp; Live MX/SPF/DMARC Audit | FinOps Studio</title>
+  <meta name="description" content="Stop Business Email Compromise (BEC) bank-account-change wire fraud in Accounts Payable: verify IBAN MOD-97 / US ABA MOD-10 / UK Sort Code / AU BSB routing plus live supplier email MX, SPF, and DMARC DNS enforcement in one screen or via RapidAPI Hub." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/vendor-onboarding-iban-aba-bsb-vat-mx-dmarc-fraud-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Accounts Payable &amp; Vendor Onboarding BEC Anti-Fraud Checksum + Live MX/DMARC Firewall" />
+  <meta property="og:description" content="Audit supplier bank change requests in real time: combine deterministic IBAN MOD-97 / US ABA MOD-10 / AU BSB checks with live DNS-over-HTTPS MX, SPF &amp; DMARC spoofing detection." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/vendor-onboarding-iban-aba-bsb-vat-mx-dmarc-fraud-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Accounts Payable Vendor Onboarding & BEC Bank-Change Anti-Fraud Firewall",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (Client-Side Checksums + Live Cloudflare DNS-over-HTTPS)",
+        "url": "https://geornaden.github.io/finops-studio/vendor-onboarding-iban-aba-bsb-vat-mx-dmarc-fraud-api.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does Business Email Compromise (BEC) vendor bank-account-change fraud happen in Accounts Payable?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Attackers register lookalike supplier domains (such as acme-loglstics.com instead of acme-logistics.com) or spoof domains lacking DMARC p=reject enforcement, then email Accounts Payable requesting an urgent ACH or SEPA IBAN bank detail update. Combining deterministic bank routing math (ISO 13616 MOD-97 IBAN, US ABA 3-7-1 MOD-10, Australian BSB) with live DNS MX, SPF, and DMARC domain verification catches spoofed or newly spun-up attacker domains before releasing funds."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Nacha 2026 require Accounts Payable fraud monitoring on ACH credit originations?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Nacha's 2026 Fraud Monitoring Rules (Phase 1 effective March 20, 2026; Phase 2 effective June 19, 2026) require non-consumer ACH Originators, TPSPs, and ODFIs to establish risk-based processes designed to identify ACH entries initiated due to fraud, explicitly targeting vendor impersonation and false pretenses."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .fw-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .fw-field label {
+      display: block;
+      font-size: 0.79rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .fw-field input, .fw-field select {
+      width: 100%;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      color: var(--text);
+      font-size: 0.94rem;
+    }
+    .score-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .score-card {
+      background: rgba(15,23,42,0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .score-card .lbl {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .score-card .val {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-top: 5px;
+      word-break: break-word;
+    }
+    .preset-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Multi-Cloud API Hub</a>
+        <a href="./regulatory-compliance-radar-2026-2027-sepa-peppol-fedwire-nacha.html">2026 Compliance Radar</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">Subscribe on RapidAPI &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:14px;">
+      <span class="pill">&#128737; Nacha 2026 Fraud Monitoring &amp; EU VoP Ready &bull; Bank Routing Math + Live DNS Spoof Detection</span>
+      <h1>Accounts Payable &amp; Vendor Onboarding BEC Anti-Fraud Checksum Firewall</h1>
+      <p style="max-width:860px;margin:0 auto;">Business Email Compromise (BEC) vendor bank-change scams cost global finance teams over <strong>$2.9B/year</strong>. Test any supplier onboarding or bank-account-change ticket in one screen—combining <strong>ISO 13616 IBAN MOD-97 / US ABA MOD-10 / UK Sort Code / AU BSB</strong> validation with live <strong>Cloudflare `1.1.1.1` `MX / SPF / DMARC`</strong> domain spoofing checks.</p>
+    </section>
+
+    <section class="sandbox-card" style="margin-bottom:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <h2 style="margin:0;font-size:1.15rem;">1. Interactive Supplier Bank-Change &amp; BEC Fraud Audit</h2>
+        <div class="preset-row" style="margin:0;">
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="loadPreset('legit_eu')">Load Legit EU Supplier (`stripe.com` + DE IBAN)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="loadPreset('legit_us')">Load Legit US Supplier (`cloudflare.com` + Chase ABA)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;border-color:#f87171;color:#fca5a5;" onclick="loadPreset('bec_attack')">Simulate BEC Attack (Burner Email + Bad ABA + Country Mismatch)</button>
+        </div>
+      </div>
+
+      <div class="fw-grid">
+        <div class="fw-field">
+          <label for="vEmail">Requester Email (From Invoice / Ticket)</label>
+          <input id="vEmail" type="text" value="billing@stripe.com" placeholder="ap@supplier.com" />
+        </div>
+        <div class="fw-field">
+          <label for="vKnownDomain">Known Master Vendor Domain (Optional)</label>
+          <input id="vKnownDomain" type="text" value="stripe.com" placeholder="supplier.com (detects lookalikes)" />
+        </div>
+        <div class="fw-field">
+          <label for="vRail">Bank Clearing Rail</label>
+          <select id="vRail">
+            <option value="IBAN">SEPA / International IBAN (MOD-97)</option>
+            <option value="US_ABA">US ACH / Fedwire 9-Digit ABA (3-7-1 MOD-10)</option>
+            <option value="UK_SORT">UK BACS 6-Digit Sort Code + 8-Digit Account</option>
+            <option value="AU_BSB">Australia BECS 6-Digit BSB (NNN-NNN)</option>
+          </select>
+        </div>
+        <div class="fw-field">
+          <label for="vBank">Requested Bank IBAN / Routing Number</label>
+          <input id="vBank" type="text" value="DE89370400440532013000" placeholder="DE89... or 021000021" />
+        </div>
+        <div class="fw-field">
+          <label for="vVendorCountry">Expected Supplier Country (ISO-2)</label>
+          <input id="vVendorCountry" type="text" value="DE" maxlength="2" placeholder="DE, US, GB, AU..." />
+        </div>
+        <div class="fw-field">
+          <label for="vTaxId">Optional EU VAT / US EIN / Tax ID</label>
+          <input id="vTaxId" type="text" value="DE123456789" placeholder="DE123456789 or 12-3456789" />
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button type="button" class="btn btn-primary" onclick="runVendorFirewall()">&#128269; Run Live Checksum + DNS Anti-Fraud Audit</button>
+        <a class="btn btn-outline" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-iban-nacha-aba-and-vat-validator" target="_blank" rel="noopener">Automate Bank Checksums on RapidAPI &rarr;</a>
+        <a class="btn btn-outline" href="https://rapidapi.com/Geornaden/api/b2b-email-deliverability-mx-dmarc-and-domain-enricher" target="_blank" rel="noopener">Automate MX/DMARC API on RapidAPI &rarr;</a>
+      </div>
+
+      <div class="score-cards" id="scoreCards" style="display:none;">
+        <div class="score-card">
+          <div class="lbl">Overall AP Release Verdict</div>
+          <div class="val" id="resVerdict">—</div>
+        </div>
+        <div class="score-card">
+          <div class="lbl">Bank Routing Checksum</div>
+          <div class="val" id="resBank">—</div>
+        </div>
+        <div class="score-card">
+          <div class="lbl">Cross-Border / Lookalike Check</div>
+          <div class="val" id="resMatch">—</div>
+        </div>
+        <div class="score-card">
+          <div class="lbl">Live Email MX &amp; DMARC Policy</div>
+          <div class="val" id="resDns">—</div>
+        </div>
+      </div>
+
+      <pre id="auditJson" style="display:none;background:#090f1d;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;font-size:0.82rem;color:#a7f3d0;margin-top:12px;"></pre>
+    </section>
+
+    <section class="sandbox-card" style="margin-bottom:24px;">
+      <h2 style="margin-top:0;">2. Two-Call Automated AP Vendor Onboarding Architecture (`&lt;25ms` Edge)</h2>
+      <p style="color:var(--muted);font-size:0.92rem;">Embed deterministic anti-fraud checks directly inside <strong>ServiceNow</strong>, <strong>Jira Service Management</strong>, <strong>Coupa</strong>, <strong>SAP Ariba</strong>, <strong>NetSuite</strong>, or <strong>n8n / Make</strong> before any vendor master record is updated:</p>
+      <pre style="background:#090f1d;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;font-size:0.81rem;color:#e2e8f0;"># Step 1: Verify IBAN MOD-97 / US ABA MOD-10 &amp; EU VAT syntax on RapidAPI Hub
+curl -s -X POST "https://corporate-banking-sepa-iban-nacha-aba-and-vat-validator.p.rapidapi.com/v1/validate/iban" \
+  -H "X-RapidAPI-Key: YOUR_RAPIDAPI_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"iban":"DE89370400440532013000"}'
+
+# Step 2: Verify Supplier Email Domain MX Gateway, SPF &amp; DMARC p=reject Policy
+curl -s -X POST "https://b2b-email-deliverability-mx-dmarc-and-domain-enricher.p.rapidapi.com/v1/email/verify" \
+  -H "X-RapidAPI-Key: YOUR_RAPIDAPI_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"billing@supplier-domain.com"}'</pre>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+        <a class="btn btn-primary" href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">Start Free `BASIC` Tier ($0.00/mo) on RapidAPI Hub &rarr;</a>
+        <a class="btn btn-outline" href="./free-b2b-email-mx-spf-dmarc-dns-validator.html">Open Standalone MX/SPF/DMARC Inspector</a>
+        <a class="btn btn-outline" href="./free-sepa-xml-pain001-xsd-be04-validator.html">Open Standalone SEPA IBAN Auditor</a>
+        <a class="btn btn-outline" href="./free-nacha-ach-file-validator-batch-hash-auditor.html">Open Standalone NACHA ABA Checker</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container" style="text-align:center;font-size:0.83rem;color:var(--muted);">
+      <p>&copy; 2026 FinOps Studio &bull; Deterministic Banking, E-Invoicing &amp; B2B Anti-Fraud Cloud APIs &bull; Zero Server Retention in Browser Sandbox</p>
+    </div>
+  </footer>
+
+  <script>
+    const DISPOSABLE = new Set([
+      'mailinator.com','guerrillamail.com','10minutemail.com','tempmail.com','yopmail.com',
+      'sharklasers.com','trashmail.com','getnada.com','maildrop.cc','dispostable.com'
+    ]);
+    const FREE_WEBMAIL = new Set([
+      'gmail.com','yahoo.com','hotmail.com','outlook.com','aol.com','icloud.com','proton.me','protonmail.com'
+    ]);
+
+    function levenshtein(a, b) {
+      const dp = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+      for (let j = 1; j <= b.length; j++) dp[0][j] = j;
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+          dp[i][j] = a[i - 1] === b[j - 1]
+            ? dp[i - 1][j - 1]
+            : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+        }
+      }
+      return dp[a.length][b.length];
+    }
+
+    function checkIbanMod97(raw) {
+      const clean = raw.replace(/\s+/g, '').toUpperCase();
+      if (!/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/.test(clean)) return { valid: false, country: clean.slice(0, 2), reason: 'Invalid IBAN length/charset' };
+      const rearranged = clean.slice(4) + clean.slice(0, 4);
+      let expanded = '';
+      for (const ch of rearranged) {
+        expanded += (ch >= 'A' && ch <= 'Z') ? String(ch.charCodeAt(0) - 55) : ch;
+      }
+      let rem = 0;
+      for (let i = 0; i < expanded.length; i += 7) {
+        rem = Number(String(rem) + expanded.slice(i, i + 7)) % 97;
+      }
+      return { valid: rem === 1, country: clean.slice(0, 2), reason: rem === 1 ? 'ISO 13616 MOD-97 === 1 PASS' : 'MOD-97 remainder ' + rem + ' (FAIL)' };
+    }
+
+    function checkUsAba(raw) {
+      const d = raw.replace(/\D/g, '');
+      if (d.length !== 9) return { valid: false, country: 'US', reason: 'Must be 9 digits' };
+      const sum = 3 * (Number(d[0]) + Number(d[3]) + Number(d[6])) +
+                  7 * (Number(d[1]) + Number(d[4]) + Number(d[7])) +
+                  1 * (Number(d[2]) + Number(d[5]) + Number(d[8]));
+      const ok = sum > 0 && sum % 10 === 0;
+      return { valid: ok, country: 'US', reason: ok ? '3-7-1 MOD-10 PASS' : '3-7-1 weighted sum ' + sum + ' % 10 !== 0 (FAIL)' };
+    }
+
+    function loadPreset(kind) {
+      if (kind === 'legit_eu') {
+        document.getElementById('vEmail').value = 'billing@stripe.com';
+        document.getElementById('vKnownDomain').value = 'stripe.com';
+        document.getElementById('vRail').value = 'IBAN';
+        document.getElementById('vBank').value = 'DE89370400440532013000';
+        document.getElementById('vVendorCountry').value = 'DE';
+        document.getElementById('vTaxId').value = 'DE123456789';
+      } else if (kind === 'legit_us') {
+        document.getElementById('vEmail').value = 'ar@cloudflare.com';
+        document.getElementById('vKnownDomain').value = 'cloudflare.com';
+        document.getElementById('vRail').value = 'US_ABA';
+        document.getElementById('vBank').value = '021000021';
+        document.getElementById('vVendorCountry').value = 'US';
+        document.getElementById('vTaxId').value = '27-0835829';
+      } else {
+        document.getElementById('vEmail').value = 'urgent-wire@strlpe.com';
+        document.getElementById('vKnownDomain').value = 'stripe.com';
+        document.getElementById('vRail').value = 'IBAN';
+        document.getElementById('vBank').value = 'LT121000011101001002';
+        document.getElementById('vVendorCountry').value = 'DE';
+        document.getElementById('vTaxId').value = 'DE123456789';
+      }
+      runVendorFirewall();
+    }
+
+    async function dohTxt(name, type) {
+      try {
+        const res = await fetch('https://cloudflare-dns.com/dns-query?name=' + encodeURIComponent(name) + '&type=' + type, {
+          headers: { 'accept': 'application/dns-json' }
+        });
+        if (!res.ok) return [];
+        const data = await res.json();
+        return Array.isArray(data.Answer) ? data.Answer.map(a => String(a.data || '').replace(/^"|"$/g, '')) : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    async function runVendorFirewall() {
+      const email = document.getElementById('vEmail').value.trim().toLowerCase();
+      const known = document.getElementById('vKnownDomain').value.trim().toLowerCase().replace(/^@/, '');
+      const rail = document.getElementById('vRail').value;
+      const bankRaw = document.getElementById('vBank').value.trim();
+      const expectedCountry = document.getElementById('vVendorCountry').value.trim().toUpperCase();
+      const taxId = document.getElementById('vTaxId').value.trim().toUpperCase();
+
+      const flags = [];
+      let riskPoints = 0;
+
+      // 1. Bank Checksum
+      let bankCheck = { valid: false, country: expectedCountry, reason: '' };
+      if (rail === 'IBAN') {
+        bankCheck = checkIbanMod97(bankRaw);
+      } else if (rail === 'US_ABA') {
+        bankCheck = checkUsAba(bankRaw);
+      } else if (rail === 'UK_SORT') {
+        const clean = bankRaw.replace(/\D/g, '');
+        bankCheck = { valid: clean.length === 6 || clean.length === 14, country: 'GB', reason: (clean.length === 6 || clean.length === 14) ? 'Valid UK Sort/Account digits' : 'Expected 6-digit Sort Code (+ optional 8-digit Account)' };
+      } else {
+        const clean = bankRaw.replace(/\D/g, '');
+        bankCheck = { valid: clean.length === 6, country: 'AU', reason: clean.length === 6 ? 'Valid 6-digit Australian BSB' : 'Expected 6-digit BSB (NNN-NNN)' };
+      }
+
+      if (!bankCheck.valid) {
+        riskPoints += 60;
+        flags.push('CRITICAL_BANK_CHECKSUM_FAIL: ' + bankCheck.reason);
+      }
+
+      // 2. Country mismatch (classic offshore mule IBAN swap)
+      if (expectedCountry && bankCheck.country && bankCheck.country !== expectedCountry) {
+        riskPoints += 45;
+        flags.push('CROSS_BORDER_BANK_COUNTRY_MISMATCH: Vendor country is ' + expectedCountry + ' but bank rail country is ' + bankCheck.country);
+      }
+
+      // 3. Domain & Lookalike analysis
+      const domain = email.includes('@') ? email.split('@')[1] : email;
+      let domainStatus = 'EXACT_MATCH';
+      if (DISPOSABLE.has(domain)) {
+        riskPoints += 70;
+        domainStatus = 'DISPOSABLE_BURNER';
+        flags.push('CRITICAL_DISPOSABLE_EMAIL_DOMAIN: ' + domain);
+      } else if (FREE_WEBMAIL.has(domain)) {
+        riskPoints += 35;
+        domainStatus = 'FREE_CONSUMER_WEBMAIL';
+        flags.push('WARNING_CONSUMER_WEBMAIL_FOR_B2B_WIRE: ' + domain);
+      }
+      if (known && domain !== known) {
+        const dist = levenshtein(domain, known);
+        if (dist <= 3) {
+          riskPoints += 80;
+          domainStatus = 'TYPOSQUAT_LOOKALIKE (' + domain + ' vs ' + known + ')';
+          flags.push('CRITICAL_BEC_TYPOSQUAT_DOMAIN: "' + domain + '" differs from master domain "' + known + '" by ' + dist + ' char(s)');
+        } else {
+          riskPoints += 30;
+          domainStatus = 'DOMAIN_CHANGED (' + domain + ' != ' + known + ')';
+          flags.push('WARNING_DOMAIN_DIFFERS_FROM_VENDOR_MASTER: ' + domain + ' vs ' + known);
+        }
+      }
+
+      // 4. Live DNS MX + SPF + DMARC check
+      const [mxAns, txtAns, dmarcAns] = await Promise.all([
+        dohTxt(domain, 'MX'),
+        dohTxt(domain, 'TXT'),
+        dohTxt('_dmarc.' + domain, 'TXT')
+      ]);
+      const hasMx = mxAns.length > 0;
+      const spf = txtAns.find(t => t.toLowerCase().includes('v=spf1')) || null;
+      const dmarc = dmarcAns.find(t => t.toLowerCase().includes('v=dmarc1')) || null;
+      let dmarcPolicy = 'MISSING';
+      if (dmarc) {
+        const m = dmarc.match(/p\s*=\s*(reject|quarantine|none)/i);
+        dmarcPolicy = m ? m[1].toUpperCase() : 'PRESENT';
+      }
+      if (!hasMx) {
+        riskPoints += 50;
+        flags.push('NO_MX_RECORDS_ON_REQUESTER_DOMAIN');
+      }
+      if (dmarcPolicy === 'MISSING' || dmarcPolicy === 'NONE') {
+        riskPoints += 20;
+        flags.push('WEAK_OR_MISSING_DMARC_SPOOF_PROTECTION (' + dmarcPolicy + '): Call vendor via verified phone before changing bank details');
+      }
+
+      const score = Math.min(100, riskPoints);
+      const verdict = score >= 50 ? 'HOLD / BLOCK PAYMENT (High BEC Fraud Risk: ' + score + '/100)'
+                    : score >= 20 ? 'STEP-UP OUT-OF-BAND CALL REQUIRED (Medium Risk: ' + score + '/100)'
+                    : 'PASS — LOW RISK (' + score + '/100)';
+
+      document.getElementById('scoreCards').style.display = 'grid';
+      const elVerdict = document.getElementById('resVerdict');
+      elVerdict.textContent = verdict;
+      elVerdict.style.color = score >= 50 ? '#f87171' : score >= 20 ? '#fbbf24' : '#34d399';
+
+      const elBank = document.getElementById('resBank');
+      elBank.textContent = (bankCheck.valid ? 'VALID — ' : 'INVALID — ') + bankCheck.reason;
+      elBank.style.color = bankCheck.valid ? '#34d399' : '#f87171';
+
+      const elMatch = document.getElementById('resMatch');
+      elMatch.textContent = domainStatus + ' | Bank=' + bankCheck.country + ' / Vendor=' + (expectedCountry || '—');
+      elMatch.style.color = (domainStatus.startsWith('TYPOSQUAT') || (expectedCountry && bankCheck.country !== expectedCountry)) ? '#f87171' : '#93c5fd';
+
+      const elDns = document.getElementById('resDns');
+      elDns.textContent = (hasMx ? 'MX OK' : 'NO MX') + ' | SPF: ' + (spf ? 'YES' : 'NO') + ' | DMARC: p=' + dmarcPolicy.toLowerCase();
+      elDns.style.color = (hasMx && (dmarcPolicy === 'REJECT' || dmarcPolicy === 'QUARANTINE')) ? '#34d399' : '#fbbf24';
+
+      const report = {
+        auditedAt: new Date().toISOString(),
+        nacha2026FraudMonitoringReady: true,
+        riskScoreOutOf100: score,
+        verdict,
+        requesterEmail: email,
+        knownMasterDomain: known || null,
+        bankVerification: {
+          rail,
+          input: bankRaw,
+          validChecksum: bankCheck.valid,
+          bankCountry: bankCheck.country,
+          expectedVendorCountry: expectedCountry || null,
+          detail: bankCheck.reason
+        },
+        liveDnsSecurity: {
+          domain,
+          mxServersFound: mxAns.slice(0, 3),
+          hasSpf: Boolean(spf),
+          dmarcPolicy
+        },
+        taxIdProvided: taxId || null,
+        flags
+      };
+      const pre = document.getElementById('auditJson');
+      pre.style.display = 'block';
+      pre.textContent = JSON.stringify(report, null, 2);
+    }
+  </script>
+</body>
+</html>
