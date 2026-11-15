@@ -110,3 +110,4 @@
 - [Free Browser US Corporate Bank Payee Positive Pay Check File Validator: 80-Char BofA CashPro, Wells Fargo CEO ARP (*03/320/370/&), PNC PINACLE & J.P. Morgan Chase CSV Auditor](https://geornaden.github.io/finops-studio/free-us-positive-pay-check-file-validator.html)
 - [VIP Simple Guide — Understand What FinOps Studio Does in 10 Seconds (Plain-English Visual Overview for Non-Technical Business Owners)](https://geornaden.github.io/finops-studio/how-it-works-simple.html)
 - [Multi-Cloud Banking API & AI Agent MCP Hub Directory: RapidAPI Hub REST Subscriptions (<10ms Edge), MCPRush Remote MCP Servers & Skill Packs, and Apify Cloud Batch APIs](https://geornaden.github.io/finops-studio/rapidapi-mcprush-claude-cursor-banking-api-hub.html)
+- [Visor y Conversor Gratis AEB Norma 43 (Cuaderno 43) a Excel CSV + Auditor IBAN ES (MOD-11/97) y Cuadre Registro 33](https://geornaden.github.io/finops-studio/free-spanish-aeb-norma-43-cuaderno-43-viewer.html)

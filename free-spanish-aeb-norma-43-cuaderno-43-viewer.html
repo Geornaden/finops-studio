@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visor y Conversor Gratis AEB Norma 43 (.n43 / Cuaderno 43) a Excel CSV + Auditor IBAN ES | FinOps Studio</title>
+  <meta name="description" content="Valide y convierta gratis en su navegador ficheros bancarios AEB Norma 43 (.n43 / .c43) de 80 columnas (CaixaBank, BBVA, Santander, Sabadell, Bankinter) a CSV UTF-8 con cálculo de IBAN ES (MOD-11/97) y cuadre del Registro 33." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-spanish-aeb-norma-43-cuaderno-43-viewer.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Visor Gratis AEB Norma 43 (.n43 / Cuaderno 43) a CSV + Auditor IBAN ES" />
+  <meta property="og:description" content="100% privado en el navegador: inspeccione extractos de 80 caracteres (Registros 11, 22, 23, 33 y 88), calcule dígitos de control CCC + IBAN ES y exporte a Excel CSV." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-spanish-aeb-norma-43-cuaderno-43-viewer.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Visor y Conversor Gratis AEB Norma 43 (Cuaderno 43) a CSV + Auditor IBAN ES",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser)",
+        "url": "https://geornaden.github.io/finops-studio/free-spanish-aeb-norma-43-cuaderno-43-viewer.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "EUR"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "¿Cómo abrir un archivo bancario Norma 43 (.n43 o .c43) y pasarlo a Excel CSV sin instalar programas?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Pegue o arrastre su extracto AEB Cuaderno 43 de 80 columnas en este visor gratuito. El motor ejecuta localmente en su navegador el cálculo de los dígitos de control CCC (MOD-11 del Banco de España), obtiene el IBAN ES completo (MOD-97), une los conceptos complementarios del Registro 23, verifica al céntimo el saldo del Registro 33 y descarga un CSV UTF-8 limpio para Excel, Odoo, Holded o A3ERP."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Por qué falla la importación de un fichero Norma 43 en el ERP?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Los errores más habituales son líneas recortadas con menos o más de 80 caracteres exactos, descuadre de céntimos entre la suma de movimientos (Registro 22) y el pie de cuenta (Registro 33), o un contador erróneo de registros en el pie de archivo (Registro 88)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .audit-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .audit-stat {
+      background: rgba(15,23,42,0.85);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .audit-stat .lbl {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .audit-stat .val {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .tx-table-wrap {
+      overflow-x: auto;
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    table.tx-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+    table.tx-table th, table.tx-table td {
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      white-space: nowrap;
+    }
+    table.tx-table th {
+      background: rgba(30,41,59,0.85);
+      color: #94a3b8;
+    }
+    .badge-ok { color: #34d399; font-weight: 700; }
+    .badge-err { color: #f87171; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html">API Norma 43</a>
+        <a href="./facturacion-electronica-2026-peppol-sepa-xml-espana.html">SEPA Cuaderno 34</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Automatizar vía API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:12px;">
+      <span class="pill">&#127466;&#127480; 100% Privado en su Navegador &bull; 80 Columnas AEB Cuaderno 43 &bull; IBAN ES + CSV</span>
+      <h1>Visor Gratis AEB Norma 43 (`.n43` / `.c43`), Auditor de Saldos (`Reg. 33`) y Conversor a Excel CSV</h1>
+      <p style="max-width:820px;margin:0 auto;">Inspeccione al instante extractos bancarios de <strong>CaixaBankNow, BBVA Net Cash, Santander, Sabadell, Bankinter y Abanca</strong> sin subir ningún dato bancario a Internet. Calcula automáticamente el <strong>IBAN `ES` (MOD-11 + MOD-97)</strong>, une conceptos `23`, verifica el cuadre al céntimo y exporta a CSV.</p>
+    </section>
+
+    <section class="sandbox-card" aria-label="AEB Norma 43 Interactive Browser Inspector">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <h2 style="margin:0;font-size:1.15rem;">Pegue o cargue su fichero `.n43` / `.c43` (80 caracteres por línea)</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" onclick="loadSampleN43('valid')">Cargar Ejemplo CaixaBank (OK)</button>
+          <button type="button" class="btn btn-outline" onclick="loadSampleN43('broken')">Probar Descuadre Reg. 33</button>
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            Subir Archivo .N43
+            <input type="file" accept=".n43,.c43,.txt,.q43" style="display:none" onchange="handleN43Upload(event)" />
+          </label>
+        </div>
+      </div>
+
+      <textarea id="n43Input" class="code-box" rows="9" style="width:100%;font-family:monospace;white-space:pre;overflow-x:auto;" spellcheck="false"></textarea>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button type="button" class="btn btn-primary" onclick="auditNorma43()">Auditar Extracto Norma 43 y Calcular IBAN</button>
+        <button type="button" class="btn btn-outline" id="btnExportN43Csv" onclick="downloadN43Csv()" disabled>Descargar CSV para Excel / ERP</button>
+      </div>
+
+      <div id="n43Summary" class="audit-summary" aria-live="polite"></div>
+      <div id="n43Issues" style="margin-top:10px;"></div>
+      <div id="n43TableWrap" class="tx-table-wrap" style="display:none;"></div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:24px;">
+      <h2 style="margin-top:0;">¿Necesita procesar cientos de extractos `.n43` cada mañana por SFTP, n8n, Make o Python?</h2>
+      <p style="color:var(--muted);font-size:0.94rem;">Conecte la API en la nube de <strong>FinOps Studio</strong> para transformar automáticamente extractos bancarios `Norma 43` y `BAI2`, generar remesas `SEPA XML pain.001.001.09` (`Cuaderno 34.14`) y emitir facturas electrónicas europeas `Peppol BIS 3.0`.</p>
+      <div class="hero-actions" style="justify-content:flex-start;">
+        <a class="btn btn-primary" href="./spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html">Ver Especificación API Norma 43 &rarr;</a>
+        <a class="btn btn-outline" href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">RapidAPI, MCPRush &amp; Apify Hub</a>
+        <a class="btn btn-outline" href="./facturacion-electronica-2026-peppol-sepa-xml-espana.html">Guía SEPA XML &amp; Peppol España</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>FinOps Studio</strong> &mdash; Infraestructura determinista de tesorería bancaria, nóminas y facturación electrónica.</p>
+      <p style="font-size:0.84rem;color:var(--muted);">
+        <a href="./index.html">Inicio</a> &bull;
+        <a href="./how-it-works-simple.html">VIP Simple Guide</a> &bull;
+        <a href="./spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html">API Norma 43</a> &bull;
+        <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">Validador SEPA XML</a> &bull;
+        <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const SPANISH_BANKS = {
+      '2100': 'CaixaBank',
+      '0182': 'BBVA',
+      '0049': 'Banco Santander',
+      '0081': 'Banco Sabadell',
+      '0128': 'Bankinter',
+      '2080': 'Abanca',
+      '0073': 'Openbank',
+      '1465': 'ING España'
+    };
+
+    const COMMON_CONCEPTS = {
+      '01': 'Talones / Reintegros',
+      '02': 'Abonarés / Entregas / Ingresos',
+      '03': 'Domiciliaciones / Recibos SEPA',
+      '04': 'Giros / Transferencias / Nóminas SEPA',
+      '05': 'Amortizaciones Préstamos',
+      '06': 'Remesas Efectos',
+      '07': 'Suscripciones / Valores',
+      '08': 'Dividendos / Cupones',
+      '09': 'Operaciones de Bolsa',
+      '10': 'Cheques Gasolina',
+      '11': 'Cajeros Automáticos',
+      '12': 'Tarjetas de Crédito / TPV',
+      '13': 'Operaciones Extranjero',
+      '14': 'Devoluciones e Impagados',
+      '15': 'Nóminas y Seguros Sociales',
+      '16': 'Timbres / Corretaje',
+      '17': 'Intereses, Comisiones y Gastos',
+      '98': 'Anulaciones y Correcciones',
+      '99': 'Varios'
+    };
+
+    const SAMPLES_N43 = {
+      valid: [
+        '112100041802000513322611102611122000000015000009783IBERIA LOGISTICA SL          ',
+        '22    0418261111261111040012000000002450500000451201FAC20260891 B2B CLIENTE MADR',
+        '2301COBRO FACTURA 2026-0891               DISTRIBUCIONES NORTE SA               ',
+        '22    0418261112261112030151000000000380250000451202RECIBO LUZ  ENDESA ENERGIA  ',
+        '2301RECIBO DOMICILIADO SEPA CORE          SUMINISTRO ELECTRICO NAVE MADRID      ',
+        '3321000418020005133200001000000000380250000100000000245050200000001707025978    ',
+        '88999999999999999999000006                                                      '
+      ].join('\n'),
+      broken: [
+        '110182123402000987652611102611122000000010000009783GRUPO INDUSTRIAL SUR SL      ',
+        '22    1234261111261111040012000000001200000000009001TRANSF CLIENTE SEVILLA      ',
+        '3301821234020009876500000000000000000000000100000000120000200000001150000978    ',
+        '88999999999999999999000009                                                      '
+      ].join('\n')
+    };
+
+    let lastParsedRows = [];
+
+    function calcSpanishMod11Digit(tenDigits) {
+      const weights = [1, 2, 4, 8, 5, 10, 9, 7, 3, 6];
+      let sum = 0;
+      for (let i = 0; i < 10; i++) {
+        sum += parseInt(tenDigits[i], 10) * weights[i];
+      }
+      let rem = 11 - (sum % 11);
+      if (rem === 11) rem = 0;
+      else if (rem === 10) rem = 1;
+      return String(rem);
+    }
+
+    function deriveSpanishIban(bank4, branch4, account10) {
+      if (!/^\d{4}$/.test(bank4) || !/^\d{4}$/.test(branch4) || !/^\d{10}$/.test(account10)) return null;
+      const d1 = calcSpanishMod11Digit('00' + bank4 + branch4);
+      const d2 = calcSpanishMod11Digit(account10);
+      const dc = d1 + d2;
+      const bban = bank4 + branch4 + dc + account10;
+      // ES -> E=14, S=28 -> '142800'
+      const numericStr = bban + '142800';
+      const mod97 = BigInt(numericStr) % 97n;
+      const checkIban = String(98n - mod97).padStart(2, '0');
+      return { dc, iban: 'ES' + checkIban + bban };
+    }
+
+    function fmtYymmdd(s) {
+      if (!/^\d{6}$/.test(s)) return s;
+      return '20' + s.slice(0, 2) + '-' + s.slice(2, 4) + '-' + s.slice(4, 6);
+    }
+
+    function fmtCents(centsBig) {
+      const neg = centsBig < 0n;
+      const abs = neg ? -centsBig : centsBig;
+      const euros = abs / 100n;
+      const cents = String(abs % 100n).padStart(2, '0');
+      return (neg ? '-' : '') + euros.toString() + '.' + cents;
+    }
+
+    function loadSampleN43(kind) {
+      document.getElementById('n43Input').value = SAMPLES_N43[kind] || SAMPLES_N43.valid;
+      auditNorma43();
+    }
+
+    function handleN43Upload(ev) {
+      const file = ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById('n43Input').value = String(reader.result || '');
+        auditNorma43();
+      };
+      reader.readAsText(file, 'ISO-8859-1');
+    }
+
+    function auditNorma43() {
+      const raw = document.getElementById('n43Input').value.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      const lines = raw.split('\n').filter(l => l.length > 0);
+      const issues = [];
+      const accounts = [];
+      let currentAcc = null;
+      let currentTx = null;
+      let record88Found = false;
+      lastParsedRows = [];
+
+      lines.forEach((line, idx) => {
+        const lineNo = idx + 1;
+        if (line.length !== 80) {
+          issues.push(`Línea ${lineNo}: longitud inválida (${line.length} caracteres; el estándar AEB Norma 43 exige exactamente 80 columnas).`);
+        }
+        const padded = line.padEnd(80, ' ');
+        const code = padded.slice(0, 2);
+
+        if (code === '11') {
+          const bank = padded.slice(2, 6);
+          const branch = padded.slice(6, 10);
+          const acct = padded.slice(10, 20);
+          const startDt = fmtYymmdd(padded.slice(20, 26));
+          const endDt = fmtYymmdd(padded.slice(26, 32));
+          const signCode = padded.slice(32, 33); // 1=Deudor(-), 2=Acreedor(+)
+          const openCents = BigInt(padded.slice(33, 47).trim() || '0') * (signCode === '1' ? -1n : 1n);
+          const currIso = padded.slice(47, 50);
+          const holder = padded.slice(51, 77).trim();
+          const ibanObj = deriveSpanishIban(bank, branch, acct);
+
+          currentAcc = {
+            bank,
+            bankName: SPANISH_BANKS[bank] || ('Entidad ' + bank),
+            branch,
+            acct,
+            iban: ibanObj ? ibanObj.iban : 'N/A',
+            dc: ibanObj ? ibanObj.dc : '--',
+            startDt,
+            endDt,
+            openCents,
+            curr: currIso === '978' ? 'EUR' : currIso,
+            holder,
+            txs: [],
+            reconciled: false,
+            closeCentsDeclared: 0n
+          };
+          accounts.push(currentAcc);
+          currentTx = null;
+        } else if (code === '22') {
+          if (!currentAcc) {
+            issues.push(`Línea ${lineNo}: Registro 22 encontrado antes de una cabecera de cuenta Registro 11.`);
+            return;
+          }
+          const origBranch = padded.slice(6, 10).trim();
+          const opDate = fmtYymmdd(padded.slice(10, 16));
+          const valDate = fmtYymmdd(padded.slice(16, 22));
+          const commonConcept = padded.slice(22, 24);
+          const ownConcept = padded.slice(24, 27);
+          const dh = padded.slice(27, 28); // 1=Debe(-), 2=Haber(+)
+          const amtCents = BigInt(padded.slice(28, 42).trim() || '0');
+          const docNum = padded.slice(42, 52).trim();
+          const ref1 = padded.slice(52, 64).trim();
+          const ref2 = padded.slice(64, 80).trim();
+
+          currentTx = {
+            iban: currentAcc.iban,
+            holder: currentAcc.holder,
+            origBranch,
+            opDate,
+            valDate,
+            commonConcept,
+            commonLabel: COMMON_CONCEPTS[commonConcept] || ('Concepto ' + commonConcept),
+            ownConcept,
+            type: dh === '1' ? 'DEBE' : 'HABER',
+            amtCents,
+            signedCents: dh === '1' ? -amtCents : amtCents,
+            docNum,
+            ref1,
+            ref2,
+            extraConcepts: []
+          };
+          currentAcc.txs.push(currentTx);
+        } else if (code === '23') {
+          if (currentTx) {
+            const c1 = padded.slice(4, 42).trim();
+            const c2 = padded.slice(42, 80).trim();
+            if (c1) currentTx.extraConcepts.push(c1);
+            if (c2) currentTx.extraConcepts.push(c2);
+          }
+        } else if (code === '33') {
+          if (!currentAcc) {
+            issues.push(`Línea ${lineNo}: Registro 33 sin cuenta activa.`);
+            return;
+          }
+          const debCountDecl = parseInt(padded.slice(20, 25).trim() || '0', 10);
+          const debTotalDecl = BigInt(padded.slice(25, 39).trim() || '0');
+          const credCountDecl = parseInt(padded.slice(39, 44).trim() || '0', 10);
+          const credTotalDecl = BigInt(padded.slice(44, 58).trim() || '0');
+          const closeSign = padded.slice(58, 59);
+          const closeDecl = BigInt(padded.slice(59, 73).trim() || '0') * (closeSign === '1' ? -1n : 1n);
+
+          let debCountCalc = 0, credCountCalc = 0;
+          let debTotalCalc = 0n, credTotalCalc = 0n;
+          currentAcc.txs.forEach(t => {
+            if (t.type === 'DEBE') { debCountCalc++; debTotalCalc += t.amtCents; }
+            else { credCountCalc++; credTotalCalc += t.amtCents; }
+          });
+          const expectedClose = currentAcc.openCents + credTotalCalc - debTotalCalc;
+          currentAcc.closeCentsDeclared = closeDecl;
+
+          if (debCountCalc !== debCountDecl || debTotalCalc !== debTotalDecl) {
+            issues.push(`Línea ${lineNo} (Reg. 33 Debe): declarados ${debCountDecl} apuntes (${fmtCents(debTotalDecl)} EUR) vs calculados ${debCountCalc} (${fmtCents(debTotalCalc)} EUR).`);
+          }
+          if (credCountCalc !== credCountDecl || credTotalCalc !== credTotalDecl) {
+            issues.push(`Línea ${lineNo} (Reg. 33 Haber): declarados ${credCountDecl} apuntes (${fmtCents(credTotalDecl)} EUR) vs calculados ${credCountCalc} (${fmtCents(credTotalCalc)} EUR).`);
+          }
+          if (expectedClose !== closeDecl) {
+            issues.push(`Línea ${lineNo} (Descuadre de Saldo Final Reg. 33): Saldo Inicial (${fmtCents(currentAcc.openCents)}) + Haber (${fmtCents(credTotalCalc)}) - Debe (${fmtCents(debTotalCalc)}) = ${fmtCents(expectedClose)} EUR, pero el pie declara ${fmtCents(closeDecl)} EUR.`);
+          } else {
+            currentAcc.reconciled = true;
+          }
+        } else if (code === '88') {
+          record88Found = true;
+          const declaredTotalRecords = parseInt(padded.slice(20, 26).trim() || '0', 10);
+          const precedingRecords = idx;
+          if (declaredTotalRecords !== precedingRecords) {
+            issues.push(`Línea ${lineNo} (Reg. 88 Fin de Archivo): declara ${declaredTotalRecords} registros previos, pero existen ${precedingRecords} líneas antes del registro 88.`);
+          }
+        }
+      });
+
+      if (lines.length > 0 && !record88Found) {
+        issues.push('Falta el Registro 88 (`88999999999999999999...`) de cierre de archivo AEB Norma 43.');
+      }
+
+      accounts.forEach(acc => {
+        acc.txs.forEach(t => {
+          lastParsedRows.push({
+            iban: acc.iban,
+            bankName: acc.bankName,
+            holder: acc.holder,
+            opDate: t.opDate,
+            valDate: t.valDate,
+            type: t.type,
+            amountEur: fmtCents(t.signedCents),
+            commonConcept: t.commonConcept + ' - ' + t.commonLabel,
+            ref1: t.ref1,
+            description: [t.ref2, ...t.extraConcepts].filter(Boolean).join(' | ')
+          });
+        });
+      });
+
+      const firstAcc = accounts[0];
+      const statusHtml = issues.length === 0 && accounts.length > 0
+        ? '<span class="badge-ok">&#10003; VÁLIDO Y CUADRADO</span>'
+        : '<span class="badge-err">&#9888; ' + issues.length + ' INCIDENCIA(S)</span>';
+
+      document.getElementById('n43Summary').innerHTML = `
+        <div class="audit-stat"><div class="lbl">Estado Auditoría</div><div class="val">${statusHtml}</div></div>
+        <div class="audit-stat"><div class="lbl">IBAN ES Calculado (MOD-11/97)</div><div class="val" style="font-size:0.96rem;">${firstAcc ? firstAcc.iban : '--'}</div></div>
+        <div class="audit-stat"><div class="lbl">Entidad / Titular</div><div class="val" style="font-size:0.95rem;">${firstAcc ? (firstAcc.bankName + ' &bull; ' + firstAcc.holder) : '--'}</div></div>
+        <div class="audit-stat"><div class="lbl">Saldo Inicial &rarr; Final</div><div class="val" style="font-size:0.96rem;">${firstAcc ? (fmtCents(firstAcc.openCents) + ' &rarr; ' + fmtCents(firstAcc.closeCentsDeclared) + ' ' + firstAcc.curr) : '--'}</div></div>
+      `;
+
+      const issuesDiv = document.getElementById('n43Issues');
+      if (issues.length > 0) {
+        issuesDiv.innerHTML = '<div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);padding:12px 16px;border-radius:10px;font-size:0.9rem;"><strong>Errores detectados antes de importar al ERP:</strong><ul style="margin:6px 0 0 18px;">' +
+          issues.map(i => `<li>${i}</li>`).join('') + '</ul></div>';
+      } else if (accounts.length > 0) {
+        issuesDiv.innerHTML = '<div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.4);padding:12px 16px;border-radius:10px;font-size:0.9rem;color:#6ee7b7;">&#10003; Todas las líneas miden 80 caracteres exactos, el IBAN ES se ha derivado por MOD-11/MOD-97 y el saldo final del Registro 33 más el contador del Registro 88 cuadran al céntimo.</div>';
+      } else {
+        issuesDiv.innerHTML = '';
+      }
+
+      const wrap = document.getElementById('n43TableWrap');
+      const exportBtn = document.getElementById('btnExportN43Csv');
+      if (lastParsedRows.length > 0) {
+        exportBtn.disabled = false;
+        wrap.style.display = 'block';
+        wrap.innerHTML = `<table class="tx-table">
+          <thead>
+            <tr>
+              <th>Fecha Op.</th>
+              <th>Fecha Valor</th>
+              <th>IBAN ES</th>
+              <th>Tipo</th>
+              <th>Importe (EUR)</th>
+              <th>Concepto AEB</th>
+              <th>Referencia 1</th>
+              <th>Concepto Ampliado (Reg. 22 + 23)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lastParsedRows.map(r => `
+              <tr>
+                <td>${r.opDate}</td>
+                <td>${r.valDate}</td>
+                <td><code>${r.iban}</code></td>
+                <td><strong>${r.type}</strong></td>
+                <td style="color:${r.type === 'HABER' ? '#34d399' : '#f87171'};font-weight:700;">${r.amountEur}</td>
+                <td>${r.commonConcept}</td>
+                <td>${r.ref1 || '-'}</td>
+                <td>${r.description || '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>`;
+      } else {
+        exportBtn.disabled = true;
+        wrap.style.display = 'none';
+      }
+    }
+
+    function downloadN43Csv() {
+      if (!lastParsedRows.length) return;
+      const headers = ['IBAN', 'Banco', 'Titular', 'Fecha_Operacion', 'Fecha_Valor', 'Tipo', 'Importe_EUR', 'Concepto_AEB', 'Referencia_1', 'Descripcion'];
+      const esc = v => '"' + String(v || '').replace(/"/g, '""') + '"';
+      const csvLines = [headers.join(',')];
+      lastParsedRows.forEach(r => {
+        csvLines.push([
+          esc(r.iban), esc(r.bankName), esc(r.holder), esc(r.opDate), esc(r.valDate),
+          esc(r.type), esc(r.amountEur), esc(r.commonConcept), esc(r.ref1), esc(r.description)
+        ].join(','));
+      });
+      const blob = new Blob(['\uFEFF' + csvLines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'extracto-norma43-conciliado.csv';
+      a.click();
+    }
+
+    loadSampleN43('valid');
+  </script>
+</body>
+</html>
