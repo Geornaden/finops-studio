@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nordic Corporate Treasury &amp; Peppol EHF 3.0 Playbook: Validate NO Organisasjonsnummer, SE Organisationsnummer, DK CVR, FI Y-tunnus &amp; Nordic IBANs | FinOps Studio</title>
+  <meta name="description" content="Free interactive 4-country Nordic company registry &amp; IBAN validator: check Norwegian Organisasjonsnummer (MOD-11, Peppol 0192), Swedish Organisationsnummer (Luhn, 0007), Danish CVR (MOD-11, 0184), Finnish Y-tunnus (MOD-11, 0216) and SEPA pain.001.001.09 for DNB, Nordea, SEB, Handelsbanken &amp; Danske Bank." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/nordic-ehf-peppol-orgnr-sepa-xml-dnb-nordea-seb-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Nordic Corporate Treasury &amp; Peppol EHF 3.0 Validator (NO / SE / DK / FI + DNB, Nordea, SEB, Danske Bank)" />
+  <meta property="og:description" content="Validate NO Org.nr, SE Org.nr, DK CVR, FI Y-tunnus and Nordic IBANs in real time and generate ready-to-run SEPA pain.001.001.09 &amp; Peppol BIS 3.0 / EHF 3.0 API payloads." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/nordic-ehf-peppol-orgnr-sepa-xml-dnb-nordea-seb-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Nordic 4-Country Company Registry (Org.nr / CVR / Y-tunnus), IBAN & Peppol EHF 3.0 / SEPA XML Validator",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "url": "https://geornaden.github.io/finops-studio/nordic-ehf-peppol-orgnr-sepa-xml-dnb-nordea-seb-api.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "EUR"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which OpenPeppol Electronic Address Scheme (EAS) codes and company check-digit formulas apply across Norway, Sweden, Denmark, and Finland?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Norway uses 9-digit Brønnøysund Organisasjonsnummer validated with weights [3,2,7,6,5,4,3,2] MOD-11 under Peppol EAS 0192. Sweden uses 10-digit Bolagsverket Organisationsnummer validated via the Luhn MOD-10 algorithm under EAS 0007. Denmark uses 8-digit Erhvervsstyrelsen CVR-nummer validated with weights [2,7,6,5,4,3,2,1] MOD-11 (including OpenPeppol v3.0.21 fatal rules PEPPOL-COMMON-R052/R053) under EAS 0184. Finland uses Y-tunnus (7 digits + hyphen + MOD-11 check digit with weights [7,9,10,5,8,4,2]) under EAS 0216 / OVT 0037."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What are the exact IBAN lengths for DNB, Nordea, SEB, Handelsbanken, and Danske Bank across the Nordics?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Norwegian IBANs are 15 characters (NO + 2 check digits + 4-digit bank code + 6-digit account + 1 MOD-11 check digit), Danish and Finnish IBANs are 18 characters (DK / FI + 16 digits), and Swedish IBANs are 24 characters (SE + 2 check digits + 3-digit clearing prefix + 17-digit account)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .nd-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .nd-field label {
+      display: block;
+      font-size: 0.79rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .nd-field input, .nd-field select {
+      width: 100%;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      color: var(--text);
+      font-size: 0.94rem;
+    }
+    .nd-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .nd-card {
+      background: rgba(15,23,42,0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .nd-card .lbl {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .nd-card .val {
+      font-size: 1.02rem;
+      font-weight: 700;
+      margin-top: 5px;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./regulatory-compliance-radar-2026-2027-sepa-peppol-fedwire-nacha.html">2026–2027 Law Radar</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Multi-Cloud API Hub</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Start Free ($5 Credits) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:14px;">
+      <span class="pill">&#127475;&#127476; &#127480;&#127466; &#127465;&#127472; &#127467;&#127470; Nordics P27 / ISO 20022 &bull; EHF 3.0 &bull; Svefaktura / Peppol &bull; NemHandel &bull; Finvoice</span>
+      <h1>Nordic Corporate Treasury &amp; Peppol EHF 3.0 Playbook: `NO Org.nr`, `SE Org.nr`, `DK CVR`, `FI Y-tunnus` &amp; `SEPA pain.001`</h1>
+      <p style="max-width:860px;margin:0 auto;">Built for Nordic CFOs, accounting bureaus, and ERP integrators running <strong>Visma.net / Tripletex / PowerOffice Go</strong>, <strong>Fortnox</strong>, <strong>e-conomic</strong>, <strong>Procountor / Netvisor</strong>, and <strong>Microsoft Dynamics 365 Business Central</strong>. Verify 4-country Nordic company registration check digits and exact IBAN structures for <strong>DNB, Nordea, SEB, Svenska Handelsbanken, Swedbank, Danske Bank, and OP Corporate Bank</strong> before transmitting ISO 20022 `pain.001.001.09` or OpenPeppol `v3.0.21` XML.</p>
+    </section>
+
+    <section class="sandbox-card" style="margin-bottom:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <h2 style="margin:0;font-size:1.14rem;">1. Interactive 4-Country Nordic Registry &amp; Bank IBAN Validator</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadNordic('NO')">&#127475;&#127476; Norway (DNB + EHF 0192)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadNordic('SE')">&#127480;&#127466; Sweden (SEB + Peppol 0007)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadNordic('DK')">&#127465;&#127472; Denmark (Danske + NemHandel 0184)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadNordic('FI')">&#127467;&#127470; Finland (Nordea + Y-tunnus 0216)</button>
+        </div>
+      </div>
+
+      <div class="nd-grid">
+        <div class="nd-field">
+          <label for="ndCountry">Nordic Jurisdiction</label>
+          <select id="ndCountry" onchange="loadNordic(this.value)">
+            <option value="NO">Norway (NO — Organisasjonsnummer 9 digits)</option>
+            <option value="SE">Sweden (SE — Organisationsnummer 10 digits)</option>
+            <option value="DK">Denmark (DK — CVR-nummer 8 digits)</option>
+            <option value="FI">Finland (FI — Y-tunnus NNNNNNN-C)</option>
+          </select>
+        </div>
+        <div class="nd-field">
+          <label for="ndOrg">Company Registration Number</label>
+          <input id="ndOrg" type="text" value="984851006" oninput="runNordicAudit()" />
+        </div>
+        <div class="nd-field">
+          <label for="ndIban">Nordic Bank IBAN (15 / 18 / 24 chars)</label>
+          <input id="ndIban" type="text" value="NO3870010530206" oninput="runNordicAudit()" />
+        </div>
+        <div class="nd-field">
+          <label for="ndName">Supplier / Payee Legal Name</label>
+          <input id="ndName" type="text" value="Fjord Cloud Systems AS" oninput="runNordicAudit()" />
+        </div>
+      </div>
+
+      <div class="nd-cards">
+        <div class="nd-card">
+          <div class="lbl">Company Registry Checksum</div>
+          <div class="val" id="resOrg">—</div>
+        </div>
+        <div class="nd-card">
+          <div class="lbl">Peppol BIS 3.0 / EHF Endpoint</div>
+          <div class="val" id="resPeppol">—</div>
+        </div>
+        <div class="nd-card">
+          <div class="lbl">Nordic IBAN Check (MOD-97)</div>
+          <div class="val" id="resIban">—</div>
+        </div>
+        <div class="nd-card">
+          <div class="lbl">Detected Nordic Clearing Bank</div>
+          <div class="val" id="resBank">—</div>
+        </div>
+      </div>
+
+      <h3 style="font-size:0.95rem;margin:14px 0 8px;">Ready-to-Run API Payload (`SEPA pain.001.001.09` + `OpenPeppol v3.0.21`)</h3>
+      <pre id="ndJson" style="background:#090f1d;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;font-size:0.81rem;color:#a7f3d0;"></pre>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Generate Peppol / EHF 3.0 XML in Cloud &rarr;</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generate ISO 20022 `pain.001.001.09` XML &rarr;</a>
+        <a class="btn btn-outline" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-iban-nacha-aba-and-vat-validator" target="_blank" rel="noopener">Validate IBAN &amp; VAT on RapidAPI (&lt;10ms) &rarr;</a>
+        <a class="btn btn-outline" href="./sepa-xml-peppol-ehf-finvoice-austria-nordics.html">Austria &amp; Nordics Architecture Guide</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container" style="text-align:center;font-size:0.83rem;color:var(--muted);">
+      <p>&copy; 2026 FinOps Studio &bull; Deterministic Banking, Payroll &amp; Nordic Peppol / EHF 3.0 Cloud APIs &bull; Zero Server Retention in Browser Sandbox</p>
+    </div>
+  </footer>
+
+  <script>
+    const PRESETS = {
+      NO: { org: '984851006', iban: 'NO3870010530206', name: 'Fjord Cloud Systems AS', city: 'Oslo', post: '0150' },
+      SE: { org: '556012-5790', iban: 'SE4550000000058398257466', name: 'Stockholm Data AB', city: 'Stockholm', post: '111 22' },
+      DK: { org: '10150817', iban: 'DK2930000001234567', name: 'København Logistik ApS', city: 'København K', post: '1050' },
+      FI: { org: '0116297-6', iban: 'FI3315903000123456', name: 'Helsinki Verkko Oy', city: 'Helsinki', post: '00100' }
+    };
+
+    function checkOrg(cc, raw) {
+      const d = raw.replace(/^(NO|SE|DK|FI)/i, '').replace(/MVA$/i, '').replace(/\D/g, '');
+      if (cc === 'NO') {
+        if (d.length !== 9) return { valid: false, clean: d, eas: '0192', peppolId: d, vat: 'NO' + d + 'MVA', msg: 'Expected 9 digits (' + d.length + ')' };
+        const w = [3, 2, 7, 6, 5, 4, 3, 2];
+        let s = 0; for (let i = 0; i < 8; i++) s += Number(d[i]) * w[i];
+        const r = s % 11;
+        const c = r === 0 ? 0 : (11 - r);
+        const ok = c !== 10 && c === Number(d[8]);
+        return { valid: ok, clean: d, eas: '0192', peppolId: d, vat: 'NO' + d + 'MVA', msg: ok ? 'VALID NO Org.nr (MOD-11 = ' + c + ')' : 'INVALID MOD-11 (Expected ' + c + ')' };
+      }
+      if (cc === 'SE') {
+        const clean10 = d.length === 12 ? d.slice(2) : d;
+        if (clean10.length !== 10) return { valid: false, clean: clean10, eas: '0007', peppolId: clean10, vat: 'SE' + clean10 + '01', msg: 'Expected 10 digits (' + clean10.length + ')' };
+        let s = 0;
+        for (let i = 0; i < 9; i++) {
+          let v = Number(clean10[i]) * (i % 2 === 0 ? 2 : 1);
+          if (v > 9) v -= 9;
+          s += v;
+        }
+        const c = (10 - (s % 10)) % 10;
+        const ok = c === Number(clean10[9]);
+        return { valid: ok, clean: clean10, eas: '0007', peppolId: clean10, vat: 'SE' + clean10 + '01', msg: ok ? 'VALID SE Org.nr (Luhn = ' + c + ')' : 'INVALID Luhn Check Digit (Expected ' + c + ')' };
+      }
+      if (cc === 'DK') {
+        if (d.length !== 8) return { valid: false, clean: d, eas: '0184', peppolId: 'DK' + d, vat: 'DK' + d, msg: 'Expected 8 digits (' + d.length + ')' };
+        const w = [2, 7, 6, 5, 4, 3, 2, 1];
+        let s = 0; for (let i = 0; i < 8; i++) s += Number(d[i]) * w[i];
+        const ok = s % 11 === 0;
+        return { valid: ok, clean: d, eas: '0184', peppolId: 'DK' + d, vat: 'DK' + d, msg: ok ? 'VALID DK CVR (MOD-11 = 0, R052 Ready)' : 'INVALID DK CVR MOD-11 (' + (s % 11) + ' != 0)' };
+      }
+      // FI Y-tunnus
+      if (d.length !== 8) return { valid: false, clean: d, eas: '0216', peppolId: '0037' + d, vat: 'FI' + d, msg: 'Expected 8 digits NNNNNNN-C (' + d.length + ')' };
+      const w = [7, 9, 10, 5, 8, 4, 2];
+      let s = 0; for (let i = 0; i < 7; i++) s += Number(d[i]) * w[i];
+      const r = s % 11;
+      if (r === 1) return { valid: false, clean: d, eas: '0216', peppolId: '0037' + d, vat: 'FI' + d, msg: 'Remainder 1 is forbidden in Y-tunnus' };
+      const c = r === 0 ? 0 : (11 - r);
+      const ok = c === Number(d[7]);
+      return { valid: ok, clean: d.slice(0, 7) + '-' + d[7], eas: '0216', peppolId: '0037' + d, vat: 'FI' + d, msg: ok ? 'VALID FI Y-tunnus (MOD-11 = ' + c + ')' : 'INVALID Y-tunnus Check Digit (Expected ' + c + ')' };
+    }
+
+    function checkNordicIban(raw) {
+      const clean = raw.replace(/\s+/g, '').toUpperCase();
+      const lengths = { NO: 15, DK: 18, FI: 18, SE: 24 };
+      const cc = clean.slice(0, 2);
+      const expLen = lengths[cc];
+      if (!expLen || clean.length !== expLen) {
+        return { valid: false, clean, bank: 'Unknown / Wrong IBAN Length', msg: expLen ? ('Expected ' + expLen + ' chars for ' + cc + ' (' + clean.length + ')') : 'Enter NO / SE / DK / FI IBAN' };
+      }
+      const rearranged = clean.slice(4) + clean.slice(0, 4);
+      let expanded = '';
+      for (const ch of rearranged) expanded += (ch >= 'A' && ch <= 'Z') ? String(ch.charCodeAt(0) - 55) : ch;
+      let rem = 0;
+      for (let i = 0; i < expanded.length; i += 7) rem = Number(String(rem) + expanded.slice(i, i + 7)) % 97;
+
+      let bank = cc + ' Commercial Bank';
+      const prefix = clean.slice(4, 8);
+      if (cc === 'NO') {
+        if (prefix.startsWith('70') || prefix.startsWith('71') || prefix.startsWith('50') || prefix.startsWith('15')) bank = 'DNB Bank ASA (Norway)';
+        else if (prefix.startsWith('60')) bank = 'Nordea Bank Abp, Filial i Norge';
+        else if (prefix.startsWith('97') || prefix.startsWith('90')) bank = 'Handelsbanken / SpareBank 1';
+        else bank = 'Norwegian Bank (Reg.nr ' + prefix + ')';
+      } else if (cc === 'SE') {
+        const p3 = clean.slice(4, 7);
+        if (p3 === '500') bank = 'Skandinaviska Enskilda Banken (SEB)';
+        else if (p3 === '300' || p3 === '330') bank = 'Nordea Bank (Sweden)';
+        else if (p3 === '600') bank = 'Svenska Handelsbanken AB';
+        else if (p3 === '800') bank = 'Swedbank AB';
+        else bank = 'Swedish Bank (Clearing ' + p3 + ')';
+      } else if (cc === 'DK') {
+        if (prefix === '3000' || prefix === '4000') bank = 'Danske Bank A/S';
+        else if (prefix === '2000') bank = 'Nordea Danmark';
+        else if (prefix === '5000') bank = 'Jyske Bank / Nykredit';
+        else bank = 'Danish Bank (Reg.nr ' + prefix + ')';
+      } else if (cc === 'FI') {
+        const p2 = clean.slice(4, 6);
+        if (p2 === '15' || p2 === '10' || p2 === '20') bank = 'Nordea Bank Abp (Finland)';
+        else if (p2 === '50') bank = 'OP Corporate Bank plc';
+        else if (p2 === '80') bank = 'Danske Bank A/S, Finland Branch';
+        else bank = 'Finnish Bank (Group ' + p2 + ')';
+      }
+      return { valid: rem === 1, clean, bank, msg: rem === 1 ? ('VALID ' + cc + ' IBAN (MOD-97 = 1)') : ('INVALID IBAN MOD-97 (Rem ' + rem + ')') };
+    }
+
+    function loadNordic(cc) {
+      document.getElementById('ndCountry').value = cc;
+      const p = PRESETS[cc];
+      document.getElementById('ndOrg').value = p.org;
+      document.getElementById('ndIban').value = p.iban;
+      document.getElementById('ndName').value = p.name;
+      runNordicAudit();
+    }
+
+    function runNordicAudit() {
+      const cc = document.getElementById('ndCountry').value;
+      const orgRes = checkOrg(cc, document.getElementById('ndOrg').value.trim());
+      const ibanRes = checkNordicIban(document.getElementById('ndIban').value.trim());
+      const name = document.getElementById('ndName').value.trim() || PRESETS[cc].name;
+
+      const elOrg = document.getElementById('resOrg');
+      elOrg.textContent = orgRes.msg;
+      elOrg.style.color = orgRes.valid ? '#34d399' : '#f87171';
+
+      const elPep = document.getElementById('resPeppol');
+      elPep.textContent = orgRes.valid ? (orgRes.eas + ':' + orgRes.peppolId) : 'Blocked (Invalid Registry ID)';
+      elPep.style.color = orgRes.valid ? '#93c5fd' : '#fbbf24';
+
+      const elIban = document.getElementById('resIban');
+      elIban.textContent = ibanRes.msg;
+      elIban.style.color = ibanRes.valid ? '#34d399' : '#f87171';
+
+      const elBank = document.getElementById('resBank');
+      elBank.textContent = ibanRes.bank;
+      elBank.style.color = ibanRes.valid ? '#e2e8f0' : '#fbbf24';
+
+      const payload = {
+        nordicReady: orgRes.valid && ibanRes.valid,
+        jurisdiction: cc,
+        openPeppolEndpoint: {
+          schemeId: orgRes.eas,
+          participantId: orgRes.peppolId,
+          vatOrMvaNumber: orgRes.vat,
+          profile: cc === 'NO' ? 'EHF Billing 3.0 / Peppol BIS 3.0' : 'Peppol BIS Billing 3.0 (v3.0.21)'
+        },
+        iso20022Pain00100109Transaction: {
+          creditorName: name,
+          creditorIban: ibanRes.clean,
+          detectedNordicBank: ibanRes.bank,
+          structuredPostalAddress: {
+            postCode: PRESETS[cc].post,
+            townName: PRESETS[cc].city,
+            country: cc
+          },
+          currency: cc === 'FI' ? 'EUR' : (cc + 'K / EUR SEPA'),
+          amount: '2400.00',
+          remittanceInfo: 'INVOICE PEPPOL ' + orgRes.eas + ':' + orgRes.peppolId
+        }
+      };
+      document.getElementById('ndJson').textContent = JSON.stringify(payload, null, 2);
+    }
+
+    runNordicAudit();
+  </script>
+</body>
+</html>
