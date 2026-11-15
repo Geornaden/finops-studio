@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veri*factu 2026, Ley Crea y Crece, Peppol BIS 3.0, SEPA Cuaderno 34 y Norma 43 API | FinOps Studio</title>
+  <meta name="description" content="Guía práctica y validador interactivo de NIF/CIF/NIE + IBAN ES para CFOs, asesorías y desarrolladores en España: automatice Peppol EN 16931 (Ley Crea y Crece), remesas SEPA XML pain.001.001.09 (Cuaderno 34.14) y conciliación AEB Norma 43." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/verifactu-ley-crea-y-crece-peppol-norma-43-api-espana.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Veri*factu 2026 &amp; Ley Crea y Crece: Validador NIF/CIF + API SEPA, Peppol &amp; Norma 43" />
+  <meta property="og:description" content="Valide NIF, CIF, NIE e IBAN ES en su navegador y genere payloads listos para Peppol BIS 3.0 y SEPA Cuaderno 34.14." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/verifactu-ley-crea-y-crece-peppol-norma-43-api-espana.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Veri*factu 2026 y Ley Crea y Crece: Guía de Automatización API para Peppol EN 16931, SEPA XML Cuaderno 34 y AEB Norma 43",
+        "inLanguage": "es-ES",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "url": "https://geornaden.github.io/finops-studio/verifactu-ley-crea-y-crece-peppol-norma-43-api-espana.html"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "¿Qué diferencia hay entre Veri*factu (AEAT) y la factura electrónica B2B de la Ley Crea y Crece / ViDA Peppol?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Veri*factu (Real Decreto 1007/2023) regula los requisitos antifraude de los sistemas informáticos de facturación ante la AEAT, mientras que la Ley Crea y Crece (Ley 18/2022) y la directiva europea ViDA exigen el intercambio estructurado de facturas electrónicas B2B bajo semántica europea EN 16931 (UBL 2.1 / Peppol BIS 3.0 / CII). FinOps Studio valida identificadores fiscales españoles (NIF/CIF/NIE + ES VAT) y genera XML EN 16931 exacto al céntimo junto con remesas SEPA pain.001.001.09 y lectura de Norma 43."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Cómo se calcula el dígito de control de un CIF societario español (A, B, E, H, P, Q, S, U, V)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Se suman los dígitos de posición par (2, 4, 6) y, para las posiciones impares (1, 3, 5, 7), se multiplica cada cifra por 2 y se suman sus dígitos individuales. El complemento a 10 de la unidad de la suma total determina el dígito numérico (0–9) o la letra de control (JABCDEFGHI según el tipo de entidad)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .es-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .es-box {
+      background: rgba(15,23,42,0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .es-box .lbl {
+      font-size: 0.77rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .es-box .val {
+      font-size: 1.04rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .form-es {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .form-es input {
+      width: 100%;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 0.94rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./free-spanish-aeb-norma-43-cuaderno-43-viewer.html">Visor Norma 43</a>
+        <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">Validador SEPA XML</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Suscribirse en RapidAPI &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:12px;">
+      <span class="pill">&#127466;&#127480; España CFO &amp; Asesorías 2026 &bull; NIF/CIF/NIE + SEPA 34.14 + Peppol EN 16931 + Norma 43</span>
+      <h1>Playbook de Automatización Financiera España 2026: Veri*factu, Ley Crea y Crece (`Peppol`), SEPA `Cuaderno 34.14` y `Norma 43`</h1>
+      <p style="max-width:830px;margin:0 auto;">Valide al instante identificadores fiscales españoles (<strong>CIF societario, NIF/DNI y NIE</strong>) junto con <strong>IBAN `ES`</strong>, y genere payloads deterministas listos para facturación electrónica B2B europea (`EN 16931 / Peppol BIS 3.0`), remesas bancarias `pain.001.001.09` y conciliación `Cuaderno 43`.</p>
+    </section>
+
+    <!-- INTERACTIVE SPANISH NIF/CIF/NIE + ES IBAN VALIDATOR & PAYLOAD GENERATOR -->
+    <section class="sandbox-card" aria-label="Validador Interactivo NIF CIF NIE e IBAN ES">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <h2 style="margin:0;font-size:1.14rem;">Validador Interactivo `CIF / NIF / NIE` + `IBAN ES` &amp; Generador Payload API</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" onclick="loadEsPreset('sl')">Ejemplo Sociedad Limitada (CIF B)</button>
+          <button type="button" class="btn btn-outline" onclick="loadEsPreset('sa')">Ejemplo Sociedad Anónima (CIF A)</button>
+          <button type="button" class="btn btn-outline" onclick="loadEsPreset('autonomo')">Ejemplo Autónomo (NIF)</button>
+        </div>
+      </div>
+
+      <div class="form-es">
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">NIF / CIF / NIE Español (con o sin `ES`)</label>
+          <input id="esTaxId" type="text" value="ESB61234562" oninput="auditSpanishEntity()" />
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">IBAN Bancario Español (`ES` 24 caracteres)</label>
+          <input id="esIbanInput" type="text" value="ES9121000418450200051332" oninput="auditSpanishEntity()" />
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">Razón Social / Proveedor</label>
+          <input id="esCompanyInput" type="text" value="Iberia Logística Digital S.L." oninput="auditSpanishEntity()" />
+        </div>
+        <div>
+          <label style="font-size:0.8rem;color:var(--muted);">Base Imponible Factura (EUR, IVA 21%)</label>
+          <input id="esNetAmt" type="number" step="0.01" value="1500.00" oninput="auditSpanishEntity()" />
+        </div>
+      </div>
+
+      <div id="esResultGrid" class="es-grid" aria-live="polite"></div>
+
+      <h3 style="margin:14px 0 8px;font-size:1rem;">Payload JSON Listo para `finops_studio/eu-einvoice-xml-generator` / RapidAPI Peppol UBL:</h3>
+      <pre id="esPayloadBox" class="code-box" style="min-height:175px;"></pre>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button type="button" class="btn btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('esPayloadBox').textContent)">Copiar Payload JSON</button>
+        <a class="btn btn-outline" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Ejecutar en RapidAPI Edge (&lt;10ms) &rarr;</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Ejecutar en Apify Cloud ($0/mes)</a>
+      </div>
+    </section>
+
+    <!-- 3 PILLARS OF SPANISH TREASURY AUTOMATION -->
+    <h2 class="section-title" style="margin-top:32px;">Los 3 Pilares Bancarios y Fiscales de una Empresa en España (2026–2027)</h2>
+    <div class="grid-3">
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">Cuaderno 34.14 / 19.14</span><span class="tag">EPC Nov 2026</span></div>
+          <h3>1. Remesas SEPA `pain.001.001.09` con Dirección Estructurada</h3>
+          <p>Desde noviembre de 2026 la banca española (CaixaBank, BBVA, Santander, Sabadell, Bankinter) exige direcciones postales estructuradas (`<TwnNm>` + `<Ctry>`) para evitar rechazos `BE04`.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="./free-sepa-xml-pain001-xsd-be04-validator.html">Validador Gratis SEPA</a>
+          <a class="btn btn-outline" href="./sepa-xml-generator.html">API SEPA XML</a>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">Ley Crea y Crece</span><span class="tag">ViDA UE / Peppol</span></div>
+          <h3>2. Facturación Electrónica B2B `EN 16931` (`Peppol BIS 3.0`)</h3>
+          <p>Emita facturas UBL 2.1 y CII matemáticamente cuadradas al céntimo (`BR-CO-10..17`) tanto para clientes corporativos españoles como para exportaciones intracomunitarias (`DE`, `FR`, `BE`, `IT`, `NL`).</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Constructor Factura XML</a>
+          <a class="btn btn-outline" href="./eu-einvoice-xml-generator.html">API E-Invoice</a>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">AEB Cuaderno 43</span><span class="tag">80 Columnas</span></div>
+          <h3>3. Conciliación Diaria `Norma 43` (`.n43`) a JSON y CSV</h3>
+          <p>Convierta ficheros diarios de tesorería en movimientos limpios con cálculo automático de `IBAN ES` (MOD-11 + MOD-97) y auditoría exacta del Registro `33` para Odoo, Holded, Sage o A3ERP.</p>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="./free-spanish-aeb-norma-43-cuaderno-43-viewer.html">Visor Gratis Norma 43</a>
+          <a class="btn btn-outline" href="./spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html">API Norma 43</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>FinOps Studio</strong> &mdash; APIs deterministas de tesorería, SEPA, Norma 43 y facturación electrónica europea.</p>
+      <p style="font-size:0.84rem;color:var(--muted);">
+        <a href="./index.html">Inicio</a> &bull;
+        <a href="./how-it-works-simple.html">VIP Simple Guide</a> &bull;
+        <a href="./facturacion-electronica-2026-peppol-sepa-xml-espana.html">SEPA &amp; Peppol España</a> &bull;
+        <a href="./free-spanish-aeb-norma-43-cuaderno-43-viewer.html">Visor Norma 43</a> &bull;
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">RapidAPI &amp; MCPRush Hub</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    function validateSpanishTaxId(rawInput) {
+      let s = (rawInput || '').toUpperCase().replace(/[\s.-]/g, '');
+      if (s.startsWith('ES')) s = s.slice(2);
+      if (s.length !== 9) return { valid: false, kind: 'Formato Inválido', normalized: 'ES' + s };
+
+      const dniLetters = 'TRWAGMYFPDXBNJZSQVHLCKE';
+
+      // DNI: 8 digits + letter
+      if (/^\d{8}[A-Z]$/.test(s)) {
+        const num = parseInt(s.slice(0, 8), 10);
+        const expected = dniLetters[num % 23];
+        return {
+          valid: s[8] === expected,
+          kind: 'NIF / DNI Persona Física',
+          expectedControl: expected,
+          normalized: 'ES' + s
+        };
+      }
+
+      // NIE: X/Y/Z + 7 digits + letter
+      if (/^[XYZ]\d{7}[A-Z]$/.test(s)) {
+        const prefixMap = { X: '0', Y: '1', Z: '2' };
+        const num = parseInt(prefixMap[s[0]] + s.slice(1, 8), 10);
+        const expected = dniLetters[num % 23];
+        return {
+          valid: s[8] === expected,
+          kind: 'NIE Residente',
+          expectedControl: expected,
+          normalized: 'ES' + s
+        };
+      }
+
+      // CIF: Letter + 7 digits + control (digit or letter)
+      if (/^[ABCDEFGHJNPQRSUVW]\d{7}[0-9A-J]$/.test(s)) {
+        const typeLetter = s[0];
+        const digits = s.slice(1, 8).split('').map(Number);
+        const control = s[8];
+        const evenSum = digits[1] + digits[3] + digits[5];
+        let oddSum = 0;
+        [0, 2, 4, 6].forEach(idx => {
+          const doubled = digits[idx] * 2;
+          oddSum += Math.floor(doubled / 10) + (doubled % 10);
+        });
+        const total = evenSum + oddSum;
+        const unitDigit = (10 - (total % 10)) % 10;
+        const controlLetters = 'JABCDEFGHI';
+        const expectedLetter = controlLetters[unitDigit];
+        const expectedDigit = String(unitDigit);
+
+        let valid = false;
+        if ('PQSWN'.includes(typeLetter) || s.slice(1, 3) === '00') {
+          valid = control === expectedLetter;
+        } else if ('ABEH'.includes(typeLetter)) {
+          valid = control === expectedDigit;
+        } else {
+          valid = control === expectedDigit || control === expectedLetter;
+        }
+
+        return {
+          valid,
+          kind: 'CIF Societario (' + typeLetter + ')',
+          expectedControl: 'ABEH'.includes(typeLetter) ? expectedDigit : expectedLetter,
+          normalized: 'ES' + s
+        };
+      }
+
+      return { valid: false, kind: 'Desconocido', normalized: 'ES' + s };
+    }
+
+    function validateEsIban(raw) {
+      const clean = (raw || '').toUpperCase().replace(/\s+/g, '');
+      if (!/^ES\d{22}$/.test(clean)) return false;
+      const rearranged = clean.slice(4) + '1428' + clean.slice(2, 4);
+      return BigInt(rearranged) % 97n === 1n;
+    }
+
+    function loadEsPreset(p) {
+      if (p === 'sl') {
+        document.getElementById('esTaxId').value = 'ESB61234562';
+        document.getElementById('esIbanInput').value = 'ES9121000418450200051332';
+        document.getElementById('esCompanyInput').value = 'Iberia Logística Digital S.L.';
+        document.getElementById('esNetAmt').value = '1500.00';
+      } else if (p === 'sa') {
+        document.getElementById('esTaxId').value = 'ESA28015865';
+        document.getElementById('esIbanInput').value = 'ES7901821234560201567890';
+        document.getElementById('esCompanyInput').value = 'Sistemas Industriales Castellana S.A.';
+        document.getElementById('esNetAmt').value = '4800.00';
+      } else {
+        document.getElementById('esTaxId').value = 'ES12345678Z';
+        document.getElementById('esIbanInput').value = 'ES6621000418401234567891';
+        document.getElementById('esCompanyInput').value = 'Carlos Martínez Consultoría';
+        document.getElementById('esNetAmt').value = '950.00';
+      }
+      auditSpanishEntity();
+    }
+
+    function auditSpanishEntity() {
+      const taxRes = validateSpanishTaxId(document.getElementById('esTaxId').value);
+      const ibanRaw = document.getElementById('esIbanInput').value.trim().toUpperCase().replace(/\s+/g, '');
+      const ibanOk = validateEsIban(ibanRaw);
+      const company = document.getElementById('esCompanyInput').value.trim() || 'Empresa Española S.L.';
+      const net = Math.max(0, parseFloat(document.getElementById('esNetAmt').value || '0') || 0);
+      const vat = Math.round(net * 21) / 100;
+      const gross = Math.round((net + vat) * 100) / 100;
+
+      document.getElementById('esResultGrid').innerHTML = `
+        <div class="es-box"><div class="lbl">Estado Fiscal (${taxRes.kind})</div><div class="val" style="color:${taxRes.valid ? '#34d399' : '#f87171'};">${taxRes.valid ? '&#10003; VÁLIDO (' + taxRes.normalized + ')' : '&#9888; DÍGITO INVÁLIDO' + (taxRes.expectedControl ? ' (esperado ' + taxRes.expectedControl + ')' : '')}</div></div>
+        <div class="es-box"><div class="lbl">Auditoría IBAN ES (MOD-97)</div><div class="val" style="color:${ibanOk ? '#34d399' : '#f87171'};">${ibanOk ? '&#10003; IBAN ES VÁLIDO' : '&#9888; IBAN INVÁLIDO'}</div></div>
+        <div class="es-box"><div class="lbl">Peppol EAS Endpoint</div><div class="val"><code>9920:${taxRes.normalized}</code></div></div>
+        <div class="es-box"><div class="lbl">Total Factura (IVA 21%)</div><div class="val">${gross.toFixed(2)} EUR</div></div>
+      `;
+
+      const payload = {
+        profile: 'peppol-bis-3.0',
+        syntax: 'UBL',
+        invoiceNumber: 'FAC-2026-0419',
+        issueDate: '2026-11-15',
+        dueDate: '2026-12-15',
+        currency: 'EUR',
+        supplier: {
+          name: company,
+          vatId: taxRes.normalized,
+          endpointSchemeId: '9920',
+          endpointId: taxRes.normalized,
+          street: 'Paseo de la Castellana 95',
+          city: 'Madrid',
+          postalCode: '28046',
+          countryCode: 'ES',
+          iban: ibanRaw
+        },
+        customer: {
+          name: 'Distribuciones Mediterráneo S.A.',
+          vatId: 'ESA28015865',
+          endpointSchemeId: '9920',
+          endpointId: 'ESA28015865',
+          street: 'Avenida Diagonal 640',
+          city: 'Barcelona',
+          postalCode: '08017',
+          countryCode: 'ES'
+        },
+        lines: [
+          {
+            description: 'Servicios de Integración Financiera y Automatización ERP',
+            quantity: 1,
+            unitPrice: Number(net.toFixed(2)),
+            vatRate: 21
+          }
+        ]
+      };
+
+      document.getElementById('esPayloadBox').textContent = JSON.stringify(payload, null, 2);
+    }
+
+    auditSpanishEntity();
+  </script>
+</body>
+</html>
