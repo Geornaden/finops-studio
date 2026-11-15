@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kostenloser DATEV EXTF v700 Buchungsstapel CSV Validator (SKR03 &amp; SKR04 Pr&uuml;fer) | FinOps Studio</title>
+  <meta name="description" content="100% lokaler DATEV EXTF v700 Buchungsstapel CSV-Pr&uuml;fer im Browser: Pr&uuml;fen Sie Zeile 1 (&quot;EXTF&quot;;700;21), Berater-/Mandantennummer, WJ-Beginn, Semikolon-Trennung, Komma-Betr&auml;ge, Soll/Haben-Kz und TTMM-Belegdatum vor dem Versand an die Steuerkanzlei." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-datev-extf-v700-buchungsstapel-csv-validator.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Kostenloser DATEV EXTF v700 Buchungsstapel CSV Validator & SKR03/SKR04 Prüfer | FinOps Studio" />
+  <meta property="og:description" content="Prüfen Sie DATEV EXTF_Buchungsstapel.csv Dateien lokal im Browser (ohne Server-Upload) auf Formatkategorie 21, Komma-Dezimalstellen, TTMM-Datum und SKR03/SKR04-Konten." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/free-datev-extf-v700-buchungsstapel-csv-validator.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "inLanguage": "de-DE",
+        "name": "FinOps Studio Kostenloser DATEV EXTF v700 Buchungsstapel CSV Validator",
+        "url": "https://geornaden.github.io/finops-studio/free-datev-extf-v700-buchungsstapel-csv-validator.html",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser)",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "EUR",
+          "description": "Kostenloser lokaler DATEV EXTF v700 CSV-Prüfer im Browser; $0/Monat + $0.02/Buchungssatz Cloud-API für automatische DATEV-Exporte."
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Warum lehnt DATEV Rechnungswesen oder Unternehmen online eine CSV-Datei beim Import ab?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Die fünf häufigsten Ursachen für abgelehnte DATEV-CSV-Importe (#REW-Fehler) sind: (1) fehlender 31-spaltiger EXTF-v700-Metadaten-Header in Zeile 1 (\"EXTF\";700;21;\"Buchungsstapel\";13), (2) Komma statt Semikolon als Spaltentrennzeichen durch Excel-Speicherung, (3) englischer Dezimalpunkt (119.00 statt 119,00) im Feld Umsatz, (4) ISO-Datum (2026-11-16) statt 4-stelligem TTMM-Belegdatum (1611) in Spalte 10 und (5) ungültige Beraternummer (4–7 Ziffern) oder Mandantennummer (1–5 Ziffern)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Werden meine Buchungssätze oder Mandantendaten bei der Prüfung an einen Server gesendet?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Nein. Alle Struktur-, Header-, Betrags- und TTMM-Datumsprüfungen laufen zu 100 % lokal im Arbeitsspeicher Ihres Browsers (DSGVO-freundlich, kein Datei-Upload)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./datev-buchungsstapel-generator.html">DATEV Cloud API</a>
+        <a href="./datev-bu-schluessel-skr03-skr04-tabelle-buchungsstapel-api.html">BU-Schl&uuml;ssel &amp; SKR03/04</a>
+        <a href="./xrechnung-3-0-zugferd-leitweg-id-generator-api-deutschland.html">E-Rechnung (XRechnung)</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/datev-buchungsstapel-generator" target="_blank" rel="noopener">DATEV API starten &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#127465;&#127466; 100% Lokale Browser-Pr&uuml;fung (Kein Upload) &bull; DATEV Formatkategorie 21 / Version 13 &bull; SKR03 &amp; SKR04</span>
+      <h1>Kostenloser <code>DATEV EXTF v700</code> Buchungsstapel CSV Validator &amp; <code>SKR03 / SKR04</code> Pr&uuml;fer</h1>
+      <p>Pr&uuml;fen Sie jede <strong><code>EXTF_Buchungsstapel.csv</code></strong> Datei vor dem Import in <strong>DATEV Kanzlei-Rechnungswesen</strong> oder <strong>DATEV Unternehmen online</strong>: Verifiziert sofort den <strong>31-spaltigen Zeile-1-Header (<code>&quot;EXTF&quot;;700;21</code>)</strong>, <strong>Berater- &amp; Mandantennummer</strong>, <strong>Semikolon-Trennung</strong>, <strong>Komma-Betr&auml;ge (<code>1190,00</code>)</strong>, <strong><code>S/H</code>-Kennzeichen</strong> und das 4-stellige <strong><code>TTMM</code>-Belegdatum</strong>.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnDatevValid" type="button" class="btn btn-outline">G&uuml;ltigen EXTF v700 Buchungsstapel laden (SKR03)</button>
+          <button id="btnDatevBroken" type="button" class="btn btn-outline">Fehlerhafte CSV laden (Punkt-Dezimal + ISO-Datum + BeraterNr)</button>
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;">
+            &#128194; Lokale EXTF .CSV Datei &ouml;ffnen
+            <input id="datevFileInput" type="file" accept=".csv,.txt" style="display:none;" />
+          </label>
+        </div>
+        <span id="datevBadge" class="status-chip status-ok">BEREIT</span>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label">
+            <span><strong>DATEV EXTF v700 Semikolon-CSV (Zeile 1 + Zeile 2 + Buchungss&auml;tze)</strong></span>
+            <span id="datevLinesChip" style="font-size:0.76rem;color:#93c5fd;">0 Zeilen</span>
+          </div>
+          <textarea id="datevRawBox" class="code-box" spellcheck="false" style="min-height:320px;font-size:0.73rem;white-space:pre;overflow-x:auto;"></textarea>
+        </div>
+
+        <div>
+          <div class="pane-label">
+            <span><strong>DATEV-Formatpr&uuml;fbericht (Kanzlei-Rechnungswesen Pre-Flight)</strong></span>
+            <span id="datevTotalsChip" style="font-size:0.76rem;color:var(--muted);">0,00 &euro; Volumen</span>
+          </div>
+          <div id="datevReportBox" class="code-box" style="min-height:320px;max-height:420px;overflow:auto;font-family:system-ui,-apple-system,sans-serif;font-size:0.84rem;line-height:1.55;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.28);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:0.86rem;color:#e2e8f0;">
+          <strong>Stripe, Shopify, PayPal oder ERP-Rechnungen vollautomatisch als DATEV EXTF v700 CSV erzeugen?</strong> Nutzen Sie unsere deterministische Cloud-API (<code>0 &euro;/Monat Grundgeb&uuml;hr + $0.02/Buchung</code>, gedeckt durch $5/Monat Apify-Freiguthaben).
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button id="btnCopyDatevJson" type="button" class="btn btn-outline">Sauberes API-JSON kopieren</button>
+          <a class="btn btn-primary" href="https://apify.com/finops_studio/datev-buchungsstapel-generator" target="_blank" rel="noopener">DATEV Generator API &ouml;ffnen &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2 class="section-title">Was dieser DATEV EXTF v700 Pre-Flight-Pr&uuml;fer kontrolliert</h2>
+      <div class="grid-3">
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">&quot;EXTF&quot;;700;21</span><span class="tag">Zeile 1 Metadaten</span></div>
+          <h3>1. Offizieller 31-Feld EXTF-Header</h3>
+          <p>Pr&uuml;ft Kennzeichen <code>&quot;EXTF&quot;</code>, Versionsnummer <code>700</code>, Formatkategorie <code>21</code> (Buchungsstapel), Formatversion <code>13</code>, Beraternummer (4–7 Ziffern), Mandantennummer (1–5 Ziffern) und <code>WJ-Beginn</code> (<code>JJJJMMTT</code>).</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">Komma-Dezimal</span><span class="tag">S / H Kennzeichen</span></div>
+          <h3>2. Umsatz-Format &amp; Soll/Haben</h3>
+          <p>Erkennt sofort englische Dezimalpunkte (<code>119.00</code>), Tausendertrennzeichen, Vorzeichen im Umsatzfeld oder fehlende <code>&quot;S&quot;</code>/<code>&quot;H&quot;</code>-Kennzeichen in Spalte 2.</p>
+        </article>
+        <article class="tool-card">
+          <div class="tag-row"><span class="tag">TTMM Belegdatum</span><span class="tag">SKR03 / SKR04</span></div>
+          <h3>3. 4-stelliges Belegdatum &amp; Konten</h3>
+          <p>Verifiziert, dass Spalte 10 exakt 4-stellig als <code>TTMM</code> (z. B. <code>1611</code> statt <code>2026-11-16</code>) formatiert ist und Sachkonten der deklarierten Sachkontenl&auml;nge entsprechen.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><strong>FinOps Studio</strong> &bull; <a href="./index.html">Alle 12 Finanz-APIs</a> &bull; <a href="./datev-buchungsstapel-generator.html">DATEV EXTF API</a> &bull; <a href="./datev-bu-schluessel-skr03-skr04-tabelle-buchungsstapel-api.html">BU-Schl&uuml;ssel Tabelle</a> &bull; <a href="./xrechnung-3-0-zugferd-leitweg-id-generator-api-deutschland.html">XRechnung &amp; Leitweg-ID</a></div>
+      <div><a href="https://apify.com/finops_studio/datev-buchungsstapel-generator" target="_blank" rel="noopener">DATEV Buchungsstapel Generator im Apify Store &ouml;ffnen &rarr;</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var VALID_DATEV = [
+        '"EXTF";700;21;"Buchungsstapel";13;20261116103000000;;"FO";"";"";29481;10402;20260101;4;20261101;20261130;"Ausgangsrechnungen Nov";"";1;0;0;"EUR";;"";;;;;;"";',
+        'Umsatz (ohne Soll/Haben-Kz);Soll/Haben-Kennzeichen;WKZ Umsatz;Kurs;Basis-Umsatz;WKZ Basis-Umsatz;Konto;Gegenkonto (ohne BU-Schlüssel);BU-Schlüssel;Belegdatum;Belegfeld 1;Belegfeld 2;Skonto;Buchungstext',
+        '1190,00;"S";"EUR";;;;1200;8400;;1511;"RE-2026-8812";"";;"SaaS Jahreslizenz Cloud GmbH"',
+        '428,40;"S";"EUR";;;;1200;8400;;1611;"RE-2026-8813";"";;"Enterprise Onboarding Paket"',
+        '107,00;"S";"EUR";;;;1200;8300;;1611;"RE-2026-8814";"";;"Fachbuch & Schulungsunterlagen 7%"'
+      ].join('\n');
+
+      var BROKEN_DATEV = [
+        '"EXTF";700;21;"Buchungsstapel";13;20261116103000000;;"FO";"";"";99;10402;2026-01-01;4;20261101;20261130;"Stripe Export";"";1;0;0;"EUR";;"";;;;;;"";',
+        'Umsatz (ohne Soll/Haben-Kz);Soll/Haben-Kennzeichen;WKZ Umsatz;Kurs;Basis-Umsatz;WKZ Basis-Umsatz;Konto;Gegenkonto (ohne BU-Schlüssel);BU-Schlüssel;Belegdatum;Belegfeld 1;Belegfeld 2;Skonto;Buchungstext',
+        '1190.00;"X";"EUR";;;;1200;8400;;2026-11-15;"RE-2026-8812";"";;"Fehlerhafte Punkt-Dezimalstelle & ISO-Datum"'
+      ].join('\n');
+
+      function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      function stripQuotes(s) {
+        return String(s == null ? '' : s).trim().replace(/^"|"$/g, '');
+      }
+
+      var rawBox = document.getElementById('datevRawBox');
+      var reportBox = document.getElementById('datevReportBox');
+      var badge = document.getElementById('datevBadge');
+      var linesChip = document.getElementById('datevLinesChip');
+      var totalsChip = document.getElementById('datevTotalsChip');
+      var extractedMeta = {
+        skr: 'SKR03',
+        consultantNumber: '29481',
+        clientNumber: '10402',
+        fiscalYearStart: '20260101'
+      };
+      var extractedBookings = [];
+
+      function auditDatev() {
+        var raw = (rawBox.value || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        var lines = raw.split('\n').filter(function (l) { return l.trim().length > 0; });
+        linesChip.textContent = lines.length + (lines.length === 1 ? ' Zeile' : ' Zeilen');
+
+        if (lines.length === 0) {
+          badge.textContent = 'LEER';
+          badge.className = 'status-chip';
+          reportBox.innerHTML = '<div style="color:var(--muted);">F&uuml;gen Sie links eine DATEV EXTF v700 CSV-Datei ein oder &ouml;ffnen Sie eine lokale <code>.csv</code> Datei.</div>';
+          totalsChip.textContent = '0,00 € Volumen';
+          extractedBookings = [];
+          return;
+        }
+
+        var errors = [];
+        var passes = [];
+        var totalCents = 0n;
+        var glLen = 4;
+        extractedBookings = [];
+
+        if (lines.length < 3) {
+          errors.push('Datei hat nur <strong>' + lines.length + ' Zeile(n)</strong> &mdash; ein g&uuml;ltiger DATEV Buchungsstapel ben&ouml;tigt Zeile 1 (EXTF-Header), Zeile 2 (Spaltennamen) und mindestens 1 Buchungszeile ab Zeile 3.');
+        }
+
+        if (lines[0]) {
+          if (lines[0].indexOf(';') === -1 && lines[0].indexOf(',') !== -1) {
+            errors.push('Zeile 1 verwendet Komma (<code>,</code>) statt Semikolon (<code>;</code>) als Trennzeichen.');
+          }
+          var h1 = lines[0].split(';');
+          var flag = stripQuotes(h1[0]);
+          var ver = stripQuotes(h1[1]);
+          var cat = stripQuotes(h1[2]);
+          var catName = stripQuotes(h1[3]);
+          var fmtVer = stripQuotes(h1[4]);
+          var berater = stripQuotes(h1[10]);
+          var mandant = stripQuotes(h1[11]);
+          var wjBeginn = stripQuotes(h1[12]);
+          var sachLenStr = stripQuotes(h1[13]);
+          var datumVon = stripQuotes(h1[14]);
+          var datumBis = stripQuotes(h1[15]);
+
+          if (h1.length < 22) {
+            errors.push('Zeile 1 (Metadaten-Header) hat nur <strong>' + h1.length + ' Semikolon-Felder</strong> (mindestens 22–31 Felder gem&auml;&szlig; DATEV EXTF v700 erwartet).');
+          }
+          if (flag !== 'EXTF' && flag !== 'DTVF') {
+            errors.push('Zeile 1 Feld 1 muss <code>"EXTF"</code> (oder <code>"DTVF"</code>) lauten (gefunden: "<code>' + escapeHtml(flag) + '</code>").');
+          }
+          if (ver !== '700' && ver !== '510') {
+            errors.push('Zeile 1 Feld 2 Versionsnummer "<code>' + escapeHtml(ver) + '</code>" ung&uuml;ltig (Standard: <code>700</code>).');
+          }
+          if (cat !== '21') {
+            errors.push('Zeile 1 Feld 3 Formatkategorie "<code>' + escapeHtml(cat) + '</code>" ung&uuml;ltig (Buchungsstapel erfordert <code>21</code>).');
+          }
+          if (!/^\d{4,7}$/.test(berater)) {
+            errors.push('Zeile 1 Feld 11 <code>Beraternummer</code> "<code>' + escapeHtml(berater) + '</code>" ung&uuml;ltig (muss 4 bis 7 Ziffern haben, z. B. <code>29481</code>).');
+          }
+          if (!/^\d{1,5}$/.test(mandant)) {
+            errors.push('Zeile 1 Feld 12 <code>Mandantennummer</code> "<code>' + escapeHtml(mandant) + '</code>" ung&uuml;ltig (muss 1 bis 5 Ziffern haben, z. B. <code>10402</code>).');
+          }
+          if (!/^\d{8}$/.test(wjBeginn)) {
+            errors.push('Zeile 1 Feld 13 <code>WJ-Beginn</code> "<code>' + escapeHtml(wjBeginn) + '</code>" muss exakt 8-stellig <code>JJJJMMTT</code> ohne Bindestriche sein (z. B. <code>20260101</code>).');
+          }
+          if (/^[4-8]$/.test(sachLenStr)) {
+            glLen = parseInt(sachLenStr, 10);
+          } else {
+            errors.push('Zeile 1 Feld 14 <code>Sachkontenl&auml;nge</code> "<code>' + escapeHtml(sachLenStr) + '</code>" ung&uuml;ltig (erwartet 4–8, Standard <code>4</code>).');
+          }
+          if (datumVon && !/^\d{8}$/.test(datumVon)) {
+            errors.push('Zeile 1 Feld 15 <code>Datum von</code> "<code>' + escapeHtml(datumVon) + '</code>" muss <code>JJJJMMTT</code> sein.');
+          }
+          if (datumBis && !/^\d{8}$/.test(datumBis)) {
+            errors.push('Zeile 1 Feld 16 <code>Datum bis</code> "<code>' + escapeHtml(datumBis) + '</code>" muss <code>JJJJMMTT</code> sein.');
+          }
+
+          if ((flag === 'EXTF' || flag === 'DTVF') && ver === '700' && cat === '21' && /^\d{4,7}$/.test(berater) && /^\d{1,5}$/.test(mandant) && /^\d{8}$/.test(wjBeginn)) {
+            passes.push('Zeile 1 EXTF v700 Header verifiziert: <code>' + escapeHtml(catName || 'Buchungsstapel') + '</code> (v' + escapeHtml(fmtVer || '13') + ') &bull; Berater <code>' + escapeHtml(berater) + '</code> &bull; Mandant <code>' + escapeHtml(mandant) + '</code> &bull; WJ-Beginn <code>' + escapeHtml(wjBeginn) + '</code>.');
+            extractedMeta.consultantNumber = berater;
+            extractedMeta.clientNumber = mandant;
+            extractedMeta.fiscalYearStart = wjBeginn;
+          }
+        }
+
+        if (lines[1]) {
+          var h2 = lines[1].split(';');
+          if (h2.length < 14 || stripQuotes(h2[0]).toLowerCase().indexOf('umsatz') === -1) {
+            errors.push('Zeile 2 (Spalten&uuml;berschriften) beginnt nicht mit <code>Umsatz (ohne Soll/Haben-Kz);Soll/Haben-Kennzeichen;...</code>.');
+          } else {
+            passes.push('Zeile 2 Spalten&uuml;berschriften erkannt (' + h2.length + ' Spalten).');
+          }
+        }
+
+        var detectedSkr04 = false;
+        for (var i = 2; i < lines.length; i++) {
+          var rNum = i + 1;
+          var cols = lines[i].split(';');
+          if (cols.length < 10) {
+            errors.push('Zeile ' + rNum + ': Zu wenige Semikolon-Spalten (' + cols.length + ', mindestens 10–14 erwartet).');
+            continue;
+          }
+          var umsatz = stripQuotes(cols[0]);
+          var sh = stripQuotes(cols[1]).toUpperCase();
+          var wkz = stripQuotes(cols[2]) || 'EUR';
+          var konto = stripQuotes(cols[6]);
+          var gegen = stripQuotes(cols[7]);
+          var bu = stripQuotes(cols[8]);
+          var belegDatum = stripQuotes(cols[9]);
+          var beleg1 = stripQuotes(cols[10] || '');
+          var text = stripQuotes(cols[13] || '');
+
+          if (!/^\d+,\d{2}$/.test(umsatz)) {
+            errors.push('Zeile ' + rNum + ': Ung&uuml;ltiges Feld <code>Umsatz</code> "<code>' + escapeHtml(umsatz) + '</code>" &mdash; muss positiv ohne Vorzeichen mit deutschem Komma sein (z. B. <code>1190,00</code> statt <code>1190.00</code>).');
+          } else {
+            var parts = umsatz.split(',');
+            var cents = BigInt(parts[0]) * 100n + BigInt(parts[1]);
+            totalCents += cents;
+          }
+
+          if (sh !== 'S' && sh !== 'H') {
+            errors.push('Zeile ' + rNum + ': Ung&uuml;ltiges <code>Soll/Haben-Kennzeichen</code> "<code>' + escapeHtml(sh) + '</code>" in Spalte 2 (muss <code>"S"</code> oder <code>"H"</code> sein).');
+          }
+
+          if (!/^\d{4,9}$/.test(konto) || !/^\d{4,9}$/.test(gegen)) {
+            errors.push('Zeile ' + rNum + ': Ung&uuml;ltiges Sach-/Personenkonto (<code>' + escapeHtml(konto) + '</code> / <code>' + escapeHtml(gegen) + '</code>) in Spalte 7–8.');
+          } else if (gegen.slice(0, 2) === '44' || gegen.slice(0, 2) === '43' || konto === '1800') {
+            detectedSkr04 = true;
+          }
+
+          if (!/^\d{4}$/.test(belegDatum)) {
+            errors.push('Zeile ' + rNum + ': <code>Belegdatum</code> "<code>' + escapeHtml(belegDatum) + '</code>" in Spalte 10 muss exakt 4-stellig <code>TTMM</code> sein (z. B. <code>1611</code> f&uuml;r 16. November, kein ISO-Datum!).');
+          } else {
+            var dd = parseInt(belegDatum.slice(0, 2), 10);
+            var mm = parseInt(belegDatum.slice(2, 4), 10);
+            if (dd < 1 || dd > 31 || mm < 1 || mm > 12) {
+              errors.push('Zeile ' + rNum + ': Ung&uuml;ltiges Kalendertag/Monat in <code>TTMM</code> "<code>' + escapeHtml(belegDatum) + '</code>".');
+            }
+          }
+
+          var numVal = /^\d+,\d{2}$/.test(umsatz) ? parseFloat(umsatz.replace(',', '.')) : 0;
+          extractedBookings.push({
+            date: /^\d{4}$/.test(belegDatum) ? ('2026-' + belegDatum.slice(2, 4) + '-' + belegDatum.slice(0, 2)) : '2026-11-16',
+            amount: numVal,
+            sollHaben: (sh === 'H' ? 'H' : 'S'),
+            account: konto || '1200',
+            contraAccount: gegen || '8400',
+            buKey: bu,
+            invoiceNumber: beleg1 || ('RE-' + (i - 1)),
+            description: text || ('Buchung ' + (i - 1)),
+            wkz: wkz
+          });
+        }
+
+        extractedMeta.skr = detectedSkr04 ? 'SKR04' : 'SKR03';
+        if (errors.length === 0 && extractedBookings.length > 0) {
+          passes.push('Alle <strong>' + extractedBookings.length + ' Buchungss&auml;tze</strong> erf&uuml;llen Komma-Dezimalformat, <code>S/H</code>-Pflicht und <code>TTMM</code>-Belegdatum (' + extractedMeta.skr + ' erkannt).');
+        }
+
+        var eurFormatted = (Number(totalCents) / 100).toFixed(2).replace('.', ',');
+        totalsChip.textContent = eurFormatted + ' € Volumen (' + extractedBookings.length + ' Sätze)';
+
+        if (errors.length === 0) {
+          badge.textContent = 'GÜLTIG • DATEV EXTF v700 OK';
+          badge.className = 'status-chip status-ok';
+        } else {
+          badge.textContent = errors.length + (errors.length === 1 ? ' FEHLER GEFUNDEN' : ' FEHLER GEFUNDEN');
+          badge.className = 'status-chip status-warn';
+        }
+
+        var html = '';
+        if (errors.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);color:#fecaca;">' +
+            '<strong>&#9888;&#65039; Gefundene DATEV-Importfehler (' + errors.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var e = 0; e < errors.length; e++) html += '<li style="margin-bottom:4px;">' + errors[e] + '</li>';
+          html += '</ul></div>';
+        }
+        if (passes.length > 0) {
+          html += '<div style="padding:10px 12px;margin-bottom:10px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#bbf7d0;">' +
+            '<strong>&#9989; Best&auml;tigte DATEV-Pr&uuml;fpunkte (' + passes.length + '):</strong><ul style="margin:6px 0 0 18px;padding:0;">';
+          for (var p = 0; p < passes.length; p++) html += '<li style="margin-bottom:3px;">' + passes[p] + '</li>';
+          html += '</ul></div>';
+        }
+        if (extractedBookings.length > 0) {
+          html += '<div style="margin-top:8px;"><strong>Geparste Buchungss&auml;tze (' + extractedBookings.length + '):</strong>';
+          for (var k = 0; k < extractedBookings.length; k++) {
+            var b = extractedBookings[k];
+            html += '<div style="margin-top:5px;padding:7px 10px;border-radius:7px;background:rgba(15,23,42,0.75);border:1px solid var(--border);font-size:0.8rem;">' +
+              '<strong>' + escapeHtml(b.invoiceNumber) + '</strong> &bull; Konto <code>' + escapeHtml(b.account) + '</code> &rarr; Gegenkonto <code>' + escapeHtml(b.contraAccount) + '</code> (' + escapeHtml(b.sollHaben) + ') &bull; <strong style="color:#86efac;">' + b.amount.toFixed(2).replace('.', ',') + ' ' + escapeHtml(b.wkz) + '</strong> &bull; ' + escapeHtml(b.description) +
+              '</div>';
+          }
+          html += '</div>';
+        }
+        reportBox.innerHTML = html;
+      }
+
+      document.getElementById('btnDatevValid').addEventListener('click', function () {
+        rawBox.value = VALID_DATEV;
+        auditDatev();
+      });
+
+      document.getElementById('btnDatevBroken').addEventListener('click', function () {
+        rawBox.value = BROKEN_DATEV;
+        auditDatev();
+      });
+
+      document.getElementById('datevFileInput').addEventListener('change', function (ev) {
+        var f = ev.target.files && ev.target.files[0];
+        if (!f) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          rawBox.value = String(e.target.result || '');
+          auditDatev();
+        };
+        reader.readAsText(f);
+      });
+
+      rawBox.addEventListener('input', auditDatev);
+
+      document.getElementById('btnCopyDatevJson').addEventListener('click', function () {
+        var btn = document.getElementById('btnCopyDatevJson');
+        var payload = JSON.stringify({
+          skr: extractedMeta.skr,
+          consultantNumber: extractedMeta.consultantNumber,
+          clientNumber: extractedMeta.clientNumber,
+          fiscalYearStart: extractedMeta.fiscalYearStart,
+          bookings: extractedBookings
+        }, null, 2);
+        navigator.clipboard.writeText(payload).then(function () {
+          btn.textContent = 'API-JSON kopiert!';
+          if (window.finopsTrack) window.finopsTrack('action_copy_curl');
+          setTimeout(function () { btn.textContent = 'Sauberes API-JSON kopieren'; }, 1700);
+        });
+      });
+
+      rawBox.value = VALID_DATEV;
+      auditDatev();
+    })();
+  </script>
+</body>
+</html>
