@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en-IE">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ireland &amp; UK Dual-Rail Treasury Playbook: IE VAT (MOD-23), BOI / AIB SEPA XML pain.001, UK BACS Standard 18 &amp; Peppol 9935 API | FinOps Studio</title>
+  <meta name="description" content="Free client-side Ireland &amp; UK cross-border treasury validator: verify Irish Revenue VAT (MOD-23), 22-character IE IBANs (Bank of Ireland BOFI, AIB, PTSB), UK HMRC VAT (MOD-97) &amp; 6-digit Sort Codes (Barclays, NatWest, HSBC, Lloyds), and generate SEPA pain.001.001.09, UK BACS Standard 18 &amp; Peppol 9935 / 0088 payloads." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/ireland-uk-bacs-sepa-xml-peppol-boi-aib-barclays-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Ireland &amp; UK Dual-Rail Treasury Validator: IE VAT MOD-23, BOI/AIB SEPA XML, UK BACS 18 &amp; Peppol 9935 API" />
+  <meta property="og:description" content="Validate Irish VAT (MOD-23), IE/GB IBANs, and UK Sort Codes locally in your browser and generate SEPA XML pain.001.001.09, UK BACS Standard 18, and Peppol 9935 e-invoice payloads." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/ireland-uk-bacs-sepa-xml-peppol-boi-aib-barclays-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Ireland & UK Cross-Border Treasury Validator (IE VAT MOD-23, IE/GB IBAN, SEPA XML & UK BACS Standard 18)",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "inLanguage": ["en-IE", "en-GB"],
+        "url": "https://geornaden.github.io/finops-studio/ireland-uk-bacs-sepa-xml-peppol-boi-aib-barclays-api.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "EUR"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How is an Irish Revenue VAT number (IE MOD-23) validated for Peppol 9935 e-invoicing?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Irish VAT numbers follow IE + 7 digits + 1 or 2 letters (e.g., IE6388047V or IE3206488LH). The 7 digits are weighted by [8, 7, 6, 5, 4, 3, 2], plus 9 times the alphabetical index (A=1..I=9) when a second suffix letter is present. Taking Modulo 23 yields 0 = W or 1..22 = A..V, mapping to Peppol Participant Scheme 9935."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "When should Dublin and London finance teams route via SEPA pain.001.001.09 vs. Pay.UK BACS Standard 18?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "EUR supplier and payroll disbursements across Bank of Ireland (BOFI), Allied Irish Banks (AIBK), PTSB (IPBS), and EEA SEPA participants clear via ISO 20022 pain.001.001.09 XML (remembering EPC mandatory TownName and Country tags when UK non-EEA GB IBANs are settled in EUR SEPA). Domestic GBP payroll and supplier runs across Barclays, NatWest, HSBC UK, and Lloyds clear in 3-day BACS cycles via 100-byte Pay.UK BACS Standard 18 files."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .ie-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .ie-field label {
+      display: block;
+      font-size: 0.79rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .ie-field input, .ie-field select {
+      width: 100%;
+      background: rgba(15,23,42,0.92);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      color: var(--text);
+      font-size: 0.94rem;
+    }
+    .ie-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .ie-card {
+      background: rgba(15,23,42,0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .ie-card .lbl {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .ie-card .val {
+      font-size: 1.01rem;
+      font-weight: 700;
+      margin-top: 5px;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-badge">FS</span>
+        <span>FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
+        <a href="./regulatory-compliance-radar-2026-2027-sepa-peppol-fedwire-nacha.html">2026–2027 Law Radar</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Multi-Cloud API Hub</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Start Free ($5 Credits) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:14px;">
+      <span class="pill">&#127470;&#127466; &#127468;&#127463; Ireland &amp; UK Dual-Rail Treasury &bull; `IE` VAT MOD-23 &bull; `BOI / AIB` SEPA `pain.001` &bull; `UK BACS 18` &amp; `Peppol 9935`</span>
+      <h1>Ireland &amp; UK Cross-Border Treasury Playbook: `IE` VAT (`MOD-23`), `IE / GB` IBAN &amp; Sort Code, `SEPA pain.001.001.09` &amp; `UK BACS Standard 18`</h1>
+      <p style="max-width:860px;margin:0 auto;">Built for Dublin, Cork, Belfast, London, and Manchester shared-service finance teams running <strong>Xero</strong>, <strong>Sage Intacct</strong>, <strong>BrightPay</strong>, <strong>NetSuite</strong>, and <strong>SAP</strong>. Validate Irish Revenue `IE` VAT checksums (`MOD-23`), UK HMRC `GB` VAT numbers (`MOD-97`), 6-digit Irish/UK Sort Codes, and `IE`/`GB` IBANs for <strong>Bank of Ireland (Business On Line), AIB (iBusiness Banking), Barclays, NatWest, HSBC UK, and Lloyds</strong> locally in your browser.</p>
+    </section>
+
+    <section class="sandbox-card" style="margin-bottom:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <h2 style="margin:0;font-size:1.14rem;">1. Interactive Ireland &amp; UK Dual-Rail Validator (`IE` MOD-23 / `GB` MOD-97 + IBAN &amp; Sort Code Router)</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadIeUkPreset('boi')">Bank of Ireland (EUR SEPA + IE VAT)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadIeUkPreset('aib')">AIB Dublin (2-Letter IE VAT)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadIeUkPreset('barc')">Barclays UK (GBP BACS 18 + GB VAT)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;border-color:#f87171;color:#fca5a5;" onclick="loadIeUkPreset('bad')">Simulate Invalid VAT &amp; IBAN</button>
+        </div>
+      </div>
+
+      <div class="ie-grid">
+        <div class="ie-field">
+          <label for="iuVat">Irish (`IE`) or UK (`GB`) VAT Number</label>
+          <input id="iuVat" type="text" value="IE6388047V" oninput="runIeUkAudit()" />
+        </div>
+        <div class="ie-field">
+          <label for="iuIban">Beneficiary `IE` or `GB` IBAN (22 Chars)</label>
+          <input id="iuIban" type="text" value="IE70BOFI90001712345678" oninput="runIeUkAudit()" />
+        </div>
+        <div class="ie-field">
+          <label for="iuCcy">Settlement Currency &amp; Clearing Rail</label>
+          <select id="iuCcy" onchange="runIeUkAudit()">
+            <option value="EUR">EUR — SEPA Credit Transfer (pain.001.001.09)</option>
+            <option value="GBP">GBP — Pay.UK BACS Standard 18 (100-Byte)</option>
+          </select>
+        </div>
+        <div class="ie-field">
+          <label for="iuEntity">Supplier / Payroll Beneficiary Name &amp; Town</label>
+          <input id="iuEntity" type="text" value="Liffey Cloud Engineering Ltd | Dublin" oninput="runIeUkAudit()" />
+        </div>
+      </div>
+
+      <div class="ie-cards">
+        <div class="ie-card">
+          <div class="lbl">Tax / VAT Checksum (IE MOD-23 / GB MOD-97)</div>
+          <div class="val" id="outIuVat">—</div>
+        </div>
+        <div class="ie-card">
+          <div class="lbl">Peppol Endpoint (9935 IE / 0088 GLN)</div>
+          <div class="val" id="outIuPeppol">—</div>
+        </div>
+        <div class="ie-card">
+          <div class="lbl">IBAN &amp; 6-Digit Sort Code Check</div>
+          <div class="val" id="outIuIban">—</div>
+        </div>
+        <div class="ie-card">
+          <div class="lbl">Clearing Bank &amp; Non-EEA SEPA Rule</div>
+          <div class="val" id="outIuRail">—</div>
+        </div>
+      </div>
+
+      <h3 style="font-size:0.95rem;margin:14px 0 8px;">Ready-to-Call Cloud API Payload (`SEPA pain.001.001.09` / `UK BACS Standard 18` + `Peppol 9935`)</h3>
+      <pre id="iuJson" style="background:#090f1d;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;font-size:0.81rem;color:#a7f3d0;"></pre>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generate SEPA `pain.001.001.09` XML &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Generate UK `BACS Standard 18` File &rarr;</a>
+        <a class="btn btn-outline" href="https://mcprush.com/geornaden-2/finops-corporate-treasury-sepa-nacha-bacs-bai2-pa" target="_blank" rel="noopener">Install Treasury Pack on MCPRush &rarr;</a>
+        <a class="btn btn-outline" href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">Subscribe on RapidAPI Hub &rarr;</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-bottom:28px;">
+      <h2 style="margin-top:0;font-size:1.12rem;">2. Cross-Border Ireland &harr; UK Treasury Guardrails (Post-Brexit EPC Non-EEA SEPA &amp; BACS Rules)</h2>
+      <ul style="line-height:1.7;color:var(--muted);padding-left:20px;">
+        <li><strong style="color:var(--text);">Non-EEA SEPA Structured Address Rule for `GB` IBANs in EUR:</strong> Because the United Kingdom is a non-EEA SEPA jurisdiction, Bank of Ireland and AIB reject EUR `pain.001.001.09` batches paying `GB` IBANs unless both Debtor/Creditor BIC and structured `&lt;PstlAdr&gt;` (`&lt;TwnNm&gt;` + `&lt;Ctry&gt;GB&lt;/Ctry&gt;`) are populated.</li>
+        <li><strong style="color:var(--text);">Pay.UK `BACS Standard 18` 100-Byte Fixed Width:</strong> Domestic GBP payroll (`Transaction Code 99`) and supplier credits across Barclays, NatWest Bankline, HSBCnet, and Lloyds Commercial require strict 6-digit Sort Code + 8-digit Account formatting (`VOL1` / `HDR1` / `UHL1` Julian `bYYDDD` processing dates and `UTL1` cent-exact contra trailers) — test existing files free in our <a href="./free-uk-bacs-standard-18-file-validator.html">UK BACS Standard 18 File Validator</a>.</li>
+        <li><strong style="color:var(--text);">Irish Public Sector &amp; B2B Peppol `9935` Modernization:</strong> Irish government bodies (OGP / HSE) and Irish Revenue VAT-registered suppliers route EN 16931 UBL 2.1 e-invoices via `9935:IE...` — validate XML locally in our <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Peppol &amp; EN 16931 XML Builder &amp; Validator</a> or automate in Claude/Cursor via our <a href="./claude-code-cursor-windsurf-banking-peppol-mcp-skills.html">AI Agent MCP &amp; Skill Pack Hub</a>.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container" style="text-align:center;font-size:0.83rem;color:var(--muted);">
+      <p>&copy; 2026 FinOps Studio &bull; Deterministic Ireland, UK &amp; EU Banking, Payroll &amp; Peppol Cloud APIs &bull; 100% Local Browser Validation</p>
+    </div>
+  </footer>
+
+  <script>
+    function validateIeOrGbVat(raw) {
+      const clean = raw.replace(/[\s.-]+/g, '').toUpperCase();
+      if (clean.startsWith('IE')) {
+        // Standard 1 or 2 letter Irish VAT: IE + 7 digits + L1 (+ optional L2)
+        const m1 = clean.match(/^IE(\d{7})([A-W])([A-I])?$/);
+        if (m1) {
+          const d = m1[1];
+          const l1 = m1[2];
+          const l2 = m1[3] || '';
+          let sum = 0;
+          const weights = [8, 7, 6, 5, 4, 3, 2];
+          for (let i = 0; i < 7; i++) sum += Number(d[i]) * weights[i];
+          if (l2) sum += 9 * (l2.charCodeAt(0) - 64);
+          const rem = sum % 23;
+          const expected = rem === 0 ? 'W' : String.fromCharCode(64 + rem);
+          const ok = l1 === expected;
+          return {
+            valid: ok,
+            country: 'IE',
+            clean,
+            peppol: ok ? ('9935:' + clean) : 'Blocked (Invalid IE VAT)',
+            msg: ok ? ('VALID IRISH VAT (MOD-23 = ' + expected + ')') : ('MOD-23 MISMATCH (Expected ' + expected + ', got ' + l1 + ')')
+          };
+        }
+        // Old-style Irish VAT: IE + digit + [A-Z+*] + 5 digits + L1
+        const m2 = clean.match(/^IE(\d)[A-Z+*](\d{5})([A-W])$/);
+        if (m2) {
+          const reordered = '0' + m2[2] + m2[1];
+          const l1 = m2[3];
+          const weights = [8, 7, 6, 5, 4, 3, 2];
+          let sum = 0;
+          for (let i = 0; i < 7; i++) sum += Number(reordered[i]) * weights[i];
+          const rem = sum % 23;
+          const expected = rem === 0 ? 'W' : String.fromCharCode(64 + rem);
+          const ok = l1 === expected;
+          return {
+            valid: ok,
+            country: 'IE',
+            clean,
+            peppol: ok ? ('9935:' + clean) : 'Blocked (Invalid IE VAT)',
+            msg: ok ? ('VALID LEGACY IRISH VAT (MOD-23 = ' + expected + ')') : ('MOD-23 MISMATCH (Expected ' + expected + ', got ' + l1 + ')')
+          };
+        }
+        return { valid: false, country: 'IE', clean, peppol: 'Invalid IE VAT Format', msg: 'Expected IE + 7 digits + 1–2 letters (e.g. IE6388047V)' };
+      }
+
+      if (clean.startsWith('GB')) {
+        const mGb = clean.match(/^GB(\d{9})$/);
+        if (!mGb) return { valid: false, country: 'GB', clean, peppol: 'Use 0088 GLN / UK Companies House', msg: 'Expected GB + 9 digits (e.g. GB434031494)' };
+        const d = mGb[1];
+        const weights = [8, 7, 6, 5, 4, 3, 2];
+        let sum = 0;
+        for (let i = 0; i < 7; i++) sum += Number(d[i]) * weights[i];
+        const chk = Number(d.slice(7, 9));
+        const ok = ((sum + chk) % 97 === 0) || ((sum + chk + 55) % 97 === 0);
+        return {
+          valid: ok,
+          country: 'GB',
+          clean,
+          peppol: ok ? ('GB VAT Verified (' + clean + ')') : 'Blocked (Invalid GB VAT)',
+          msg: ok ? 'VALID UK HMRC VAT (MOD-97 Verified)' : 'UK VAT MOD-97 CHECKSUM FAILED'
+        };
+      }
+
+      return { valid: false, country: 'UNKNOWN', clean, peppol: 'Prefix IE or GB required', msg: 'Start with IE (Ireland) or GB (United Kingdom)' };
+    }
+
+    function validateIeGbIban(raw) {
+      const clean = raw.replace(/\s+/g, '').toUpperCase();
+      if (!/^(IE|GB)\d{2}[A-Z]{4}\d{14}$/.test(clean)) {
+        return {
+          valid: false,
+          clean,
+          country: clean.slice(0, 2),
+          bic4: '',
+          sortCode: '',
+          accountNumber: '',
+          bank: 'Expected 22-char IE or GB IBAN (e.g. IE70BOFI90001712345678)',
+          msg: 'INVALID LENGTH / STRUCTURE (22 Chars Required)'
+        };
+      }
+      const rearranged = clean.slice(4) + clean.slice(0, 4);
+      let expanded = '';
+      for (const ch of rearranged) expanded += (ch >= 'A' && ch <= 'Z') ? String(ch.charCodeAt(0) - 55) : ch;
+      let rem = 0;
+      for (let i = 0; i < expanded.length; i += 7) rem = Number(String(rem) + expanded.slice(i, i + 7)) % 97;
+
+      const country = clean.slice(0, 2);
+      const bic4 = clean.slice(4, 8);
+      const scRaw = clean.slice(8, 14);
+      const sortCode = scRaw.slice(0, 2) + '-' + scRaw.slice(2, 4) + '-' + scRaw.slice(4, 6);
+      const accountNumber = clean.slice(14, 22);
+
+      const bankMap = {
+        BOFI: 'Bank of Ireland (BOFIIE2D)',
+        AIBK: 'Allied Irish Banks — AIB (AIBKIE2D)',
+        IPBS: 'PTSB / Permanent TSB (IPBSIE2D)',
+        REVO: country === 'IE' ? 'Revolut Bank UAB Ireland (REVOIE23)' : 'Revolut Ltd UK (REVOGB21)',
+        BARC: 'Barclays Bank UK (BARCGB22)',
+        NWBK: 'NatWest Bank UK (NWBKGB2L)',
+        HBUK: 'HSBC UK Bank (HBUKGB4B)',
+        LOYD: 'Lloyds Bank Corporate (LOYDGB2L)',
+        MONZ: 'Monzo Bank UK (MONZGB2L)'
+      };
+      const bank = bankMap[bic4] || (country + ' Clearing Institution (' + bic4 + ')');
+
+      return {
+        valid: rem === 1,
+        clean,
+        country,
+        bic4,
+        scRaw,
+        sortCode,
+        accountNumber,
+        bank,
+        msg: rem === 1 ? ('VALID ' + country + ' IBAN (MOD-97 = 1 • Sort ' + sortCode + ')') : ('IBAN MOD-97 FAILED (Remainder ' + rem + ')')
+      };
+    }
+
+    function loadIeUkPreset(p) {
+      if (p === 'boi') {
+        document.getElementById('iuVat').value = 'IE6388047V';
+        document.getElementById('iuIban').value = 'IE70BOFI90001712345678';
+        document.getElementById('iuCcy').value = 'EUR';
+        document.getElementById('iuEntity').value = 'Liffey Cloud Engineering Ltd | Dublin';
+      } else if (p === 'aib') {
+        document.getElementById('iuVat').value = 'IE3206488LH';
+        document.getElementById('iuIban').value = 'IE80AIBK93115223456789';
+        document.getElementById('iuCcy').value = 'EUR';
+        document.getElementById('iuEntity').value = 'Shannon MedTech Manufacturing DAC | Cork';
+      } else if (p === 'barc') {
+        document.getElementById('iuVat').value = 'GB434031494';
+        document.getElementById('iuIban').value = 'GB60BARC20000055779911';
+        document.getElementById('iuCcy').value = 'GBP';
+        document.getElementById('iuEntity').value = 'Thames Precision Logistics Ltd | London';
+      } else {
+        document.getElementById('iuVat').value = 'IE6388047A';
+        document.getElementById('iuIban').value = 'IE11BOFI90001712345678';
+        document.getElementById('iuCcy').value = 'EUR';
+        document.getElementById('iuEntity').value = 'Unverified Supplier Ltd | Dublin';
+      }
+      runIeUkAudit();
+    }
+
+    function runIeUkAudit() {
+      const vatRes = validateIeOrGbVat(document.getElementById('iuVat').value);
+      const ibanRes = validateIeGbIban(document.getElementById('iuIban').value);
+      const ccy = document.getElementById('iuCcy').value;
+      const parts = document.getElementById('iuEntity').value.split('|');
+      const credName = (parts[0] || 'Beneficiary Ltd').trim();
+      const town = (parts[1] || (ibanRes.country === 'GB' ? 'London' : 'Dublin')).trim();
+
+      const elVat = document.getElementById('outIuVat');
+      elVat.textContent = vatRes.msg;
+      elVat.style.color = vatRes.valid ? '#34d399' : '#f87171';
+
+      const elPep = document.getElementById('outIuPeppol');
+      elPep.textContent = vatRes.peppol;
+      elPep.style.color = vatRes.valid ? '#93c5fd' : '#fca5a5';
+
+      const elIban = document.getElementById('outIuIban');
+      elIban.textContent = ibanRes.msg;
+      elIban.style.color = ibanRes.valid ? '#34d399' : '#f87171';
+
+      const elRail = document.getElementById('outIuRail');
+      let railNote = ibanRes.bank;
+      if (ccy === 'EUR' && ibanRes.country === 'GB') {
+        railNote += ' • Non-EEA SEPA: BIC + TownName Mandatory';
+      } else if (ccy === 'GBP' && ibanRes.country === 'IE') {
+        railNote += ' • Warning: BACS 18 requires UK 6-digit Sort Code';
+      }
+      elRail.textContent = railNote;
+      elRail.style.color = ibanRes.valid ? '#fde68a' : '#fca5a5';
+
+      const payload = ccy === 'EUR' ? {
+        actor: 'finops_studio/sepa-xml-generator',
+        schemaVersion: 'pain.001.001.09',
+        nonEeaSepaCompliance: ibanRes.country === 'GB',
+        creditor: {
+          name: credName,
+          iban: ibanRes.clean,
+          taxId: vatRes.clean,
+          peppolEndpoint: vatRes.country === 'IE' ? ('9935:' + vatRes.clean) : undefined,
+          postalAddress: {
+            townName: town,
+            country: ibanRes.country || 'IE'
+          }
+        },
+        amountEur: '4850.00',
+        remittanceUnstructured: 'INV-2026-IEUK-409'
+      } : {
+        actor: 'finops_studio/uk-bacs-standard18-generator',
+        standard: 'Pay.UK BACS Standard 18 (100-Byte Fixed Width)',
+        processingJulianDate: 'b26321',
+        destinationSortCode: ibanRes.scRaw || '200000',
+        destinationAccountNumber: ibanRes.accountNumber || '55779911',
+        transactionCode: '99',
+        amountPence: 485000,
+        beneficiaryName: credName.slice(0, 18).toUpperCase(),
+        bacsReference: 'INV-2026-UK409'
+      };
+
+      document.getElementById('iuJson').textContent = JSON.stringify(payload, null, 2);
+    }
+
+    runIeUkAudit();
+  </script>
+</body>
+</html>
