@@ -6,7 +6,7 @@
 [![MCP Ready](https://img.shields.io/badge/MCP-Claude_%7C_Cursor_%7C_Windsurf-8b5cf6?style=for-the-badge)](#model-context-protocol-mcp-for-ai-agents)
 
 [![FinOps Studio — 9 Live Banking, Payroll & E-Invoice APIs MCP on mcprush](https://mcprush.com/badge/finops-studio-banking-payroll-e-invoicing-mcp/score.svg)](https://mcprush.com/to/finops-studio-banking-payroll-e-invoicing-mcp?ref=badge)
-[![EU E-Invoice XML Generator MCP on mcprush](https://mcprush.com/badge/eu-e-invoice-xml-generator-peppol-xrechnung-mcp/score.svg)](https://mcprush.com/to/eu-e-invoice-xml-generator-peppol-xrechnung-mcp?ref=badge)
+[![EU E-Invoice XML Generator MCP on mcprush](https://mcprush.com/badge/eu-e-invoice-xml-generator-peppol-xrechnung-f-mcp/score.svg)](https://mcprush.com/to/eu-e-invoice-xml-generator-peppol-xrechnung-f-mcp?ref=badge)
 [![Corporate BAI2 Bank Statement Parser MCP on mcprush](https://mcprush.com/badge/corporate-bai2-bank-statement-parser-to-json-mcp/score.svg)](https://mcprush.com/to/corporate-bai2-bank-statement-parser-to-json-mcp?ref=badge)
 [![German DATEV Buchungsstapel CSV Generator MCP on mcprush](https://mcprush.com/badge/german-datev-buchungsstapel-extf-csv-generato-mcp/score.svg)](https://mcprush.com/to/german-datev-buchungsstapel-extf-csv-generato-mcp?ref=badge)
 
@@ -92,6 +92,13 @@ Give **Claude Desktop**, **Cursor**, **Windsurf**, or any MCP-compatible AI agen
   }
 }
 ```
+
+### Independent MCPRush Tool-List Grade A Verified Servers
+
+[![FinOps Studio — 9 Live Banking, Payroll & E-Invoice APIs MCP server](https://mcprush.com/badge/finops-studio-banking-payroll-e-invoicing-mcp/card.svg)](https://mcprush.com/to/finops-studio-banking-payroll-e-invoicing-mcp?ref=badge)
+[![Corporate BAI2 Bank Statement Parser to JSON & CSV MCP server](https://mcprush.com/badge/corporate-bai2-bank-statement-parser-to-json-mcp/card.svg)](https://mcprush.com/to/corporate-bai2-bank-statement-parser-to-json-mcp?ref=badge)
+[![EU E-Invoice XML Generator (Peppol, XRechnung, Factur-X) MCP server](https://mcprush.com/badge/eu-e-invoice-xml-generator-peppol-xrechnung-f-mcp/card.svg)](https://mcprush.com/to/eu-e-invoice-xml-generator-peppol-xrechnung-f-mcp?ref=badge)
+[![German DATEV Buchungsstapel EXTF CSV Generator MCP server](https://mcprush.com/badge/german-datev-buchungsstapel-extf-csv-generato-mcp/card.svg)](https://mcprush.com/to/german-datev-buchungsstapel-extf-csv-generato-mcp?ref=badge)
 
 ---
 
