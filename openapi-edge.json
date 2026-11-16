@@ -1,0 +1,315 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FinOps Studio Banking, Payroll, E-Invoicing & Verification Edge API",
+    "version": "1.5.0",
+    "summary": "Deterministic banking file generation, ISO 20022 SEPA XML, Peppol/XRechnung/Factur-X e-invoicing, US NACHA ACH, BAI2 parsing, DATEV EXTF, UK BACS 18, Australian ABA, Canadian CPA-005, IBAN/ABA routing validation, and B2B email DNS deliverability API.",
+    "description": "Low-latency Cloudflare Edge REST API for corporate treasury, ERP automation, payroll clearing, EN 16931 e-invoicing, global bank routing/IBAN MOD-97/ABA MOD-10 validation, and live MX/SPF/DMARC deliverability verification. Accessible via RapidAPI Hub subscriptions (with free sandbox tier), MCPRush Remote MCP, and Apify Cloud.",
+    "contact": {
+      "name": "FinOps Studio",
+      "url": "https://geornaden.github.io/finops-studio/",
+      "email": "geornaden@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/Geornaden/finops-studio/blob/main/LICENSE"
+    },
+    "x-logo": {
+      "url": "https://geornaden.github.io/finops-studio/logo.jpg"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://finops-rapidapi-edge.ria-rader.workers.dev",
+      "description": "FinOps Studio Global Edge Gateway (Cloudflare Workers)"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "RapidApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-RapidAPI-Key",
+        "description": "Obtain free sandbox or paid monthly key via RapidAPI Hub (https://rapidapi.com/user/Geornaden)."
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "getGatewayHealth",
+        "summary": "Check edge gateway health and list all available banking and verification endpoints",
+        "tags": ["System"],
+        "responses": {
+          "200": { "description": "Healthy gateway status and endpoint catalog" }
+        }
+      }
+    },
+    "/v1/validate/bank": {
+      "get": {
+        "operationId": "validateBankRoutingGet",
+        "summary": "Validate IBAN MOD-97, SWIFT BIC, US ABA MOD-10, UK Sort Code, AU BSB, CA CPA-005, or EU VAT via query params",
+        "tags": ["Validation"],
+        "parameters": [
+          { "name": "iban", "in": "query", "schema": { "type": "string", "example": "DE89370400440532013000" } },
+          { "name": "bic", "in": "query", "schema": { "type": "string", "example": "COBADEFFXXX" } },
+          { "name": "aba", "in": "query", "schema": { "type": "string", "example": "021000021" } },
+          { "name": "ukSortCode", "in": "query", "schema": { "type": "string", "example": "40-05-15" } },
+          { "name": "auBsb", "in": "query", "schema": { "type": "string", "example": "062-000" } },
+          { "name": "vatId", "in": "query", "schema": { "type": "string", "example": "DE123456789" } }
+        ],
+        "responses": {
+          "200": { "description": "Mathematical checksum validation report" }
+        }
+      },
+      "post": {
+        "operationId": "validateBankRoutingPost",
+        "summary": "Validate multiple global banking and EU VAT identifiers in one JSON request",
+        "tags": ["Validation"],
+        "security": [{ "RapidApiKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "iban": { "type": "string", "example": "DE89370400440532013000" },
+                  "bic": { "type": "string", "example": "COBADEFFXXX" },
+                  "aba": { "type": "string", "example": "021000021" },
+                  "ukSortCode": { "type": "string", "example": "40-05-15" },
+                  "ukAccountNumber": { "type": "string", "example": "87654321" },
+                  "auBsb": { "type": "string", "example": "062-000" },
+                  "caInstitution": { "type": "string", "example": "003" },
+                  "caTransit": { "type": "string", "example": "10202" },
+                  "vatId": { "type": "string", "example": "DE123456789" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Mathematical checksum validation report" }
+        }
+      }
+    },
+    "/v1/leads/verify-email": {
+      "get": {
+        "operationId": "verifyEmailGet",
+        "summary": "Check email syntax, disposable domain status, and live DNS-over-HTTPS MX, SPF, and DMARC policies",
+        "tags": ["Email & Domain Intelligence"],
+        "parameters": [
+          { "name": "email", "in": "query", "required": true, "schema": { "type": "string", "example": "treasury@stripe.com" } }
+        ],
+        "responses": {
+          "200": { "description": "Deliverability and mail security report" }
+        }
+      },
+      "post": {
+        "operationId": "verifyEmailPost",
+        "summary": "Verify single email or batch of up to 25 emails via live DNS MX, SPF, and DMARC lookups",
+        "tags": ["Email & Domain Intelligence"],
+        "security": [{ "RapidApiKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "example": "treasury@stripe.com" },
+                  "emails": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Deliverability and mail security report" }
+        }
+      }
+    },
+    "/v1/leads/enrich-domain": {
+      "get": {
+        "operationId": "enrichDomainGet",
+        "summary": "Extract company tech stack, public social links, contact emails, and mail provider from a corporate domain",
+        "tags": ["Email & Domain Intelligence"],
+        "parameters": [
+          { "name": "domain", "in": "query", "required": true, "schema": { "type": "string", "example": "stripe.com" } }
+        ],
+        "responses": {
+          "200": { "description": "Domain enrichment payload" }
+        }
+      }
+    },
+    "/v1/sepa/generate": {
+      "post": {
+        "operationId": "generateSepaXmlEdge",
+        "summary": "Generate 2026 EPC SEPA Credit Transfer (pain.001.001.09) or Direct Debit (pain.008.001.08) XML",
+        "tags": ["Banking & Treasury Files"],
+        "security": [{ "RapidApiKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["transactions"],
+                "properties": {
+                  "schema": { "type": "string", "default": "pain.001.001.09" },
+                  "initiatingPartyName": { "type": "string" },
+                  "initiatingPartyIban": { "type": "string" },
+                  "initiatingPartyBic": { "type": "string" },
+                  "transactions": { "type": "array", "items": { "type": "object" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Generated and checksum-validated SEPA XML" }
+        }
+      }
+    },
+    "/v1/nacha/generate": {
+      "post": {
+        "operationId": "generateNachaAchEdge",
+        "summary": "Generate 94-character Block-10 padded US NACHA ACH (.ach) PPD/CCD/WEB file",
+        "tags": ["Banking & Treasury Files"],
+        "security": [{ "RapidApiKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Generated 94-character US NACHA ACH file" }
+        }
+      }
+    },
+    "/v1/bai2/parse": {
+      "post": {
+        "operationId": "parseBai2StatementEdge",
+        "summary": "Parse Corporate BAI2 Bank Statement (01/02/03/16/88/49/98/99) into JSON and CSV",
+        "tags": ["Banking & Treasury Files"],
+        "security": [{ "RapidApiKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["bai2Text"],
+                "properties": {
+                  "bai2Text": { "type": "string" },
+                  "includeInlineCsv": { "type": "boolean", "default": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Parsed BAI2 accounts, decoded type codes, and transactions" }
+        }
+      }
+    },
+    "/v1/einvoice/generate": {
+      "post": {
+        "operationId": "generateEinvoiceXmlEdge",
+        "summary": "Generate EN 16931 Peppol BIS 3.0 UBL, German XRechnung 3.0, or Factur-X CII XML invoice",
+        "tags": ["Tax & E-Invoicing"],
+        "security": [{ "RapidApiKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "EN 16931 XML e-invoice" }
+        }
+      }
+    },
+    "/v1/datev/generate": {
+      "post": {
+        "operationId": "generateDatevExtfEdge",
+        "summary": "Generate German DATEV EXTF v700 Buchungsstapel CSV (SKR03 / SKR04)",
+        "tags": ["Tax & E-Invoicing"],
+        "security": [{ "RapidApiKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "DATEV EXTF v700 CSV export" }
+        }
+      }
+    },
+    "/v1/bacs/generate": {
+      "post": {
+        "operationId": "generateUkBacsEdge",
+        "summary": "Generate 100-character Pay.UK BACS Standard 18 Direct Credit or Direct Debit file",
+        "tags": ["Banking & Treasury Files"],
+        "security": [{ "RapidApiKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "100-character UK BACS Standard 18 file" }
+        }
+      }
+    },
+    "/v1/aba/generate": {
+      "post": {
+        "operationId": "generateAuAbaEdge",
+        "summary": "Generate 120-character Australian AusPayNet BECS Direct Entry (.ABA) file",
+        "tags": ["Banking & Treasury Files"],
+        "security": [{ "RapidApiKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "120-character Australian .ABA file" }
+        }
+      }
+    },
+    "/v1/cpa005/generate": {
+      "post": {
+        "operationId": "generateCaCpa005Edge",
+        "summary": "Generate 1,464-byte Payments Canada CPA-005 EFT Direct Deposit file",
+        "tags": ["Banking & Treasury Files"],
+        "security": [{ "RapidApiKey": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "1,464-byte Canadian CPA-005 EFT file" }
+        }
+      }
+    }
+  }
+}

@@ -80,6 +80,22 @@ curl -X POST "https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run
 
 Give **Claude Desktop**, **Cursor**, **Windsurf**, or any MCP-compatible AI agent deterministic banking and e-invoicing capabilities:
 
+### Option A: Zero-Install Local `stdio` MCP Server (Works Offline for Routing & Format Audits!)
+```json
+{
+  "mcpServers": {
+    "finops-studio": {
+      "command": "npx",
+      "args": ["-y", "github:Geornaden/finops-studio", "mcp"],
+      "env": {
+        "APIFY_TOKEN": "YOUR_OPTIONAL_APIFY_TOKEN"
+      }
+    }
+  }
+}
+```
+
+### Option B: Hosted Remote Cloud MCP Gateway
 ```json
 {
   "mcpServers": {
