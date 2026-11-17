@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import readline from 'node:readline';
 
-const VERSION = '1.6.0';
+const VERSION = '1.7.0';
 
 const TOOLS = [
   ['sepa', 'finops_studio~sepa-xml-generator', 'ISO 20022 SEPA Credit Transfer & Direct Debit XML (pain.001/008)', true],
@@ -86,60 +86,374 @@ function auditBankText(raw, sourceLabel = '<inline>') {
   };
 }
 
+function snakeToCamelKey(key) {
+  return String(key).replace(/_([a-z0-9])/g, (_, ch) => ch.toUpperCase());
+}
+
+function snakeToCamelObject(value) {
+  if (Array.isArray(value)) return value.map(snakeToCamelObject);
+  if (value && typeof value === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(value)) {
+      out[snakeToCamelKey(k)] = snakeToCamelObject(v);
+    }
+    return out;
+  }
+  return value;
+}
+
+const OFFLINE_ANNOTATIONS = (title) => ({
+  title,
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false
+});
+
+const CLOUD_ANNOTATIONS = (title) => ({
+  title,
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: true
+});
+
 const CLOUD_MCP_TOOLS = [
   {
     name: 'generate_sepa_xml',
+    title: 'Generate SEPA XML',
     slug: 'finops_studio~sepa-xml-generator',
-    description: 'Generate 2026 EPC-compliant ISO 20022 SEPA Credit Transfer (pain.001.001.09) or Direct Debit (pain.008.001.08) XML via Apify Cloud.',
-    payloadDesc: 'JSON input matching finops_studio/sepa-xml-generator schema (schema, initiatingPartyName, initiatingPartyIban, transactions, etc.).'
+    description: 'Generate 2026 EPC-compliant ISO 20022 SEPA Credit Transfer (pain.001.001.09) or Direct Debit (pain.008.001.08) XML files via Apify Cloud.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['initiating_party_name', 'initiating_party_iban', 'transactions'],
+      properties: {
+        schema: {
+          type: 'string',
+          enum: ['pain.001.001.09', 'pain.008.001.08'],
+          default: 'pain.001.001.09',
+          description: 'ISO 20022 SEPA XML schema version.'
+        },
+        initiating_party_name: { type: 'string', description: 'Legal name of the initiating debtor or creditor organization.' },
+        initiating_party_iban: { type: 'string', description: 'Originating SEPA bank account IBAN.' },
+        initiating_party_bic: { type: 'string', description: 'Optional 8- or 11-character SWIFT/BIC code of the originating bank.' },
+        execution_date: { type: 'string', description: 'Requested execution date in YYYY-MM-DD format.' },
+        transactions: {
+          type: 'array',
+          minItems: 1,
+          description: 'Payment transactions to include in the SEPA batch.',
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['amount', 'counterparty_name', 'counterparty_iban'],
+            properties: {
+              end_to_end_id: { type: 'string', description: 'Unique end-to-end transaction identifier.' },
+              amount: { type: 'number', description: 'Payment amount in major currency units (e.g., 1250.50).' },
+              currency: { type: 'string', default: 'EUR', description: 'ISO 4217 currency code (e.g., EUR).' },
+              counterparty_name: { type: 'string', description: 'Recipient or debtor name.' },
+              counterparty_iban: { type: 'string', description: 'Recipient or debtor IBAN.' },
+              counterparty_bic: { type: 'string', description: 'Optional recipient or debtor BIC.' },
+              remittance_info: { type: 'string', description: 'Unstructured invoice reference or payment note.' },
+              country: { type: 'string', description: 'Two-letter ISO 3166-1 alpha-2 country code (e.g., DE).' },
+              town_name: { type: 'string', description: 'Structured town or city name.' },
+              post_code: { type: 'string', description: 'Structured postal code.' },
+              street_name: { type: 'string', description: 'Structured street address.' }
+            }
+          }
+        }
+      }
+    }
   },
   {
     name: 'generate_eu_einvoice_xml',
+    title: 'Generate EU E-Invoice XML',
     slug: 'finops_studio~eu-einvoice-xml-generator',
-    description: 'Generate EN 16931 EU E-Invoice XML (Peppol BIS 3.0 UBL, German XRechnung 3.0, or Factur-X/ZUGFeRD CII) via Apify Cloud.',
-    payloadDesc: 'JSON input matching finops_studio/eu-einvoice-xml-generator schema (format, invoiceNumber, issueDate, currency, seller, buyer, lines).'
+    description: 'Generate EN 16931 EU E-Invoice XML (Peppol BIS 3.0 UBL, German XRechnung 3.0 UBL, or Factur-X/ZUGFeRD 2.3 CII) via Apify Cloud.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['invoice_number', 'seller', 'buyer', 'lines'],
+      properties: {
+        format: {
+          type: 'string',
+          enum: ['peppol-ubl-3.0', 'xrechnung-3.0-ubl', 'facturx-cii-en16931'],
+          default: 'peppol-ubl-3.0',
+          description: 'Target European e-invoice XML standard.'
+        },
+        invoice_number: { type: 'string', description: 'Unique supplier invoice number (BT-1).' },
+        issue_date: { type: 'string', description: 'Invoice issue date in YYYY-MM-DD format (BT-2).' },
+        due_date: { type: 'string', description: 'Payment due date in YYYY-MM-DD format (BT-9).' },
+        currency: { type: 'string', default: 'EUR', description: 'ISO 4217 document currency code (e.g., EUR).' },
+        buyer_reference: { type: 'string', description: 'Purchase order reference or German XRechnung Leitweg-ID (BT-10).' },
+        seller: {
+          type: 'object',
+          additionalProperties: false,
+          required: ['name', 'vat_id', 'country'],
+          description: 'Seller legal entity details.',
+          properties: {
+            name: { type: 'string', description: 'Seller legal entity name.' },
+            vat_id: { type: 'string', description: 'Seller EU VAT registration ID (e.g., DE129273398).' },
+            country: { type: 'string', description: 'ISO 3166-1 alpha-2 country code.' },
+            city: { type: 'string', description: 'Seller city.' },
+            postal_code: { type: 'string', description: 'Seller postal code.' },
+            street: { type: 'string', description: 'Seller street address.' },
+            iban: { type: 'string', description: 'Seller payment IBAN.' }
+          }
+        },
+        buyer: {
+          type: 'object',
+          additionalProperties: false,
+          required: ['name', 'country'],
+          description: 'Buyer legal entity details.',
+          properties: {
+            name: { type: 'string', description: 'Buyer legal entity name.' },
+            vat_id: { type: 'string', description: 'Buyer EU VAT registration ID.' },
+            country: { type: 'string', description: 'ISO 3166-1 alpha-2 country code.' },
+            city: { type: 'string', description: 'Buyer city.' },
+            postal_code: { type: 'string', description: 'Buyer postal code.' },
+            street: { type: 'string', description: 'Buyer street address.' }
+          }
+        },
+        lines: {
+          type: 'array',
+          minItems: 1,
+          description: 'Invoice line items with quantities, unit prices, and VAT rates.',
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['description', 'quantity', 'unit_price', 'vat_rate'],
+            properties: {
+              description: { type: 'string', description: 'Line item description.' },
+              quantity: { type: 'number', description: 'Billed quantity.' },
+              unit_price: { type: 'number', description: 'Net unit price before VAT.' },
+              vat_rate: { type: 'number', description: 'VAT percentage rate (e.g., 19 or 21).' }
+            }
+          }
+        }
+      }
+    }
   },
   {
-    name: 'generate_nacha_ach',
+    name: 'generate_nacha_ach_file',
+    title: 'Generate US NACHA ACH File',
     slug: 'finops_studio~nacha-ach-file-generator',
-    description: 'Generate or parse 94-character Block-10 padded US NACHA ACH (.ach) PPD/CCD/WEB files via Apify Cloud.',
-    payloadDesc: 'JSON input matching finops_studio/nacha-ach-file-generator schema (mode, secCode, immediateDestination, companyName, companyId, entries).'
+    description: 'Generate 94-character Block-10 padded US NACHA ACH (.ach) vendor payment and payroll direct deposit files (CCD, PPD, WEB) via Apify Cloud.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['immediate_destination', 'company_name', 'company_id', 'entries'],
+      properties: {
+        sec_code: {
+          type: 'string',
+          enum: ['CCD', 'PPD', 'WEB'],
+          default: 'CCD',
+          description: 'Standard Entry Class code (CCD business, PPD payroll/consumer, WEB internet).'
+        },
+        immediate_destination: { type: 'string', description: '9-digit US ABA routing number of the originating or destination bank.' },
+        company_name: { type: 'string', description: 'Originating company name (up to 16 characters).' },
+        company_id: { type: 'string', description: '10-character NACHA Company ID (typically 1 plus 9-digit EIN).' },
+        effective_entry_date: { type: 'string', description: 'Settlement date in YYMMDD or YYYY-MM-DD format.' },
+        entries: {
+          type: 'array',
+          minItems: 1,
+          description: 'ACH debit or credit entry detail records.',
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['receiving_dfi_routing', 'dfi_account_number', 'amount', 'individual_name'],
+            properties: {
+              trace_id: { type: 'string', description: 'Optional trace or invoice ID (up to 15 chars).' },
+              receiving_dfi_routing: { type: 'string', description: 'Receiver 9-digit US ABA routing number.' },
+              dfi_account_number: { type: 'string', description: 'Receiver bank account number.' },
+              amount: { type: 'number', description: 'Payment amount in USD (e.g., 450.25).' },
+              individual_name: { type: 'string', description: 'Receiver name (up to 22 chars).' },
+              transaction_code: { type: 'string', description: 'NACHA transaction code (22 checking credit, 27 checking debit).' }
+            }
+          }
+        }
+      }
+    }
   },
   {
     name: 'parse_bai2_statement',
+    title: 'Parse BAI2 Bank Statement',
     slug: 'finops_studio~bai2-bank-statement-parser',
-    description: 'Parse corporate BAI2 cash-management bank statements (01/02/03/16/88/49/98/99) into JSON & CSV via Apify Cloud.',
-    payloadDesc: 'JSON input matching finops_studio/bai2-bank-statement-parser schema (bai2Text, includeInlineCsv).'
+    description: 'Parse corporate BAI2 (.bai / .bai2) cash-management bank statements (records 01, 02, 03, 16, 88, 49, 98, 99) into structured JSON and CSV via Apify Cloud.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['bai2_content'],
+      properties: {
+        bai2_content: { type: 'string', description: 'Raw multi-line corporate BAI2 bank statement text (records 01 through 99).' },
+        include_inline_csv: { type: 'boolean', default: false, description: 'When true, include a flattened UTF-8 CSV ledger export in the output.' }
+      }
+    }
   },
   {
     name: 'generate_datev_csv',
+    title: 'Generate DATEV EXTF CSV',
     slug: 'finops_studio~datev-buchungsstapel-generator',
-    description: 'Generate German DATEV EXTF v700 Buchungsstapel CSV (SKR03 / SKR04) via Apify Cloud.',
-    payloadDesc: 'JSON input matching finops_studio/datev-buchungsstapel-generator schema (skr, consultantNumber, clientNumber, batchTitle, bookings).'
+    description: 'Generate German DATEV EXTF v700 Buchungsstapel CSV (SKR03 / SKR04) accounting import batches via Apify Cloud.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['entries'],
+      properties: {
+        chart_of_accounts: {
+          type: 'string',
+          enum: ['SKR03', 'SKR04'],
+          default: 'SKR03',
+          description: 'German DATEV standard chart of accounts.'
+        },
+        consultant_number: { type: 'integer', default: 12998, description: 'DATEV Beraternummer (4 to 7 digits).' },
+        client_number: { type: 'integer', default: 55001, description: 'DATEV Mandantennummer (1 to 5 digits).' },
+        fiscal_year_start: { type: 'string', default: '20260101', description: 'Fiscal year start date in YYYYMMDD format.' },
+        entries: {
+          type: 'array',
+          minItems: 1,
+          description: 'Accounting bookings to serialize into DATEV EXTF CSV rows.',
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['booking_date', 'gross_amount', 'contra_account'],
+            properties: {
+              booking_date: { type: 'string', description: 'Document date in YYYY-MM-DD format.' },
+              gross_amount: { type: 'number', description: 'Gross booking amount in EUR.' },
+              vat_rate: { type: 'number', description: 'VAT percentage rate (e.g., 19, 7, or 0).' },
+              contra_account: { type: 'integer', description: 'DATEV contra account number (Gegenkonto).' },
+              booking_text: { type: 'string', description: 'Booking description text (Buchungstext, max 60 chars).' },
+              document_ref: { type: 'string', description: 'Document reference / Belegfeld 1.' }
+            }
+          }
+        }
+      }
+    }
   },
   {
-    name: 'generate_australian_aba',
+    name: 'generate_australian_aba_file',
+    title: 'Generate Australian ABA File',
     slug: 'finops_studio~aba-cemtex-file-generator',
-    description: 'Generate 120-character Australian AusPayNet BECS Direct Entry (.aba / Cemtex) files via Apify Cloud.',
-    payloadDesc: 'JSON input matching finops_studio/aba-cemtex-file-generator schema (bankCode, userName, apcaUserId, traceBsb, traceAccount, transactions).'
+    description: 'Generate 120-character Australian AusPayNet BECS Direct Entry (.aba / Cemtex) files with Record 7 hash/net balancing via Apify Cloud.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['bsb', 'account_number', 'user_name', 'apca_user_id', 'transactions'],
+      properties: {
+        bsb: { type: 'string', description: 'Originating or trace Australian 6-digit BSB (XXX-XXX).' },
+        account_number: { type: 'string', description: 'Originating or trace bank account number.' },
+        user_name: { type: 'string', description: 'Originating user preferred name (max 26 chars).' },
+        apca_user_id: { type: 'string', description: '6-digit AusPayNet / APCA User Identification Number.' },
+        description: { type: 'string', description: 'Batch entry description (max 12 chars, e.g., PAYROLL).' },
+        transactions: {
+          type: 'array',
+          minItems: 1,
+          description: 'Australian Direct Entry detail lines (Type 1 records).',
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['bsb', 'account_number', 'amount', 'account_title'],
+            properties: {
+              bsb: { type: 'string', description: 'Recipient 6-digit BSB (XXX-XXX).' },
+              account_number: { type: 'string', description: 'Recipient bank account number (max 9 digits).' },
+              indicator: { type: 'string', description: 'Single-character indicator (blank, N, W, X, or Y).' },
+              transaction_code: { type: 'string', default: '50', description: '2-digit BECS transaction code (50 general credit, 53 payroll, 13 debit).' },
+              amount: { type: 'number', description: 'Payment amount in AUD.' },
+              account_title: { type: 'string', description: 'Recipient account title (max 32 chars).' },
+              lodgement_reference: { type: 'string', description: 'Reference shown on recipient statement (max 18 chars).' }
+            }
+          }
+        }
+      }
+    }
   },
   {
-    name: 'decode_pain002_status',
+    name: 'parse_pain002_status_xml',
+    title: 'Parse ISO 20022 pain.002 XML',
     slug: 'finops_studio~iso20022-pain002-status-parser',
-    description: 'Decode ISO 20022 pain.002 XML bank payment rejection reports (AC04, AM04, BE04, MD01) into plain-English fixes via Apify Cloud.',
-    payloadDesc: 'JSON input matching finops_studio/iso20022-pain002-status-parser schema (xmlContent, onlyRejectedOrExceptions, includeInlineCsv).'
+    description: 'Parse ISO 20022 pain.002 XML bank payment rejection reports (AC04, AM04, BE04, MD01) into plain-English remediation steps via Apify Cloud.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['xml_content'],
+      properties: {
+        xml_content: { type: 'string', description: 'Raw ISO 20022 pain.002.001.03 or pain.002.001.10 bank status report XML.' },
+        only_rejected_or_exceptions: { type: 'boolean', default: false, description: 'When true, return only RJCT/PDNG transactions and omit ACCP items.' },
+        include_inline_csv: { type: 'boolean', default: false, description: 'When true, include a UTF-8 CSV summary of status records.' }
+      }
+    }
   },
   {
-    name: 'generate_uk_bacs_18',
+    name: 'generate_uk_bacs_file',
+    title: 'Generate UK BACS Standard 18 File',
     slug: 'finops_studio~uk-bacs-standard18-generator',
-    description: 'Generate 100-character Pay.UK BACS Standard 18 (VOL1/HDR1/UHL1 + Contra + UTL1) files via Apify Cloud.',
-    payloadDesc: 'JSON input matching finops_studio/uk-bacs-standard18-generator schema (serviceUserNumber, originatingCompanyName, originatingSortCode, originatingAccountNumber, payments).'
+    description: 'Generate 100-character UK Pay.UK BACS Standard 18 (VOL1/HDR1/UHL1 + Contra + UTL1) direct credit or debit files via Apify Cloud.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['service_user_number', 'originating_company_name', 'originating_sort_code', 'originating_account_number', 'payments'],
+      properties: {
+        service_user_number: { type: 'string', description: '6-digit BACS Service User Number (SUN).' },
+        originating_company_name: { type: 'string', description: 'Originating account or company name (max 18 chars).' },
+        originating_sort_code: { type: 'string', description: '6-digit UK originating Sort Code.' },
+        originating_account_number: { type: 'string', description: '8-digit UK originating bank account number.' },
+        processing_date: { type: 'string', description: 'Processing date in YYYY-MM-DD format.' },
+        payments: {
+          type: 'array',
+          minItems: 1,
+          description: 'BACS payment lines.',
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['destination_sort_code', 'destination_account_number', 'account_name', 'amount_pence'],
+            properties: {
+              destination_sort_code: { type: 'string', description: 'Recipient 6-digit UK Sort Code.' },
+              destination_account_number: { type: 'string', description: 'Recipient 8-digit UK bank account number.' },
+              account_name: { type: 'string', description: 'Recipient name (max 18 chars).' },
+              amount_pence: { type: 'integer', description: 'Payment amount in GBP integer pence (e.g., 12500 = 125.00 GBP).' },
+              reference: { type: 'string', description: 'Payment reference (max 18 chars).' },
+              transaction_code: { type: 'string', default: '99', description: 'BACS transaction code (99 credit, 01/17/18/19 Direct Debit).' }
+            }
+          }
+        }
+      }
+    }
   },
   {
-    name: 'generate_canada_cpa005',
+    name: 'generate_canada_cpa005_file',
+    title: 'Generate Canada CPA-005 EFT File',
     slug: 'finops_studio~canada-cpa005-eft-generator',
-    description: 'Generate 1,464-byte Payments Canada Standard 005 EFT direct deposit & supplier files via Apify Cloud.',
-    payloadDesc: 'JSON input matching finops_studio/canada-cpa005-eft-generator schema (originatorId, originatorShortName, destinationDataCentre, transactions).'
+    description: 'Generate 1,464-byte Payments Canada Standard 005 (CPA-005) EFT direct deposit and supplier files via Apify Cloud.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['originator_id', 'originator_short_name', 'transactions'],
+      properties: {
+        originator_id: { type: 'string', description: '10-character Payments Canada Originator ID.' },
+        originator_short_name: { type: 'string', description: 'Originator short name (max 15 chars).' },
+        originator_long_name: { type: 'string', description: 'Originator full name (max 30 chars).' },
+        destination_data_centre: { type: 'string', description: '5-digit destination bank data centre code.' },
+        transactions: {
+          type: 'array',
+          minItems: 1,
+          description: 'Canadian EFT direct deposit or supplier payment items.',
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['institution_number', 'transit_number', 'account_number', 'amount', 'payee_name'],
+            properties: {
+              transaction_type: { type: 'string', default: '450', description: '3-digit CPA payment type code (200 payroll, 450 AP credit).' },
+              amount: { type: 'number', description: 'Amount in CAD dollars (e.g., 1200.00).' },
+              institution_number: { type: 'string', description: '3-digit Canadian bank institution number.' },
+              transit_number: { type: 'string', description: '5-digit Canadian bank branch transit number.' },
+              account_number: { type: 'string', description: 'Recipient bank account number (up to 12 chars).' },
+              payee_name: { type: 'string', description: 'Payee full name (up to 30 chars).' },
+              cross_reference: { type: 'string', description: 'Cross-reference ID (up to 19 chars).' }
+            }
+          }
+        }
+      }
+    }
   }
 ];
 
@@ -147,41 +461,37 @@ function getMcpToolDefinitions() {
   return [
     {
       name: 'validate_bank_routing',
-      description: 'Offline deterministic validator for ISO 13616 IBAN (MOD-97), US 9-digit ABA routing number (MOD-10), UK 6-digit Sort Code, and Australian 6-digit BSB.',
+      description: 'Offline deterministic validator for standalone bank routing identifiers: ISO 13616 IBAN (MOD-97), US 9-digit ABA routing number (MOD-10), UK 6-digit BACS Sort Code, and Australian 6-digit BSB. Use for standalone bank identifiers; to inspect a full multi-line payment or statement file, use audit_bank_file_format.',
+      annotations: OFFLINE_ANNOTATIONS('Validate Bank Routing Identifiers'),
       inputSchema: {
         type: 'object',
+        additionalProperties: false,
         properties: {
-          iban: { type: 'string', description: 'International Bank Account Number (e.g., DE89370400440532013000)' },
-          aba: { type: 'string', description: 'US 9-digit ABA Fedwire/ACH routing number (e.g., 021000021)' },
-          ukSortCode: { type: 'string', description: 'UK 6-digit BACS Sort Code (e.g., 40-05-15)' },
-          auBsb: { type: 'string', description: 'Australian 6-digit BSB number (e.g., 062-000)' }
+          iban: { type: 'string', description: 'International Bank Account Number to verify via ISO 13616 MOD-97 (e.g., DE89370400440532013000).' },
+          aba_routing_number: { type: 'string', description: 'US 9-digit ABA Fedwire/ACH routing number to verify via MOD-10 checksum (e.g., 021000021).' },
+          uk_sort_code: { type: 'string', description: 'UK 6-digit BACS Sort Code to validate and normalize (e.g., 40-05-15).' },
+          au_bsb: { type: 'string', description: 'Australian 6-digit BECS BSB number to validate and normalize (e.g., 062-000).' }
         }
       }
     },
     {
       name: 'audit_bank_file_format',
-      description: 'Offline pre-flight inspector that detects bank/tax file format (NACHA 94-char, AU ABA 120-char, UK BACS 100-char, CA CPA-005 1464-byte, Norma 43 80-char, BAI2, SEPA/ISO 20022 XML) and validates every embedded IBAN & ABA checksum.',
+      description: 'Offline pre-flight inspector for multi-line bank, payroll, or statement files: detects format (NACHA 94-char, AU ABA 120-char, UK BACS 100-char, CA CPA-005 1464-byte, Norma 43 80-char, BAI2, SEPA/ISO 20022 XML) and validates every embedded IBAN and ABA checksum. Use for full files; to check a single standalone identifier, use validate_bank_routing.',
+      annotations: OFFLINE_ANNOTATIONS('Audit Bank File Format & Checksums'),
       inputSchema: {
         type: 'object',
-        required: ['content'],
+        additionalProperties: false,
+        required: ['file_content'],
         properties: {
-          content: { type: 'string', description: 'Raw text content of the bank file, CSV, or XML snippet to audit' }
+          file_content: { type: 'string', description: 'Raw text content of the bank payment file, CSV batch, BAI2 statement, or ISO 20022 XML snippet to audit.' }
         }
       }
     },
     ...CLOUD_MCP_TOOLS.map((t) => ({
       name: t.name,
       description: t.description,
-      inputSchema: {
-        type: 'object',
-        required: ['payload'],
-        properties: {
-          payload: {
-            type: 'object',
-            description: t.payloadDesc
-          }
-        }
-      }
+      annotations: CLOUD_ANNOTATIONS(t.title),
+      inputSchema: t.inputSchema
     }))
   ];
 }
@@ -190,27 +500,53 @@ function sendJsonRpc(msg) {
   process.stdout.write(JSON.stringify(msg) + '\n');
 }
 
+function normalizeCloudPayload(name, args) {
+  const source = args.payload && typeof args.payload === 'object' ? args.payload : args;
+  const payload = snakeToCamelObject(source);
+  if (name === 'parse_bai2_statement' && payload.bai2Content && !payload.bai2Text) {
+    payload.bai2Text = payload.bai2Content;
+  }
+  if (name === 'generate_datev_csv') {
+    if (payload.chartOfAccounts && !payload.skr) payload.skr = payload.chartOfAccounts;
+    if (Array.isArray(payload.entries)) {
+      payload.entries = payload.entries.map((e) => ({
+        ...e,
+        date: e.date || e.bookingDate
+      }));
+    }
+  }
+  if (name === 'generate_australian_aba_file') {
+    if (payload.bsb && !payload.traceBsb) payload.traceBsb = payload.bsb;
+    if (payload.accountNumber && !payload.traceAccount) payload.traceAccount = payload.accountNumber;
+  }
+  return payload;
+}
+
 async function handleMcpCallTool(name, args = {}) {
   if (name === 'validate_bank_routing') {
+    const abaInput = args.aba_routing_number || args.aba;
+    const ukInput = args.uk_sort_code || args.ukSortCode;
+    const auInput = args.au_bsb || args.auBsb;
     const checks = {};
     if (args.iban) checks.iban = { input: args.iban, valid: validIban(args.iban), normalized: String(args.iban).replace(/\s+/g, '').toUpperCase() };
-    if (args.aba) checks.usAbaRouting = { input: args.aba, valid: validAba(args.aba), normalized: String(args.aba).replace(/\s+/g, '') };
-    if (args.ukSortCode) checks.ukSortCode = validUkSortCode(args.ukSortCode);
-    if (args.auBsb) checks.auBsb = validAuBsb(args.auBsb);
+    if (abaInput) checks.usAbaRouting = { input: abaInput, valid: validAba(abaInput), normalized: String(abaInput).replace(/\s+/g, '') };
+    if (ukInput) checks.ukSortCode = validUkSortCode(ukInput);
+    if (auInput) checks.auBsb = validAuBsb(auInput);
     if (Object.keys(checks).length === 0) {
       return {
         isError: true,
-        content: [{ type: 'text', text: 'Provide at least one parameter: iban, aba, ukSortCode, or auBsb.' }]
+        content: [{ type: 'text', text: 'Provide at least one parameter: iban, aba_routing_number, uk_sort_code, or au_bsb.' }]
       };
     }
     return { content: [{ type: 'text', text: JSON.stringify({ ok: true, checks }, null, 2) }] };
   }
 
   if (name === 'audit_bank_file_format') {
-    if (!args.content || typeof args.content !== 'string') {
-      return { isError: true, content: [{ type: 'text', text: 'Missing required string parameter: content' }] };
+    const fileText = args.file_content || args.content;
+    if (!fileText || typeof fileText !== 'string') {
+      return { isError: true, content: [{ type: 'text', text: 'Missing required string parameter: file_content' }] };
     }
-    const audit = auditBankText(args.content, 'mcp-inline');
+    const audit = auditBankText(fileText, 'mcp-inline');
     return { content: [{ type: 'text', text: JSON.stringify(audit, null, 2) }] };
   }
 
@@ -236,7 +572,7 @@ async function handleMcpCallTool(name, args = {}) {
     };
   }
 
-  const payload = args.payload && typeof args.payload === 'object' ? args.payload : args;
+  const payload = normalizeCloudPayload(name, args);
   const url = `https://api.apify.com/v2/acts/${cloudTool.slug}/run-sync-get-dataset-items?token=${encodeURIComponent(token)}`;
   const res = await fetch(url, {
     method: 'POST',
