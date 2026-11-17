@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global APAC, LATAM &amp; MENA Banking &amp; E-Invoicing Validators (BR, MX, IN, JP, SG, MY, SA, AE) | FinOps Studio</title>
+  <meta name="description" content="Free deterministic banking and e-invoicing ID validators plus Google Sheets =IMPORTDATA() formulas for Brazil (CNPJ/Pix/CNAB), Mexico (CLABE/CFDI 4.0), India (IFSC/GSTIN), Japan (T-Number/Zengin/PINT JP), Singapore (InvoiceNow UEN), Malaysia (MyInvois), Saudi Arabia (ZATCA), and UAE (PINT AE)." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/global-apac-latam-mena-einvoicing-banking-validators.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "FinOps Studio Global APAC, LATAM & MENA Banking & E-Invoice Validator",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web, Google Sheets, Excel, Cloud API",
+        "url": "https://geornaden.github.io/finops-studio/global-apac-latam-mena-einvoicing-banking-validators.html",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "description": "Free offline checksum validator and live Cloud Sheets API for Mexico 18-digit CLABE, Brazil 14-digit CNPJ, India IFSC and GSTIN, Japan NTA T-Number, Singapore UEN, Malaysia MyInvois, Saudi ZATCA SA IBAN, and UAE PINT AE IBAN."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which APAC, LATAM, and Middle East banking and tax formats can I validate here?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "You can validate Mexico 18-digit CLABE (MOD-10), Brazil 14-digit CNPJ (MOD-11), India 11-char IFSC and 15-char GSTIN (MOD-36), Japan Qualified Invoice T-Number (NTA MOD-9), Singapore UEN (ACRA/InvoiceNow), Malaysia MyInvois TIN, Saudi Arabia 24-char SA IBAN + ZATCA 15-digit VAT TRN, and UAE 23-char AE IBAN + 15-digit TRN."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can Google Sheets or Excel validate Mexico CLABE, Brazil CNPJ, India IFSC, and Japan T-Numbers automatically?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Use =IMPORTDATA(\"https://finops-rapidapi-edge.ria-rader.workers.dev/v1/sheet/check?q=\"&ENCODEURL(A2)&\"&row=\"&ROW()) in Google Sheets with zero add-ons required (first 10 rows free per batch)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./eu-einvoice-xml-generator.html">Peppol / UBL Sandbox</a>
+        <a href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html">Fedwire &amp; SWIFT pacs.008</a>
+        <a href="./google-sheets-excel-importdata-iban-aba-formula.html">Sheets =IMPORTDATA()</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud API Hub &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127758; Global Expansion: BR &bull; MX &bull; IN &bull; JP &bull; SG &bull; MY &bull; SA &bull; AE &bull; $0 Browser Checker</span>
+      <h1>Global APAC, LATAM &amp; MENA Banking &amp; E-Invoicing Pre-Flight Validators</h1>
+      <p>Validate corporate vendor tax IDs and local payout routing codes across <strong>Brazil</strong> (<code>CNPJ</code> / Pix / CNAB), <strong>Mexico</strong> (<code>CLABE</code> / SPEI / CFDI 4.0), <strong>India</strong> (<code>IFSC</code> &amp; <code>GSTIN</code>), <strong>Japan</strong> (NTA <code>T-Number</code> / Zengin / PINT JP), <strong>Singapore</strong> (<code>InvoiceNow</code> / <code>UEN</code>), <strong>Malaysia</strong> (<code>MyInvois</code>), <strong>Saudi Arabia</strong> (<code>ZATCA</code> &amp; <code>SA</code> IBAN), and <strong>UAE</strong> (<code>PINT AE</code> &amp; <code>AE</code> IBAN) — 100% locally in your browser or directly in Google Sheets.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#checker">Run Live ID Checker Below &darr;</a>
+        <a class="btn btn-secondary" href="./eu-einvoice-xml-generator.html">Peppol &amp; Global UBL XML Sandbox</a>
+      </div>
+    </section>
+
+    <section id="checker" class="card" style="margin-top:24px;">
+      <h2>Instant Global Tax &amp; Bank Checksum Validator (0 Network Leaks)</h2>
+      <p>Paste any <strong>Mexico CLABE</strong>, <strong>Brazil CNPJ</strong>, <strong>India IFSC / GSTIN</strong>, <strong>Japan T-Number</strong>, <strong>Singapore UEN</strong>, <strong>Malaysia TIN</strong>, or <strong>SA / AE IBAN</strong>, or tap a sample button:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+        <button type="button" class="btn btn-secondary" data-sample="032180000118359719">Sample MX CLABE</button>
+        <button type="button" class="btn btn-secondary" data-sample="11.222.333/0001-81">Sample BR CNPJ</button>
+        <button type="button" class="btn btn-secondary" data-sample="HDFC0000123">Sample IN IFSC</button>
+        <button type="button" class="btn btn-secondary" data-sample="T8000000000001">Sample JP T-Number</button>
+        <button type="button" class="btn btn-secondary" data-sample="201912345A">Sample SG UEN</button>
+        <button type="button" class="btn btn-secondary" data-sample="SA0380000000608010167519">Sample Saudi SA IBAN</button>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <input id="globalCodeInput" type="text" value="032180000118359719" style="flex:1;min-width:240px;padding:12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#f8fafc;font-family:monospace;font-size:1rem;" />
+        <button type="button" id="runGlobalCheckBtn" class="btn btn-primary">Validate Checksum</button>
+      </div>
+      <div id="globalCheckOutput" style="margin-top:14px;padding:14px;border-radius:10px;background:#0f172a;border:1px solid #334155;font-family:monospace;white-space:pre-wrap;"></div>
+    </section>
+
+    <section class="grid" style="margin-top:24px;">
+      <article class="card">
+        <h3>&#127474;&#127485; Mexico (SPEI &amp; CFDI 4.0)</h3>
+        <p>Validates <strong>18-digit CLABE</strong> MOD-10 check digits (weights <code>3,7,1</code>) before SPEI supplier disbursements and cross-border USD/MXN wire settlements.</p>
+      </article>
+      <article class="card">
+        <h3>&#127463;&#127479; Brazil (Pix, CNAB 240 &amp; NF-e)</h3>
+        <p>Validates <strong>14-digit CNPJ</strong> dual MOD-11 check digits before issuing Pix DICT payouts, CNAB 240/400 batches, or B2B NF-e tax invoices.</p>
+      </article>
+      <article class="card">
+        <h3>&#127470;&#127475; India (NEFT / IMPS / GST E-Invoice)</h3>
+        <p>Validates <strong>11-char IFSC</strong> routing codes (bank + zero + branch) and <strong>15-char GSTIN</strong> MOD-36 tax IDs prior to IRP/NIC e-invoice generation.</p>
+      </article>
+      <article class="card">
+        <h3>&#127471;&#127477; Japan (Zengin &amp; PINT JP T-Number)</h3>
+        <p>Validates NTA <strong>Qualified Invoice T-Numbers</strong> (<code>T</code> + 13 digits, MOD-9 check digit) required for Japanese consumption tax deduction &amp; Peppol PINT JP.</p>
+      </article>
+      <article class="card">
+        <h3>&#127480;&#127468; &#127474;&#127486; Singapore &amp; Malaysia (InvoiceNow / MyInvois)</h3>
+        <p>Validates <strong>Singapore ACRA UEN</strong> identifiers (Peppol <code>0195</code> scheme) and <strong>Malaysia LHDN MyInvois TIN</strong> tax formats alongside SWIFT <code>pacs.008</code> wires.</p>
+      </article>
+      <article class="card">
+        <h3>&#127480;&#127462; &#127462;&#127466; Saudi Arabia &amp; UAE (ZATCA / PINT AE)</h3>
+        <p>Runs full ISO 13616 MOD-97 IBAN verification for <strong>Saudi Arabia (24-char <code>SA</code>)</strong> and <strong>UAE (23-char <code>AE</code>)</strong> corporate accounts plus 15-digit GCC VAT TRN checks.</p>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:24px;">
+      <h2>Zero-Install Google Sheets <code>=IMPORTDATA()</code> Formula</h2>
+      <p>Put any vendor ID (Mexico CLABE, Brazil CNPJ, India IFSC/GSTIN, Japan T-Number, IBAN, or US ABA) in column <code>A</code> and paste this formula into cell <code>B2</code>:</p>
+      <pre style="background:#0f172a;padding:12px;border-radius:8px;overflow:auto;">=IMPORTDATA("https://finops-rapidapi-edge.ria-rader.workers.dev/v1/sheet/check?q="&amp;ENCODEURL(A2)&amp;"&amp;row="&amp;ROW())</pre>
+      <p style="margin-top:10px;">Also send cross-border wires cleanly via <a href="./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html">ISO 20022 <code>pacs.008</code> Fedwire &amp; SWIFT CBPR+ XML</a> or Peppol PINT UBL via <a href="./eu-einvoice-xml-generator.html">EU &amp; Peppol E-Invoice XML</a>.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <a href="./index.html">&larr; Back to FinOps Studio Hub</a> &bull; <a href="./sitemap.xml">Sitemap</a>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      function checkGlobalCode(raw) {
+        var s = String(raw || '').trim();
+        var compact = s.replace(/[\s-]+/g, '').toUpperCase();
+        var digits = s.replace(/[.\-\/\s]+/g, '').toUpperCase();
+
+        if (/^\d{18}$/.test(digits)) {
+          var w = [3, 7, 1], sum = 0;
+          for (var i = 0; i < 17; i++) sum += (Number(digits[i]) * w[i % 3]) % 10;
+          var exp = (10 - (sum % 10)) % 10;
+          var ok = exp === Number(digits[17]);
+          return { ok: ok, type: 'Mexico 18-Digit CLABE (SPEI)', detail: ok ? 'VALID MOD-10 check digit (' + exp + ') | Bank code ' + digits.slice(0, 3) : 'INVALID check digit (expected ' + exp + ', got ' + digits[17] + ')' };
+        }
+        if (/^\d{14}$/.test(digits) && !/^(\d)\1{13}$/.test(digits)) {
+          var calc = function (len) {
+            var wt = len === 12 ? [5,4,3,2,9,8,7,6,5,4,3,2] : [6,5,4,3,2,9,8,7,6,5,4,3,2];
+            var sm = 0;
+            for (var k = 0; k < len; k++) sm += Number(digits[k]) * wt[k];
+            var r = sm % 11;
+            return r < 2 ? 0 : 11 - r;
+          };
+          var d1 = calc(12), d2 = calc(13);
+          var okBr = d1 === Number(digits[12]) && d2 === Number(digits[13]);
+          return { ok: okBr, type: 'Brazil 14-Digit CNPJ (Pix / NF-e / CNAB)', detail: okBr ? 'VALID MOD-11 (' + digits.slice(0,2) + '.' + digits.slice(2,5) + '.' + digits.slice(5,8) + '/' + digits.slice(8,12) + '-' + digits.slice(12) + ')' : 'INVALID check digits (expected ' + d1 + '' + d2 + ')' };
+        }
+        if (/^T[1-9]\d{12}$/.test(compact)) {
+          var jd = compact.slice(1), jsum = 0;
+          for (var pos = 1; pos <= 12; pos++) jsum += Number(jd[13 - pos]) * (pos % 2 === 1 ? 1 : 2);
+          var jexp = 9 - (jsum % 9);
+          var okJp = jexp === Number(jd[0]);
+          return { ok: okJp, type: 'Japan Qualified Invoice T-Number (PINT JP / Zengin)', detail: okJp ? 'VALID NTA MOD-9 check digit (' + jexp + ')' : 'INVALID NTA check digit (expected ' + jexp + ')' };
+        }
+        if (/^[0-3]\d[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(compact)) {
+          var cp = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', h = 0;
+          for (var g = 0; g < 14; g++) {
+            var prod = cp.indexOf(compact[g]) * (g % 2 === 0 ? 1 : 2);
+            h += Math.floor(prod / 36) + (prod % 36);
+          }
+          var gexp = cp[(36 - (h % 36)) % 36];
+          var okGst = gexp === compact[14];
+          return { ok: okGst, type: 'India 15-Char GSTIN', detail: okGst ? 'VALID MOD-36 checksum | State ' + compact.slice(0,2) + ' PAN ' + compact.slice(2,12) : 'INVALID MOD-36 (expected ' + gexp + ')' };
+        }
+        if (/^[A-Z]{4}0[A-Z0-9]{6}$/.test(compact)) {
+          return { ok: true, type: 'India 11-Char IFSC', detail: 'VALID IFSC format | Bank ' + compact.slice(0, 4) + ' Branch ' + compact.slice(5) };
+        }
+        if (/^([0-9]{8}[A-Z]|[0-9]{9}[A-Z]|[TSR][0-9]{2}[A-Z]{2}[0-9]{4}[A-Z])$/.test(compact)) {
+          return { ok: true, type: 'Singapore ACRA UEN (InvoiceNow / Peppol 0195)', detail: 'VALID UEN structure (' + compact + ')' };
+        }
+        if (/^(C|D|E|F|IG|OG|SG|TA|TC|TD|TN|TR|PT)\d{8,12}$/.test(compact)) {
+          return { ok: true, type: 'Malaysia LHDN MyInvois TIN', detail: 'VALID MyInvois Tax ID format (' + compact + ')' };
+        }
+        if (/^(SA|AE)\d{2}[A-Z0-9]{18,22}$/.test(compact)) {
+          var rearr = compact.slice(4) + compact.slice(0, 4);
+          var expStr = rearr.replace(/[A-Z]/g, function (c) { return String(c.charCodeAt(0) - 55); });
+          var rem = 0;
+          for (var x = 0; x < expStr.length; x++) rem = (rem * 10 + Number(expStr[x])) % 97;
+          var okIban = rem === 1;
+          return { ok: okIban, type: (compact.slice(0,2) === 'SA' ? 'Saudi Arabia ZATCA' : 'UAE PINT AE') + ' IBAN', detail: okIban ? 'VALID ISO 13616 MOD-97 checksum (' + compact + ')' : 'INVALID IBAN MOD-97 remainder ' + rem };
+        }
+        if (/^\d{15}$/.test(digits)) {
+          return { ok: digits[0] === '3' || digits[0] === '1', type: 'GCC 15-Digit VAT / ZATCA TRN', detail: digits[0] === '3' ? 'VALID Saudi ZATCA 15-digit VAT format' : (digits[0] === '1' ? 'VALID UAE 15-digit TRN format' : 'UNRECOGNIZED GCC prefix') };
+        }
+        return { ok: false, type: 'Unrecognized Global ID', detail: 'Enter 18-digit MX CLABE, 14-digit BR CNPJ, IN IFSC/GSTIN, JP T-Number, SG UEN, MY TIN, SA/AE IBAN, or 15-digit GCC TRN.' };
+      }
+
+      var inp = document.getElementById('globalCodeInput');
+      var out = document.getElementById('globalCheckOutput');
+      function paint() {
+        var r = checkGlobalCode(inp.value);
+        out.style.borderColor = r.ok ? '#10b981' : '#ef4444';
+        out.textContent = (r.ok ? 'PASS: ' : 'FAIL: ') + r.type + '\n' + r.detail;
+      }
+      document.getElementById('runGlobalCheckBtn').onclick = paint;
+      var smps = document.querySelectorAll('[data-sample]');
+      for (var i = 0; i < smps.length; i++) {
+        smps[i].onclick = function () {
+          inp.value = this.getAttribute('data-sample');
+          paint();
+        };
+      }
+      paint();
+    })();
+  </script>
+</body>
+</html>
