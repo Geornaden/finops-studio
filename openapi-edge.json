@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "FinOps Studio Banking, Payroll, E-Invoicing & Verification Edge API",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "summary": "Deterministic banking file generation, ISO 20022 SEPA XML, Peppol/XRechnung/Factur-X e-invoicing, US NACHA ACH, BAI2 parsing, DATEV EXTF, UK BACS 18, Australian ABA, Canadian CPA-005, IBAN/ABA routing validation, and B2B email DNS deliverability API.",
     "description": "Low-latency Cloudflare Edge REST API for corporate treasury, ERP automation, payroll clearing, EN 16931 e-invoicing, global bank routing/IBAN MOD-97/ABA MOD-10 validation, and live MX/SPF/DMARC deliverability verification. Accessible via RapidAPI Hub subscriptions (with free sandbox tier), MCPRush Remote MCP, and Apify Cloud.",
     "contact": {
@@ -309,6 +309,98 @@
         "responses": {
           "200": { "description": "1,464-byte Canadian CPA-005 EFT file" }
         }
+      }
+    },
+    "/v1/sheet/check": {
+      "get": {
+        "operationId": "sheetCheckFreeGet",
+        "summary": "Zero-install Google Sheets =IMPORTDATA() and Excel =WEBSERVICE() bank & VAT checksum checker (10 rows free)",
+        "tags": ["Free Preview & Spreadsheets"],
+        "security": [],
+        "parameters": [
+          { "name": "q", "in": "query", "required": true, "schema": { "type": "string", "example": "DE89370400440532013000" } },
+          { "name": "row", "in": "query", "schema": { "type": "integer", "example": 2 } },
+          { "name": "type", "in": "query", "schema": { "type": "string", "enum": ["auto", "iban", "aba", "uk", "au", "vat", "bic"] } },
+          { "name": "format", "in": "query", "schema": { "type": "string", "enum": ["csv", "text", "json"], "default": "csv" } }
+        ],
+        "responses": {
+          "200": { "description": "CSV, plain text, or JSON validation status (Row 12+ prompts $14.99/mo upgrade)" }
+        }
+      }
+    },
+    "/v1/demo/validate": {
+      "get": {
+        "operationId": "demoValidateBankGet",
+        "summary": "Zero-auth instant bank routing, IBAN MOD-97, ABA MOD-10 & EU VAT validator",
+        "tags": ["Free Preview & Spreadsheets"],
+        "security": [],
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string", "example": "DE89370400440532013000" } },
+          { "name": "iban", "in": "query", "schema": { "type": "string" } },
+          { "name": "aba", "in": "query", "schema": { "type": "string" } },
+          { "name": "vatId", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Deterministic validation result with row3Upgrade links" }
+        }
+      },
+      "post": {
+        "operationId": "demoValidateBankPost",
+        "summary": "Zero-auth instant bank routing & EU VAT validator (JSON)",
+        "tags": ["Free Preview & Spreadsheets"],
+        "security": [],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "200": { "description": "Deterministic validation result" } }
+      }
+    },
+    "/v1/demo/sepa": {
+      "post": {
+        "operationId": "demoSepa2RowsPost",
+        "summary": "Zero-auth 2-row free taste-test of 2026 EPC SEPA XML (pain.001 / pain.008)",
+        "tags": ["Free Preview & Spreadsheets"],
+        "security": [],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "200": { "description": "2-row SEPA XML preview + row3Upgrade checkout links" } }
+      }
+    },
+    "/v1/demo/nacha": {
+      "post": {
+        "operationId": "demoNacha2RowsPost",
+        "summary": "Zero-auth 2-row free taste-test of US 94-character NACHA ACH (.ach)",
+        "tags": ["Free Preview & Spreadsheets"],
+        "security": [],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "200": { "description": "2-row NACHA ACH preview + row3Upgrade checkout links" } }
+      }
+    },
+    "/v1/demo/einvoice": {
+      "post": {
+        "operationId": "demoEinvoice2LinesPost",
+        "summary": "Zero-auth 2-line free taste-test of EN 16931 Peppol / XRechnung / Factur-X XML",
+        "tags": ["Free Preview & Spreadsheets"],
+        "security": [],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "200": { "description": "2-line EU e-Invoice XML preview + row3Upgrade checkout links" } }
+      }
+    },
+    "/v1/demo/datev": {
+      "post": {
+        "operationId": "demoDatev2RowsPost",
+        "summary": "Zero-auth 2-row free taste-test of German DATEV EXTF v700 CSV",
+        "tags": ["Free Preview & Spreadsheets"],
+        "security": [],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "200": { "description": "2-row DATEV CSV preview + row3Upgrade checkout links" } }
+      }
+    },
+    "/v1/demo/bai2": {
+      "post": {
+        "operationId": "demoBai2TxPost",
+        "summary": "Zero-auth 2-transaction free taste-test of Corporate BAI2 Statement Parser",
+        "tags": ["Free Preview & Spreadsheets"],
+        "security": [],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": { "200": { "description": "2-tx BAI2 parsed preview + row3Upgrade checkout links" } }
       }
     }
   }

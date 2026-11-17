@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Embeddable IBAN &amp; ABA Validator Widget + Zero-Auth 2-Row Bank API &amp; Open MCP | FinOps Studio</title>
+  <meta name="description" content="Embed a free 1-line bank routing &amp; IBAN validator widget on any accounting blog or ERP help doc, test our zero-auth 2-row Cloud REST API live, or connect Claude/Cursor to /public-mcp in seconds." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/free-embeddable-iban-aba-routing-validator-widget.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script src="./embed-bank-validator.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "FinOps Studio Embeddable Bank Validator Widget & Open 2-Row Preview API",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web, Cloud API, MCP",
+        "url": "https://geornaden.github.io/finops-studio/free-embeddable-iban-aba-routing-validator-widget.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can I embed the FinOps Studio IBAN and ABA Routing Checker on my accounting blog or SaaS docs for free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Copy the 2-line HTML snippet onto any page. It mounts inside an isolated Shadow DOM so it never clashes with your CSS and runs free on Cloudflare Global Edge."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is there a zero-signup API or remote MCP server I can test right now?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Use POST https://finops-rapidapi-edge.ria-rader.workers.dev/v1/demo/sepa (or /nacha, /einvoice, /datev, /bai2, /validate) with up to 2 rows free and zero auth headers, or point Claude Desktop and Cursor to https://finops-rapidapi-edge.ria-rader.workers.dev/public-mcp."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html">All 12 Banking APIs</a>
+        <a href="./google-sheets-excel-importdata-iban-aba-formula.html">Sheets &amp; Excel Formula</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">Full Hub &amp; Grade A MCP</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">Get Unlimited Key ($14.99/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#129513; Embed on Any Website &bull; &#9889; Zero-Auth 2-Row Taste-Test API &bull; &#129302; Open Remote MCP</span>
+      <h1>Free Embeddable Bank Validator Widget + Instant 2-Row Cloud API Preview</h1>
+      <p>Put an instant IBAN / ABA / UK Sort Code / AU BSB / VAT validator on any blog or documentation page in 2 lines—or test real SEPA XML, NACHA ACH, Peppol e-Invoice, DATEV &amp; BAI2 output from <code>curl</code> or Claude with <strong>zero signup wall</strong>.</p>
+    </section>
+
+    <section class="sandbox-card">
+      <div class="sandbox-grid">
+        <div>
+          <h2 style="margin-top:0;">1. Customize &amp; Embed This Widget Free</h2>
+          <p style="color:var(--muted);font-size:0.9rem;">Isolated Shadow DOM CSS &bull; Zero dependencies &bull; Instant Cloudflare checksums:</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+            <div>
+              <label for="themeSel" style="display:block;font-size:0.78rem;color:var(--muted);margin-bottom:4px;">Widget Theme</label>
+              <select id="themeSel" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;">
+                <option value="dark">Dark Mode</option>
+                <option value="light">Light Mode</option>
+              </select>
+            </div>
+            <div>
+              <label for="typeSel" style="display:block;font-size:0.78rem;color:var(--muted);margin-bottom:4px;">Default Checker</label>
+              <select id="typeSel" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;">
+                <option value="auto">Auto-Detect</option>
+                <option value="iban">IBAN (MOD-97)</option>
+                <option value="aba">US ABA Routing</option>
+                <option value="uk">UK Sort Code</option>
+                <option value="au">AU BSB</option>
+                <option value="vat">EU VAT ID</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pane-label">
+            <span>Copy &amp; Paste 2-Line HTML Embed Code:</span>
+            <button id="copyEmbedBtn" class="btn btn-primary" type="button" style="padding:6px 14px;font-size:0.84rem;">Copy Embed Code</button>
+          </div>
+          <pre id="embedCodeBox" class="code-box" style="min-height:110px;max-height:150px;white-space:pre-wrap;word-break:break-all;">&lt;div data-finops-widget="bank-validator" data-theme="dark" data-default-type="auto"&gt;&lt;/div&gt;
+&lt;script src="https://geornaden.github.io/finops-studio/embed-bank-validator.js" defer&gt;&lt;/script&gt;</pre>
+        </div>
+
+        <div>
+          <div class="pane-label"><span>Live Widget Preview (Interactive Right Now):</span></div>
+          <div id="liveWidgetWrap">
+            <div id="previewWidgetEl" data-finops-widget="bank-validator" data-theme="dark" data-default-type="auto"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sandbox-card">
+      <h2 style="margin-top:0;">2. Zero-Auth 2-Row Taste-Test API Playground (<code>/v1/demo/*</code>)</h2>
+      <p style="color:var(--muted);font-size:0.92rem;">Test real SEPA XML, US NACHA ACH, Peppol E-Invoice, DATEV CSV, or BAI2 responses right now without creating an account. Free taste-tests process up to 2 rows and show full batch upgrade links in <code>row3Upgrade</code>.</p>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;">
+        <button id="testSepaDemoBtn" class="btn btn-primary" type="button">&#9889; Run Live 2-Row SEPA XML Test</button>
+        <button id="testMcpDemoBtn" class="btn btn-outline" type="button">&#129302; Query /public-mcp tools/list</button>
+      </div>
+
+      <div class="sandbox-grid">
+        <div>
+          <div class="pane-label"><span>Zero-Auth cURL &amp; Open Remote MCP Config:</span></div>
+          <pre class="code-box" style="min-height:240px;"># Instant 2-Row Taste-Test (No API Key Needed!)
+curl -X POST https://finops-rapidapi-edge.ria-rader.workers.dev/v1/demo/sepa \
+  -H "Content-Type: application/json" \
+  -d '{
+    "schema": "pain.001.001.09",
+    "initiatingPartyName": "Acme Europe GmbH",
+    "initiatingPartyIban": "DE89370400440532013000",
+    "transactions": [
+      {"name":"Vendor 1","iban":"NL91ABNA0417164300","amount":125.50,"country":"NL","townName":"Amsterdam"},
+      {"name":"Vendor 2","iban":"FR7630006000011234567890189","amount":240.00,"country":"FR","townName":"Paris"}
+    ]
+  }'
+
+# Claude Desktop / Cursor Zero-Auth 2-Row Preview MCP:
+{
+  "mcpServers": {
+    "finops-studio-preview": {
+      "url": "https://finops-rapidapi-edge.ria-rader.workers.dev/public-mcp"
+    }
+  }
+}</pre>
+        </div>
+        <div>
+          <div class="pane-label"><span>Live Response From Cloudflare Edge:</span></div>
+          <pre id="demoApiOutput" class="code-box" style="min-height:240px;">Click a test button above to execute a live request against FinOps Studio's Cloudflare Edge Gateway...</pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; Back to FinOps Studio Hub</a> &bull;
+      <a href="./google-sheets-excel-importdata-iban-aba-formula.html">Google Sheets &amp; Excel =IMPORTDATA Formula</a> &bull;
+      <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>
+    </div>
+  </footer>
+
+  <script>
+    function refreshEmbedSnippet() {
+      const theme = document.getElementById('themeSel').value;
+      const defType = document.getElementById('typeSel').value;
+      const snippet = '<div data-finops-widget="bank-validator" data-theme="' + theme + '" data-default-type="' + defType + '"></div>\n' +
+        '<script src="https://geornaden.github.io/finops-studio/embed-bank-validator.js" defer></' + 'script>';
+      document.getElementById('embedCodeBox').textContent = snippet;
+
+      const el = document.getElementById('previewWidgetEl');
+      el.setAttribute('data-theme', theme);
+      el.setAttribute('data-default-type', defType);
+      if (window.FinOpsEmbedWidget && typeof window.FinOpsEmbedWidget.renderOne === 'function') {
+        window.FinOpsEmbedWidget.renderOne(el);
+      }
+    }
+
+    document.getElementById('themeSel').addEventListener('change', refreshEmbedSnippet);
+    document.getElementById('typeSel').addEventListener('change', refreshEmbedSnippet);
+    document.getElementById('copyEmbedBtn').addEventListener('click', function () {
+      navigator.clipboard.writeText(document.getElementById('embedCodeBox').textContent);
+      this.textContent = 'Copied Embed Code!';
+      setTimeout(() => { this.textContent = 'Copy Embed Code'; }, 1800);
+    });
+
+    document.getElementById('testSepaDemoBtn').addEventListener('click', async function () {
+      const out = document.getElementById('demoApiOutput');
+      out.textContent = 'Calling POST https://finops-rapidapi-edge.ria-rader.workers.dev/v1/demo/sepa ...';
+      try {
+        const res = await fetch('https://finops-rapidapi-edge.ria-rader.workers.dev/v1/demo/sepa', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            schema: 'pain.001.001.09',
+            initiatingPartyName: 'Acme Europe GmbH',
+            initiatingPartyIban: 'DE89370400440532013000',
+            transactions: [
+              { name: 'Vendor 1', iban: 'NL91ABNA0417164300', amount: 125.50, country: 'NL', townName: 'Amsterdam' },
+              { name: 'Vendor 2', iban: 'FR7630006000011234567890189', amount: 240.00, country: 'FR', townName: 'Paris' },
+              { name: 'Vendor 3 (Trigger Row 3 Upgrade)', iban: 'NL91ABNA0417164300', amount: 300.00, country: 'NL', townName: 'Utrecht' }
+            ]
+          })
+        });
+        out.textContent = JSON.stringify(await res.json(), null, 2);
+      } catch (err) {
+        out.textContent = 'Error: ' + err.message;
+      }
+    });
+
+    document.getElementById('testMcpDemoBtn').addEventListener('click', async function () {
+      const out = document.getElementById('demoApiOutput');
+      out.textContent = 'Calling POST https://finops-rapidapi-edge.ria-rader.workers.dev/public-mcp ...';
+      try {
+        const res = await fetch('https://finops-rapidapi-edge.ria-rader.workers.dev/public-mcp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' })
+        });
+        out.textContent = JSON.stringify(await res.json(), null, 2);
+      } catch (err) {
+        out.textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

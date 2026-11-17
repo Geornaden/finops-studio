@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Google Sheets =IMPORTDATA &amp; Excel =WEBSERVICE IBAN, US ABA Routing &amp; VAT Formula | FinOps Studio</title>
+  <meta name="description" content="Zero-install Google Sheets =IMPORTDATA and Microsoft Excel =WEBSERVICE formula to validate IBAN MOD-97, US ABA routing numbers, UK Sort Codes, Australian BSBs, and EU VAT IDs directly inside your spreadsheet. Check 10 rows free." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/google-sheets-excel-importdata-iban-aba-formula.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Google Sheets =IMPORTDATA &amp; Excel =WEBSERVICE Bank Validator Formula | FinOps Studio" />
+  <meta property="og:description" content="Paste one spreadsheet formula to verify IBANs, US ABA routing codes, UK Sort Codes, AU BSBs &amp; EU VAT IDs with zero add-ons or scripts." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/google-sheets-excel-importdata-iban-aba-formula.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "FinOps Studio Google Sheets =IMPORTDATA & Excel =WEBSERVICE Formula",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web, Google Sheets, Microsoft Excel",
+        "url": "https://geornaden.github.io/finops-studio/google-sheets-excel-importdata-iban-aba-formula.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I validate IBANs or US ABA routing numbers in Google Sheets without Apps Script or add-ons?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Paste =IMPORTDATA(\"https://finops-rapidapi-edge.ria-rader.workers.dev/v1/sheet/check?q=\"&ENCODEURL(A2)&\"&row=\"&ROW()) into cell B2 and drag down to row 11. Google Sheets fetches two clean columns: verification status and audit details."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How many rows are free in the spreadsheet formula?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "You can check 10 vendor or payroll rows (rows 2 through 11) completely free with no API key. Row 12 automatically displays your one-click upgrade option starting at $14.99/mo on RapidAPI or Pay-Per-Use on Apify."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this formula work in Microsoft Excel too?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. In Windows Microsoft Excel, use =WEBSERVICE(\"https://finops-rapidapi-edge.ria-rader.workers.dev/v1/sheet/check?format=text&q=\"&ENCODEURL(A2)&\"&row=\"&ROW()). For Mac Excel or bulk file exports, use our Excel 365 Office Scripts cookbook."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html">All 12 Banking APIs</a>
+        <a href="./google-sheets-excel-apps-script-sepa-nacha-bacs-aba-automation.html">Apps Script / Office Scripts</a>
+        <a href="./free-embeddable-iban-aba-routing-validator-widget.html">Embed Widget &amp; Free API</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">Unlock Unlimited ($14.99/mo) &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding-bottom:18px;">
+      <span class="pill">&#128202; Zero Install &bull; No Macros &bull; Works Inside Any Google Sheet or Excel File</span>
+      <h1>One Spreadsheet Formula to Validate Every Vendor IBAN, ABA Routing #, UK Sort Code &amp; VAT ID</h1>
+      <p>Skip IT approvals, browser extensions, and broken regex formulas. Paste one live <code>=IMPORTDATA()</code> formula into Google Sheets (or <code>=WEBSERVICE()</code> in Excel) to verify up to <strong>10 rows free</strong>—and automatically flag bank errors before payroll or AP runs.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#formula-builder">Build My 1-Line Formula &darr;</a>
+        <a class="btn btn-outline" href="#sheet-sim">Run Live 11-Row Simulation &darr;</a>
+        <a class="btn btn-outline" href="./google-sheets-excel-apps-script-sepa-nacha-bacs-aba-automation.html">Need Full SEPA/ACH File Export? &rarr;</a>
+      </div>
+    </section>
+
+    <section id="formula-builder" class="sandbox-card">
+      <h2 style="margin-top:0;">1-Click Spreadsheet Formula Generator</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;">
+        <div>
+          <label for="platformSel" style="display:block;font-size:0.82rem;color:var(--muted);margin-bottom:5px;"><strong>Spreadsheet App</strong></label>
+          <select id="platformSel" style="width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;">
+            <option value="gsheets">Google Sheets (=IMPORTDATA)</option>
+            <option value="excel">Microsoft Excel (=WEBSERVICE)</option>
+          </select>
+        </div>
+        <div>
+          <label for="modeSel" style="display:block;font-size:0.82rem;color:var(--muted);margin-bottom:5px;"><strong>What Are You Checking?</strong></label>
+          <select id="modeSel" style="width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;">
+            <option value="auto">Auto-Detect (IBAN, ABA, UK, AU, BIC, VAT)</option>
+            <option value="iban">European IBAN (ISO 13616 MOD-97)</option>
+            <option value="aba">US 9-Digit ABA Routing (MOD-10)</option>
+            <option value="uk">UK 6-Digit Sort Code (BACS)</option>
+            <option value="au">Australian 6-Digit BSB (.ABA)</option>
+            <option value="vat">EU VAT Identification Number</option>
+          </select>
+        </div>
+        <div>
+          <label for="cellInp" style="display:block;font-size:0.82rem;color:var(--muted);margin-bottom:5px;"><strong>Column &amp; Start Cell</strong></label>
+          <input id="cellInp" value="A2" style="width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-family:ui-monospace,monospace;" />
+        </div>
+      </div>
+
+      <div class="pane-label">
+        <span>Paste This Exact Formula Into Cell <code>B2</code> and Drag Down (Rows 2&ndash;11 Free):</span>
+        <button id="copyFormulaBtn" class="btn btn-primary" type="button" style="padding:6px 14px;font-size:0.84rem;">Copy Formula</button>
+      </div>
+      <pre id="formulaOut" class="code-box" style="min-height:74px;max-height:110px;white-space:pre-wrap;word-break:break-all;font-size:0.9rem;color:#34d399;"></pre>
+      <p style="margin:10px 0 0;color:var(--muted);font-size:0.86rem;">Tip: In Google Sheets, <code>=IMPORTDATA()</code> automatically splits across 2 columns: Column B shows <code>VALID (...)</code> or <code>INVALID (...)</code>, and Column C shows the formatted identifier or remediation note. Row 12 cleanly prompts your team to upgrade for unlimited batch runs.</p>
+    </section>
+
+    <section id="sheet-sim" class="sandbox-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <div>
+          <h2 style="margin:0;">Live Cloudflare Edge Spreadsheet Simulator (Rows 2&ndash;12)</h2>
+          <p style="margin:4px 0 0;color:var(--muted);font-size:0.9rem;">Watch our live <code>/v1/sheet/check</code> endpoint validate real bank rows 2&ndash;11 and return the built-in Row 12 upgrade prompt.</p>
+        </div>
+        <button id="runSimBtn" class="btn btn-primary" type="button">&#9654; Run Live Sheet Check</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);text-align:left;color:var(--muted);">
+              <th style="padding:8px;">Sheet Row</th>
+              <th style="padding:8px;">Column A (Vendor Bank ID)</th>
+              <th style="padding:8px;">Column B (Live Status)</th>
+              <th style="padding:8px;">Column C (Audit Detail / Action)</th>
+            </tr>
+          </thead>
+          <tbody id="simBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section style="margin-bottom:34px;">
+      <h2 class="section-title">How Bookkeepers Upgrade From Checking 10 Rows to Full Bank Files</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Step 1 &bull; Free</span></div>
+            <h3>Clean Vendor Master in Sheets</h3>
+            <p>Catch invalid IBAN check digits and mistyped Chase/BofA routing numbers right inside Google Sheets or Excel before payroll week.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-outline" href="#formula-builder">Use Free Formula &uarr;</a></div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">$14.99/mo &bull; Unlimited</span></div>
+            <h3>Generate Bank-Ready Upload Files</h3>
+            <p>Turn verified rows into EPC 2026 SEPA XML, 94-char US NACHA ACH, UK BACS 18, Australian .ABA, or Peppol e-invoices via RapidAPI or Apify.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-primary" href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">RapidAPI ($14.99/mo) &rarr;</a></div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Zero Subscription</span></div>
+            <h3>Or Pay Only When You Export</h3>
+            <p>Run occasional batches via Apify Store starting with <code>$5/mo</code> free platform credits—<code>$0.02</code> per transaction with zero monthly lock-in.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-outline" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Apify Store &rarr;</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; Back to FinOps Studio Hub</a> &bull;
+      <a href="./free-embeddable-iban-aba-routing-validator-widget.html">Free Embeddable Blog Widget</a> &bull;
+      <a href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">RapidAPI Hub</a>
+    </div>
+  </footer>
+
+  <script>
+    const SAMPLE_ROWS = [
+      { row: 2, val: 'DE89370400440532013000' },
+      { row: 3, val: '021000021' },
+      { row: 4, val: 'NL91ABNA0417164300' },
+      { row: 5, val: '20-00-00' },
+      { row: 6, val: '062-000' },
+      { row: 7, val: 'DE129273398' },
+      { row: 8, val: 'FR7630006000011234567890189' },
+      { row: 9, val: 'COBADEFFXXX' },
+      { row: 10, val: 'DE00370400440532013000' },
+      { row: 11, val: '121000358' },
+      { row: 12, val: 'ES9121000418450200051332' }
+    ];
+
+    function buildFormula() {
+      const app = document.getElementById('platformSel').value;
+      const mode = document.getElementById('modeSel').value;
+      const cell = (document.getElementById('cellInp').value || 'A2').trim().toUpperCase();
+      const base = 'https://finops-rapidapi-edge.ria-rader.workers.dev/v1/sheet/check?';
+      const typePart = mode === 'auto' ? '' : `type=${mode}&`;
+      if (app === 'excel') {
+        return `=WEBSERVICE("${base}format=text&${typePart}q="&ENCODEURL(${cell})&"&row="&ROW())`;
+      }
+      return `=IMPORTDATA("${base}${typePart}q="&ENCODEURL(${cell})&"&row="&ROW())`;
+    }
+
+    function updateFormula() {
+      document.getElementById('formulaOut').textContent = buildFormula();
+    }
+
+    document.getElementById('platformSel').addEventListener('change', updateFormula);
+    document.getElementById('modeSel').addEventListener('change', updateFormula);
+    document.getElementById('cellInp').addEventListener('input', updateFormula);
+    document.getElementById('copyFormulaBtn').addEventListener('click', function () {
+      navigator.clipboard.writeText(document.getElementById('formulaOut').textContent);
+      this.textContent = 'Copied Formula!';
+      setTimeout(() => { this.textContent = 'Copy Formula'; }, 1800);
+    });
+
+    function parseCsvTwoCols(line) {
+      const m = line.match(/^"((?:[^"]|"")*)","((?:[^"]|"")*)"$/);
+      if (!m) return [line, ''];
+      return [m[1].replace(/""/g, '"'), m[2].replace(/""/g, '"')];
+    }
+
+    async function runSimulation() {
+      const tbody = document.getElementById('simBody');
+      tbody.innerHTML = SAMPLE_ROWS.map((r) =>
+        `<tr id="sim-row-${r.row}" style="border-bottom:1px solid var(--border);"><td style="padding:8px;">Row ${r.row}</td><td style="padding:8px;font-family:monospace;">${r.val}</td><td style="padding:8px;color:var(--muted);">Checking...</td><td style="padding:8px;color:var(--muted);">-</td></tr>`
+      ).join('');
+
+      await Promise.all(SAMPLE_ROWS.map(async (r) => {
+        const tr = document.getElementById(`sim-row-${r.row}`);
+        try {
+          const res = await fetch(`https://finops-rapidapi-edge.ria-rader.workers.dev/v1/sheet/check?q=${encodeURIComponent(r.val)}&row=${r.row}`);
+          const txt = await res.text();
+          const [colB, colC] = parseCsvTwoCols(txt.trim());
+          const isValid = colB.startsWith('VALID');
+          const isLimit = colB.includes('LIMIT REACHED');
+          const color = isValid ? '#34d399' : isLimit ? '#fbbf24' : '#f87171';
+          tr.children[2].innerHTML = `<span style="color:${color};font-weight:700;">${colB}</span>`;
+          tr.children[3].textContent = colC;
+        } catch (err) {
+          tr.children[2].textContent = 'Offline / Error';
+          tr.children[3].textContent = err.message;
+        }
+      }));
+    }
+
+    document.getElementById('runSimBtn').addEventListener('click', runSimulation);
+    updateFormula();
+    runSimulation();
+  </script>
+</body>
+</html>

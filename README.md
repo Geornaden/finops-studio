@@ -125,6 +125,23 @@ Give **Claude Desktop**, **Cursor**, **Windsurf**, or any MCP-compatible AI agen
 }
 ```
 
+### Option C: Zero-Auth 2-Row Remote Cloud MCP Preview (Try Instantly — No Token Needed!)
+```json
+{
+  "mcpServers": {
+    "finops-studio-preview": {
+      "url": "https://finops-rapidapi-edge.ria-rader.workers.dev/public-mcp"
+    }
+  }
+}
+```
+
+### Zero-Install Google Sheets `=IMPORTDATA()` Formula (10 Rows Free)
+Paste straight into Google Sheets cell `B2` to validate any vendor IBAN, US ABA routing #, UK Sort Code, AU BSB, or EU VAT ID (no add-on required — [Interactive Builder](https://geornaden.github.io/finops-studio/google-sheets-excel-importdata-iban-aba-formula.html) &bull; [Free Blog Embed Widget](https://geornaden.github.io/finops-studio/free-embeddable-iban-aba-routing-validator-widget.html)):
+```excel
+=IMPORTDATA("https://finops-rapidapi-edge.ria-rader.workers.dev/v1/sheet/check?q="&ENCODEURL(A2)&"&row="&ROW())
+```
+
 ### Independent MCPRush Tool-List Grade A Verified Servers
 
 [![FinOps Studio — 9 Live Banking, Payroll & E-Invoice APIs MCP server](https://mcprush.com/badge/finops-studio-banking-payroll-e-invoicing-mcp/card.svg)](https://mcprush.com/to/finops-studio-banking-payroll-e-invoicing-mcp?ref=badge)
