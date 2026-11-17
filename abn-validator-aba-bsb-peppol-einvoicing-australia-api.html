@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Australia ABN Validator (MOD-89), ACN, BSB Resolver, BECS .ABA &amp; Peppol 0151 E-Invoicing API | FinOps Studio</title>
+  <meta name="description" content="Free offline Australian corporate clearing validator: check 11-digit ABN (MOD-89), 9-digit ASIC ACN (MOD-10), 6-digit BSB (CBA, NAB, Westpac, ANZ, Macquarie), and generate bank-ready 120-char BECS .ABA files &amp; Peppol A-NZ 0151 e-invoice JSON." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/abn-validator-aba-bsb-peppol-einvoicing-australia-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Australia ABN (MOD-89), BSB Bank Resolver, .ABA &amp; Peppol 0151 Validator" />
+  <meta property="og:description" content="Validate Australian ABN (MOD-89), ACN (MOD-10), and 6-digit BSB locally in your browser and build 120-char .ABA &amp; Peppol 0151 payloads." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/abn-validator-aba-bsb-peppol-einvoicing-australia-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Australia ABN MOD-89, ACN MOD-10, BSB & Peppol 0151 E-Invoicing Validator",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "inLanguage": ["en-AU", "en-NZ"],
+        "url": "https://geornaden.github.io/finops-studio/abn-validator-aba-bsb-peppol-einvoicing-australia-api.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "AUD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How is an 11-digit Australian ABN checksum verified mathematically (MOD-89)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Subtract 1 from the first digit of the 11-digit ABN, multiply all 11 digits by ATO weights [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19], sum the products, and verify sum % 89 === 0. Valid ABNs map directly to Peppol Participant Scheme 0151 for Australian Government and B2B A-NZ e-invoicing."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which Australian banks accept 120-character BECS Direct Entry .ABA files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "CommBank CommBiz (06x), NAB Connect (08x), Westpac Corporate Online (03x/73x), ANZ Transactive (01x), Macquarie Bank (18x), St.George (11x), Suncorp (48x), and Bendigo Bank (63x) all require fixed 120-character AusPayNet/APCA BECS .ABA files with Record 0 header, Record 1 transactions, optional balancing debit row, and Record 7 file control total."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .au-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 14px 0; }
+    .au-field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; font-weight: 700; }
+    .au-field input, .au-field select { width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #f8fafc; font-size: 0.9rem; font-family: monospace; }
+    .au-result { margin-top: 10px; padding: 12px 14px; border-radius: 10px; background: #0b1120; border: 1px solid var(--border); font-size: 0.88rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html">Home</a>
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">&#128202; CSV to .ABA Mapper</a>
+        <a href="./free-australian-aba-file-validator-record-7-auditor.html">Record 7 Auditor</a>
+        <a href="./xero-myob-csv-to-australian-aba-commbiz-nab-westpac-anz.html">Xero / MYOB .ABA Guide</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener">AU .ABA Cloud API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127462;&#127482; Australia &amp; New Zealand Corporate Clearing &bull; MOD-89 ABN &bull; 120-Char BECS .ABA &bull; Peppol 0151</span>
+      <h1>Australian ABN (MOD-89), ACN, BSB Resolver &amp; BECS .ABA / Peppol 0151 Builder</h1>
+      <p>Catch invalid vendor <strong>ABN</strong> numbers, typos in <strong>6-digit BSB</strong> codes, and missing GST totals 100% locally in your browser before uploading payroll or supplier runs to <strong>CommBiz</strong>, <strong>NAB Connect</strong>, <strong>Westpac</strong>, <strong>ANZ</strong>, or <strong>Peppol A-NZ</strong>.</p>
+      <div class="hero-actions">
+        <button id="auBuy24h" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#128179; Instant 24h Unlimited .ABA Pass ($9)</button>
+        <button id="auBuy30d" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fbbf24;font-weight:700;">&#128640; Pro Pass — 30d Unlimited ($29)</button>
+        <a class="btn btn-outline" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">&#128202; Convert Xero/MYOB CSV to .ABA &rarr;</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:22px;">
+      <h2 style="margin-top:0;">Interactive ATO ABN (MOD-89), ASIC ACN (MOD-10) &amp; BSB Validator</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button id="btnSampleTelstra" type="button" class="btn btn-outline">Sample: Telstra ABN + CBA BSB</button>
+        <button id="btnSampleQantas" type="button" class="btn btn-outline">Sample: Qantas ABN + NAB BSB</button>
+        <button id="btnSampleBad" type="button" class="btn btn-outline">Test Bad ABN Checksum</button>
+      </div>
+      <div class="au-grid">
+        <div class="au-field">
+          <label for="auAbn">11-Digit Australian ABN (ATO MOD-89)</label>
+          <input id="auAbn" type="text" value="33 051 775 556" />
+        </div>
+        <div class="au-field">
+          <label for="auAcn">9-Digit ASIC ACN (Optional MOD-10)</label>
+          <input id="auAcn" type="text" value="051 775 556" />
+        </div>
+        <div class="au-field">
+          <label for="auBsb">Payee 6-Digit BSB (XXX-XXX)</label>
+          <input id="auBsb" type="text" value="062-000" />
+        </div>
+        <div class="au-field">
+          <label for="auAcct">Payee Account (Max 9 Digits)</label>
+          <input id="auAcct" type="text" value="10498211" />
+        </div>
+        <div class="au-field">
+          <label for="auName">Supplier / Employee Name</label>
+          <input id="auName" type="text" value="SYDNEY CLOUD SERVICES PTY LTD" />
+        </div>
+        <div class="au-field">
+          <label for="auAmount">Amount (AUD incl. 10% GST)</label>
+          <input id="auAmount" type="text" value="2640.00" />
+        </div>
+      </div>
+
+      <div id="auValidationOut" class="au-result">Validating Australian banking &amp; tax identifiers...</div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px;margin-top:14px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <strong style="font-size:0.88rem;color:#34d399;">Ready-to-Run BECS .ABA Payload (/v1/aba/generate)</strong>
+            <button id="copyAbaJson" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.75rem;">Copy .ABA JSON</button>
+          </div>
+          <pre id="outAbaJson" class="code-box" style="min-height:190px;font-size:0.78rem;"></pre>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <strong style="font-size:0.88rem;color:#38bdf8;">Peppol A-NZ E-Invoice (Scheme 0151 + 10% GST)</strong>
+            <button id="copyPeppolJson" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.75rem;">Copy Peppol JSON</button>
+          </div>
+          <pre id="outPeppolJson" class="code-box" style="min-height:190px;font-size:0.78rem;"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:26px;">
+      <h2 class="section-title">Related Australian Payroll &amp; E-Invoicing Tools</h2>
+      <div class="grid-3">
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">Record 0 / 1 / 7</span></div>
+            <h3>Free .ABA File &amp; Record 7 Auditor</h3>
+            <p>Drop an exported Xero, MYOB, or Employment Hero <code>.aba</code> file to verify 120-character line lengths and Record 7 net totals locally.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-outline" href="./free-australian-aba-file-validator-record-7-auditor.html">Open .ABA Auditor &rarr;</a></div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">CSV &rarr; Bank File</span></div>
+            <h3>Xero / MYOB Excel to .ABA Generator</h3>
+            <p>Upload CSV payroll or supplier sheets and download a ready-to-upload CommBiz, NAB Connect, Westpac, or ANZ file in seconds.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-outline" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">Open CSV Mapper &rarr;</a></div>
+        </div>
+        <div class="tool-card">
+          <div>
+            <div class="tag-row"><span class="tag">AU Codes 50 / 53 / 13</span></div>
+            <h3>BECS Transaction Code &amp; Column Reference</h3>
+            <p>Exact byte offsets (cols 1–120), APCA User ID formatting, self-balancing debit rows, and transaction code guide.</p>
+          </div>
+          <div class="card-actions"><a class="btn btn-outline" href="./australian-aba-transaction-codes-50-53-13-record-1-column-slicer.html">Read Column Guide &rarr;</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio Home</a> &bull;
+      <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">CSV to .ABA Mapper</a> &bull;
+      <a href="./free-australian-aba-file-validator-record-7-auditor.html">AU .ABA Auditor</a> &bull;
+      <a href="./global-apac-latam-mena-einvoicing-banking-validators.html">Global APAC/LATAM Validators</a>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var ABN_WEIGHTS = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+    var ACN_WEIGHTS = [8, 7, 6, 5, 4, 3, 2, 1];
+    var BSB_BANKS = {
+      "01": { bank: "ANZ (Transactive Global)", code: "ANZ" },
+      "03": { bank: "Westpac Banking Corp", code: "WBC" },
+      "73": { bank: "Westpac Banking Corp", code: "WBC" },
+      "06": { bank: "Commonwealth Bank (CommBiz)", code: "CBA" },
+      "76": { bank: "Commonwealth Bank (CommBiz)", code: "CBA" },
+      "08": { bank: "National Australia Bank (NAB Connect)", code: "NAB" },
+      "11": { bank: "St.George Bank", code: "STG" },
+      "18": { bank: "Macquarie Bank", code: "MBL" },
+      "48": { bank: "Suncorp-Metway", code: "MET" },
+      "63": { bank: "Bendigo & Adelaide Bank", code: "BEN" }
+    };
+    var BSB_STATES = {
+      "2": "NSW / ACT", "3": "Victoria (VIC)", "4": "Queensland (QLD)",
+      "5": "South Australia / NT", "6": "Western Australia (WA)", "7": "Tasmania (TAS)", "8": "ACT Special"
+    };
+
+    function validateAbn(raw) {
+      var d = String(raw || "").replace(/\D/g, "");
+      if (d.length !== 11) return { valid: false, digits: d, reason: "ABN must be exactly 11 digits." };
+      var arr = d.split("").map(Number);
+      arr[0] = arr[0] - 1;
+      if (arr[0] < 0) return { valid: false, digits: d, reason: "First ABN digit cannot be 0." };
+      var sum = 0;
+      for (var i = 0; i < 11; i++) sum += arr[i] * ABN_WEIGHTS[i];
+      var ok = sum % 89 === 0;
+      return {
+        valid: ok,
+        digits: d,
+        formatted: d.slice(0, 2) + " " + d.slice(2, 5) + " " + d.slice(5, 8) + " " + d.slice(8, 11),
+        rem: sum % 89
+      };
+    }
+
+    function validateAcn(raw) {
+      var d = String(raw || "").replace(/\D/g, "");
+      if (!d) return { empty: true };
+      if (d.length !== 9) return { valid: false, digits: d, reason: "ACN must be 9 digits." };
+      var sum = 0;
+      for (var i = 0; i < 8; i++) sum += Number(d[i]) * ACN_WEIGHTS[i];
+      var rem = sum % 10;
+      var check = (10 - rem) % 10;
+      return { valid: check === Number(d[8]), digits: d, expectedCheck: check };
+    }
+
+    function resolveBsb(raw) {
+      var d = String(raw || "").replace(/\D/g, "");
+      if (d.length !== 6) return { valid: false, reason: "BSB must be 6 digits (XXX-XXX)." };
+      var prefix = d.slice(0, 2);
+      var bInfo = BSB_BANKS[prefix] || { bank: "Australian ADIs Clearing (APCA)", code: "CBA" };
+      var st = BSB_STATES[d[2]] || "National / Centralized";
+      return { valid: true, formatted: d.slice(0, 3) + "-" + d.slice(3, 6), bank: bInfo.bank, code: bInfo.code, state: st };
+    }
+
+    function refreshAll() {
+      var abnRes = validateAbn(document.getElementById("auAbn").value);
+      var acnRes = validateAcn(document.getElementById("auAcn").value);
+      var bsbRes = resolveBsb(document.getElementById("auBsb").value);
+      var acct = String(document.getElementById("auAcct").value || "").replace(/[^0-9-]/g, "");
+      var payee = String(document.getElementById("auName").value || "SUPPLIER PTY LTD").trim();
+      var amt = Math.max(0.01, parseFloat(document.getElementById("auAmount").value) || 0);
+      var netExGst = +(amt / 1.1).toFixed(2);
+
+      var lines = [];
+      lines.push(abnRes.valid
+        ? "&#128994; <strong>ABN VALID (MOD-89):</strong> <code>" + abnRes.formatted + "</code> &bull; Peppol A-NZ Participant ID: <code>0151:" + abnRes.digits + "</code>"
+        : "&#128308; <strong>ABN INVALID:</strong> " + (abnRes.reason || "MOD-89 remainder = " + abnRes.rem + " (must be 0)."));
+      if (!acnRes.empty) {
+        lines.push(acnRes.valid
+          ? "&#128994; <strong>ACN VALID (ASIC MOD-10):</strong> <code>" + acnRes.digits + "</code>"
+          : "&#128308; <strong>ACN INVALID:</strong> " + (acnRes.reason || "Check digit mismatch (expected " + acnRes.expectedCheck + ")."));
+      }
+      lines.push(bsbRes.valid
+        ? "&#128994; <strong>BSB RESOLVED:</strong> <code>" + bsbRes.formatted + "</code> &rarr; <strong>" + bsbRes.bank + "</strong> (" + bsbRes.state + ")"
+        : "&#128308; <strong>BSB INVALID:</strong> " + bsbRes.reason);
+
+      document.getElementById("auValidationOut").innerHTML = lines.join("<br>");
+
+      var abaPayload = {
+        bankCode: bsbRes.valid ? bsbRes.code : "CBA",
+        userName: "AU PAYER ENTERPRISE PTY",
+        apcaUserId: "301500",
+        description: "SUPPLIERS",
+        traceBsb: bsbRes.valid ? bsbRes.formatted : "062-000",
+        traceAccount: "10458921",
+        processDate: new Date().toISOString().slice(0, 10),
+        transactions: [
+          {
+            accountTitle: payee.slice(0, 32),
+            bsb: bsbRes.valid ? bsbRes.formatted : "062-000",
+            accountNumber: acct || "10498211",
+            amount: +amt.toFixed(2),
+            transactionCode: "50",
+            reference: "ABN " + (abnRes.digits || "VALID")
+          }
+        ]
+      };
+
+      var peppolPayload = {
+        format: "peppol-ubl-3.0",
+        invoiceNumber: "INV-AU-2026-01",
+        currency: "AUD",
+        seller: {
+          name: payee,
+          endpointScheme: "0151",
+          endpointId: abnRes.digits || "33051775556",
+          country: "AU",
+          city: "Sydney"
+        },
+        buyer: {
+          name: "AUSTRALIAN BUYER PTY LTD",
+          endpointScheme: "0151",
+          endpointId: "48123123124",
+          country: "AU",
+          city: "Melbourne"
+        },
+        lines: [
+          { description: "Consulting & Software Batch (A-NZ GST 10%)", quantity: 1, unitPrice: netExGst, vatRate: 10 }
+        ]
+      };
+
+      document.getElementById("outAbaJson").textContent = JSON.stringify(abaPayload, null, 2);
+      document.getElementById("outPeppolJson").textContent = JSON.stringify(peppolPayload, null, 2);
+    }
+
+    ["auAbn", "auAcn", "auBsb", "auAcct", "auName", "auAmount"].forEach(function (id) {
+      document.getElementById(id).addEventListener("input", refreshAll);
+    });
+
+    document.getElementById("btnSampleTelstra").addEventListener("click", function () {
+      document.getElementById("auAbn").value = "33 051 775 556";
+      document.getElementById("auAcn").value = "051 775 556";
+      document.getElementById("auBsb").value = "062-000";
+      document.getElementById("auName").value = "TELSTRA LIMITED AU";
+      refreshAll();
+    });
+    document.getElementById("btnSampleQantas").addEventListener("click", function () {
+      document.getElementById("auAbn").value = "16 009 661 901";
+      document.getElementById("auAcn").value = "009 661 901";
+      document.getElementById("auBsb").value = "083-004";
+      document.getElementById("auName").value = "QANTAS AIRWAYS LIMITED";
+      refreshAll();
+    });
+    document.getElementById("btnSampleBad").addEventListener("click", function () {
+      document.getElementById("auAbn").value = "33 051 775 550";
+      document.getElementById("auAcn").value = "051 775 550";
+      document.getElementById("auBsb").value = "062-000";
+      refreshAll();
+    });
+
+    function wireCopy(btnId, preId, orig) {
+      document.getElementById(btnId).addEventListener("click", function (e) {
+        navigator.clipboard.writeText(document.getElementById(preId).textContent || "");
+        e.target.textContent = "Copied!";
+        setTimeout(function () { e.target.textContent = orig; }, 1600);
+      });
+    }
+    wireCopy("copyAbaJson", "outAbaJson", "Copy .ABA JSON");
+    wireCopy("copyPeppolJson", "outPeppolJson", "Copy Peppol JSON");
+
+    document.getElementById("auBuy24h").addEventListener("click", function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout("batch24h", { btn: e.target });
+    });
+    document.getElementById("auBuy30d").addEventListener("click", function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout("pro30d", { btn: e.target });
+    });
+
+    refreshAll();
+  })();
+  </script>
+</body>
+</html>

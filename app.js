@@ -169,6 +169,49 @@ export const TOOLS_CONFIG = {
     summary: "DECODED pain.002.001.10 • 1 Accepted, 2 Rejected with Plain-English Fixes",
     sample: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.002.001.10\">\n  <CstmrPmtStsRpt>\n    <GrpHdr><MsgId>STS-20261112-99201</MsgId><CreDtTm>2026-11-12T09:15:00Z</CreDtTm><InitgPty><Nm>DEUTSCHE BANK AG</Nm></InitgPty></GrpHdr>\n    <OrgnlGrpInfAndSts><OrgnlMsgId>BATCH-2026-NOV-01</OrgnlMsgId><OrgnlMsgNmId>pain.001.001.09</OrgnlMsgNmId><GrpSts>PART</GrpSts></OrgnlGrpInfAndSts>\n    <OrgnlPmtInfAndSts>\n      <OrgnlPmtInfId>PMT-SUPPLIERS-01</OrgnlPmtInfId>\n      <PmtInfSts>PART</PmtInfSts>\n      <TxInfAndSts>\n        <OrgnlInstrId>INSTR-001</OrgnlInstrId><OrgnlEndToEndId>INV-2026-8801</OrgnlEndToEndId><TxSts>ACSC</TxSts>\n        <OrgnlTxRef><Amt><InstdAmt Ccy=\"EUR\">1250.50</InstdAmt></Amt><Cdtr><Nm>Mueller + Soehne KG</Nm></Cdtr><CdtrAcct><Id><IBAN>DE89370400440532013000</IBAN></Id></CdtrAcct></OrgnlTxRef>\n      </TxInfAndSts>\n      <TxInfAndSts>\n        <OrgnlInstrId>INSTR-002</OrgnlInstrId><OrgnlEndToEndId>INV-2026-8802</OrgnlEndToEndId><TxSts>RJCT</TxSts>\n        <StsRsnInf><Rsn><Cd>AC04</Cd></Rsn><AddtlInf>Beneficiary IBAN account closed at receiving bank</AddtlInf></StsRsnInf>\n        <OrgnlTxRef><Amt><InstdAmt Ccy=\"EUR\">849.95</InstdAmt></Amt><Cdtr><Nm>Elodie Lefevre SARL</Nm></Cdtr><CdtrAcct><Id><IBAN>FR7630006000011234567890189</IBAN></Id></CdtrAcct></OrgnlTxRef>\n      </TxInfAndSts>\n      <TxInfAndSts>\n        <OrgnlInstrId>INSTR-003</OrgnlInstrId><OrgnlEndToEndId>INV-2026-8803</OrgnlEndToEndId><TxSts>RJCT</TxSts>\n        <StsRsnInf><Rsn><Cd>BE04</Cd></Rsn><AddtlInf>2026 EPC Rule: Missing structured creditor TownName and Country</AddtlInf></StsRsnInf>\n        <OrgnlTxRef><Amt><InstdAmt Ccy=\"EUR\">3400.00</InstdAmt></Amt><Cdtr><Nm>Alpine Advisory AG</Nm></Cdtr><CdtrAcct><Id><IBAN>CH9300762011623852957</IBAN></Id></CdtrAcct></OrgnlTxRef>\n      </TxInfAndSts>\n    </OrgnlPmtInfAndSts>\n  </CstmrPmtStsRpt>\n</Document>",
     output: "originalMessageId,batchPaymentInfoId,originalEndToEndId,originalInstructionId,isoStatus,normalizedStatus,reasonCode,reasonTitle,category,amount,currency,counterpartyName,counterpartyIban,plainEnglishExplanation,recommendedAction\r\nBATCH-2026-NOV-01,PMT-SUPPLIERS-01,INV-2026-8801,INSTR-001,ACSC,SETTLED,,,OK,1250.50,EUR,Mueller + Soehne KG,DE89370400440532013000,Payment settled successfully.,No action required.\r\nBATCH-2026-NOV-01,PMT-SUPPLIERS-01,INV-2026-8802,INSTR-002,RJCT,REJECTED,AC04,Closed Bank Account,ACCOUNT,849.95,EUR,Elodie Lefevre SARL,FR7630006000011234567890189,The target bank account has been permanently closed.,Stop automated retries and request updated IBAN from beneficiary.\r\nBATCH-2026-NOV-01,PMT-SUPPLIERS-01,INV-2026-8803,INSTR-003,RJCT,REJECTED,BE04,Missing Structured Address,COMPLIANCE_ADDRESS,3400.00,EUR,Alpine Advisory AG,CH9300762011623852957,Mandatory 2026 EPC structured <Ctry> and <TwnNm> missing.,Regenerate batch using pain.001.001.09 with structured <PstlAdr>."
+  },
+  positivepay: {
+    label: "🇺🇸 US Check Positive Pay",
+    storeUrl: "https://apify.com/finops_studio/us-positive-pay-check-generator",
+    actorSlug: "finops_studio~us-positive-pay-check-generator",
+    unitPrice: 0.02,
+    fileExt: "POSITIVE_PAY.txt",
+    mime: "text/plain",
+    summary: "VALID US Check Positive Pay • Chase / BofA / Wells Fargo / PNC (Sample Preview)",
+    apiSampleJson: {
+      bankProfile: "CHASE_JPM_CSV",
+      accountNumber: "1234567890",
+      companyName: "ACME CORP US",
+      fileDate: "2026-11-17",
+      checks: [
+        { checkNumber: "10421", issueDate: "2026-11-17", amount: 1450.25, payeeName: "ACME SUPPLY LLC", status: "ISSUE" },
+        { checkNumber: "10422", issueDate: "2026-11-17", amount: 890.00, payeeName: "OFFICE DEPOT INC", status: "VOID" }
+      ]
+    },
+    sample: "checkNumber,issueDate,amount,payeeName,status\n10421,2026-11-17,1450.25,ACME SUPPLY LLC,ISSUE\n10422,2026-11-17,890.00,OFFICE DEPOT INC,VOID",
+    output: "ACCOUNT_NUMBER,CHECK_NUMBER,ISSUE_DATE,AMOUNT,PAYEE_NAME,ACTION_FLAG\r\n1234567890,0000010421,11172026,1450.25,ACME SUPPLY LLC,I\r\n1234567890,0000010422,11172026,890.00,OFFICE DEPOT INC,V"
+  },
+  norma43: {
+    label: "🇪🇸 Spain Norma 43 Parser",
+    storeUrl: "https://apify.com/finops_studio/spanish-aeb-norma43-parser",
+    actorSlug: "finops_studio~spanish-aeb-norma43-parser",
+    unitPrice: 0.02,
+    fileExt: "NORMA43_DECODED.csv",
+    mime: "text/csv",
+    summary: "VALID Spanish AEB Norma 43 Statement • Reconciled Balances + ES IBAN (Sample Preview)",
+    sample: "112100041802000513322611102611122000000015000009783IBERIA LOGISTICA SL          \r\n22    0418261111261111040012000000002450500000451201FAC20260891 B2B CLIENTE MADR\r\n2301COBRO FACTURA 2026-0891               DISTRIBUCIONES NORTE SA               \r\n33210004180200051332000000000000000000000100000000245050200000001745050978    \r\n88999999999999999999000004                                                      ",
+    output: "iban,bank_name,booking_date,value_date,direction,amount,currency,reference_1,concept\r\nES9121000418450200051332,CaixaBank,2026-11-11,2026-11-11,CREDIT,2450.50,EUR,FAC20260891,COBRO FACTURA 2026-0891 DISTRIBUCIONES NORTE SA"
+  },
+  pacs008: {
+    label: "🌐 Fedwire / SWIFT pacs.008",
+    storeUrl: "https://apify.com/finops_studio/iso20022-pacs008-fedwire-generator",
+    actorSlug: "finops_studio~iso20022-pacs008-fedwire-generator",
+    unitPrice: 0.02,
+    fileExt: "FEDWIRE_PACS008.xml",
+    mime: "application/xml",
+    summary: "VALID ISO 20022 pacs.008.001.08 Fedwire & SWIFT CBPR+ XML (Sample Preview)",
+    sample: "{\n  \"networkProfile\": \"FEDWIRE_USABA\",\n  \"settlementDate\": \"2026-11-17\",\n  \"wires\": [\n    {\n      \"amount\": \"12500.00\",\n      \"currency\": \"USD\",\n      \"debtor\": { \"name\": \"PACIFIC COAST LLC\", \"accountNumber\": \"489011223344\", \"address\": { \"townName\": \"San Francisco\", \"country\": \"US\" } },\n      \"debtorAgent\": { \"abaRouting\": \"021000021\", \"bic\": \"CHASUS33XXX\" },\n      \"creditorAgent\": { \"abaRouting\": \"026009593\", \"bic\": \"BOFAUS3NXXX\" },\n      \"creditor\": { \"name\": \"APEX SUPPLY INC\", \"accountNumber\": \"003948571120\", \"address\": { \"townName\": \"Austin\", \"country\": \"US\" } },\n      \"remittanceInfo\": \"INV-2026-9920 SETTLEMENT\"\n    }\n  ]\n}",
+    output: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08\">\n  <FIToFICstmrCdtTrf><GrpHdr><NbOfTxs>1</NbOfTxs><TtlIntrBkSttlmAmt Ccy=\"USD\">12500.00</TtlIntrBkSttlmAmt></GrpHdr></FIToFICstmrCdtTrf>\n</Document>"
   }
 };
 
@@ -284,21 +327,81 @@ export function initSandbox(defaultTool = "sepa") {
   let activeKey = TOOLS_CONFIG[defaultTool] ? defaultTool : "sepa";
   let lastOutput = "";
 
-  // Inject optional Direct Cloud API Runner bar right below sandbox-bar for instant developer execution
+  const EDGE_API = "https://finops-rapidapi-edge.ria-rader.workers.dev";
+  const EDGE_ROUTES = {
+    sepa: { path: "/v1/sepa/generate", key: "xml" },
+    einvoice: { path: "/v1/einvoice/generate", key: "xml" },
+    nacha: { path: "/v1/nacha/generate", key: "nachaText" },
+    bai2: { path: "/v1/bai2/parse", key: "csvOutput" },
+    datev: { path: "/v1/datev/generate", key: "csvText" },
+    aba: { path: "/v1/aba/generate", key: "abaText" },
+    bacs: { path: "/v1/bacs/generate", key: "bacsText" },
+    cpa005: { path: "/v1/cpa005/generate", key: "eftText" },
+    pain002: { path: "/v1/pain002/parse", key: "csvReport" },
+    norma43: { path: "/v1/norma43/parse", key: "csvText" },
+    positivepay: { path: "/v1/positive-pay/generate", key: "fileText" },
+    pacs008: { path: "/v1/pacs008/generate", key: "xmlText" }
+  };
+
+  async function triggerCheckout(plan, btn) {
+    if (typeof window.startFinOpsCheckout === "function") {
+      return window.startFinOpsCheckout(plan, { btn });
+    }
+    const orig = btn ? btn.textContent : "";
+    if (btn) { btn.disabled = true; btn.textContent = "Opening Checkout..."; }
+    try {
+      const res = await fetch(`${EDGE_API}/v1/checkout/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: plan === "pro30d" ? "pro30d" : "batch24h", returnUrl: location.href.split("#")[0] })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok || !data.checkoutUrl) throw new Error(data.error || "Checkout failed");
+      try { localStorage.setItem("finops_pending_pass", data.passKey); } catch {}
+      window.location.href = data.checkoutUrl;
+    } catch (err) {
+      if (btn) { btn.disabled = false; btn.textContent = orig; }
+      alert(`Checkout notice: ${err.message}`);
+    }
+  }
+
+  ["btn-hero-pass-24h", "btn-upsell-pass-24h"].forEach((id) => {
+    const el = document.getElementById(id);
+    el?.addEventListener("click", () => triggerCheckout("batch24h", el));
+  });
+  const heroProBtn = document.getElementById("btn-hero-pass-30d");
+  heroProBtn?.addEventListener("click", () => triggerCheckout("pro30d", heroProBtn));
+
+  // Inject Direct Instant Pass ($9/$29) + Apify Bridge right below sandbox-bar
   const sandboxCard = tabsEl.closest(".sandbox-card");
   let liveRunnerBar = document.getElementById("direct-cloud-runner");
   if (sandboxCard && !liveRunnerBar) {
     liveRunnerBar = document.createElement("div");
     liveRunnerBar.id = "direct-cloud-runner";
-    liveRunnerBar.style.cssText = "margin-top:12px;padding:10px 14px;border-radius:10px;background:rgba(15,23,42,0.75);border:1px dashed rgba(56,189,248,0.35);display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;font-size:0.82rem;";
+    liveRunnerBar.style.cssText = "margin-top:12px;padding:10px 14px;border-radius:10px;background:rgba(15,23,42,0.75);border:1px dashed rgba(245,158,11,0.45);display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;font-size:0.82rem;";
     liveRunnerBar.innerHTML = `
-      <span style="color:var(--muted);"><strong style="color:#38bdf8;">⚡ Direct Cloud API Bridge:</strong> Have an Apify Token? Generate your live production file right here (or <a href="https://apify.com/finops_studio" target="_blank" rel="noopener" style="color:#34d399;">claim $5/mo free credits &rarr;</a>):</span>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span style="color:var(--muted);"><strong style="color:#fbbf24;">⚡ Instant Direct Pass:</strong> No account needed:</span>
+        <button id="btn-bridge-buy-9" type="button" class="btn btn-primary" style="padding:5px 10px;font-size:0.78rem;background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">💳 $9 24h Unlimited</button>
+        <button id="btn-bridge-buy-29" type="button" class="btn btn-outline" style="padding:5px 10px;font-size:0.78rem;border-color:#fbbf24;color:#fde68a;">🚀 $29 Pro Pass</button>
+      </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;flex:1;max-width:460px;">
-        <input id="apify-live-token" type="password" placeholder="apify_api_... (sent directly to api.apify.com)" style="flex:1;min-width:190px;padding:7px 10px;border-radius:7px;border:1px solid var(--border);background:#020617;color:#f8fafc;font-family:monospace;font-size:0.79rem;" />
+        <input id="apify-live-token" type="password" placeholder="fop_... (Instant Pass) OR apify_api_... (Apify Token)" style="flex:1;min-width:190px;padding:7px 10px;border-radius:7px;border:1px solid var(--border);background:#020617;color:#f8fafc;font-family:monospace;font-size:0.79rem;" />
         <button id="btn-live-cloud-exec" type="button" class="btn btn-outline" style="padding:7px 12px;font-size:0.8rem;">Run Live Cloud Engine</button>
       </div>
     `;
     sandboxCard.appendChild(liveRunnerBar);
+    const b9 = document.getElementById("btn-bridge-buy-9");
+    const b29 = document.getElementById("btn-bridge-buy-29");
+    b9?.addEventListener("click", () => triggerCheckout("batch24h", b9));
+    b29?.addEventListener("click", () => triggerCheckout("pro30d", b29));
+    try {
+      const qpPass = new URLSearchParams(location.search).get("pass_key") || "";
+      if (qpPass.startsWith("fop_")) localStorage.setItem("finops_pro_pass", qpPass);
+      const savedPass = localStorage.getItem("finops_pro_pass") || "";
+      const tokEl = document.getElementById("apify-live-token");
+      if (savedPass.startsWith("fop_") && tokEl && !tokEl.value) tokEl.value = savedPass;
+    } catch {}
   }
 
   function getApiPayloadObj(cfg) {
@@ -308,6 +411,7 @@ export function initSandbox(defaultTool = "sepa") {
     }
     if (activeKey === "bai2") return { bai2Content: cfg.sample };
     if (activeKey === "pain002") return { xmlContent: cfg.sample };
+    if (activeKey === "norma43") return { norma43Content: cfg.sample };
     return {};
   }
 
@@ -371,30 +475,48 @@ export function initSandbox(defaultTool = "sepa") {
     const token = (tokenInput?.value || "").trim();
     const cfg = TOOLS_CONFIG[activeKey];
     if (!token) {
-      window.open(cfg.storeUrl, "_blank", "noopener");
+      triggerCheckout("batch24h", execBtn);
       return;
     }
     let bodyStr = inputEl.value.trim();
     if (!bodyStr.startsWith("{")) {
       if (activeKey === "bai2") bodyStr = JSON.stringify({ bai2Content: bodyStr });
       else if (activeKey === "pain002") bodyStr = JSON.stringify({ xmlContent: bodyStr });
+      else if (activeKey === "norma43") bodyStr = JSON.stringify({ norma43Content: bodyStr });
       else bodyStr = JSON.stringify(getApiPayloadObj(cfg));
     }
     execBtn.disabled = true;
     execBtn.textContent = "Running Cloud Engine...";
-    statusEl.textContent = "EXECUTING ON APIFY CLOUD...";
+    const isDirectPass = token.startsWith("fop_");
+    statusEl.textContent = isDirectPass ? "EXECUTING ON FINOPS DIRECT CLOUD EDGE..." : "EXECUTING ON APIFY CLOUD...";
     try {
-      const res = await fetch(`https://api.apify.com/v2/acts/${cfg.actorSlug}/run-sync-get-dataset-items?token=${encodeURIComponent(token)}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: bodyStr
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error?.message || `HTTP ${res.status}`);
-      const first = Array.isArray(data) && data[0] ? data[0] : data;
-      const fileOut = first.xmlContent || first.achContent || first.abaContent || first.bacsContent || first.cpa005Content || first.csvContent || JSON.stringify(data, null, 2);
-      outputEl.textContent = fileOut;
-      lastOutput = fileOut;
+      if (isDirectPass) {
+        try { localStorage.setItem("finops_pro_pass", token); } catch {}
+        const route = EDGE_ROUTES[activeKey];
+        if (!route) throw new Error(`Direct edge route not configured for ${activeKey}.`);
+        const res = await fetch(`${EDGE_API}${route.path}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-FinOps-Pass": token },
+          body: bodyStr
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || (Array.isArray(data?.errors) ? data.errors.join("; ") : `HTTP ${res.status}`));
+        const fileOut = data[route.key] || data.xml || data.xmlText || data.fileText || data.nachaText || data.bacsText || data.abaText || data.eftText || data.csvText || data.csvOutput || data.csvReport || JSON.stringify(data, null, 2);
+        outputEl.textContent = fileOut;
+        lastOutput = fileOut;
+      } else {
+        const res = await fetch(`https://api.apify.com/v2/acts/${cfg.actorSlug}/run-sync-get-dataset-items?token=${encodeURIComponent(token)}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: bodyStr
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error?.message || `HTTP ${res.status}`);
+        const first = Array.isArray(data) && data[0] ? data[0] : data;
+        const fileOut = first.xmlContent || first.achContent || first.abaContent || first.bacsContent || first.cpa005Content || first.positivePayContent || first.csvContent || JSON.stringify(data, null, 2);
+        outputEl.textContent = fileOut;
+        lastOutput = fileOut;
+      }
       statusEl.className = "status-chip status-ok";
       statusEl.textContent = "LIVE CLOUD OUTPUT READY — CLICK DOWNLOAD";
     } catch (err) {

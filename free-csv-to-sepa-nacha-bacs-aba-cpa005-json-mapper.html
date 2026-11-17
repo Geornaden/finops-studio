@@ -87,6 +87,8 @@
             <option value="aba">&#127462;&#127482; Australian 120-Character BECS Direct Entry (.aba)</option>
             <option value="cpa005">&#127464;&#127462; Canadian 1,464-Byte CPA-005 EFT (.eft)</option>
             <option value="datev">&#127465;&#127466; German DATEV Buchungsstapel EXTF v700 (.csv)</option>
+            <option value="positivepay">&#127482;&#127480; US Bank Check Positive Pay (Chase / BofA / Wells / PNC)</option>
+            <option value="pacs008">&#127760; ISO 20022 Fedwire &amp; SWIFT CBPR+ Wire (pacs.008.001.08)</option>
           </select>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
@@ -120,14 +122,26 @@
         </div>
       </div>
 
-      <div style="margin-top:16px;padding:14px;border-radius:10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div id="directCheckoutBar" style="margin-top:16px;padding:14px 16px;border-radius:10px;background:rgba(245,158,11,0.10);border:1px solid rgba(245,158,11,0.45);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-weight:800;font-size:0.95rem;color:#fde68a;">&#128179; Instant No-Signup Production Access (PayPal / Card)</div>
+          <div id="passStatusChip" style="font-size:0.82rem;color:#cbd5e1;margin-top:3px;">Generate unlimited bank files right on this page without creating any third-party developer account.</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnBuyBatch24h" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#128179; Unlock 24h Unlimited ($9)</button>
+          <button id="btnBuyPro30d" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fde68a;font-weight:700;">&#128640; Unlock 30-Day Pro ($29)</button>
+          <button id="btnFree2RowDemo" type="button" class="btn btn-outline" style="border-color:#38bdf8;color:#38bdf8;">&#127379; Run Free 2-Row Live Test</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;padding:14px;border-radius:10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:1;">
-          <input id="directToken" type="password" placeholder="Optional: Paste Apify API Token (apify_api_...) to generate &amp; download file right here" style="min-width:290px;flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.84rem;" />
+          <input id="directToken" type="password" placeholder="Paste Instant Pass Key (fop_...) OR Apify Token (apify_api_...)" style="min-width:290px;flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.84rem;" />
           <button id="btnRunDirect" type="button" class="btn btn-primary">&#9889; Generate &amp; Download Bank File Now</button>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button id="btnCopyJson" type="button" class="btn btn-outline">Copy JSON Payload</button>
-          <a id="btnOpenActor" class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Open in Apify Console ($5 Free/Mo) &rarr;</a>
+          <a id="btnOpenActor" class="btn btn-outline" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Apify Console ($5 Free/Mo) &rarr;</a>
         </div>
       </div>
       <pre id="cloudResultBox" class="code-box" style="display:none;margin-top:12px;min-height:160px;border-color:#34d399;"></pre>
@@ -173,10 +187,13 @@
 
   <script>
   (function () {
+    var EDGE_API = "https://finops-rapidapi-edge.ria-rader.workers.dev";
     var CONFIGS = {
       sepa: {
         actor: "finops_studio~sepa-xml-generator",
         storeUrl: "https://apify.com/finops_studio/sepa-xml-generator",
+        edgePath: "/v1/sepa/generate",
+        edgeKey: "xml",
         ext: "sepa-pain001.xml",
         outKey: "xmlString",
         unitPrice: 0.02,
@@ -198,6 +215,8 @@
       nacha: {
         actor: "finops_studio~nacha-ach-file-generator",
         storeUrl: "https://apify.com/finops_studio/nacha-ach-file-generator",
+        edgePath: "/v1/nacha/generate",
+        edgeKey: "nachaText",
         ext: "batch-nacha.ach",
         outKey: "achContent",
         unitPrice: 0.02,
@@ -220,6 +239,8 @@
       bacs: {
         actor: "finops_studio~uk-bacs-standard18-generator",
         storeUrl: "https://apify.com/finops_studio/uk-bacs-standard18-generator",
+        edgePath: "/v1/bacs/generate",
+        edgeKey: "bacsText",
         ext: "bacs-standard18.txt",
         outKey: "bacsContent",
         unitPrice: 0.02,
@@ -241,6 +262,8 @@
       aba: {
         actor: "finops_studio~aba-cemtex-file-generator",
         storeUrl: "https://apify.com/finops_studio/aba-cemtex-file-generator",
+        edgePath: "/v1/aba/generate",
+        edgeKey: "abaText",
         ext: "direct-entry.aba",
         outKey: "abaContent",
         unitPrice: 0.02,
@@ -264,6 +287,8 @@
       cpa005: {
         actor: "finops_studio~canada-cpa005-eft-generator",
         storeUrl: "https://apify.com/finops_studio/canada-cpa005-eft-generator",
+        edgePath: "/v1/cpa005/generate",
+        edgeKey: "eftText",
         ext: "canada-cpa005.eft",
         outKey: "cpa005Content",
         unitPrice: 0.02,
@@ -287,6 +312,8 @@
       datev: {
         actor: "finops_studio~datev-buchungsstapel-generator",
         storeUrl: "https://apify.com/finops_studio/datev-buchungsstapel-generator",
+        edgePath: "/v1/datev/generate",
+        edgeKey: "csvText",
         ext: "EXTF_Buchungsstapel.csv",
         outKey: "csvString",
         unitPrice: 0.02,
@@ -302,6 +329,55 @@
           { key: "vatRate", label: "USt % (19 / 7 / 0)", match: /vat|ust|mwst|tax/i },
           { key: "invoiceNumber", label: "Belegfeld 1 (Rechnung)", match: /inv|beleg|rechn|nr/i },
           { key: "description", label: "Buchungstext", match: /desc|text|memo|kunde/i }
+        ]
+      },
+      positivepay: {
+        actor: "finops_studio~us-positive-pay-check-generator",
+        storeUrl: "https://apify.com/finops_studio/us-positive-pay-check-generator",
+        edgePath: "/v1/positive-pay/generate",
+        edgeKey: "fileText",
+        ext: "positive-pay.txt",
+        outKey: "positivePayContent",
+        unitPrice: 0.02,
+        sampleCsv: "Check Number,Issue Date,Amount USD,Payee Name,Status\n10421,2026-11-17,1450.25,ACME SUPPLY LLC,ISSUE\n10422,2026-11-17,890.00,OFFICE DEPOT INC,VOID",
+        companyDefaults: [
+          { key: "bankProfile", label: "Bank (CHASE_JPM_CSV / BOFA_CASHPRO_80 / WELLS_FARGO_CEO_80 / PNC_PINACLE_80)", val: "CHASE_JPM_CSV" },
+          { key: "accountNumber", label: "Checking Account #", val: "1234567890" },
+          { key: "companyName", label: "Company Name", val: "ACME CORP US" }
+        ],
+        fields: [
+          { key: "checkNumber", label: "Check Number", match: /check|chk|num/i },
+          { key: "issueDate", label: "Issue Date (YYYY-MM-DD)", match: /date|issue/i },
+          { key: "amount", label: "Amount (USD)", match: /amount|usd|total|pay/i },
+          { key: "payeeName", label: "Payee Name", match: /payee|name|vendor/i },
+          { key: "status", label: "Status (ISSUE/VOID)", match: /status|action|void|type/i }
+        ]
+      },
+      pacs008: {
+        actor: "finops_studio~iso20022-pacs008-fedwire-generator",
+        storeUrl: "https://apify.com/finops_studio/iso20022-pacs008-fedwire-generator",
+        edgePath: "/v1/pacs008/generate",
+        edgeKey: "xmlText",
+        ext: "fedwire-pacs008.xml",
+        outKey: "xmlContent",
+        unitPrice: 0.02,
+        sampleCsv: "Creditor Name,Creditor Routing/IBAN,Creditor Bank ABA/BIC,Amount,Currency,Town,Country,Remittance\nAPEX PRECISION INC,003948571120,026009593,12500.00,USD,Austin,US,INV-2026-9920 EQUIPMENT\nWEST COAST LOGISTICS,987654321,121000358,4890.50,USD,San Francisco,US,FREIGHT-102",
+        companyDefaults: [
+          { key: "networkProfile", label: "Network (FEDWIRE_USABA / SWIFT_CBPR_PLUS)", val: "FEDWIRE_USABA" },
+          { key: "debtorName", label: "Debtor Company Name", val: "PACIFIC COAST VENTURES LLC" },
+          { key: "debtorAccount", label: "Debtor Account / IBAN", val: "489011223344" },
+          { key: "instructingAgentRouting", label: "Debtor Bank 9d ABA", val: "021000021" },
+          { key: "instructingAgentBic", label: "Debtor Bank BIC", val: "CHASUS33XXX" }
+        ],
+        fields: [
+          { key: "name", label: "Creditor Name", match: /name|creditor|payee|vendor/i },
+          { key: "creditorAccount", label: "Creditor Acct / IBAN", match: /iban|acct|account|routing/i },
+          { key: "creditorBank", label: "Creditor Bank ABA / BIC", match: /bic|swift|bank|aba/i },
+          { key: "amount", label: "Amount", match: /amount|usd|eur|total/i },
+          { key: "currency", label: "Currency (USD/EUR)", match: /curr|ccy/i },
+          { key: "townName", label: "Creditor City / Town", match: /city|town/i },
+          { key: "country", label: "Country (2-Letter)", match: /country|iso/i },
+          { key: "remittanceInfo", label: "Remittance / Invoice", match: /remit|ref|inv|desc/i }
         ]
       }
     };
@@ -444,6 +520,36 @@
           if (inst.length !== 3 || trn.length !== 5) errors.push("Row " + (rIdx + 1) + ": CA Institution (3d) + Transit (5d) required");
           return { name: val("name", "PAYEE"), institution: inst, transit: trn, accountNumber: val("accountNumber", ""), amount: +rawAmt.toFixed(2), cpaCode: val("cpaCode", "200"), crossReference: val("crossReference", "REF-" + (rIdx + 1)) };
         }
+        if (fmt === "positivepay") {
+          var chk = val("checkNumber", String(1000 + rIdx + 1)).replace(/\D/g, "");
+          if (!chk) errors.push("Row " + (rIdx + 1) + ": Positive Pay check number is required");
+          return { checkNumber: chk, issueDate: val("issueDate", new Date().toISOString().slice(0, 10)), amount: +rawAmt.toFixed(2), payeeName: val("payeeName", "PAYEE"), status: String(val("status", "ISSUE")).toUpperCase() };
+        }
+        if (fmt === "pacs008") {
+          var cAcct = val("creditorAccount", "").replace(/\s+/g, "");
+          var cBank = val("creditorBank", "").replace(/\s+/g, "");
+          var netProf = compVals.networkProfile || "FEDWIRE_USABA";
+          if (netProf === "FEDWIRE_USABA" && /^[0-9]{9}$/.test(cBank) && !checkAbaMod10(cBank)) errors.push("Row " + (rIdx + 1) + ": Creditor bank ABA failed MOD-10 (" + cBank + ")");
+          return {
+            amount: rawAmt.toFixed(2),
+            currency: val("currency", "USD").toUpperCase(),
+            debtor: {
+              name: compVals.debtorName || "PACIFIC COAST VENTURES LLC",
+              accountNumber: compVals.debtorAccount || "489011223344",
+              address: { streetName: "Market Street", buildingNumber: "555", postCode: "94105", townName: "San Francisco", stateOrProvince: "CA", country: "US" }
+            },
+            debtorAgent: {
+              abaRouting: netProf === "FEDWIRE_USABA" ? (compVals.instructingAgentRouting || "021000021") : undefined,
+              bic: compVals.instructingAgentBic || "CHASUS33XXX"
+            },
+            creditorAgent: /^[0-9]{9}$/.test(cBank) ? { abaRouting: cBank, bic: "BOFAUS3NXXX" } : { bic: cBank || "DEUTDEFFXXX" },
+            creditor: Object.assign(
+              { name: val("name", "BENEFICIARY INC"), address: { streetName: "Main St", buildingNumber: "100", postCode: "10001", townName: val("townName", "New York"), country: val("country", "US") } },
+              checkIbanMod97(cAcct) ? { iban: cAcct } : { accountNumber: cAcct || "987654321" }
+            ),
+            remittanceInfo: val("remittanceInfo", "INV-" + (rIdx + 1))
+          };
+        }
         return { date: val("date", "2026-11-13"), amount: +rawAmt.toFixed(2), vatRate: Number(val("vatRate", "19")) || 0, invoiceNumber: val("invoiceNumber", "RE-1"), description: val("description", "Buchung") };
       });
 
@@ -453,6 +559,8 @@
       else if (fmt === "bacs") payload = { serviceUserNumber: compVals.serviceUserNumber, originatorName: compVals.originatorName, originatorSortCode: compVals.originatorSortCode, originatorAccountNumber: compVals.originatorAccountNumber, processingDate: "2026-11-20", includeHeaders: true, transactions: items };
       else if (fmt === "aba") payload = { financialInstitution: compVals.financialInstitution, userName: compVals.userName, apcaUserId: compVals.apcaUserId, description: "PAYROLL", processingDate: "2026-11-20", traceBsb: compVals.traceBsb, traceAccount: compVals.traceAccount, remitterName: (compVals.userName || "COMPANY").slice(0, 16), includeSelfBalancingRow: true, transactions: items };
       else if (fmt === "cpa005") payload = { originatorId: compVals.originatorId, originatorShortName: compVals.originatorShortName, originatorLongName: compVals.originatorShortName, destinationDataCentre: compVals.destinationDataCentre, fileCreationNumber: compVals.fileCreationNumber, returnInstitution: "003", returnTransit: "00012", returnAccount: "1004589", dueDate: "2026-11-20", transactions: items };
+      else if (fmt === "positivepay") payload = { bankProfile: compVals.bankProfile || "CHASE_JPM_CSV", accountNumber: compVals.accountNumber || "1234567890", companyName: compVals.companyName || "ACME CORP US", fileDate: new Date().toISOString().slice(0, 10), checks: items };
+      else if (fmt === "pacs008") payload = { networkProfile: compVals.networkProfile || "FEDWIRE_USABA", settlementDate: "2026-11-17", instructingAgentRouting: compVals.instructingAgentRouting || "021000021", instructingAgentBic: compVals.instructingAgentBic || "CHASUS33XXX", wires: items };
       else payload = { skr: compVals.skr || "SKR03", consultantNumber: compVals.consultantNumber, clientNumber: compVals.clientNumber, bookings: items };
 
       jsonOut.textContent = JSON.stringify(payload, null, 2);
@@ -495,36 +603,134 @@
       setTimeout(function () { e.target.textContent = "Copy JSON Payload"; }, 1800);
     });
 
+    async function startMapperCheckout(plan, btn) {
+      if (typeof window.startFinOpsCheckout === "function") {
+        return window.startFinOpsCheckout(plan, { btn: btn });
+      }
+      var orig = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Opening Checkout...";
+      try {
+        var r = await fetch(EDGE_API + "/v1/checkout/start", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan: plan === "pro30d" ? "pro30d" : "batch24h", returnUrl: location.href.split("#")[0] })
+        });
+        var j = await r.json();
+        if (!r.ok || !j.ok || !j.checkoutUrl) throw new Error(j.error || "Checkout error");
+        try { localStorage.setItem("finops_pending_pass", j.passKey); } catch (e) {}
+        window.location.href = j.checkoutUrl;
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = orig;
+        var resBox = document.getElementById("cloudResultBox");
+        resBox.style.display = "block";
+        resBox.textContent = "Checkout error: " + err.message;
+      }
+    }
+
+    document.getElementById("btnBuyBatch24h").addEventListener("click", function (e) { startMapperCheckout("batch24h", e.target); });
+    document.getElementById("btnBuyPro30d").addEventListener("click", function (e) { startMapperCheckout("pro30d", e.target); });
+
+    document.getElementById("btnFree2RowDemo").addEventListener("click", async function (e) {
+      var fmt = fmtSel.value;
+      var resBox = document.getElementById("cloudResultBox");
+      resBox.style.display = "block";
+      e.target.disabled = true;
+      resBox.textContent = "Running free 2-row live cloud demo on FinOps Edge...";
+      try {
+        var demoPath = ["sepa", "nacha", "datev"].indexOf(fmt) !== -1 ? "/v1/demo/" + fmt : "/v1/demo/validate";
+        var bodyData = demoPath === "/v1/demo/validate"
+          ? { iban: "DE89370400440532013000", aba: "021000021", ukSortCode: "40-05-15", auBsb: "062-000", caInstitution: "003", caTransit: "10202" }
+          : JSON.parse(jsonOut.textContent || "{}");
+        var r = await fetch(EDGE_API + demoPath, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bodyData)
+        });
+        var data = await r.json();
+        resBox.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        resBox.textContent = "Demo error: " + err.message;
+      } finally {
+        e.target.disabled = false;
+      }
+    });
+
+    (function hydrateSavedPass() {
+      var tokInp = document.getElementById("directToken");
+      var chip = document.getElementById("passStatusChip");
+      try {
+        var qp = new URLSearchParams(location.search);
+        var urlPass = (qp.get("pass_key") || "").trim();
+        if (urlPass.indexOf("fop_") === 0) localStorage.setItem("finops_pro_pass", urlPass);
+        var saved = (localStorage.getItem("finops_pro_pass") || "").trim();
+        if (saved.indexOf("fop_") === 0) {
+          if (tokInp && !tokInp.value) tokInp.value = saved;
+          chip.innerHTML = "&#128994; Checking Instant Pass <code>" + saved + "</code>...";
+          fetch(EDGE_API + "/v1/checkout/pass-status?passKey=" + encodeURIComponent(saved))
+            .then(function (r) { return r.json(); })
+            .then(function (j) {
+              if (j.ok && j.active) {
+                chip.innerHTML = "&#128994; <strong style='color:#34d399;'>PASS ACTIVE</strong> (" + (j.plan === "pro30d" ? "30-Day Pro" : "24h Unlimited") + ") — Click <strong>Generate &amp; Download Bank File Now</strong> below!";
+              } else if (j.ok) {
+                chip.innerHTML = "&#128993; Pass saved (status: <strong>" + j.status + "</strong> — auto-activates right after PayPal confirms).";
+              }
+            })
+            .catch(function () {});
+        }
+      } catch (e) {}
+    })();
+
     document.getElementById("btnRunDirect").addEventListener("click", async function (e) {
       var tok = (document.getElementById("directToken").value || "").trim();
       var resBox = document.getElementById("cloudResultBox");
       resBox.style.display = "block";
       if (!tok) {
-        resBox.textContent = "Tip: Paste your free Apify API Token (from https://console.apify.com/settings/integrations — includes $5/month free credits) in the box above, OR click 'Copy JSON Payload' and 'Open in Apify Console' to run inside Apify UI.";
+        resBox.textContent = "Click 'Unlock 24h Unlimited ($9)' above to get an instant fop_... Pass Key via PayPal/Card, OR paste an Apify token (apify_api_... with $5/mo free credits).";
         return;
       }
       var cfg = CONFIGS[fmtSel.value];
       e.target.disabled = true;
-      resBox.textContent = "Executing live production Cloud API (" + cfg.actor + ")...";
+      var isDirectPass = tok.indexOf("fop_") === 0;
+      resBox.textContent = isDirectPass
+        ? "Executing on FinOps Direct Cloud Edge (" + cfg.edgePath + ")..."
+        : "Executing live production Cloud API (" + cfg.actor + ")...";
       try {
-        var r = await fetch("https://api.apify.com/v2/acts/" + cfg.actor + "/run-sync-get-dataset-items?token=" + encodeURIComponent(tok), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: jsonOut.textContent
-        });
-        var data = await r.json();
-        if (!r.ok) {
-          resBox.textContent = "API Error (" + r.status + "): " + JSON.stringify(data, null, 2);
+        var r, data, fileBody;
+        if (isDirectPass) {
+          try { localStorage.setItem("finops_pro_pass", tok); } catch (ex) {}
+          r = await fetch(EDGE_API + cfg.edgePath, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-FinOps-Pass": tok },
+            body: jsonOut.textContent
+          });
+          data = await r.json();
+          if (!r.ok) {
+            resBox.textContent = "Edge Error (" + r.status + "): " + JSON.stringify(data, null, 2);
+            return;
+          }
+          fileBody = data[cfg.edgeKey] || data.xml || data.xmlText || data.fileText || data.nachaText || data.bacsText || data.abaText || data.eftText || data.csvText || JSON.stringify(data, null, 2);
         } else {
+          r = await fetch("https://api.apify.com/v2/acts/" + cfg.actor + "/run-sync-get-dataset-items?token=" + encodeURIComponent(tok), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: jsonOut.textContent
+          });
+          data = await r.json();
+          if (!r.ok) {
+            resBox.textContent = "API Error (" + r.status + "): " + JSON.stringify(data, null, 2);
+            return;
+          }
           var first = Array.isArray(data) && data[0] ? data[0] : data;
-          var fileBody = first[cfg.outKey] || first.xmlContent || first.fileContent || JSON.stringify(data, null, 2);
-          resBox.textContent = fileBody;
-          var blob = new Blob([fileBody], { type: "text/plain;charset=utf-8" });
-          var a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = cfg.ext;
-          a.click();
+          fileBody = first[cfg.outKey] || first.xmlContent || first.fileContent || JSON.stringify(data, null, 2);
         }
+        resBox.textContent = fileBody;
+        var blob = new Blob([fileBody], { type: "text/plain;charset=utf-8" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = cfg.ext;
+        a.click();
       } catch (err) {
         resBox.textContent = "Network Error: " + err.message;
       } finally {

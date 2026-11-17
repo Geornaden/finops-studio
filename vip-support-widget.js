@@ -12,6 +12,58 @@
   const LS_CONV = 'finops_sup_conv_v1';
   const LS_SESS = 'finops_sup_sessions_v1';
   const LS_TKTS = 'finops_sup_tickets_v1';
+  const LS_PASS = 'finops_pro_pass';
+
+  // Auto-capture ?paid=1&pass_key=fop_... after PayPal/Stripe checkout redirect
+  try {
+    const qp = new URLSearchParams(location.search);
+    const urlPass = (qp.get('pass_key') || '').trim();
+    if (urlPass.startsWith('fop_')) {
+      localStorage.setItem(LS_PASS, urlPass);
+    }
+  } catch {}
+
+  window.getFinOpsPassKey = function () {
+    try {
+      const k = (localStorage.getItem(LS_PASS) || '').trim();
+      return k.startsWith('fop_') ? k : '';
+    } catch {
+      return '';
+    }
+  };
+
+  window.startFinOpsCheckout = async function (plan = 'batch24h', opts = {}) {
+    const btn = opts.btn || null;
+    const origText = btn ? btn.textContent : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Opening Checkout...';
+    }
+    try {
+      const returnUrl = opts.returnUrl || location.href.split('#')[0];
+      const res = await fetch(`${API_BASE}/v1/checkout/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: plan === 'pro30d' ? 'pro30d' : 'batch24h',
+          returnUrl,
+          customerEmail: opts.customerEmail || undefined
+        })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok || !data.checkoutUrl) {
+        throw new Error(data.error || 'Checkout unavailable right now.');
+      }
+      try { localStorage.setItem('finops_pending_pass', data.passKey); } catch {}
+      window.location.href = data.checkoutUrl;
+    } catch (err) {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
+      alert(`Checkout notice: ${err.message}`);
+    }
+  };
 
   const getOrCreateId = (key, prefix) => {
     try {
@@ -243,6 +295,20 @@
           margin-top: 5px; padding: 6px 8px; border-radius: 6px; background: rgba(16,185,129,0.15);
           border: 1px solid rgba(16,185,129,0.4); color: #ecfdf5;
         }
+        .pass-strip {
+          padding: 8px 12px; background: rgba(245,158,11,0.1); border-bottom: 1px solid rgba(245,158,11,0.3);
+          display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap;
+        }
+        .pass-btns { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        .pass-btn {
+          border: none; border-radius: 7px; padding: 5px 9px; font-size: 11px; font-weight: 800; cursor: pointer;
+          background: linear-gradient(135deg, #f59e0b, #eab308); color: #111827;
+        }
+        .pass-btn.pro { background: #1e293b; color: #fde68a; border: 1px solid rgba(245,158,11,0.55); }
+        .pass-btn:disabled { opacity: 0.6; cursor: wait; }
+        .pass-active-chip {
+          font-size: 11px; color: #34d399; font-weight: 700; display: none; width: 100%;
+        }
       </style>
 
       <button id="fabBtn" class="fab" type="button" aria-label="Live Help and Report Issue with Screenshot">
@@ -257,6 +323,15 @@
             <div class="head-sub">Instant FinOps Q&amp;A &bull; Screenshot Help &bull; Fast Email Reply</div>
           </div>
           <button id="closeBtn" class="close-btn" type="button" aria-label="Close">&times;</button>
+        </div>
+
+        <div class="pass-strip">
+          <div style="font-size:11px;font-weight:700;color:#fde68a;">&#9889; Instant Pass (No Signup):</div>
+          <div class="pass-btns">
+            <button id="wBuy9" class="pass-btn" type="button">&#128179; $9 / 24h Batch</button>
+            <button id="wBuy29" class="pass-btn pro" type="button">&#128640; $29 / 30d Pro</button>
+          </div>
+          <div id="wPassActiveChip" class="pass-active-chip"></div>
         </div>
 
         <div class="tabs">
@@ -276,7 +351,7 @@
             <button class="chip" type="button" data-q="What is your pricing and free tier?">Pricing &amp; free tier</button>
           </div>
           <div id="chatMsgs" class="msgs">
-            <div class="msg bot">Hi! I'm the **FinOps Studio Support Assistant**. Ask me about any of our 12 banking &amp; tax tools, supported countries, rejection codes (`BE04`, `R01`), or paste an IBAN / routing code to test live!</div>
+            <div class="msg bot">Hi! I'm the <strong>FinOps Studio Support Assistant</strong>. Ask me about any of our 12 banking &amp; tax tools, supported countries, rejection codes (<code>BE04</code>, <code>R01</code>), or paste an IBAN / routing code to test live!</div>
           </div>
           <div class="chat-foot">
             <form id="chatForm" class="chat-row">
@@ -362,6 +437,34 @@
     const chatSendBtn = shadow.getElementById('chatSendBtn');
     const aiPaidRef = shadow.getElementById('aiPaidRef');
     const escalateBtn = shadow.getElementById('escalateBtn');
+    const wBuy9 = shadow.getElementById('wBuy9');
+    const wBuy29 = shadow.getElementById('wBuy29');
+    const wPassActiveChip = shadow.getElementById('wPassActiveChip');
+
+    wBuy9?.addEventListener('click', () => window.startFinOpsCheckout('batch24h', { btn: wBuy9, customerEmail: bugEmail.value.trim() || undefined }));
+    wBuy29?.addEventListener('click', () => window.startFinOpsCheckout('pro30d', { btn: wBuy29, customerEmail: bugEmail.value.trim() || undefined }));
+
+    const savedPassKey = window.getFinOpsPassKey();
+    if (savedPassKey) {
+      if (!aiPaidRef.value) aiPaidRef.value = savedPassKey;
+      if (!bugOrderRef.value) bugOrderRef.value = savedPassKey;
+      wPassActiveChip.style.display = 'block';
+      wPassActiveChip.textContent = `Checking pass ${savedPassKey.slice(0, 12)}...`;
+      fetch(`${API_BASE}/v1/checkout/pass-status?passKey=${encodeURIComponent(savedPassKey)}`)
+        .then((r) => r.json())
+        .then((j) => {
+          if (j.ok && j.active) {
+            wPassActiveChip.textContent = `🟢 ACTIVE PASS: ${savedPassKey} (${j.plan === 'pro30d' ? '30d Pro' : '24h Unlimited'})`;
+            wPassActiveChip.style.color = '#34d399';
+          } else if (j.ok) {
+            wPassActiveChip.textContent = `🟡 Pass ${savedPassKey.slice(0, 12)}... status: ${j.status} (completes within seconds after PayPal confirmation)`;
+            wPassActiveChip.style.color = '#fbbf24';
+          }
+        })
+        .catch(() => {
+          wPassActiveChip.textContent = `Key saved: ${savedPassKey}`;
+        });
+    }
 
     const bugForm = shadow.getElementById('bugForm');
     const bugCat = shadow.getElementById('bugCat');

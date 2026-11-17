@@ -137,6 +137,11 @@
           <div id="sup-open-tkts" class="kpi-val">—</div>
           <div id="sup-vip-tkts" class="kpi-sub">0 VIP paid priority</div>
         </div>
+        <div class="kpi-card" style="border-color:rgba(245,158,11,0.45);">
+          <div class="kpi-label">Direct Pass Sales ($9 / $29)</div>
+          <div id="sup-direct-rev" class="kpi-val" style="color:#fbbf24;">$0.00</div>
+          <div id="sup-active-passes" class="kpi-sub">0 active direct passes</div>
+        </div>
       </div>
 
       <div class="two-col">
@@ -579,6 +584,8 @@
         document.getElementById('sup-blocked').textContent = m.blockedOffTopic ?? 0;
         document.getElementById('sup-open-tkts').textContent = m.openTickets ?? 0;
         document.getElementById('sup-vip-tkts').textContent = `${m.vipPaidTickets ?? 0} VIP paid priority`;
+        document.getElementById('sup-direct-rev').textContent = `$${Number(m.directRevenueUsd || 0).toFixed(2)}`;
+        document.getElementById('sup-active-passes').textContent = `${m.activePasses ?? 0} active Pro/Batch passes`;
 
         if (!data.tickets?.length) {
           tktBox.innerHTML = '<div class="cause-box">No bug reports or customer messages yet (0 open).</div>';
