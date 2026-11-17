@@ -98,6 +98,63 @@
       </div>
     </div>
 
+    <!-- LIVE CUSTOMER SUPPORT, REPEAT USERS & SCREENSHOT INBOX -->
+    <section class="panel" style="border-color: rgba(16,185,129,0.55);">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div>
+          <h2 style="margin:0;">&#128172; Live Customer AI Support, Repeat Users &amp; Screenshot Inbox</h2>
+          <p class="panel-sub" style="margin:4px 0 0;">Tracks every AI conversation, repeat visitors who keep coming back, off-topic abuse blocks ($0 spent), and bug reports with screenshots.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input id="sup-admin-key" type="password" placeholder="Paste Support Admin Key" style="padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;width:210px;" />
+          <button id="btn-save-sup-key" class="btn btn-outline" type="button" style="padding:7px 12px;font-size:0.82rem;">Connect Inbox</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid" style="margin:12px 0 18px;">
+        <div class="kpi-card">
+          <div class="kpi-label">Unique Support Users</div>
+          <div id="sup-unique" class="kpi-val">—</div>
+          <div class="kpi-sub">Total outside visitors in chat/tickets</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Repeat Users ("Keep Using")</div>
+          <div id="sup-repeat" class="kpi-val" style="color:#34d399;">—</div>
+          <div id="sup-repeat-sub" class="kpi-sub">2+ messages or return visits</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">AI Answers Delivered</div>
+          <div id="sup-answers" class="kpi-val" style="color:#38bdf8;">—</div>
+          <div class="kpi-sub">100% FinOps &amp; country scoped</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Off-Topic Abuse Blocked</div>
+          <div id="sup-blocked" class="kpi-val" style="color:#f59e0b;">—</div>
+          <div class="kpi-sub">$0.00 paid credit spent</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Open Screenshot Tickets</div>
+          <div id="sup-open-tkts" class="kpi-val">—</div>
+          <div id="sup-vip-tkts" class="kpi-sub">0 VIP paid priority</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <h3 style="margin:0 0 8px;font-size:1.02rem;">&#128248; Customer Bug Reports, Screenshots &amp; Quick Messages</h3>
+          <div id="sup-tickets-list" style="display:flex;flex-direction:column;gap:10px;max-height:460px;overflow-y:auto;">
+            <div class="cause-box">Enter or open with <code>?admin_key=...</code> to view live customer messages and screenshots.</div>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin:0 0 8px;font-size:1.02rem;">&#129302; Live FinOps AI Chat Transcripts</h3>
+          <div id="sup-convs-list" style="display:flex;flex-direction:column;gap:10px;max-height:460px;overflow-y:auto;">
+            <div class="cause-box">Waiting for live Support Inbox connection...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- MULTI-MARKETPLACE CLOUD MONETIZATION PANEL -->
     <section class="panel" style="border-color: rgba(56,189,248,0.45);">
       <h2>All 4 Cloud Revenue Channels (0% Laptop Load &bull; $0/mo Cloud Cost)</h2>
@@ -438,8 +495,162 @@
       document.getElementById('last-sync').textContent = `Live • Updated ${new Date().toLocaleTimeString()}`;
     }
 
-    document.getElementById('btn-refresh').addEventListener('click', refreshAll);
+    document.getElementById('btn-refresh').addEventListener('click', () => {
+      refreshAll();
+      refreshSupportDashboard();
+    });
+
+    // Live Support Inbox & Repeat-User Analytics (Cloudflare D1)
+    const EDGE_API = 'https://finops-rapidapi-edge.ria-rader.workers.dev';
+    const LS_SUP_KEY = 'finops_support_admin_key';
+    const urlParams = new URLSearchParams(location.search);
+    const paramAdminKey = urlParams.get('admin_key');
+    if (paramAdminKey) {
+      try {
+        localStorage.setItem(LS_SUP_KEY, paramAdminKey);
+        const cleanUrl = `${location.pathname}?owner=1`;
+        history.replaceState(null, '', cleanUrl);
+      } catch {}
+    }
+
+    const supKeyInput = document.getElementById('sup-admin-key');
+    const savedSupKey = (() => {
+      try { return localStorage.getItem(LS_SUP_KEY) || ''; } catch { return ''; }
+    })();
+    if (savedSupKey) supKeyInput.value = savedSupKey;
+
+    document.getElementById('btn-save-sup-key').addEventListener('click', () => {
+      try { localStorage.setItem(LS_SUP_KEY, supKeyInput.value.trim()); } catch {}
+      refreshSupportDashboard();
+    });
+
+    function escHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    async function loadTicketScreenshot(ticketId, containerEl) {
+      const key = supKeyInput.value.trim();
+      containerEl.innerHTML = '<span style="color:#94a3b8;font-size:0.8rem;">Loading screenshot...</span>';
+      try {
+        const res = await fetch(`${EDGE_API}/v1/support/admin/ticket?id=${encodeURIComponent(ticketId)}`, {
+          headers: { 'X-Support-Admin-Key': key }
+        });
+        const j = await res.json();
+        if (j.ok && j.ticket?.screenshot_data) {
+          containerEl.innerHTML = `<img src="${j.ticket.screenshot_data}" alt="Customer screenshot" style="max-width:100%;max-height:260px;border-radius:8px;border:1px solid #38bdf8;margin-top:6px;" />`;
+        } else {
+          containerEl.innerHTML = '<span style="color:#94a3b8;font-size:0.8rem;">No image attached.</span>';
+        }
+      } catch {
+        containerEl.innerHTML = '<span style="color:#ef4444;font-size:0.8rem;">Failed to load image.</span>';
+      }
+    }
+
+    async function sendSupportReply(ticketId, replyText, status = 'agent_replied') {
+      const key = supKeyInput.value.trim();
+      const res = await fetch(`${EDGE_API}/v1/support/admin/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Support-Admin-Key': key },
+        body: JSON.stringify({ ticketId, reply: replyText, status })
+      });
+      if (res.ok) refreshSupportDashboard();
+    }
+
+    async function refreshSupportDashboard() {
+      const key = supKeyInput.value.trim();
+      const tktBox = document.getElementById('sup-tickets-list');
+      const convBox = document.getElementById('sup-convs-list');
+      if (!key) return;
+
+      try {
+        const res = await fetch(`${EDGE_API}/v1/support/admin/dashboard`, {
+          headers: { 'X-Support-Admin-Key': key }
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          tktBox.innerHTML = `<div class="cause-box" style="border-color:#ef4444;">Invalid Support Admin Key (${res.status}).</div>`;
+          return;
+        }
+        const m = data.metrics || {};
+        document.getElementById('sup-unique').textContent = m.uniqueUsers ?? 0;
+        document.getElementById('sup-repeat').textContent = m.repeatUsers ?? 0;
+        document.getElementById('sup-repeat-sub').textContent = `${m.multiSessionUsers ?? 0} multi-day returning`;
+        document.getElementById('sup-answers').textContent = m.totalUserQuestions ?? 0;
+        document.getElementById('sup-blocked').textContent = m.blockedOffTopic ?? 0;
+        document.getElementById('sup-open-tkts').textContent = m.openTickets ?? 0;
+        document.getElementById('sup-vip-tkts').textContent = `${m.vipPaidTickets ?? 0} VIP paid priority`;
+
+        if (!data.tickets?.length) {
+          tktBox.innerHTML = '<div class="cause-box">No bug reports or customer messages yet (0 open).</div>';
+        } else {
+          tktBox.innerHTML = data.tickets.map((t) => `
+            <div class="cause-box" style="border-color:${t.isPaid ? '#f59e0b' : 'var(--border)'};">
+              <div class="cause-head">
+                <span>${t.isPaid ? '⭐ PAID ' : ''}${escHtml(t.ticketId)} (${escHtml(t.category)})</span>
+                <span class="${t.status === 'resolved' ? 'badge-win' : 'badge-queue'}">${escHtml(t.status.toUpperCase())}</span>
+              </div>
+              <div style="font-size:0.82rem;color:#94a3b8;">
+                ${escHtml(t.customerName || 'Visitor')} ${t.customerEmail ? `&bull; <a href="mailto:${escHtml(t.customerEmail)}">${escHtml(t.customerEmail)}</a>` : ''}
+                ${t.orderRef ? `&bull; Order: <code>${escHtml(t.orderRef)}</code>` : ''} &bull; ${escHtml(new Date(t.createdAt).toLocaleString())}
+              </div>
+              <div style="margin:6px 0;font-size:0.88rem;color:#f8fafc;">${escHtml(t.message)}</div>
+              <div style="font-size:0.78rem;color:#64748b;">Page: ${escHtml(t.pageUrl)}</div>
+              ${t.agentReply ? `<div class="cause-fix">Replied: ${escHtml(t.agentReply)}</div>` : ''}
+              <div id="shot-${escHtml(t.ticketId)}"></div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">
+                ${t.hasScreenshot ? `<button type="button" class="btn btn-outline btn-shot" data-id="${escHtml(t.ticketId)}" style="padding:5px 9px;font-size:0.78rem;">📸 View Screenshot</button>` : ''}
+                ${t.status !== 'resolved' ? `<button type="button" class="btn btn-outline btn-resolve" data-id="${escHtml(t.ticketId)}" style="padding:5px 9px;font-size:0.78rem;">✅ Mark Resolved</button>` : ''}
+              </div>
+              <div style="display:flex;gap:6px;margin-top:8px;">
+                <input type="text" class="reply-input" data-id="${escHtml(t.ticketId)}" placeholder="Type reply shown live inside customer widget..." style="flex:1;padding:6px 9px;border-radius:6px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.82rem;" />
+                <button type="button" class="btn btn-primary btn-send-reply" data-id="${escHtml(t.ticketId)}" style="padding:6px 10px;font-size:0.8rem;">Reply</button>
+              </div>
+            </div>
+          `).join('');
+
+          tktBox.querySelectorAll('.btn-shot').forEach((b) => {
+            b.addEventListener('click', () => {
+              const id = b.getAttribute('data-id');
+              loadTicketScreenshot(id, document.getElementById(`shot-${id}`));
+            });
+          });
+          tktBox.querySelectorAll('.btn-resolve').forEach((b) => {
+            b.addEventListener('click', () => sendSupportReply(b.getAttribute('data-id'), '', 'resolved'));
+          });
+          tktBox.querySelectorAll('.btn-send-reply').forEach((b) => {
+            b.addEventListener('click', () => {
+              const id = b.getAttribute('data-id');
+              const input = tktBox.querySelector(`.reply-input[data-id="${id}"]`);
+              if (input?.value.trim()) sendSupportReply(id, input.value.trim(), 'agent_replied');
+            });
+          });
+        }
+
+        if (!data.conversations?.length) {
+          convBox.innerHTML = '<div class="cause-box">No AI chat conversations yet.</div>';
+        } else {
+          convBox.innerHTML = data.conversations.map((c) => `
+            <div class="cause-box">
+              <div class="cause-head">
+                <span>${c.isPaid ? '⭐ ' : ''}Visitor ${escHtml(c.visitorId)}</span>
+                <span class="badge-queue">${escHtml(c.messageCount)} turns</span>
+              </div>
+              <div style="font-size:0.76rem;color:#64748b;margin-bottom:6px;">${escHtml(c.toolContext || c.pageUrl)}</div>
+              ${(c.messages || []).map((msg) => `
+                <div style="font-size:0.82rem;margin:4px 0;padding:5px 8px;border-radius:6px;background:${msg.scope_blocked ? 'rgba(245,158,11,0.12)' : msg.role === 'user' ? '#064e3b' : '#0f172a'};">
+                  <strong>${msg.role === 'user' ? 'User' : msg.scope_blocked ? 'Blocked ($0)' : 'FinOps AI'}:</strong> ${escHtml(msg.content)}
+                </div>
+              `).join('')}
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        tktBox.innerHTML = `<div class="cause-box" style="border-color:#ef4444;">Support sync error: ${escHtml(err.message)}</div>`;
+      }
+    }
+
     refreshAll();
+    refreshSupportDashboard();
   </script>
 </body>
 </html>

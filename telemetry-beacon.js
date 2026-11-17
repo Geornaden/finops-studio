@@ -8,6 +8,17 @@
 (function () {
   if (typeof window === 'undefined') return;
 
+  // Always load VIP Customer Support & Screenshot Issue Reporter across every public page (even on owner browsers for testing)
+  try {
+    if (!location.pathname.includes('command-center') && !document.getElementById('finops-vip-widget-script')) {
+      const s = document.createElement('script');
+      s.id = 'finops-vip-widget-script';
+      s.src = './vip-support-widget.js';
+      s.defer = true;
+      (document.head || document.documentElement).appendChild(s);
+    }
+  } catch {}
+
   // Allow tagging an owner device directly via ?owner=1 or coming from command-center.html
   // Saves BOTH localStorage and a 400-day first-party cookie so iPhone Safari & PC browsers stay excluded permanently
   try {
@@ -19,14 +30,14 @@
       localStorage.getItem('finops_owner_ignore') === '1' ||
       (document.cookie && document.cookie.includes('finops_owner_ignore=1'))
     ) {
-      // Show a small reassuring badge ONLY on George's excluded devices (invisible to all outside customers)
+      // Show a small reassuring badge ONLY on George's excluded devices (bottom-left so bottom-right VIP Support button stays unobstructed)
       const showBadge = () => {
         if (!document.body || document.getElementById('finops-owner-shield')) return;
         const badge = document.createElement('a');
         badge.id = 'finops-owner-shield';
         badge.href = './command-center.html';
         badge.textContent = '🛡️ Owner Device (Not Counted)';
-        badge.style.cssText = 'position:fixed;bottom:12px;right:12px;z-index:9999;background:#064e3b;color:#ecfdf5;border:1px solid #10b981;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,0.4);font-family:system-ui,sans-serif;';
+        badge.style.cssText = 'position:fixed;bottom:14px;left:14px;z-index:9999;background:#064e3b;color:#ecfdf5;border:1px solid #10b981;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,0.4);font-family:system-ui,sans-serif;';
         document.body.appendChild(badge);
       };
       if (document.readyState === 'loading') {
@@ -51,6 +62,12 @@
   const NS = 'finops_studio_customers_v2';
   const hit = (key) => {
     fetch(`https://abacus.jasoncameron.dev/hit/${NS}/${key}`, { mode: 'cors', keepalive: true }).catch(() => {});
+  };
+
+  window.__finopsTrackSupport = (evt) => {
+    if (evt === 'open') hit('action_open_support');
+    else if (evt === 'chat') hit('action_ai_question');
+    else if (evt === 'ticket') hit('action_submit_issue');
   };
 
   // Separate search engine / AI crawlers from real human customers
