@@ -440,4 +440,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/best-sepa-xml-nacha-ach-bai2-peppol-datev-software-comparison-2026.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.97</priority>
+  </url>
 </urlset>

@@ -1,4 +1,40 @@
+# Welcome Search Engines & AI Assistants (ChatGPT Search, Perplexity, Claude, Gemini)
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
 User-agent: *
 Allow: /
 
 Sitemap: https://geornaden.github.io/finops-studio/sitemap.xml
+# LLMs & AI Agent Manuals:
+# https://geornaden.github.io/finops-studio/llms.txt
+# https://geornaden.github.io/finops-studio/llms-full.txt
+# https://geornaden.github.io/finops-studio/.well-known/mcp.json
+# https://geornaden.github.io/finops-studio/.well-known/ai-plugin.json

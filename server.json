@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.Geornaden/finops-studio",
-  "title": "FinOps Studio — 9 Live Banking, Payroll & E-Invoice APIs",
-  "description": "SEPA XML, Peppol/XRechnung, NACHA ACH, BAI2, DATEV, ABA, pain.002, UK BACS & Canada CPA-005 APIs",
-  "version": "1.4.0",
+  "title": "FinOps Studio — 12 Banking, Payroll, Treasury & E-Invoice MCP Tools",
+  "description": "Free 2-row zero-auth preview & 9-actor cloud SEPA XML, Peppol, NACHA ACH, BAI2, DATEV & BACS MCP",
+  "version": "1.6.0",
   "websiteUrl": "https://geornaden.github.io/finops-studio/",
   "icons": [
     {
@@ -16,6 +16,10 @@
     "source": "github"
   },
   "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://finops-rapidapi-edge.ria-rader.workers.dev/public-mcp"
+    },
     {
       "type": "streamable-http",
       "url": "https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser,finops_studio/uk-bacs-standard18-generator,finops_studio/canada-cpa005-eft-generator",

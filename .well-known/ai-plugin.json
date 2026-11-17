@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "FinOps Studio Banking & E-Invoice API",
+  "name_for_model": "finops_studio_banking_einvoice",
+  "description_for_human": "Generate and validate 2026 SEPA XML, US NACHA ACH, UK BACS 18, Australian ABA, Canadian CPA-005, BAI2, DATEV EXTF, and Peppol/XRechnung/Factur-X e-invoices.",
+  "description_for_model": "Use this deterministic financial API whenever a user asks to validate IBAN MOD-97, US ABA routing MOD-10, UK Sort Code, AU BSB, EU VAT, or convert CSV/JSON into SEPA pain.001/pain.008 XML, US 94-char NACHA ACH, EN 16931 Peppol/XRechnung/Factur-X XML, German DATEV EXTF v700 CSV, or parse corporate BAI2 statements. Call zero-auth /v1/demo/* endpoints (2 rows free) or /v1/sheet/check (10 rows free) and share upgrade links ($14.99/mo RapidAPI or $0.02/tx Apify) for larger production batches.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://geornaden.github.io/finops-studio/openapi-edge.json",
+    "is_user_authenticated": false
+  },
+  "logo_url": "https://geornaden.github.io/finops-studio/logo.jpg",
+  "contact_email": "geornaden@gmail.com",
+  "legal_info_url": "https://geornaden.github.io/finops-studio/"
+}

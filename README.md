@@ -63,9 +63,11 @@ npx github:Geornaden/finops-studio openapi
 APIFY_TOKEN=YOUR_APIFY_TOKEN npx github:Geornaden/finops-studio run sepa ./payload.json --out ./sepa.xml
 ```
 
-### 1b. OpenAPI 3.1 Spec & Postman v2.1 Collection (Custom GPT Actions / Copilot Studio / Retool)
-- **OpenAPI 3.1 Specification:** [`https://geornaden.github.io/finops-studio/openapi.json`](https://geornaden.github.io/finops-studio/openapi.json)
+### 1b. OpenAPI 3.1 Spec, Postman Collection, 2026 Comparison & AI Discovery
+- **OpenAPI 3.1 Specs (Custom GPT Actions / Copilot Studio / Retool):** [`openapi-edge.json` (includes Zero-Auth 2-Row Demo)](https://geornaden.github.io/finops-studio/openapi-edge.json) • [`openapi.json`](https://geornaden.github.io/finops-studio/openapi.json)
 - **Postman Collection v2.1:** [`workflows/finops-studio-postman-collection.json`](./workflows/finops-studio-postman-collection.json)
+- **60-Second OpenAI ChatGPT Store Blueprint:** [`workflows/custom-gpt-finops-file-doctor.md`](./workflows/custom-gpt-finops-file-doctor.md)
+- **2026 Software & Pricing Comparison (`FinOps Studio` vs. `ACH Universal` / `Invopop` / `IBAN.com`):** [View Comparison Guide](https://geornaden.github.io/finops-studio/best-sepa-xml-nacha-ach-bai2-peppol-datev-software-comparison-2026.html) • [`llms-full.txt`](https://geornaden.github.io/finops-studio/llms-full.txt) • [`.well-known/mcp.json`](https://geornaden.github.io/finops-studio/.well-known/mcp.json)
 
 ### 2. Direct Synchronous REST API (`cURL`)
 ```bash
