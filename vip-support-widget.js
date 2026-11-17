@@ -45,7 +45,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          plan: plan === 'pro30d' ? 'pro30d' : 'batch24h',
+          plan: ['test1usd', 'pro30d', 'batch24h'].includes(plan) ? plan : 'batch24h',
           returnUrl,
           customerEmail: opts.customerEmail || undefined
         })
@@ -450,20 +450,27 @@
       if (!bugOrderRef.value) bugOrderRef.value = savedPassKey;
       wPassActiveChip.style.display = 'block';
       wPassActiveChip.textContent = `Checking pass ${savedPassKey.slice(0, 12)}...`;
-      fetch(`${API_BASE}/v1/checkout/pass-status?passKey=${encodeURIComponent(savedPassKey)}`)
-        .then((r) => r.json())
-        .then((j) => {
-          if (j.ok && j.active) {
-            wPassActiveChip.textContent = `🟢 ACTIVE PASS: ${savedPassKey} (${j.plan === 'pro30d' ? '30d Pro' : '24h Unlimited'})`;
-            wPassActiveChip.style.color = '#34d399';
-          } else if (j.ok) {
-            wPassActiveChip.textContent = `🟡 Pass ${savedPassKey.slice(0, 12)}... status: ${j.status} (completes within seconds after PayPal confirmation)`;
-            wPassActiveChip.style.color = '#fbbf24';
-          }
-        })
-        .catch(() => {
-          wPassActiveChip.textContent = `Key saved: ${savedPassKey}`;
-        });
+      let attempts = 0;
+      const pollWidgetPass = () => {
+        attempts++;
+        fetch(`${API_BASE}/v1/checkout/pass-status?passKey=${encodeURIComponent(savedPassKey)}`)
+          .then((r) => r.json())
+          .then((j) => {
+            if (j.ok && j.active) {
+              const label = j.plan === 'pro30d' ? '30d Pro' : j.plan === 'test1usd' ? '$1 Live Test' : '24h Unlimited';
+              wPassActiveChip.textContent = `🟢 ACTIVE PASS: ${savedPassKey} (${label})`;
+              wPassActiveChip.style.color = '#34d399';
+            } else if (j.ok) {
+              wPassActiveChip.textContent = `🟡 Pass ${savedPassKey.slice(0, 12)}... (${j.status}) — waiting for PayPal confirmation...`;
+              wPassActiveChip.style.color = '#fbbf24';
+              if (j.status === 'pending' && attempts < 25) setTimeout(pollWidgetPass, 3000);
+            }
+          })
+          .catch(() => {
+            wPassActiveChip.textContent = `Key saved: ${savedPassKey}`;
+          });
+      };
+      pollWidgetPass();
     }
 
     const bugForm = shadow.getElementById('bugForm');

@@ -123,11 +123,20 @@
       </div>
 
       <div id="directCheckoutBar" style="margin-top:16px;padding:14px 16px;border-radius:10px;background:rgba(245,158,11,0.10);border:1px solid rgba(245,158,11,0.45);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-        <div>
-          <div style="font-weight:800;font-size:0.95rem;color:#fde68a;">&#128179; Instant No-Signup Production Access (PayPal / Card)</div>
+        <div style="flex:1;min-width:260px;">
+          <div style="font-weight:800;font-size:0.95rem;color:#fde68a;">&#128179; Instant No-Signup Production Access (PayPal / Debit &amp; Credit Card)</div>
           <div id="passStatusChip" style="font-size:0.82rem;color:#cbd5e1;margin-top:3px;">Generate unlimited bank files right on this page without creating any third-party developer account.</div>
+          <div id="receiptClaimBox" style="display:none;margin-top:10px;padding:9px 11px;border-radius:8px;background:#0f172a;border:1px solid #fbbf24;">
+            <div style="font-size:0.79rem;color:#fde68a;font-weight:700;margin-bottom:5px;">&#9889; Completed PayPal checkout? If auto-unlock hasn't arrived yet, paste your PayPal Receipt / Transaction ID to activate in 1 second:</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <input id="receiptClaimId" type="text" placeholder="PayPal Transaction / Receipt ID (e.g. 9XY12345AB67890)" style="flex:1;min-width:190px;padding:6px 9px;border-radius:6px;border:1px solid var(--border);background:#020617;color:#f8fafc;font-size:0.8rem;font-family:monospace;" />
+              <input id="receiptClaimEmail" type="email" placeholder="Payer email (optional)" style="width:170px;padding:6px 9px;border-radius:6px;border:1px solid var(--border);background:#020617;color:#f8fafc;font-size:0.8rem;" />
+              <button id="btnClaimReceipt" type="button" class="btn btn-primary" style="padding:6px 12px;font-size:0.8rem;">Unlock Pass Now</button>
+            </div>
+          </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnBuyTest1" type="button" class="btn btn-primary" style="display:none;background:linear-gradient(135deg,#10b981,#059669);color:#04130d;border:none;font-weight:800;">&#129514; $1 Live Test Pass (2h)</button>
           <button id="btnBuyBatch24h" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#128179; Unlock 24h Unlimited ($9)</button>
           <button id="btnBuyPro30d" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fde68a;font-weight:700;">&#128640; Unlock 30-Day Pro ($29)</button>
           <button id="btnFree2RowDemo" type="button" class="btn btn-outline" style="border-color:#38bdf8;color:#38bdf8;">&#127379; Run Free 2-Row Live Test</button>
@@ -333,7 +342,8 @@
       },
       positivepay: {
         actor: "finops_studio~us-positive-pay-check-generator",
-        storeUrl: "https://apify.com/finops_studio/us-positive-pay-check-generator",
+        storeUrl: "./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html",
+        apifyPublic: false,
         edgePath: "/v1/positive-pay/generate",
         edgeKey: "fileText",
         ext: "positive-pay.txt",
@@ -355,7 +365,8 @@
       },
       pacs008: {
         actor: "finops_studio~iso20022-pacs008-fedwire-generator",
-        storeUrl: "https://apify.com/finops_studio/iso20022-pacs008-fedwire-generator",
+        storeUrl: "./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html",
+        apifyPublic: false,
         edgePath: "/v1/pacs008/generate",
         edgeKey: "xmlText",
         ext: "fedwire-pacs008.xml",
@@ -614,7 +625,7 @@
         var r = await fetch(EDGE_API + "/v1/checkout/start", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plan: plan === "pro30d" ? "pro30d" : "batch24h", returnUrl: location.href.split("#")[0] })
+          body: JSON.stringify({ plan: ["test1usd", "pro30d", "batch24h"].includes(plan) ? plan : "batch24h", returnUrl: location.href.split("#")[0] })
         });
         var j = await r.json();
         if (!r.ok || !j.ok || !j.checkoutUrl) throw new Error(j.error || "Checkout error");
@@ -629,8 +640,48 @@
       }
     }
 
+    var btnTest1 = document.getElementById("btnBuyTest1");
+    if (location.search.indexOf("test_checkout=1") !== -1 && btnTest1) {
+      btnTest1.style.display = "inline-block";
+    }
+    if (btnTest1) btnTest1.addEventListener("click", function (e) { startMapperCheckout("test1usd", e.target); });
     document.getElementById("btnBuyBatch24h").addEventListener("click", function (e) { startMapperCheckout("batch24h", e.target); });
     document.getElementById("btnBuyPro30d").addEventListener("click", function (e) { startMapperCheckout("pro30d", e.target); });
+
+    document.getElementById("btnClaimReceipt").addEventListener("click", async function (e) {
+      var tokInp = document.getElementById("directToken");
+      var passKey = (tokInp.value || localStorage.getItem("finops_pro_pass") || localStorage.getItem("finops_pending_pass") || "").trim();
+      var receiptId = (document.getElementById("receiptClaimId").value || "").trim();
+      var payerEmail = (document.getElementById("receiptClaimEmail").value || "").trim();
+      var chip = document.getElementById("passStatusChip");
+      if (!receiptId) {
+        chip.innerHTML = "&#9888;&#65039; Please paste your PayPal Receipt / Transaction ID first.";
+        return;
+      }
+      e.target.disabled = true;
+      e.target.textContent = "Verifying...";
+      try {
+        var r = await fetch(EDGE_API + "/v1/checkout/claim-receipt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ passKey: passKey, receiptId: receiptId, payerEmail: payerEmail })
+        });
+        var j = await r.json();
+        if (!r.ok || !j.ok) {
+          chip.innerHTML = "&#128308; " + (j.error || "Could not verify receipt ID.");
+        } else {
+          localStorage.setItem("finops_pro_pass", j.passKey);
+          tokInp.value = j.passKey;
+          document.getElementById("receiptClaimBox").style.display = "none";
+          chip.innerHTML = "&#128994; <strong style='color:#34d399;'>PASS ACTIVE!</strong> Your key <code>" + j.passKey + "</code> is unlocked — click <strong>Generate &amp; Download Bank File Now</strong> below!";
+        }
+      } catch (err) {
+        chip.innerHTML = "&#128308; Network error: " + err.message;
+      } finally {
+        e.target.disabled = false;
+        e.target.textContent = "Unlock Pass Now";
+      }
+    });
 
     document.getElementById("btnFree2RowDemo").addEventListener("click", async function (e) {
       var fmt = fmtSel.value;
@@ -660,24 +711,35 @@
     (function hydrateSavedPass() {
       var tokInp = document.getElementById("directToken");
       var chip = document.getElementById("passStatusChip");
+      var claimBox = document.getElementById("receiptClaimBox");
       try {
         var qp = new URLSearchParams(location.search);
         var urlPass = (qp.get("pass_key") || "").trim();
+        var justPaid = qp.get("paid") === "1";
         if (urlPass.indexOf("fop_") === 0) localStorage.setItem("finops_pro_pass", urlPass);
         var saved = (localStorage.getItem("finops_pro_pass") || "").trim();
         if (saved.indexOf("fop_") === 0) {
           if (tokInp && !tokInp.value) tokInp.value = saved;
           chip.innerHTML = "&#128994; Checking Instant Pass <code>" + saved + "</code>...";
-          fetch(EDGE_API + "/v1/checkout/pass-status?passKey=" + encodeURIComponent(saved))
-            .then(function (r) { return r.json(); })
-            .then(function (j) {
-              if (j.ok && j.active) {
-                chip.innerHTML = "&#128994; <strong style='color:#34d399;'>PASS ACTIVE</strong> (" + (j.plan === "pro30d" ? "30-Day Pro" : "24h Unlimited") + ") — Click <strong>Generate &amp; Download Bank File Now</strong> below!";
-              } else if (j.ok) {
-                chip.innerHTML = "&#128993; Pass saved (status: <strong>" + j.status + "</strong> — auto-activates right after PayPal confirms).";
-              }
-            })
-            .catch(function () {});
+          var tries = 0;
+          function checkPass() {
+            tries++;
+            fetch(EDGE_API + "/v1/checkout/pass-status?passKey=" + encodeURIComponent(saved))
+              .then(function (r) { return r.json(); })
+              .then(function (j) {
+                if (j.ok && j.active) {
+                  var pName = j.plan === "pro30d" ? "30-Day Pro" : j.plan === "test1usd" ? "$1 Live Test Pass" : "24h Unlimited";
+                  claimBox.style.display = "none";
+                  chip.innerHTML = "&#128994; <strong style='color:#34d399;'>PASS ACTIVE</strong> (" + pName + ") — Click <strong>Generate &amp; Download Bank File Now</strong> below!";
+                } else if (j.ok) {
+                  chip.innerHTML = "&#128993; Pass <code>" + saved + "</code> status: <strong>" + j.status + "</strong> (waiting for PayPal confirmation...)";
+                  if (justPaid || tries >= 2) claimBox.style.display = "block";
+                  if (j.status === "pending" && tries < 25) setTimeout(checkPass, 3000);
+                }
+              })
+              .catch(function () {});
+          }
+          checkPass();
         }
       } catch (e) {}
     })();
@@ -712,6 +774,10 @@
           }
           fileBody = data[cfg.edgeKey] || data.xml || data.xmlText || data.fileText || data.nachaText || data.bacsText || data.abaText || data.eftText || data.csvText || JSON.stringify(data, null, 2);
         } else {
+          if (cfg.apifyPublic === false) {
+            resBox.textContent = "This format runs directly on FinOps Cloud Edge — unlock an instant $9 / $29 Pass above to generate & download.";
+            return;
+          }
           r = await fetch("https://api.apify.com/v2/acts/" + cfg.actor + "/run-sync-get-dataset-items?token=" + encodeURIComponent(tok), {
             method: "POST",
             headers: { "Content-Type": "application/json" },

@@ -6,7 +6,35 @@
 import fs from 'node:fs';
 import readline from 'node:readline';
 
-const VERSION = '1.7.0';
+const VERSION = '1.8.0';
+const EDGE_ORIGIN = 'https://finops-rapidapi-edge.ria-rader.workers.dev';
+
+const EDGE_PATH_BY_MCP = {
+  generate_sepa_xml: '/v1/sepa/generate',
+  generate_eu_einvoice_xml: '/v1/einvoice/generate',
+  generate_nacha_ach_file: '/v1/nacha/generate',
+  parse_bai2_statement: '/v1/bai2/parse',
+  generate_datev_csv: '/v1/datev/generate',
+  generate_australian_aba_file: '/v1/aba/generate',
+  parse_pain002_status_xml: '/v1/pain002/parse',
+  generate_uk_bacs_file: '/v1/bacs/generate',
+  generate_canada_cpa005_file: '/v1/cpa005/generate'
+};
+
+const EDGE_PATH_BY_CLI = {
+  sepa: '/v1/sepa/generate',
+  einvoice: '/v1/einvoice/generate',
+  nacha: '/v1/nacha/generate',
+  bai2: '/v1/bai2/parse',
+  datev: '/v1/datev/generate',
+  aba: '/v1/aba/generate',
+  pain002: '/v1/pain002/parse',
+  bacs: '/v1/bacs/generate',
+  cpa005: '/v1/cpa005/generate',
+  'positive-pay': '/v1/positive-pay/generate',
+  norma43: '/v1/norma43/parse',
+  pacs008: '/v1/pacs008/generate'
+};
 
 const TOOLS = [
   ['sepa', 'finops_studio~sepa-xml-generator', 'ISO 20022 SEPA Credit Transfer & Direct Debit XML (pain.001/008)', true],
@@ -555,24 +583,39 @@ async function handleMcpCallTool(name, args = {}) {
     return { isError: true, content: [{ type: 'text', text: `Unknown tool: ${name}` }] };
   }
 
-  const token = process.env.APIFY_TOKEN;
-  if (!token) {
+  const passKey = (process.env.FINOPS_PASS_KEY || '').trim();
+  const token = (process.env.APIFY_TOKEN || '').trim();
+  if (!passKey && !token) {
     return {
       isError: false,
       content: [
         {
           type: 'text',
           text:
-            `Cloud API token not configured in APIFY_TOKEN.\n\n` +
-            `To run ${cloudTool.name} in the cloud:\n` +
-            `1. Claim $5/month free starter credits at https://apify.com/finops_studio (tool: https://apify.com/${cloudTool.slug.replace('~', '/')}) and set APIFY_TOKEN in your MCP env config.\n` +
-            `2. Or connect directly via hosted Remote MCP Subscriptions & Grade-A listings at https://mcprush.com/geornaden-2`
+            `Cloud API key not configured (set FINOPS_PASS_KEY or APIFY_TOKEN).\n\n` +
+            `To run ${cloudTool.name} in production:\n` +
+            `1. Instant No-Signup Pass ($9 24h Unlimited / $29 30d Pro via PayPal or Card): https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html — set FINOPS_PASS_KEY=fop_... in your MCP env.\n` +
+            `2. Apify Cloud ($5/month free starter credits): https://apify.com/${cloudTool.slug.replace('~', '/')} — set APIFY_TOKEN in your MCP env.\n` +
+            `3. Hosted Remote MCP Subscriptions: https://mcprush.com/geornaden-2/finops-studio-banking-payroll-e-invoicing-mcp`
         }
       ]
     };
   }
 
   const payload = normalizeCloudPayload(name, args);
+  if (passKey.startsWith('fop_') && EDGE_PATH_BY_MCP[name]) {
+    const res = await fetch(`${EDGE_ORIGIN}${EDGE_PATH_BY_MCP[name]}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-FinOps-Pass': passKey },
+      body: JSON.stringify(payload)
+    });
+    const text = await res.text();
+    if (!res.ok) {
+      return { isError: true, content: [{ type: 'text', text: `FinOps Edge HTTP ${res.status}: ${text}` }] };
+    }
+    return { content: [{ type: 'text', text }] };
+  }
+
   const url = `https://api.apify.com/v2/acts/${cloudTool.slug}/run-sync-get-dataset-items?token=${encodeURIComponent(token)}`;
   const res = await fetch(url, {
     method: 'POST',
@@ -706,23 +749,33 @@ if (cmd === 'mcp' || cmd === '--mcp') {
   const payloadPath = process.argv[4];
   const outIdx = process.argv.indexOf('--out');
   const outPath = outIdx !== -1 ? process.argv[outIdx + 1] : null;
-  const token = process.env.APIFY_TOKEN;
+  const passKey = (process.env.FINOPS_PASS_KEY || '').trim();
+  const token = (process.env.APIFY_TOKEN || '').trim();
   const entry = TOOLS.find((t) => t[0] === toolKey);
   if (!entry || !payloadPath) {
-    console.error('Usage: APIFY_TOKEN=<token> npx github:Geornaden/finops-studio run <tool> <payload.json> [--out ./output.xml]');
+    console.error('Usage: FINOPS_PASS_KEY=fop_... npx finops-studio run <tool> <payload.json> [--out ./output.xml]');
     console.error('Tools: ' + TOOLS.map((t) => t[0]).join(', '));
     process.exit(1);
   }
-  if (!token) {
-    console.error('Error: Set APIFY_TOKEN environment variable (free $5/mo credits at https://apify.com/finops_studio).');
+  if (!passKey && !token) {
+    console.error('Error: Set FINOPS_PASS_KEY ($9/$29 Instant Pass at https://geornaden.github.io/finops-studio/) or APIFY_TOKEN ($5/mo free credits at https://apify.com/finops_studio).');
     process.exit(1);
   }
   const body = fs.readFileSync(payloadPath, 'utf8');
   JSON.parse(body);
-  const url = `https://api.apify.com/v2/acts/${entry[1]}/run-sync-get-dataset-items?token=${encodeURIComponent(token)}`;
+  const useDirectPass = passKey.startsWith('fop_');
+  if (!useDirectPass && !entry[3]) {
+    console.error(`Error: ${toolKey} runs on FinOps Direct Cloud Edge. Set FINOPS_PASS_KEY=fop_... ($9/$29 Pass at https://geornaden.github.io/finops-studio/).`);
+    process.exit(1);
+  }
+  const url = useDirectPass
+    ? `${EDGE_ORIGIN}${EDGE_PATH_BY_CLI[toolKey]}`
+    : `https://api.apify.com/v2/acts/${entry[1]}/run-sync-get-dataset-items?token=${encodeURIComponent(token)}`;
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: useDirectPass
+      ? { 'Content-Type': 'application/json', 'X-FinOps-Pass': passKey }
+      : { 'Content-Type': 'application/json' },
     body
   });
   const text = await res.text();
@@ -733,7 +786,7 @@ if (cmd === 'mcp' || cmd === '--mcp') {
   if (outPath) {
     const items = JSON.parse(text);
     const first = Array.isArray(items) && items[0] ? items[0] : items;
-    const extracted = first.xmlContent || first.achContent || first.abaContent || first.bacsContent || first.cpa005Content || first.csvContent || text;
+    const extracted = first.xml || first.xmlText || first.fileText || first.nachaText || first.bacsText || first.abaText || first.eftText || first.csvText || first.csvOutput || first.csvReport || first.xmlContent || first.achContent || first.abaContent || first.bacsContent || first.cpa005Content || first.csvContent || text;
     fs.writeFileSync(outPath, extracted, 'utf8');
     console.log(`Saved verified bank/tax file to ${outPath} (${extracted.length} bytes)`);
   } else {
@@ -741,18 +794,22 @@ if (cmd === 'mcp' || cmd === '--mcp') {
   }
 } else {
   console.log(`FinOps Studio v${VERSION} — 12 Deterministic Banking, Treasury & E-Invoicing Cloud APIs & MCP Server`);
+  console.log('Instant Direct Pass ($9): https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html');
   console.log('Docs & Pre-Flight Tools : https://geornaden.github.io/finops-studio/');
   console.log('OpenAPI 3.1 Spec        : https://geornaden.github.io/finops-studio/openapi.json');
   console.log('Edge OpenAPI 3.1 Spec   : https://geornaden.github.io/finops-studio/openapi-edge.json');
   console.log('Cloud API Storefront    : https://apify.com/finops_studio\n');
-  for (const [key, slug, desc] of TOOLS) {
-    console.log(`  ${key.padEnd(14)} https://apify.com/${slug.replace('~', '/')}  — ${desc}`);
+  for (const [key, slug, desc, isApifyPublic] of TOOLS) {
+    const link = isApifyPublic
+      ? `https://apify.com/${slug.replace('~', '/')}`
+      : `${EDGE_ORIGIN}${EDGE_PATH_BY_CLI[key]}`;
+    console.log(`  ${key.padEnd(14)} ${link.padEnd(58)} — ${desc}`);
   }
   console.log('\nCommands:');
-  console.log('  npx github:Geornaden/finops-studio mcp        # Start local stdio MCP server');
-  console.log('  npx github:Geornaden/finops-studio list');
-  console.log('  npx github:Geornaden/finops-studio doctor ./batch.csv');
-  console.log('  npx github:Geornaden/finops-studio mcp-config');
-  console.log('  npx github:Geornaden/finops-studio openapi');
-  console.log('  APIFY_TOKEN=... npx github:Geornaden/finops-studio run sepa ./payload.json --out ./sepa.xml');
+  console.log('  npx finops-studio mcp                # Start local stdio MCP server');
+  console.log('  npx finops-studio list');
+  console.log('  npx finops-studio doctor ./batch.csv');
+  console.log('  npx finops-studio mcp-config');
+  console.log('  npx finops-studio openapi');
+  console.log('  FINOPS_PASS_KEY=fop_... npx finops-studio run sepa ./payload.json --out ./sepa.xml');
 }

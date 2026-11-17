@@ -172,8 +172,9 @@ export const TOOLS_CONFIG = {
   },
   positivepay: {
     label: "🇺🇸 US Check Positive Pay",
-    storeUrl: "https://apify.com/finops_studio/us-positive-pay-check-generator",
+    storeUrl: "./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html",
     actorSlug: "finops_studio~us-positive-pay-check-generator",
+    apifyPublic: false,
     unitPrice: 0.02,
     fileExt: "POSITIVE_PAY.txt",
     mime: "text/plain",
@@ -193,8 +194,9 @@ export const TOOLS_CONFIG = {
   },
   norma43: {
     label: "🇪🇸 Spain Norma 43 Parser",
-    storeUrl: "https://apify.com/finops_studio/spanish-aeb-norma43-parser",
+    storeUrl: "./spanish-aeb-norma-43-cuaderno-43-bank-statement-parser.html",
     actorSlug: "finops_studio~spanish-aeb-norma43-parser",
+    apifyPublic: false,
     unitPrice: 0.02,
     fileExt: "NORMA43_DECODED.csv",
     mime: "text/csv",
@@ -204,8 +206,9 @@ export const TOOLS_CONFIG = {
   },
   pacs008: {
     label: "🌐 Fedwire / SWIFT pacs.008",
-    storeUrl: "https://apify.com/finops_studio/iso20022-pacs008-fedwire-generator",
+    storeUrl: "./fedwire-iso20022-pacs008-swift-cbpr-xml-generator.html",
     actorSlug: "finops_studio~iso20022-pacs008-fedwire-generator",
+    apifyPublic: false,
     unitPrice: 0.02,
     fileExt: "FEDWIRE_PACS008.xml",
     mime: "application/xml",
@@ -353,7 +356,7 @@ export function initSandbox(defaultTool = "sepa") {
       const res = await fetch(`${EDGE_API}/v1/checkout/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: plan === "pro30d" ? "pro30d" : "batch24h", returnUrl: location.href.split("#")[0] })
+        body: JSON.stringify({ plan: ["test1usd", "pro30d", "batch24h"].includes(plan) ? plan : "batch24h", returnUrl: location.href.split("#")[0] })
       });
       const data = await res.json();
       if (!res.ok || !data.ok || !data.checkoutUrl) throw new Error(data.error || "Checkout failed");
@@ -505,6 +508,9 @@ export function initSandbox(defaultTool = "sepa") {
         outputEl.textContent = fileOut;
         lastOutput = fileOut;
       } else {
+        if (cfg.apifyPublic === false) {
+          throw new Error(`${cfg.label} runs exclusively on FinOps Direct Cloud Edge — use a $9 / $29 Instant Pass (fop_...) above.`);
+        }
         const res = await fetch(`https://api.apify.com/v2/acts/${cfg.actorSlug}/run-sync-get-dataset-items?token=${encodeURIComponent(token)}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
