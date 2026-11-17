@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * FinOps Studio Official CLI, Pre-Flight Checksum Doctor & MCP Server (v1.5.0)
+ * FinOps Studio Official CLI, Pre-Flight Checksum Doctor & MCP Server (v1.6.0)
  * Zero-dependency CLI, local bank checksum validator, OpenAPI/MCP helper & stdio MCP server.
  */
 import fs from 'node:fs';
 import readline from 'node:readline';
 
-const VERSION = '1.5.0';
+const VERSION = '1.6.0';
 
 const TOOLS = [
   ['sepa', 'finops_studio~sepa-xml-generator', 'ISO 20022 SEPA Credit Transfer & Direct Debit XML (pain.001/008)', true],
@@ -274,7 +274,7 @@ function startStdioMcpServer() {
           jsonrpc: '2.0',
           id,
           result: {
-            protocolVersion: '2024-11-05',
+            protocolVersion: (req.params && req.params.protocolVersion) || '2024-11-05',
             capabilities: { tools: {} },
             serverInfo: { name: 'finops-studio', version: VERSION }
           }
@@ -287,6 +287,10 @@ function startStdioMcpServer() {
           id,
           result: { tools: getMcpToolDefinitions() }
         });
+      } else if (method === 'resources/list') {
+        sendJsonRpc({ jsonrpc: '2.0', id, result: { resources: [] } });
+      } else if (method === 'prompts/list') {
+        sendJsonRpc({ jsonrpc: '2.0', id, result: { prompts: [] } });
       } else if (method === 'tools/call') {
         const params = req.params || {};
         const result = await handleMcpCallTool(params.name, params.arguments || {});
