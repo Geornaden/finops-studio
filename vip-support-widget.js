@@ -14,12 +14,15 @@
   const LS_TKTS = 'finops_sup_tickets_v1';
   const LS_PASS = 'finops_pro_pass';
 
-  // Auto-capture ?paid=1&pass_key=fop_... after PayPal/Stripe checkout redirect
+  // Auto-capture ?paid=1&pass_key=fop_... OR promote finops_pending_pass after Stripe Payment Link / PayPal redirect
   try {
     const qp = new URLSearchParams(location.search);
     const urlPass = (qp.get('pass_key') || '').trim();
     if (urlPass.startsWith('fop_')) {
       localStorage.setItem(LS_PASS, urlPass);
+    } else if (qp.get('paid') === '1') {
+      const pending = (localStorage.getItem('finops_pending_pass') || '').trim();
+      if (pending.startsWith('fop_')) localStorage.setItem(LS_PASS, pending);
     }
   } catch {}
 
@@ -46,8 +49,9 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           plan: ['test1usd', 'pro30d', 'batch24h'].includes(plan) ? plan : 'batch24h',
+          provider: opts.provider || 'auto',
           returnUrl,
-          customerEmail: opts.customerEmail || undefined
+          payerEmail: opts.customerEmail || opts.payerEmail || undefined
         })
       });
       const data = await res.json();
@@ -719,6 +723,85 @@
     if (loadTickets().length) {
       setTimeout(refreshMyTickets, 2000);
     }
+
+    // Inject Universal Direct Conversion Bar on all 79+ SEO / Validator / Country Pages lacking top checkout buttons
+    try {
+      const hasTopCheckout = Boolean(document.getElementById('directCheckoutBar') || document.getElementById('btn-hero-pass-24h'));
+      if (!hasTopCheckout && !document.getElementById('finops-global-pass-strip')) {
+        const strip = document.createElement('div');
+        strip.id = 'finops-global-pass-strip';
+        strip.style.cssText = 'background:linear-gradient(90deg,rgba(15,23,42,0.97),rgba(30,41,59,0.97));border-bottom:1px solid rgba(245,158,11,0.4);padding:9px 16px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
+        strip.innerHTML =
+          '<div style="max-width:1160px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:0.82rem;color:#e2e8f0;">' +
+            '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+              '<span id="fopStripBadge" style="font-weight:800;color:#fbbf24;">&#9889; Instant No-Signup Bank File Pass:</span>' +
+              '<span id="fopStripSub" style="color:#cbd5e1;">Generate unlimited SEPA, NACHA, Peppol, DATEV, BACS, ABA &amp; CPA-005 batches right in your browser.</span>' +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">' +
+              '<a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html" style="padding:6px 11px;border-radius:7px;border:1px solid rgba(56,189,248,0.55);color:#7dd3fc;text-decoration:none;font-weight:700;font-size:0.78rem;">&#127379; Free 2-Row Converter</a>' +
+              '<button type="button" id="fopStripBuy9" style="padding:6px 12px;border-radius:7px;border:none;background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;font-weight:800;font-size:0.79rem;cursor:pointer;">&#9889; 24h Unlimited ($9)</button>' +
+              '<button type="button" id="fopStripBuy29" style="padding:6px 11px;border-radius:7px;border:1px solid #fbbf24;background:transparent;color:#fde68a;font-weight:700;font-size:0.78rem;cursor:pointer;">&#128640; 30d Pro + API ($29)</button>' +
+              '<button type="button" id="fopStripPayPal" style="display:none;padding:6px 10px;border-radius:7px;border:1px solid #60a5fa;background:transparent;color:#93c5fd;font-weight:700;font-size:0.76rem;cursor:pointer;">PayPal</button>' +
+              '<button type="button" id="fopStripCfo" title="Copy a summary + payment link to send to your manager or finance cardholder" style="padding:6px 10px;border-radius:7px;border:1px solid #475569;background:#0f172a;color:#cbd5e1;font-weight:600;font-size:0.76rem;cursor:pointer;">&#128203; Send to Boss/CFO</button>' +
+            '</div>' +
+          '</div>';
+
+        const topbar = document.querySelector('header.topbar') || document.querySelector('header');
+        if (topbar && topbar.parentNode) {
+          topbar.parentNode.insertBefore(strip, topbar.nextSibling);
+        } else if (document.body.firstChild) {
+          document.body.insertBefore(strip, document.body.firstChild);
+        }
+
+        const b9 = document.getElementById('fopStripBuy9');
+        const b29 = document.getElementById('fopStripBuy29');
+        const bPP = document.getElementById('fopStripPayPal');
+        const bCfo = document.getElementById('fopStripCfo');
+        const badgeEl = document.getElementById('fopStripBadge');
+        const subEl = document.getElementById('fopStripSub');
+
+        b9?.addEventListener('click', () => window.startFinOpsCheckout('batch24h', { btn: b9 }));
+        b29?.addEventListener('click', () => window.startFinOpsCheckout('pro30d', { btn: b29 }));
+        bPP?.addEventListener('click', () => window.startFinOpsCheckout('batch24h', { btn: bPP, provider: 'paypal' }));
+        bCfo?.addEventListener('click', () => {
+          const shareText = 'FinOps Studio — Deterministic Bank & E-Invoice File Generator ($9 24h Unlimited Pass or $29 30-Day Pro API/MCP Pass, zero subscription): https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html';
+          navigator.clipboard?.writeText(shareText);
+          if (bCfo) {
+            const old = bCfo.textContent;
+            bCfo.textContent = 'Copied CFO Link!';
+            setTimeout(() => { bCfo.textContent = old; }, 2000);
+          }
+        });
+
+        const activeK = window.getFinOpsPassKey();
+        if (activeK && badgeEl && subEl) {
+          badgeEl.style.color = '#34d399';
+          badgeEl.textContent = 'PASS SAVED: ' + activeK.slice(0, 14) + '...';
+          subEl.innerHTML = 'Open the <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html" style="color:#38bdf8;font-weight:700;">1-Click CSV/JSON Runner</a> to generate unlimited bank files.';
+        }
+      }
+
+      // Sync real-time payment provider capabilities across the page so labels are 100% accurate
+      fetch(`${API_BASE}/v1/checkout/config`)
+        .then((r) => r.json())
+        .then((cfg) => {
+          if (!cfg || !cfg.ok) return;
+          window.__finopsStripeReady = Boolean(cfg.stripeCardReady);
+          const mapperTitle = document.getElementById('directCheckoutTitle');
+          const stripB9 = document.getElementById('fopStripBuy9');
+          const stripPP = document.getElementById('fopStripPayPal');
+          const mapperPP = document.getElementById('btnBuyPayPalAlt');
+          if (cfg.stripeCardReady) {
+            if (mapperTitle) mapperTitle.innerHTML = '&#128179; Instant No-Signup Access (Credit/Debit Card, Apple Pay, Google Pay &amp; PayPal)';
+            if (stripB9) stripB9.innerHTML = '&#128179; Card / Apple Pay ($9)';
+            if (stripPP) stripPP.style.display = 'inline-block';
+            if (mapperPP) mapperPP.style.display = 'inline-flex';
+          } else {
+            if (mapperTitle) mapperTitle.innerHTML = '&#127359;&#65039; Instant No-Signup Production Access (PayPal Instant Pass &bull; $5 Free Apify Credits Also Available)';
+          }
+        })
+        .catch(() => {});
+    } catch {}
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountWidget);

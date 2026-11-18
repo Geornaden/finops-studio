@@ -399,8 +399,14 @@ export function initSandbox(defaultTool = "sepa") {
     b9?.addEventListener("click", () => triggerCheckout("batch24h", b9));
     b29?.addEventListener("click", () => triggerCheckout("pro30d", b29));
     try {
-      const qpPass = new URLSearchParams(location.search).get("pass_key") || "";
-      if (qpPass.startsWith("fop_")) localStorage.setItem("finops_pro_pass", qpPass);
+      const sp = new URLSearchParams(location.search);
+      const qpPass = sp.get("pass_key") || "";
+      if (qpPass.startsWith("fop_")) {
+        localStorage.setItem("finops_pro_pass", qpPass);
+      } else if (sp.get("paid") === "1") {
+        const pend = (localStorage.getItem("finops_pending_pass") || "").trim();
+        if (pend.startsWith("fop_")) localStorage.setItem("finops_pro_pass", pend);
+      }
       const savedPass = localStorage.getItem("finops_pro_pass") || "";
       const tokEl = document.getElementById("apify-live-token");
       if (savedPass.startsWith("fop_") && tokEl && !tokEl.value) tokEl.value = savedPass;

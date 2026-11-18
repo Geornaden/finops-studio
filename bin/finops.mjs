@@ -18,7 +18,10 @@ const EDGE_PATH_BY_MCP = {
   generate_australian_aba_file: '/v1/aba/generate',
   parse_pain002_status_xml: '/v1/pain002/parse',
   generate_uk_bacs_file: '/v1/bacs/generate',
-  generate_canada_cpa005_file: '/v1/cpa005/generate'
+  generate_canada_cpa005_file: '/v1/cpa005/generate',
+  generate_positive_pay_file: '/v1/positive-pay/generate',
+  parse_norma43_statement: '/v1/norma43/parse',
+  generate_pacs008_wire_xml: '/v1/pacs008/generate'
 };
 
 const EDGE_PATH_BY_CLI = {
@@ -482,6 +485,78 @@ const CLOUD_MCP_TOOLS = [
         }
       }
     }
+  },
+  {
+    name: 'generate_positive_pay_file',
+    title: 'Generate US Bank Positive Pay File',
+    slug: 'finops_studio~us-positive-pay-check-generator',
+    edgeOnly: true,
+    description: 'Generate US Payee Positive Pay check fraud-prevention files for J.P. Morgan Chase, Bank of America CashPro, Wells Fargo CEO, CitiDirect, and PNC via FinOps Direct Cloud Edge.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['account_number', 'checks'],
+      properties: {
+        bank_profile: { type: 'string', default: 'CHASE_JPM_CSV', description: 'Bank format profile (CHASE_JPM_CSV, BOFA_CASHPRO_FIXED, WELLS_FARGO_80, CITI_CSV, PNC_FIXED).' },
+        account_number: { type: 'string', description: 'Corporate checking account number.' },
+        company_name: { type: 'string', description: 'Company name.' },
+        checks: {
+          type: 'array',
+          minItems: 1,
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['check_number', 'issue_date', 'amount', 'payee_name'],
+            properties: {
+              check_number: { type: 'string', description: 'Check serial number.' },
+              issue_date: { type: 'string', description: 'Issue date YYYY-MM-DD.' },
+              amount: { type: 'number', description: 'Check amount in USD.' },
+              payee_name: { type: 'string', description: 'Payee name.' },
+              status: { type: 'string', default: 'ISSUE', description: 'ISSUE or VOID.' }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    name: 'parse_norma43_statement',
+    title: 'Parse Spanish AEB Norma 43 Bank Statement',
+    slug: 'finops_studio~spanish-aeb-norma43-parser',
+    edgeOnly: true,
+    description: 'Parse Spanish AEB Norma 43 (Cuaderno 43) 80-char bank statements from CaixaBank, BBVA, Santander, and Sabadell into reconciled JSON/CSV with calculated ES IBANs.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['norma43_content'],
+      properties: {
+        norma43_content: { type: 'string', description: 'Raw 80-character Spanish Norma 43 / Cuaderno 43 statement text.' }
+      }
+    }
+  },
+  {
+    name: 'generate_pacs008_wire_xml',
+    title: 'Generate ISO 20022 pacs.008 Fedwire & SWIFT XML',
+    slug: 'finops_studio~iso20022-pacs008-fedwire-generator',
+    edgeOnly: true,
+    description: 'Generate ISO 20022 pacs.008.001.08 high-value wire XML for US Fedwire Funds Service and SWIFT CBPR+ with UETR UUIDv4 and ABA/BIC validation.',
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['wires'],
+      properties: {
+        network_profile: { type: 'string', default: 'FEDWIRE_USABA', description: 'FEDWIRE_USABA or SWIFT_CBPR_PLUS.' },
+        settlement_date: { type: 'string', description: 'Settlement date YYYY-MM-DD.' },
+        wires: {
+          type: 'array',
+          minItems: 1,
+          items: {
+            type: 'object',
+            additionalProperties: true
+          }
+        }
+      }
+    }
   }
 ];
 
@@ -614,6 +689,18 @@ async function handleMcpCallTool(name, args = {}) {
       return { isError: true, content: [{ type: 'text', text: `FinOps Edge HTTP ${res.status}: ${text}` }] };
     }
     return { content: [{ type: 'text', text }] };
+  }
+
+  if (cloudTool.edgeOnly) {
+    return {
+      isError: false,
+      content: [
+        {
+          type: 'text',
+          text: `${cloudTool.name} runs exclusively on FinOps Direct Cloud Edge. Get an instant $9 (24h Unlimited) or $29 (30-Day Pro) Pass Key (fop_...) at https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html and set FINOPS_PASS_KEY=fop_... in your MCP environment.`
+        }
+      ]
+    };
   }
 
   const url = `https://api.apify.com/v2/acts/${cloudTool.slug}/run-sync-get-dataset-items?token=${encodeURIComponent(token)}`;
