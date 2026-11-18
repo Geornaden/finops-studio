@@ -70,6 +70,12 @@
     else if (evt === 'ticket') hit('action_submit_issue');
   };
 
+  window.__finopsTrackCheckout = (plan) => {
+    const clean = String(plan || 'batch24h').replace(/[^a-z0-9_]/gi, '');
+    hit('action_click_checkout_total');
+    hit(`action_click_checkout_${clean}`);
+  };
+
   // Separate search engine / AI crawlers from real human customers
   const ua = navigator.userAgent || '';
   if (/bot|crawl|spider|slurp|bingpreview|headless|lighthouse|pagespeed|gptbot|claudebot|perplexity/i.test(ua)) {
@@ -115,6 +121,15 @@
     } else if (el.id === 'btn-download-preview') {
       testedPreviewOrDownload = true;
       hit('action_sample_download');
+    } else if (el.id === 'btnFree2RowDemo') {
+      testedPreviewOrDownload = true;
+      hit('action_mapper_demo');
+    } else if (el.id === 'btnRunDirect') {
+      clickedStore = true;
+      hit('action_direct_run');
+    } else if (el.id === 'btnRunEinv') {
+      clickedStore = true;
+      hit('action_einvoice_run');
     } else if (el.id === 'btn-copy-curl') {
       copiedCodeOrWorkflow = true;
       hit('action_copy_curl');
@@ -123,6 +138,9 @@
       if (href.includes('apify.com/finops_studio')) {
         clickedStore = true;
         hit('action_click_store');
+      } else if (href.includes('free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html')) {
+        clickedStore = true;
+        hit('action_click_direct_pass_link');
       } else if (href.includes('/workflows/')) {
         copiedCodeOrWorkflow = true;
         hit('action_workflow_download');

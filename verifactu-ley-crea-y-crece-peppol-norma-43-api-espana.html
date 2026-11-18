@@ -108,14 +108,14 @@
   <main class="container">
     <section class="hero" style="padding-bottom:12px;">
       <span class="pill">&#127466;&#127480; España CFO &amp; Asesorías 2026 &bull; NIF/CIF/NIE + SEPA 34.14 + Peppol EN 16931 + Norma 43</span>
-      <h1>Playbook de Automatización Financiera España 2026: Veri*factu, Ley Crea y Crece (`Peppol`), SEPA `Cuaderno 34.14` y `Norma 43`</h1>
-      <p style="max-width:830px;margin:0 auto;">Valide al instante identificadores fiscales españoles (<strong>CIF societario, NIF/DNI y NIE</strong>) junto con <strong>IBAN `ES`</strong>, y genere payloads deterministas listos para facturación electrónica B2B europea (`EN 16931 / Peppol BIS 3.0`), remesas bancarias `pain.001.001.09` y conciliación `Cuaderno 43`.</p>
+      <h1>Playbook de Automatización Financiera España 2026: Veri*factu, Ley Crea y Crece (<code>Peppol</code>), SEPA <code>Cuaderno 34.14</code> y <code>Norma 43</code></h1>
+      <p style="max-width:830px;margin:0 auto;">Valide al instante identificadores fiscales españoles (<strong>CIF societario, NIF/DNI y NIE</strong>) junto con <strong>IBAN <code>ES</code></strong>, y genere payloads deterministas listos para facturación electrónica B2B europea (<code>EN 16931 / Peppol BIS 3.0</code>), remesas bancarias <code>pain.001.001.09</code> y conciliación <code>Cuaderno 43</code>.</p>
     </section>
 
     <!-- INTERACTIVE SPANISH NIF/CIF/NIE + ES IBAN VALIDATOR & PAYLOAD GENERATOR -->
     <section class="sandbox-card" aria-label="Validador Interactivo NIF CIF NIE e IBAN ES">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-        <h2 style="margin:0;font-size:1.14rem;">Validador Interactivo `CIF / NIF / NIE` + `IBAN ES` &amp; Generador Payload API</h2>
+        <h2 style="margin:0;font-size:1.14rem;">Validador Interactivo <code>CIF / NIF / NIE</code> + <code>IBAN ES</code> &amp; Generador Payload API</h2>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button type="button" class="btn btn-outline" onclick="loadEsPreset('sl')">Ejemplo Sociedad Limitada (CIF B)</button>
           <button type="button" class="btn btn-outline" onclick="loadEsPreset('sa')">Ejemplo Sociedad Anónima (CIF A)</button>
@@ -125,11 +125,11 @@
 
       <div class="form-es">
         <div>
-          <label style="font-size:0.8rem;color:var(--muted);">NIF / CIF / NIE Español (con o sin `ES`)</label>
+          <label style="font-size:0.8rem;color:var(--muted);">NIF / CIF / NIE Español (con o sin <code>ES</code>)</label>
           <input id="esTaxId" type="text" value="ESB61234562" oninput="auditSpanishEntity()" />
         </div>
         <div>
-          <label style="font-size:0.8rem;color:var(--muted);">IBAN Bancario Español (`ES` 24 caracteres)</label>
+          <label style="font-size:0.8rem;color:var(--muted);">IBAN Bancario Español (<code>ES</code> 24 caracteres)</label>
           <input id="esIbanInput" type="text" value="ES9121000418450200051332" oninput="auditSpanishEntity()" />
         </div>
         <div>
@@ -144,12 +144,12 @@
 
       <div id="esResultGrid" class="es-grid" aria-live="polite"></div>
 
-      <h3 style="margin:14px 0 8px;font-size:1rem;">Payload JSON Listo para `finops_studio/eu-einvoice-xml-generator` / RapidAPI Peppol UBL:</h3>
+      <h3 style="margin:14px 0 8px;font-size:1rem;">Payload JSON Listo para <code>finops_studio/eu-einvoice-xml-generator</code> / RapidAPI Peppol UBL:</h3>
       <pre id="esPayloadBox" class="code-box" style="min-height:175px;"></pre>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button type="button" class="btn btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('esPayloadBox').textContent)">Copiar Payload JSON</button>
         <a class="btn btn-outline" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-xml-nacha-ach-bai2-and-peppol-suite" target="_blank" rel="noopener">Ejecutar en RapidAPI Edge (&lt;10ms) &rarr;</a>
-        <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Ejecutar en Apify Cloud ($0/mes)</a>
+        <a class="btn btn-outline" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html#directCheckoutBar">&#128179; Unlock $9 Instant Pass &rarr;</a>
       </div>
     </section>
 
@@ -159,8 +159,8 @@
       <div class="tool-card">
         <div>
           <div class="tag-row"><span class="tag">Cuaderno 34.14 / 19.14</span><span class="tag">EPC Nov 2026</span></div>
-          <h3>1. Remesas SEPA `pain.001.001.09` con Dirección Estructurada</h3>
-          <p>Desde noviembre de 2026 la banca española (CaixaBank, BBVA, Santander, Sabadell, Bankinter) exige direcciones postales estructuradas (`<TwnNm>` + `<Ctry>`) para evitar rechazos `BE04`.</p>
+          <h3>1. Remesas SEPA <code>pain.001.001.09</code> con Dirección Estructurada</h3>
+          <p>Desde noviembre de 2026 la banca española (CaixaBank, BBVA, Santander, Sabadell, Bankinter) exige direcciones postales estructuradas (<code>&lt;TwnNm&gt;</code> + <code>&lt;Ctry&gt;</code>) para evitar rechazos <code>BE04</code>.</p>
         </div>
         <div class="card-actions">
           <a class="btn btn-primary" href="./free-sepa-xml-pain001-xsd-be04-validator.html">Validador Gratis SEPA</a>
@@ -171,8 +171,8 @@
       <div class="tool-card">
         <div>
           <div class="tag-row"><span class="tag">Ley Crea y Crece</span><span class="tag">ViDA UE / Peppol</span></div>
-          <h3>2. Facturación Electrónica B2B `EN 16931` (`Peppol BIS 3.0`)</h3>
-          <p>Emita facturas UBL 2.1 y CII matemáticamente cuadradas al céntimo (`BR-CO-10..17`) tanto para clientes corporativos españoles como para exportaciones intracomunitarias (`DE`, `FR`, `BE`, `IT`, `NL`).</p>
+          <h3>2. Facturación Electrónica B2B <code>EN 16931</code> (<code>Peppol BIS 3.0</code>)</h3>
+          <p>Emita facturas UBL 2.1 y CII matemáticamente cuadradas al céntimo (<code>BR-CO-10..17</code>) tanto para clientes corporativos españoles como para exportaciones intracomunitarias (<code>DE</code>, <code>FR</code>, <code>BE</code>, <code>IT</code>, <code>NL</code>).</p>
         </div>
         <div class="card-actions">
           <a class="btn btn-primary" href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Constructor Factura XML</a>
@@ -183,8 +183,8 @@
       <div class="tool-card">
         <div>
           <div class="tag-row"><span class="tag">AEB Cuaderno 43</span><span class="tag">80 Columnas</span></div>
-          <h3>3. Conciliación Diaria `Norma 43` (`.n43`) a JSON y CSV</h3>
-          <p>Convierta ficheros diarios de tesorería en movimientos limpios con cálculo automático de `IBAN ES` (MOD-11 + MOD-97) y auditoría exacta del Registro `33` para Odoo, Holded, Sage o A3ERP.</p>
+          <h3>3. Conciliación Diaria <code>Norma 43</code> (<code>.n43</code>) a JSON y CSV</h3>
+          <p>Convierta ficheros diarios de tesorería en movimientos limpios con cálculo automático de <code>IBAN ES</code> (MOD-11 + MOD-97) y auditoría exacta del Registro <code>33</code> para Odoo, Holded, Sage o A3ERP.</p>
         </div>
         <div class="card-actions">
           <a class="btn btn-primary" href="./free-spanish-aeb-norma-43-cuaderno-43-viewer.html">Visor Gratis Norma 43</a>

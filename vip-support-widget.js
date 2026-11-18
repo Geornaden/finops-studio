@@ -36,6 +36,9 @@
   };
 
   window.startFinOpsCheckout = async function (plan = 'batch24h', opts = {}) {
+    try {
+      if (typeof window.__finopsTrackCheckout === 'function') window.__finopsTrackCheckout(plan);
+    } catch {}
     const btn = opts.btn || null;
     const origText = btn ? btn.textContent : '';
     if (btn) {

@@ -128,15 +128,15 @@
     <section class="hero" style="padding-bottom:14px;">
       <span class="pill">&#128737; Nacha 2026 Fraud Monitoring &amp; EU VoP Ready &bull; Bank Routing Math + Live DNS Spoof Detection</span>
       <h1>Accounts Payable &amp; Vendor Onboarding BEC Anti-Fraud Checksum Firewall</h1>
-      <p style="max-width:860px;margin:0 auto;">Business Email Compromise (BEC) vendor bank-change scams cost global finance teams over <strong>$2.9B/year</strong>. Test any supplier onboarding or bank-account-change ticket in one screen—combining <strong>ISO 13616 IBAN MOD-97 / US ABA MOD-10 / UK Sort Code / AU BSB</strong> validation with live <strong>Cloudflare `1.1.1.1` `MX / SPF / DMARC`</strong> domain spoofing checks.</p>
+      <p style="max-width:860px;margin:0 auto;">Business Email Compromise (BEC) vendor bank-change scams cost global finance teams over <strong>$2.9B/year</strong>. Test any supplier onboarding or bank-account-change ticket in one screen—combining <strong>ISO 13616 IBAN MOD-97 / US ABA MOD-10 / UK Sort Code / AU BSB</strong> validation with live <strong>Cloudflare <code>1.1.1.1</code> <code>MX / SPF / DMARC</code></strong> domain spoofing checks.</p>
     </section>
 
     <section class="sandbox-card" style="margin-bottom:24px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
         <h2 style="margin:0;font-size:1.15rem;">1. Interactive Supplier Bank-Change &amp; BEC Fraud Audit</h2>
         <div class="preset-row" style="margin:0;">
-          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="loadPreset('legit_eu')">Load Legit EU Supplier (`stripe.com` + DE IBAN)</button>
-          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="loadPreset('legit_us')">Load Legit US Supplier (`cloudflare.com` + Chase ABA)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="loadPreset('legit_eu')">Load Legit EU Supplier (<code>stripe.com</code> + DE IBAN)</button>
+          <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="loadPreset('legit_us')">Load Legit US Supplier (<code>cloudflare.com</code> + Chase ABA)</button>
           <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;border-color:#f87171;color:#fca5a5;" onclick="loadPreset('bec_attack')">Simulate BEC Attack (Burner Email + Bad ABA + Country Mismatch)</button>
         </div>
       </div>
@@ -202,7 +202,7 @@
     </section>
 
     <section class="sandbox-card" style="margin-bottom:24px;">
-      <h2 style="margin-top:0;">2. Two-Call Automated AP Vendor Onboarding Architecture (`&lt;25ms` Edge)</h2>
+      <h2 style="margin-top:0;">2. Two-Call Automated AP Vendor Onboarding Architecture (<code>&lt;25ms</code> Edge)</h2>
       <p style="color:var(--muted);font-size:0.92rem;">Embed deterministic anti-fraud checks directly inside <strong>ServiceNow</strong>, <strong>Jira Service Management</strong>, <strong>Coupa</strong>, <strong>SAP Ariba</strong>, <strong>NetSuite</strong>, or <strong>n8n / Make</strong> before any vendor master record is updated:</p>
       <pre style="background:#090f1d;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;font-size:0.81rem;color:#e2e8f0;"># Step 1: Verify IBAN MOD-97 / US ABA MOD-10 &amp; EU VAT syntax on RapidAPI Hub
 curl -s -X POST "https://corporate-banking-sepa-iban-nacha-aba-and-vat-validator.p.rapidapi.com/v1/validate/iban" \
@@ -216,7 +216,7 @@ curl -s -X POST "https://b2b-email-deliverability-mx-dmarc-and-domain-enricher.p
   -H "Content-Type: application/json" \
   -d '{"email":"billing@supplier-domain.com"}'</pre>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
-        <a class="btn btn-primary" href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">Start Free `BASIC` Tier ($0.00/mo) on RapidAPI Hub &rarr;</a>
+        <a class="btn btn-primary" href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">Start Free <code>BASIC</code> Tier ($0.00/mo) on RapidAPI Hub &rarr;</a>
         <a class="btn btn-outline" href="./free-b2b-email-mx-spf-dmarc-dns-validator.html">Open Standalone MX/SPF/DMARC Inspector</a>
         <a class="btn btn-outline" href="./free-sepa-xml-pain001-xsd-be04-validator.html">Open Standalone SEPA IBAN Auditor</a>
         <a class="btn btn-outline" href="./free-nacha-ach-file-validator-batch-hash-auditor.html">Open Standalone NACHA ABA Checker</a>

@@ -58,7 +58,7 @@
         <a href="./nacha-ach-file-generator.html">US NACHA ACH</a>
         <a href="./bai2-bank-statement-parser.html">BAI2 Treasury Parser</a>
         <a href="./index.html">All 12 Banking APIs</a>
-        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs ($0/mo) &rarr;</a>
+        <a class="btn btn-primary" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html#directCheckoutBar">&#128179; Unlock $9 Pass &rarr;</a>
       </nav>
     </div>
   </header>
@@ -66,8 +66,8 @@
   <main class="container">
     <section class="hero">
       <span class="pill">🇺🇸🌐 Enterprise Treasury &amp; RTGS &bull; Fedwire ISO 20022 &bull; SWIFT CBPR+ &bull; CHAPS &bull; TARGET2</span>
-      <h1>ISO 20022 `pacs.008.001.08` Fedwire Funds &amp; SWIFT CBPR+ Wire XML Generator — $0/Month</h1>
-      <p>Convert JSON treasury approvals, escrow closings, or cross-border FX instructions into deterministic <strong>`head.001.001.02` + `pacs.008.001.08`</strong> XML messages for <strong>Federal Reserve Fedwire Funds (`FDW` / `USABA`)</strong>, <strong>SWIFT CBPR+</strong>, <strong>UK CHAPS</strong>, and <strong>Eurosystem TARGET2</strong> — with RFC 4122 v4 <strong>`UETR`</strong> generation, 9-digit ABA `MOD-10` verification, and 2026 structured addresses for <strong>$0.02/wire</strong>.</p>
+      <h1>ISO 20022 <code>pacs.008.001.08</code> Fedwire Funds &amp; SWIFT CBPR+ Wire XML Generator — $0/Month</h1>
+      <p>Convert JSON treasury approvals, escrow closings, or cross-border FX instructions into deterministic <strong><code>head.001.001.02</code> + <code>pacs.008.001.08</code></strong> XML messages for <strong>Federal Reserve Fedwire Funds (<code>FDW</code> / <code>USABA</code>)</strong>, <strong>SWIFT CBPR+</strong>, <strong>UK CHAPS</strong>, and <strong>Eurosystem TARGET2</strong> — with RFC 4122 v4 <strong><code>UETR</code></strong> generation, 9-digit ABA <code>MOD-10</code> verification, and 2026 structured addresses for <strong>$0.02/wire</strong>.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="./free-fedwire-iso20022-pacs008-swift-cbpr-validator.html">Free pacs.008 Wire XML Validator &rarr;</a>
         <a class="btn btn-outline" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open on Apify Store ($0/mo)</a>
@@ -77,24 +77,24 @@
 
     <div class="grid-3">
       <div class="sandbox-card">
-        <h3 style="margin-top:0;">1. Fedwire (`FDW`) + `AppHdr` Ready</h3>
-        <p style="color:var(--muted);font-size:0.9rem;">Wraps `pacs.008.001.08` inside the `head.001.001.02` Business Application Header (`fedwirefunds.01` or `swift.cbprplus.02`) and validates 9-digit Federal Reserve `USABA` routing prefixes &amp; `3-7-1` MOD-10 checksums.</p>
+        <h3 style="margin-top:0;">1. Fedwire (<code>FDW</code>) + <code>AppHdr</code> Ready</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Wraps <code>pacs.008.001.08</code> inside the <code>head.001.001.02</code> Business Application Header (<code>fedwirefunds.01</code> or <code>swift.cbprplus.02</code>) and validates 9-digit Federal Reserve <code>USABA</code> routing prefixes &amp; <code>3-7-1</code> MOD-10 checksums.</p>
       </div>
 
       <div class="sandbox-card">
-        <h3 style="margin-top:0;">2. Mandatory `UETR` UUID v4 Tracking</h3>
-        <p style="color:var(--muted);font-size:0.9rem;">Auto-generates cryptographic lowercase RFC 4122 v4 `<UETR>` identifiers (or validates caller-supplied UETRs) for end-to-end SWIFT GPI and Federal Reserve wire tracking.</p>
+        <h3 style="margin-top:0;">2. Mandatory <code>UETR</code> UUID v4 Tracking</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Auto-generates cryptographic lowercase RFC 4122 v4 <code>&lt;UETR&gt;</code> identifiers (or validates caller-supplied UETRs) for end-to-end SWIFT GPI and Federal Reserve wire tracking.</p>
       </div>
 
       <div class="sandbox-card">
-        <h3 style="margin-top:0;">3. 2026 Structured `<PstlAdr>` Compliance</h3>
-        <p style="color:var(--muted);font-size:0.9rem;">Eliminates CBPR+ &amp; Fedwire structured-address rejections by enforcing `<StrtNm>`, `<BldgNb>`, `<PstCd>`, `<TwnNm>`, `<CtrySubDvsn>`, and `<Ctry>` tags alongside integer-cent `<TtlIntrBkSttlmAmt>` totals.</p>
+        <h3 style="margin-top:0;">3. 2026 Structured <code>&lt;PstlAdr&gt;</code> Compliance</h3>
+        <p style="color:var(--muted);font-size:0.9rem;">Eliminates CBPR+ &amp; Fedwire structured-address rejections by enforcing <code>&lt;StrtNm&gt;</code>, <code>&lt;BldgNb&gt;</code>, <code>&lt;PstCd&gt;</code>, <code>&lt;TwnNm&gt;</code>, <code>&lt;CtrySubDvsn&gt;</code>, and <code>&lt;Ctry&gt;</code> tags alongside integer-cent <code>&lt;TtlIntrBkSttlmAmt&gt;</code> totals.</p>
       </div>
     </div>
 
     <!-- Sample Output Preview -->
     <section class="sandbox-card" style="margin-top:24px;">
-      <h2 style="margin-top:0;">Sample Generated Fedwire ISO 20022 `BusMsg` (`head.001.001.02` + `pacs.008.001.08`)</h2>
+      <h2 style="margin-top:0;">Sample Generated Fedwire ISO 20022 <code>BusMsg</code> (<code>head.001.001.02</code> + <code>pacs.008.001.08</code>)</h2>
       <pre class="code-box">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;BusMsg xmlns="urn:iso:std:iso:20022:tech:xsd:busmsg"&gt;
   &lt;AppHdr xmlns="urn:iso:std:iso:20022:tech:xsd:head.001.001.02"&gt;

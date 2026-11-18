@@ -311,12 +311,16 @@
       setTimeout(function () { e.target.textContent = "Copy JSON Payload"; }, 1800);
     });
 
-    try {
-      var savedPass = localStorage.getItem("finops_pass_key");
-      if (savedPass && savedPass.indexOf("fop_") === 0 && !g("einvToken")) {
-        document.getElementById("einvToken").value = savedPass;
-      }
-    } catch (e) {}
+    function syncSavedPassKey() {
+      try {
+        var savedPass = (typeof window.getFinOpsPassKey === "function" ? window.getFinOpsPassKey() : "") || localStorage.getItem("finops_pro_pass") || localStorage.getItem("finops_pass_key") || "";
+        if (savedPass && savedPass.indexOf("fop_") === 0 && !g("einvToken")) {
+          document.getElementById("einvToken").value = savedPass;
+        }
+      } catch (e) {}
+    }
+    syncSavedPassKey();
+    window.addEventListener("finops-pass-active", syncSavedPassKey);
 
     document.getElementById("btnRunEinv").addEventListener("click", async function (e) {
       var tok = g("einvToken");
@@ -328,6 +332,9 @@
       }
       e.target.disabled = true;
       var isDirectPass = tok.indexOf("fop_") === 0;
+      if (isDirectPass) {
+        try { localStorage.setItem("finops_pro_pass", tok); } catch (ex) {}
+      }
       resBox.textContent = isDirectPass
         ? "Generating certified EN 16931 XML via FinOps Edge Instant Pass..."
         : "Generating certified EN 16931 XML via finops_studio~eu-einvoice-xml-generator...";

@@ -121,14 +121,14 @@
 
   <main class="container">
     <section class="hero" style="padding-bottom:14px;">
-      <span class="pill">&#127464;&#127469; &#127473;&#127470; SIX Swiss Payment Standards (SPS 2026) &bull; QR-IBAN (`30000–31999`) &bull; QRR Modulo-10 Rekursiv &bull; `CHE-UID`</span>
-      <h1>Schweizer Corporate Treasury &amp; Swiss QR-Rechnung Playbook: `QR-IBAN`, `QRR`, `CHE-UID` &amp; `pain.001.001.09`</h1>
-      <p style="max-width:860px;margin:0 auto;">Entwickelt für Schweizer CFOs, Treuhänder und ERP-Teams mit <strong>Abacus</strong>, <strong>bexio</strong>, <strong>KLARA</strong>, <strong>Banana Buchhaltung</strong>, <strong>Odoo</strong> und <strong>SAP S/4HANA</strong>. Prüfen Sie im Browser 21-stellige `CH / LI` Standard- und <strong>QR-IBANs</strong>, berechnen Sie <strong>27-stellige QRR-Referenzen (Modulo 10 rekursiv)</strong> sowie <strong>CHE-UIDs (MOD-11)</strong> vor dem Upload ins E-Banking von <strong>UBS key4 / Multimat, PostFinance, Zürcher Kantonalbank (ZKB) oder Raiffeisen</strong>.</p>
+      <span class="pill">&#127464;&#127469; &#127473;&#127470; SIX Swiss Payment Standards (SPS 2026) &bull; QR-IBAN (<code>30000–31999</code>) &bull; QRR Modulo-10 Rekursiv &bull; <code>CHE-UID</code></span>
+      <h1>Schweizer Corporate Treasury &amp; Swiss QR-Rechnung Playbook: <code>QR-IBAN</code>, <code>QRR</code>, <code>CHE-UID</code> &amp; <code>pain.001.001.09</code></h1>
+      <p style="max-width:860px;margin:0 auto;">Entwickelt für Schweizer CFOs, Treuhänder und ERP-Teams mit <strong>Abacus</strong>, <strong>bexio</strong>, <strong>KLARA</strong>, <strong>Banana Buchhaltung</strong>, <strong>Odoo</strong> und <strong>SAP S/4HANA</strong>. Prüfen Sie im Browser 21-stellige <code>CH / LI</code> Standard- und <strong>QR-IBANs</strong>, berechnen Sie <strong>27-stellige QRR-Referenzen (Modulo 10 rekursiv)</strong> sowie <strong>CHE-UIDs (MOD-11)</strong> vor dem Upload ins E-Banking von <strong>UBS key4 / Multimat, PostFinance, Zürcher Kantonalbank (ZKB) oder Raiffeisen</strong>.</p>
     </section>
 
     <section class="sandbox-card" style="margin-bottom:24px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-        <h2 style="margin:0;font-size:1.14rem;">1. Interaktiver Validator: `CH/LI QR-IBAN`, `27-Stellige QRR` &amp; `CHE-UID`</h2>
+        <h2 style="margin:0;font-size:1.14rem;">1. Interaktiver Validator: <code>CH/LI QR-IBAN</code>, <code>27-Stellige QRR</code> &amp; <code>CHE-UID</code></h2>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadChPreset('ubs_qr')">UBS QR-IBAN + 27-Stellige QRR</button>
           <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadChPreset('pf_qr')">PostFinance QR-IBAN + QRR</button>
@@ -139,7 +139,7 @@
 
       <div class="ch-grid">
         <div class="ch-field">
-          <label for="chUid">Schweizer UID / MWST (`CHE-XXX.XXX.XXX`)</label>
+          <label for="chUid">Schweizer UID / MWST (<code>CHE-XXX.XXX.XXX</code>)</label>
           <input id="chUid" type="text" value="CHE-105.805.649 MWST" oninput="runChAudit()" />
         </div>
         <div class="ch-field">
@@ -147,7 +147,7 @@
           <input id="chIban" type="text" value="CH4630023000123456010" oninput="runChAudit()" />
         </div>
         <div class="ch-field">
-          <label for="chQrr">27-Stellige QR-Referenz (`QRR` — bei QR-IBAN Pflicht)</label>
+          <label for="chQrr">27-Stellige QR-Referenz (<code>QRR</code> — bei QR-IBAN Pflicht)</label>
           <input id="chQrr" type="text" value="21 00000 00003 13947 14300 09017" oninput="runChAudit()" />
         </div>
         <div class="ch-field">
@@ -170,19 +170,19 @@
           <div class="val" id="outChBank">—</div>
         </div>
         <div class="ch-card">
-          <div class="lbl">QR-Referenz (`QRR` Modulo-10 Rekursiv)</div>
+          <div class="lbl">QR-Referenz (<code>QRR</code> Modulo-10 Rekursiv)</div>
           <div class="val" id="outChQrr">—</div>
         </div>
       </div>
 
-      <h3 style="font-size:0.95rem;margin:14px 0 8px;">SIX SPS / SEPA API Payload (`pain.001.001.09` + `Peppol EAS 0183`)</h3>
+      <h3 style="font-size:0.95rem;margin:14px 0 8px;">SIX SPS / SEPA API Payload (<code>pain.001.001.09</code> + <code>Peppol EAS 0183</code>)</h3>
       <pre id="chJson" style="background:#090f1d;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;font-size:0.81rem;color:#a7f3d0;"></pre>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
-        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">ISO 20022 `pain.001.001.09` XML Generieren &rarr;</a>
-        <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Peppol `0183` E-Rechnung XML Generieren &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">ISO 20022 <code>pain.001.001.09</code> XML Generieren &rarr;</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Peppol <code>0183</code> E-Rechnung XML Generieren &rarr;</a>
         <a class="btn btn-outline" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-iban-nacha-aba-and-vat-validator" target="_blank" rel="noopener">IBAN &amp; UID API auf RapidAPI (&lt;10ms) &rarr;</a>
-        <a class="btn btn-outline" href="./free-sepa-xml-pain001-xsd-be04-validator.html">Kostenloser `pain.001` Browser-Validator</a>
+        <a class="btn btn-outline" href="./free-sepa-xml-pain001-xsd-be04-validator.html">Kostenloser <code>pain.001</code> Browser-Validator</a>
       </div>
     </section>
   </main>

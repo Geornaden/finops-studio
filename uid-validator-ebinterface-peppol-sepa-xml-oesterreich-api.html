@@ -121,14 +121,14 @@
 
   <main class="container">
     <section class="hero" style="padding-bottom:14px;">
-      <span class="pill">&#127462;&#127481; Österreich B2G/B2B E-Rechnung (`erb.gv.at` / Peppol `9914`) &bull; `ATU` UID-Prüfung &bull; `AT-IBAN` BLZ &bull; BMD &amp; DATEV</span>
-      <h1>Österreich Corporate Treasury &amp; E-Rechnung Playbook: `ATU-UID`, `AT-IBAN` (`BLZ`), `SEPA pain.001` &amp; `Peppol 9914`</h1>
-      <p style="max-width:860px;margin:0 auto;">Gebaut für österreichische Finanzabteilungen, Steuerberatungskanzleien und ERP-Teams mit <strong>BMD NTCS</strong>, <strong>RZL</strong>, <strong>DATEV Österreich</strong>, <strong> Mesonic WinLine</strong>, <strong>SAP</strong> und <strong>Odoo</strong>. Prüfen Sie `ATU`-Umsatzsteuer-IDs sowie 20-stellige `AT`-IBANs für <strong>Erste Bank / Sparkasse (George Business / Telebanking Pro), Raiffeisen (Mein ELBA / Infinity), UniCredit Bank Austria und BAWAG</strong> direkt im Browser.</p>
+      <span class="pill">&#127462;&#127481; Österreich B2G/B2B E-Rechnung (<code>erb.gv.at</code> / Peppol <code>9914</code>) &bull; <code>ATU</code> UID-Prüfung &bull; <code>AT-IBAN</code> BLZ &bull; BMD &amp; DATEV</span>
+      <h1>Österreich Corporate Treasury &amp; E-Rechnung Playbook: <code>ATU-UID</code>, <code>AT-IBAN</code> (<code>BLZ</code>), <code>SEPA pain.001</code> &amp; <code>Peppol 9914</code></h1>
+      <p style="max-width:860px;margin:0 auto;">Gebaut für österreichische Finanzabteilungen, Steuerberatungskanzleien und ERP-Teams mit <strong>BMD NTCS</strong>, <strong>RZL</strong>, <strong>DATEV Österreich</strong>, <strong> Mesonic WinLine</strong>, <strong>SAP</strong> und <strong>Odoo</strong>. Prüfen Sie <code>ATU</code>-Umsatzsteuer-IDs sowie 20-stellige <code>AT</code>-IBANs für <strong>Erste Bank / Sparkasse (George Business / Telebanking Pro), Raiffeisen (Mein ELBA / Infinity), UniCredit Bank Austria und BAWAG</strong> direkt im Browser.</p>
     </section>
 
     <section class="sandbox-card" style="margin-bottom:24px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-        <h2 style="margin:0;font-size:1.14rem;">1. Interaktiver Österreich-Validator: `ATU-UID` (`Luhn+4`) &amp; `AT-IBAN` (`BLZ` + `MOD-97`)</h2>
+        <h2 style="margin:0;font-size:1.14rem;">1. Interaktiver Österreich-Validator: <code>ATU-UID</code> (<code>Luhn+4</code>) &amp; <code>AT-IBAN</code> (<code>BLZ</code> + <code>MOD-97</code>)</h2>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadAtPreset('erste')">Erste Bank Wien + Gültige ATU</button>
           <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadAtPreset('raiff')">Raiffeisen + Gültige ATU</button>
@@ -139,11 +139,11 @@
 
       <div class="at-grid">
         <div class="at-field">
-          <label for="atUid">Österreichische UID-Nummer (`ATU` + 8 Ziffern)</label>
+          <label for="atUid">Österreichische UID-Nummer (<code>ATU</code> + 8 Ziffern)</label>
           <input id="atUid" type="text" value="ATU10223006" oninput="runAtAudit()" />
         </div>
         <div class="at-field">
-          <label for="atIban">Österreichische IBAN (`AT` + 18 Ziffern)</label>
+          <label for="atIban">Österreichische IBAN (<code>AT</code> + 18 Ziffern)</label>
           <input id="atIban" type="text" value="AT832011182912345678" oninput="runAtAudit()" />
         </div>
         <div class="at-field">
@@ -175,12 +175,12 @@
         </div>
       </div>
 
-      <h3 style="font-size:0.95rem;margin:14px 0 8px;">Fertiger Cloud-API Payload (`SEPA pain.001.001.09` + `Peppol 9914` + `DATEV EXTF`)</h3>
+      <h3 style="font-size:0.95rem;margin:14px 0 8px;">Fertiger Cloud-API Payload (<code>SEPA pain.001.001.09</code> + <code>Peppol 9914</code> + <code>DATEV EXTF</code>)</h3>
       <pre id="atJson" style="background:#090f1d;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;font-size:0.81rem;color:#a7f3d0;"></pre>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
-        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">SEPA `pain.001.001.09` XML Generieren &rarr;</a>
-        <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Peppol `9914` / B2G E-Rechnung XML &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">SEPA <code>pain.001.001.09</code> XML Generieren &rarr;</a>
+        <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Peppol <code>9914</code> / B2G E-Rechnung XML &rarr;</a>
         <a class="btn btn-outline" href="https://apify.com/finops_studio/datev-buchungsstapel-generator" target="_blank" rel="noopener">DATEV Buchungsstapel CSV API &rarr;</a>
         <a class="btn btn-outline" href="./sepa-xml-peppol-ehf-finvoice-austria-nordics.html">Österreich &amp; Nordics Übersicht</a>
       </div>

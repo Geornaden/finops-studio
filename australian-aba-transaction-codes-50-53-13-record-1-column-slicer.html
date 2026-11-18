@@ -65,7 +65,7 @@
         <a href="./aba-cemtex-file-generator.html">ABA Sandbox</a>
         <a href="./xero-myob-csv-to-australian-aba-commbiz-nab-westpac-anz.html">Xero/MYOB &rarr; ABA</a>
         <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Free BSB Checker</a>
-        <a class="btn btn-primary" href="https://apify.com/finops_studio/aba-cemtex-file-generator" target="_blank" rel="noopener">Launch Live ABA API &rarr;</a>
+        <a class="btn btn-primary" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html#directCheckoutBar">&#128179; Unlock $9 Pass &rarr;</a>
       </nav>
     </div>
   </header>
@@ -128,7 +128,7 @@
     <div class="grid-2" style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
       <div class="sandbox-card">
         <span class="tag">Production Cloud API ($0/mo + $0.02/row)</span>
-        <h3 style="margin:10px 0 8px;">Generate 120-Char `.ABA` Batches via HTTP POST</h3>
+        <h3 style="margin:10px 0 8px;">Generate 120-Char <code>.ABA</code> Batches via HTTP POST</h3>
         <p style="color:var(--muted);font-size:0.88rem;">Validates <code>NNN-NNN</code> BSBs, formats right-justified 9-character account numbers, builds optional Code <code>13</code> self-balancing rows, and reconciles Record <code>7</code> to the exact cent:</p>
         <pre class="code-box" style="font-size:0.76rem;min-height:225px;">curl -X POST "https://api.apify.com/v2/acts/finops_studio~aba-cemtex-file-generator/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
   -H "Content-Type: application/json" \
@@ -156,7 +156,7 @@
 
       <div class="sandbox-card">
         <span class="tag">Official MCP Registry (#1 Global Rank)</span>
-        <h3 style="margin:10px 0 8px;">Top 4 `.ABA` Upload Rejections Prevented Automatically</h3>
+        <h3 style="margin:10px 0 8px;">Top 4 <code>.ABA</code> Upload Rejections Prevented Automatically</h3>
         <ul style="color:var(--muted);font-size:0.85rem;line-height:1.55;margin-top:6px;">
           <li><strong>Missing Trailing Spaces:</strong> Excel/Notepad strips trailing spaces on <code>Record 0</code> &amp; <code>Record 7</code>, shrinking lines from <code>120</code> to <code>80</code> chars.</li>
           <li><strong>Missing BSB Hyphen:</strong> Passing <code>082140</code> instead of <code>082-140</code> shifts columns <code>09–120</code> left by 1 byte.</li>
@@ -175,13 +175,13 @@
     </div>
 
     <section style="margin-top:28px;">
-      <h2 class="section-title">Frequently Asked Australian `.ABA` Direct Entry Questions</h2>
+      <h2 class="section-title">Frequently Asked Australian <code>.ABA</code> Direct Entry Questions</h2>
       <div class="faq-item">
         <h4>Should I use Transaction Code 50 or 53 for Australian payroll vs contractor invoices?</h4>
         <p>Use <code>53</code> (<em>Pay</em>) for employee wages and salaries (TFN payroll runs), and <code>50</code> (<em>Externally Initiated Credit</em>) for ABN supplier invoices, contractor bills, superannuation clearing house transfers, and expense reimbursements.</p>
       </div>
       <div class="faq-item">
-        <h4>What APCA User ID (`apcaUserId`) do I use if my business uploads via NetBank or CommBiz web banking?</h4>
+        <h4>What APCA User ID (<code>apcaUserId</code>) do I use if my business uploads via NetBank or CommBiz web banking?</h4>
         <p>Commonwealth Bank NetBank business uploads commonly accept generic APCA ID <code>301500</code>, whereas Direct Entry facility holders (CommBiz DE, NAB Connect DE, Westpac Corporate Online, ANZ Transactive) enter their bank-issued 6-digit APCA Direct Entry User ID in columns <code>57–62</code> of Record <code>0</code>.</p>
       </div>
     </section>

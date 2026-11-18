@@ -107,14 +107,14 @@
 
   <main class="container">
     <section class="hero" style="padding-bottom:12px;">
-      <span class="pill">&#127470;&#127481; Tesoreria Corporate Italia &bull; Partita IVA (Luhn) &bull; IBAN IT (`CIN` ABI/CAB) &bull; Peppol `0211`</span>
-      <h1>Validatore Interattivo `Partita IVA`, `IBAN IT` (`CIN` + `MOD-97`) &amp; Generatore API SEPA CBI / Peppol</h1>
-      <p style="max-width:830px;margin:0 auto;">Verifica istantaneamente nel tuo browser la <strong>Partita IVA italiana a 11 cifre</strong>, il carattere di controllo nazionale <strong>`CIN` + `ABI / CAB`</strong> dell'IBAN italiano a 27 caratteri e genera il payload 2026 per <strong>bonifici SEPA `pain.001.001.09`</strong> (Inbiz Intesa Sanpaolo, UniCredit, Banco BPM, BPER) e <strong>Peppol BIS 3.0 (`EAS 0211`)</strong>.</p>
+      <span class="pill">&#127470;&#127481; Tesoreria Corporate Italia &bull; Partita IVA (Luhn) &bull; IBAN IT (<code>CIN</code> ABI/CAB) &bull; Peppol <code>0211</code></span>
+      <h1>Validatore Interattivo <code>Partita IVA</code>, <code>IBAN IT</code> (<code>CIN</code> + <code>MOD-97</code>) &amp; Generatore API SEPA CBI / Peppol</h1>
+      <p style="max-width:830px;margin:0 auto;">Verifica istantaneamente nel tuo browser la <strong>Partita IVA italiana a 11 cifre</strong>, il carattere di controllo nazionale <strong><code>CIN</code> + <code>ABI / CAB</code></strong> dell'IBAN italiano a 27 caratteri e genera il payload 2026 per <strong>bonifici SEPA <code>pain.001.001.09</code></strong> (Inbiz Intesa Sanpaolo, UniCredit, Banco BPM, BPER) e <strong>Peppol BIS 3.0 (<code>EAS 0211</code>)</strong>.</p>
     </section>
 
     <section class="sandbox-card" aria-label="Validatore Partita IVA e IBAN Italiano">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-        <h2 style="margin:0;font-size:1.14rem;">Controllo `Partita IVA` + `IBAN IT (CIN)` &amp; Costruttore Flusso SEPA 2026</h2>
+        <h2 style="margin:0;font-size:1.14rem;">Controllo <code>Partita IVA</code> + <code>IBAN IT (CIN)</code> &amp; Costruttore Flusso SEPA 2026</h2>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button type="button" class="btn btn-outline" onclick="loadItPreset('intesa')">Esempio Intesa Sanpaolo</button>
           <button type="button" class="btn btn-outline" onclick="loadItPreset('unicredit')">Esempio UniCredit</button>
@@ -123,11 +123,11 @@
 
       <div class="it-form">
         <div>
-          <label style="font-size:0.8rem;color:var(--muted);">Partita IVA Italiana (11 cifre, con o senza `IT`)</label>
+          <label style="font-size:0.8rem;color:var(--muted);">Partita IVA Italiana (11 cifre, con o senza <code>IT</code>)</label>
           <input id="itPiva" type="text" value="IT00799960158" oninput="auditItalianEntity()" />
         </div>
         <div>
-          <label style="font-size:0.8rem;color:var(--muted);">IBAN Italiano (`27 caratteri: ITkk C AAAAA BBBBB ...`)</label>
+          <label style="font-size:0.8rem;color:var(--muted);">IBAN Italiano (<code>27 caratteri: ITkk C AAAAA BBBBB ...</code>)</label>
           <input id="itIban" type="text" value="IT60X0542811101000000123456" oninput="auditItalianEntity()" />
         </div>
         <div>
@@ -142,7 +142,7 @@
 
       <div id="itSummary" class="it-grid" aria-live="polite"></div>
 
-      <h3 style="margin:14px 0 8px;font-size:1rem;">Payload JSON SEPA `pain.001.001.09` Conforme EPC Novembre 2026 (`Zero Scarti BE04`):</h3>
+      <h3 style="margin:14px 0 8px;font-size:1rem;">Payload JSON SEPA <code>pain.001.001.09</code> Conforme EPC Novembre 2026 (<code>Zero Scarti BE04</code>):</h3>
       <pre id="itPayload" class="code-box" style="min-height:180px;"></pre>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button type="button" class="btn btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('itPayload').textContent)">Copia Payload JSON</button>

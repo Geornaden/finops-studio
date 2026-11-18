@@ -107,14 +107,14 @@
 
   <main class="container">
     <section class="hero" style="padding-bottom:12px;">
-      <span class="pill">&#127475;&#127473; Nederland Zakelijk Bankieren &amp; E-Facturatie &bull; ING / Rabobank / ABN AMRO &bull; Peppol KVK `0106`</span>
-      <h1>Nederland SEPA XML (`pain.001.001.09`) &amp; Peppol Simplerinvoicing (`KVK 0106` / `NL BTW`) API Playbook</h1>
-      <p style="max-width:830px;margin:0 auto;">Controleer direct Nederlandse <strong>KVK-nummers (`0106`)</strong>, <strong>BTW-identificatienummers (`NL...B01` MOD-97)</strong> en <strong>NL IBAN-rekeningen</strong>, en genereer kant-en-klare 2026 SEPA verzamelbetalingen en Peppol BIS 3.0 UBL-facturen vanuit Exact Online, AFAS, Twinfield, Odoo of n8n.</p>
+      <span class="pill">&#127475;&#127473; Nederland Zakelijk Bankieren &amp; E-Facturatie &bull; ING / Rabobank / ABN AMRO &bull; Peppol KVK <code>0106</code></span>
+      <h1>Nederland SEPA XML (<code>pain.001.001.09</code>) &amp; Peppol Simplerinvoicing (<code>KVK 0106</code> / <code>NL BTW</code>) API Playbook</h1>
+      <p style="max-width:830px;margin:0 auto;">Controleer direct Nederlandse <strong>KVK-nummers (<code>0106</code>)</strong>, <strong>BTW-identificatienummers (<code>NL...B01</code> MOD-97)</strong> en <strong>NL IBAN-rekeningen</strong>, en genereer kant-en-klare 2026 SEPA verzamelbetalingen en Peppol BIS 3.0 UBL-facturen vanuit Exact Online, AFAS, Twinfield, Odoo of n8n.</p>
     </section>
 
     <section class="sandbox-card" aria-label="Interactieve Nederlandse KVK, BTW en IBAN Validator">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-        <h2 style="margin:0;font-size:1.14rem;">Interactieve `KVK 0106` + `NL BTW-id` + `NL IBAN` Checker &amp; API Builder</h2>
+        <h2 style="margin:0;font-size:1.14rem;">Interactieve <code>KVK 0106</code> + <code>NL BTW-id</code> + <code>NL IBAN</code> Checker &amp; API Builder</h2>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button type="button" class="btn btn-outline" onclick="loadNlPreset('abn')">Voorbeeld ABN AMRO B.V.</button>
           <button type="button" class="btn btn-outline" onclick="loadNlPreset('ing')">Voorbeeld ING Zakelijk</button>
@@ -124,15 +124,15 @@
 
       <div class="nl-form">
         <div>
-          <label style="font-size:0.8rem;color:var(--muted);">8-Cijferig KVK-nummer (`EAS 0106`)</label>
+          <label style="font-size:0.8rem;color:var(--muted);">8-Cijferig KVK-nummer (<code>EAS 0106</code>)</label>
           <input id="nlKvk" type="text" value="34334259" oninput="auditDutchEntity()" />
         </div>
         <div>
-          <label style="font-size:0.8rem;color:var(--muted);">NL BTW-identificatienummer (`NL999999999B01`)</label>
+          <label style="font-size:0.8rem;color:var(--muted);">NL BTW-identificatienummer (<code>NL999999999B01</code>)</label>
           <input id="nlBtw" type="text" value="NL004495445B01" oninput="auditDutchEntity()" />
         </div>
         <div>
-          <label style="font-size:0.8rem;color:var(--muted);">Nederlands IBAN (`18 tekens`)</label>
+          <label style="font-size:0.8rem;color:var(--muted);">Nederlands IBAN (<code>18 tekens</code>)</label>
           <input id="nlIban" type="text" value="NL91ABNA0417164300" oninput="auditDutchEntity()" />
         </div>
         <div>
@@ -143,7 +143,7 @@
 
       <div id="nlSummary" class="nl-grid" aria-live="polite"></div>
 
-      <h3 style="margin:14px 0 8px;font-size:1rem;">2026 EPC Gestructureerde SEPA `pain.001.001.09` API Payload (`ING` / `Rabobank` / `ABN AMRO`):</h3>
+      <h3 style="margin:14px 0 8px;font-size:1rem;">2026 EPC Gestructureerde SEPA <code>pain.001.001.09</code> API Payload (<code>ING</code> / <code>Rabobank</code> / <code>ABN AMRO</code>):</h3>
       <pre id="nlPayload" class="code-box" style="min-height:180px;"></pre>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button type="button" class="btn btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('nlPayload').textContent)">Kopieer JSON Payload</button>

@@ -122,13 +122,13 @@
   <main class="container">
     <section class="hero" style="padding-bottom:14px;">
       <span class="pill">&#127477;&#127473; Polska KSeF 2.0 (API v2.9) &bull; Walidacja NIP MOD-11 &bull; IBAN PL 28 Znaków &bull; SEPA XML &amp; Peppol 9945</span>
-      <h1>Polska Automatyzacja Finansowa 2026: Walidator `NIP`, `IBAN PL` (NRB) oraz Generator `SEPA pain.001` &amp; `Peppol 9945`</h1>
+      <h1>Polska Automatyzacja Finansowa 2026: Walidator <code>NIP</code>, <code>IBAN PL</code> (NRB) oraz Generator <code>SEPA pain.001</code> &amp; <code>Peppol 9945</code></h1>
       <p style="max-width:860px;margin:0 auto;">Zaprojektowany dla polskich dyrektorów finansowych (CFO), biur rachunkowych oraz zespołów ERP (<strong>Comarch ERP Optima / XL</strong>, <strong>Symfonia</strong>, <strong>enova365</strong>, <strong>Insert Subiekt / Rewizor</strong>, <strong>SAP S/4HANA</strong>). Zweryfikuj w przeglądarce sumę kontrolną <strong>10-cyfrowego NIP</strong> oraz <strong>28-znakowego rachunku IBAN PL</strong> przed wysyłką faktury do <strong>KSeF 2.0 / Peppol</strong> lub paczki przelewów SEPA do <strong>PKO BP iPKO biznes, mBank CompanyNet, ING Business, Santander iBiznes24 czy Banku Pekao Biznes24</strong>.</p>
     </section>
 
     <section class="sandbox-card" style="margin-bottom:24px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-        <h2 style="margin:0;font-size:1.14rem;">1. Interaktywny Walidator NIP (`6-5-7-2-3-4-5-6-7` MOD-11) &amp; IBAN PL (`NRB` + Rozpoznawanie Banku NBP)</h2>
+        <h2 style="margin:0;font-size:1.14rem;">1. Interaktywny Walidator NIP (<code>6-5-7-2-3-4-5-6-7</code> MOD-11) &amp; IBAN PL (<code>NRB</code> + Rozpoznawanie Banku NBP)</h2>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="loadPlPreset('pkobp')">Przykład PKO BP + Poprawny NIP</button>
           <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;" onclick="loadPlPreset('mbank')">Przykład mBank + Poprawny NIP</button>
@@ -174,11 +174,11 @@
         </div>
       </div>
 
-      <h3 style="font-size:0.95rem;margin:14px 0 8px;">Gotowy Ładunek API JSON (`SEPA pain.001.001.09` + `Peppol BIS 3.0`)</h3>
+      <h3 style="font-size:0.95rem;margin:14px 0 8px;">Gotowy Ładunek API JSON (<code>SEPA pain.001.001.09</code> + <code>Peppol BIS 3.0</code>)</h3>
       <pre id="plPayload" style="background:#090f1d;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;font-size:0.81rem;color:#a7f3d0;"></pre>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
-        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generuj SEPA XML (`pain.001.001.09`) w Chmurze &rarr;</a>
+        <a class="btn btn-primary" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html#directCheckoutBar">&#128179; Unlock $9 Instant Pass &rarr;</a>
         <a class="btn btn-outline" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Generuj E-Fakturę Peppol 9945 UBL XML &rarr;</a>
         <a class="btn btn-outline" href="https://rapidapi.com/Geornaden/api/corporate-banking-sepa-iban-nacha-aba-and-vat-validator" target="_blank" rel="noopener">Walidacja IBAN &amp; VAT w &lt;10ms (RapidAPI) &rarr;</a>
         <a class="btn btn-outline" href="./free-sepa-xml-pain001-xsd-be04-validator.html">Darmowy Audytor Plików SEPA XML</a>

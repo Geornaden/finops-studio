@@ -669,7 +669,7 @@ async function handleMcpCallTool(name, args = {}) {
           text:
             `Cloud API key not configured (set FINOPS_PASS_KEY or APIFY_TOKEN).\n\n` +
             `To run ${cloudTool.name} in production:\n` +
-            `1. Instant No-Signup Pass ($9 24h Unlimited / $29 30d Pro via PayPal or Card): https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html — set FINOPS_PASS_KEY=fop_... in your MCP env.\n` +
+            `1. Instant No-Signup Pass ($9 24h Unlimited / $29 30d Pro via Instant Checkout): https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html — set FINOPS_PASS_KEY=fop_... in your MCP env.\n` +
             `2. Apify Cloud (Paid Plan Pay-Per-Use): https://apify.com/${cloudTool.slug.replace('~', '/')} — set APIFY_TOKEN in your MCP env.\n` +
             `3. Hosted Remote MCP Subscriptions: https://mcprush.com/geornaden-2/finops-studio-banking-payroll-e-invoicing-mcp`
         }
@@ -840,7 +840,7 @@ if (cmd === 'mcp' || cmd === '--mcp') {
   const token = (process.env.APIFY_TOKEN || '').trim();
   const entry = TOOLS.find((t) => t[0] === toolKey);
   if (!entry || !payloadPath) {
-    console.error('Usage: FINOPS_PASS_KEY=fop_... npx finops-studio run <tool> <payload.json> [--out ./output.xml]');
+    console.error('Usage: FINOPS_PASS_KEY=fop_... npx -y github:Geornaden/finops-studio run <tool> <payload.json> [--out ./output.xml]');
     console.error('Tools: ' + TOOLS.map((t) => t[0]).join(', '));
     process.exit(1);
   }
@@ -893,10 +893,10 @@ if (cmd === 'mcp' || cmd === '--mcp') {
     console.log(`  ${key.padEnd(14)} ${link.padEnd(58)} — ${desc}`);
   }
   console.log('\nCommands:');
-  console.log('  npx finops-studio mcp                # Start local stdio MCP server');
-  console.log('  npx finops-studio list');
-  console.log('  npx finops-studio doctor ./batch.csv');
-  console.log('  npx finops-studio mcp-config');
-  console.log('  npx finops-studio openapi');
-  console.log('  FINOPS_PASS_KEY=fop_... npx finops-studio run sepa ./payload.json --out ./sepa.xml');
+  console.log('  npx -y github:Geornaden/finops-studio mcp                # Start local stdio MCP server');
+  console.log('  npx -y github:Geornaden/finops-studio list');
+  console.log('  npx -y github:Geornaden/finops-studio doctor ./batch.csv');
+  console.log('  npx -y github:Geornaden/finops-studio mcp-config');
+  console.log('  npx -y github:Geornaden/finops-studio openapi');
+  console.log('  FINOPS_PASS_KEY=fop_... npx -y github:Geornaden/finops-studio run sepa ./payload.json --out ./sepa.xml');
 }

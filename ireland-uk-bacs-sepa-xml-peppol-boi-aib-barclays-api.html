@@ -121,14 +121,14 @@
 
   <main class="container">
     <section class="hero" style="padding-bottom:14px;">
-      <span class="pill">&#127470;&#127466; &#127468;&#127463; Ireland &amp; UK Dual-Rail Treasury &bull; `IE` VAT MOD-23 &bull; `BOI / AIB` SEPA `pain.001` &bull; `UK BACS 18` &amp; `Peppol 9935`</span>
-      <h1>Ireland &amp; UK Cross-Border Treasury Playbook: `IE` VAT (`MOD-23`), `IE / GB` IBAN &amp; Sort Code, `SEPA pain.001.001.09` &amp; `UK BACS Standard 18`</h1>
-      <p style="max-width:860px;margin:0 auto;">Built for Dublin, Cork, Belfast, London, and Manchester shared-service finance teams running <strong>Xero</strong>, <strong>Sage Intacct</strong>, <strong>BrightPay</strong>, <strong>NetSuite</strong>, and <strong>SAP</strong>. Validate Irish Revenue `IE` VAT checksums (`MOD-23`), UK HMRC `GB` VAT numbers (`MOD-97`), 6-digit Irish/UK Sort Codes, and `IE`/`GB` IBANs for <strong>Bank of Ireland (Business On Line), AIB (iBusiness Banking), Barclays, NatWest, HSBC UK, and Lloyds</strong> locally in your browser.</p>
+      <span class="pill">&#127470;&#127466; &#127468;&#127463; Ireland &amp; UK Dual-Rail Treasury &bull; <code>IE</code> VAT MOD-23 &bull; <code>BOI / AIB</code> SEPA <code>pain.001</code> &bull; <code>UK BACS 18</code> &amp; <code>Peppol 9935</code></span>
+      <h1>Ireland &amp; UK Cross-Border Treasury Playbook: <code>IE</code> VAT (<code>MOD-23</code>), <code>IE / GB</code> IBAN &amp; Sort Code, <code>SEPA pain.001.001.09</code> &amp; <code>UK BACS Standard 18</code></h1>
+      <p style="max-width:860px;margin:0 auto;">Built for Dublin, Cork, Belfast, London, and Manchester shared-service finance teams running <strong>Xero</strong>, <strong>Sage Intacct</strong>, <strong>BrightPay</strong>, <strong>NetSuite</strong>, and <strong>SAP</strong>. Validate Irish Revenue <code>IE</code> VAT checksums (<code>MOD-23</code>), UK HMRC <code>GB</code> VAT numbers (<code>MOD-97</code>), 6-digit Irish/UK Sort Codes, and <code>IE</code>/<code>GB</code> IBANs for <strong>Bank of Ireland (Business On Line), AIB (iBusiness Banking), Barclays, NatWest, HSBC UK, and Lloyds</strong> locally in your browser.</p>
     </section>
 
     <section class="sandbox-card" style="margin-bottom:24px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-        <h2 style="margin:0;font-size:1.14rem;">1. Interactive Ireland &amp; UK Dual-Rail Validator (`IE` MOD-23 / `GB` MOD-97 + IBAN &amp; Sort Code Router)</h2>
+        <h2 style="margin:0;font-size:1.14rem;">1. Interactive Ireland &amp; UK Dual-Rail Validator (<code>IE</code> MOD-23 / <code>GB</code> MOD-97 + IBAN &amp; Sort Code Router)</h2>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadIeUkPreset('boi')">Bank of Ireland (EUR SEPA + IE VAT)</button>
           <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:0.8rem;" onclick="loadIeUkPreset('aib')">AIB Dublin (2-Letter IE VAT)</button>
@@ -139,11 +139,11 @@
 
       <div class="ie-grid">
         <div class="ie-field">
-          <label for="iuVat">Irish (`IE`) or UK (`GB`) VAT Number</label>
+          <label for="iuVat">Irish (<code>IE</code>) or UK (<code>GB</code>) VAT Number</label>
           <input id="iuVat" type="text" value="IE6388047V" oninput="runIeUkAudit()" />
         </div>
         <div class="ie-field">
-          <label for="iuIban">Beneficiary `IE` or `GB` IBAN (22 Chars)</label>
+          <label for="iuIban">Beneficiary <code>IE</code> or <code>GB</code> IBAN (22 Chars)</label>
           <input id="iuIban" type="text" value="IE70BOFI90001712345678" oninput="runIeUkAudit()" />
         </div>
         <div class="ie-field">
@@ -178,12 +178,12 @@
         </div>
       </div>
 
-      <h3 style="font-size:0.95rem;margin:14px 0 8px;">Ready-to-Call Cloud API Payload (`SEPA pain.001.001.09` / `UK BACS Standard 18` + `Peppol 9935`)</h3>
+      <h3 style="font-size:0.95rem;margin:14px 0 8px;">Ready-to-Call Cloud API Payload (<code>SEPA pain.001.001.09</code> / <code>UK BACS Standard 18</code> + <code>Peppol 9935</code>)</h3>
       <pre id="iuJson" style="background:#090f1d;border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;font-size:0.81rem;color:#a7f3d0;"></pre>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
-        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generate SEPA `pain.001.001.09` XML &rarr;</a>
-        <a class="btn btn-primary" href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Generate UK `BACS Standard 18` File &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Generate SEPA <code>pain.001.001.09</code> XML &rarr;</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/uk-bacs-standard18-generator" target="_blank" rel="noopener">Generate UK <code>BACS Standard 18</code> File &rarr;</a>
         <a class="btn btn-outline" href="https://mcprush.com/geornaden-2/finops-corporate-treasury-sepa-nacha-bacs-bai2-pa" target="_blank" rel="noopener">Install Treasury Pack on MCPRush &rarr;</a>
         <a class="btn btn-outline" href="https://rapidapi.com/user/Geornaden" target="_blank" rel="noopener">Subscribe on RapidAPI Hub &rarr;</a>
       </div>
@@ -192,9 +192,9 @@
     <section class="sandbox-card" style="margin-bottom:28px;">
       <h2 style="margin-top:0;font-size:1.12rem;">2. Cross-Border Ireland &harr; UK Treasury Guardrails (Post-Brexit EPC Non-EEA SEPA &amp; BACS Rules)</h2>
       <ul style="line-height:1.7;color:var(--muted);padding-left:20px;">
-        <li><strong style="color:var(--text);">Non-EEA SEPA Structured Address Rule for `GB` IBANs in EUR:</strong> Because the United Kingdom is a non-EEA SEPA jurisdiction, Bank of Ireland and AIB reject EUR `pain.001.001.09` batches paying `GB` IBANs unless both Debtor/Creditor BIC and structured `&lt;PstlAdr&gt;` (`&lt;TwnNm&gt;` + `&lt;Ctry&gt;GB&lt;/Ctry&gt;`) are populated.</li>
-        <li><strong style="color:var(--text);">Pay.UK `BACS Standard 18` 100-Byte Fixed Width:</strong> Domestic GBP payroll (`Transaction Code 99`) and supplier credits across Barclays, NatWest Bankline, HSBCnet, and Lloyds Commercial require strict 6-digit Sort Code + 8-digit Account formatting (`VOL1` / `HDR1` / `UHL1` Julian `bYYDDD` processing dates and `UTL1` cent-exact contra trailers) — test existing files free in our <a href="./free-uk-bacs-standard-18-file-validator.html">UK BACS Standard 18 File Validator</a>.</li>
-        <li><strong style="color:var(--text);">Irish Public Sector &amp; B2B Peppol `9935` Modernization:</strong> Irish government bodies (OGP / HSE) and Irish Revenue VAT-registered suppliers route EN 16931 UBL 2.1 e-invoices via `9935:IE...` — validate XML locally in our <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Peppol &amp; EN 16931 XML Builder &amp; Validator</a> or automate in Claude/Cursor via our <a href="./claude-code-cursor-windsurf-banking-peppol-mcp-skills.html">AI Agent MCP &amp; Skill Pack Hub</a>.</li>
+        <li><strong style="color:var(--text);">Non-EEA SEPA Structured Address Rule for <code>GB</code> IBANs in EUR:</strong> Because the United Kingdom is a non-EEA SEPA jurisdiction, Bank of Ireland and AIB reject EUR <code>pain.001.001.09</code> batches paying <code>GB</code> IBANs unless both Debtor/Creditor BIC and structured <code>&lt;PstlAdr&gt;</code> (<code>&lt;TwnNm&gt;</code> + <code>&lt;Ctry&gt;GB&lt;/Ctry&gt;</code>) are populated.</li>
+        <li><strong style="color:var(--text);">Pay.UK <code>BACS Standard 18</code> 100-Byte Fixed Width:</strong> Domestic GBP payroll (<code>Transaction Code 99</code>) and supplier credits across Barclays, NatWest Bankline, HSBCnet, and Lloyds Commercial require strict 6-digit Sort Code + 8-digit Account formatting (<code>VOL1</code> / <code>HDR1</code> / <code>UHL1</code> Julian <code>bYYDDD</code> processing dates and <code>UTL1</code> cent-exact contra trailers) — test existing files free in our <a href="./free-uk-bacs-standard-18-file-validator.html">UK BACS Standard 18 File Validator</a>.</li>
+        <li><strong style="color:var(--text);">Irish Public Sector &amp; B2B Peppol <code>9935</code> Modernization:</strong> Irish government bodies (OGP / HSE) and Irish Revenue VAT-registered suppliers route EN 16931 UBL 2.1 e-invoices via <code>9935:IE...</code> — validate XML locally in our <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Peppol &amp; EN 16931 XML Builder &amp; Validator</a> or automate in Claude/Cursor via our <a href="./claude-code-cursor-windsurf-banking-peppol-mcp-skills.html">AI Agent MCP &amp; Skill Pack Hub</a>.</li>
       </ul>
     </section>
   </main>

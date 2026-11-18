@@ -99,19 +99,19 @@
 
   <main class="container">
     <section class="hero" style="padding-bottom:12px;">
-      <span class="pill">&#127482;&#127480; US Treasury, Real Estate Escrow &amp; Core Banking &bull; Fedwire FAIM &rarr; ISO 20022 `pacs.008`</span>
-      <h1>Legacy Fedwire FAIM (`{1500}`–`{6500}`) to ISO 20022 `pacs.008.001.08` XPath Mapping Guide &amp; Converter</h1>
-      <p style="max-width:830px;margin:0 auto;">Migrating real estate title/escrow software, ERP wire modules, or bank middleware off legacy Federal Reserve FAIM `{tag}` strings? Search every FAIM tag below or paste a raw `{1500}...{6000}` wire to unpack it into a clean ISO 20022 `pacs.008` API payload.</p>
+      <span class="pill">&#127482;&#127480; US Treasury, Real Estate Escrow &amp; Core Banking &bull; Fedwire FAIM &rarr; ISO 20022 <code>pacs.008</code></span>
+      <h1>Legacy Fedwire FAIM (<code>{1500}</code>–<code>{6500}</code>) to ISO 20022 <code>pacs.008.001.08</code> XPath Mapping Guide &amp; Converter</h1>
+      <p style="max-width:830px;margin:0 auto;">Migrating real estate title/escrow software, ERP wire modules, or bank middleware off legacy Federal Reserve FAIM <code>{tag}</code> strings? Search every FAIM tag below or paste a raw <code>{1500}...{6000}</code> wire to unpack it into a clean ISO 20022 <code>pacs.008</code> API payload.</p>
     </section>
 
     <!-- INTERACTIVE FAIM STRING UNPACKER -->
     <section class="sandbox-card" aria-label="Interactive FAIM Wire String Unpacker">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-        <h2 style="margin:0;font-size:1.14rem;">Interactive Legacy FAIM `{tag}` String &rarr; `pacs.008` JSON Unpacker</h2>
+        <h2 style="margin:0;font-size:1.14rem;">Interactive Legacy FAIM <code>{tag}</code> String &rarr; <code>pacs.008</code> JSON Unpacker</h2>
         <button type="button" class="btn btn-outline" onclick="loadSampleFaim()">Load Sample Escrow Closing Wire</button>
       </div>
       <textarea id="faimInput" class="code-box" rows="5" style="width:100%;font-family:monospace;" oninput="convertFaimToPacs()"></textarea>
-      <p style="color:var(--muted);font-size:0.86rem;margin:10px 0 6px;">Mapped ISO 20022 `pacs.008.001.08` Payload + USABA Checksum Audit:</p>
+      <p style="color:var(--muted);font-size:0.86rem;margin:10px 0 6px;">Mapped ISO 20022 <code>pacs.008.001.08</code> Payload + USABA Checksum Audit:</p>
       <pre id="faimJsonOut" class="code-box" style="min-height:190px;"></pre>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
         <button type="button" class="btn btn-primary" onclick="navigator.clipboard.writeText(document.getElementById('faimJsonOut').textContent)">Copy Mapped JSON</button>
@@ -122,7 +122,7 @@
 
     <!-- SEARCHABLE XPATH DICTIONARY -->
     <section class="sandbox-card" style="margin-top:24px;">
-      <h2 style="margin-top:0;">Searchable Fedwire FAIM `{Tag}` &rarr; ISO 20022 XPath Dictionary</h2>
+      <h2 style="margin-top:0;">Searchable Fedwire FAIM <code>{Tag}</code> &rarr; ISO 20022 XPath Dictionary</h2>
       <input id="faimSearch" type="text" class="search-bar-faim" placeholder="Filter by FAIM tag (e.g. 2000, 3100, 3400, 3600, 4200, 5000, 6000, IMAD, UETR)..." oninput="renderFaimTable()" />
       <div class="map-table-wrap">
         <table class="map-tbl">
@@ -130,7 +130,7 @@
             <tr>
               <th>Legacy FAIM Tag</th>
               <th>Field Name</th>
-              <th>ISO 20022 `head.001` / `pacs.008.001.08` Target XPath</th>
+              <th>ISO 20022 <code>head.001</code> / <code>pacs.008.001.08</code> Target XPath</th>
               <th>2026 Migration Rule</th>
             </tr>
           </thead>

@@ -50,16 +50,16 @@
       <nav class="nav-links">
         <a href="https://github.com/Geornaden/finops-studio/tree/main/cookbook" target="_blank" rel="noopener">GitHub /cookbook</a>
         <a href="./index.html">All 10 Banking APIs</a>
-        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Get Free API Token ($0/mo) &rarr;</a>
+        <a class="btn btn-primary" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html#directCheckoutBar">&#128179; Unlock $9 Pass &rarr;</a>
       </nav>
     </div>
   </header>
 
   <main class="container">
     <section class="hero">
-      <span class="pill">Developer SDK Cookbook &bull; Python 3 &bull; Node.js 20+ &bull; CLI (`npx`) &bull; Zero Dependencies</span>
-      <h1>Python &amp; Node.js Recipes for Bank-Grade SEPA XML, NACHA `.ach`, BAI2, Peppol &amp; DATEV</h1>
-      <p>Stop maintaining brittle fixed-width column offsets, floating-point `CtrlSum` bugs, and annual ISO 20022 / EPC schema migrations inside your app codebase. Drop these 35-line standard-library scripts into your backend, Airflow DAG, or cron job for <strong>$0/month + $0.02/row</strong>.</p>
+      <span class="pill">Developer SDK Cookbook &bull; Python 3 &bull; Node.js 20+ &bull; CLI (<code>npx</code>) &bull; Zero Dependencies</span>
+      <h1>Python &amp; Node.js Recipes for Bank-Grade SEPA XML, NACHA <code>.ach</code>, BAI2, Peppol &amp; DATEV</h1>
+      <p>Stop maintaining brittle fixed-width column offsets, floating-point <code>CtrlSum</code> bugs, and annual ISO 20022 / EPC schema migrations inside your app codebase. Drop these 35-line standard-library scripts into your backend, Airflow DAG, or cron job for <strong>$0/month + $0.02/row</strong>.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Cloud APIs on Apify &rarr;</a>
         <a class="btn btn-outline" href="./cookbook/csv_to_sepa_pain001.mjs" download>csv_to_sepa_pain001.mjs &darr;</a>
@@ -72,10 +72,10 @@
     <!-- Recipe 1: Node.js SEPA XML -->
     <section class="sandbox-card" style="margin-bottom:20px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-        <h2 style="margin:0;">1. Node.js 20+ — Generate 2026 ISO 20022 SEPA XML (`pain.001.001.09`)</h2>
+        <h2 style="margin:0;">1. Node.js 20+ — Generate 2026 ISO 20022 SEPA XML (<code>pain.001.001.09</code>)</h2>
         <a class="btn btn-outline" href="./cookbook/csv_to_sepa_pain001.mjs" download>Download .mjs</a>
       </div>
-      <p style="color:var(--muted);font-size:0.9rem;">Validates every European IBAN via MOD-97, enforces 2026 EPC structured addresses (eliminating `BE04` bank rejections), and outputs ready-to-upload XML:</p>
+      <p style="color:var(--muted);font-size:0.9rem;">Validates every European IBAN via MOD-97, enforces 2026 EPC structured addresses (eliminating <code>BE04</code> bank rejections), and outputs ready-to-upload XML:</p>
       <pre class="code-box">const res = await fetch(
   `https://api.apify.com/v2/acts/finops_studio~sepa-xml-generator/run-sync-get-dataset-items?token=${process.env.APIFY_TOKEN}`,
   {
@@ -109,10 +109,10 @@ const [{ xmlContent }] = await res.json();</pre>
     <!-- Recipe 2: Python US NACHA ACH -->
     <section class="sandbox-card" style="margin-bottom:20px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-        <h2 style="margin:0;">2. Python 3 — Generate 94-Character US NACHA Direct Deposit (`.ach`)</h2>
+        <h2 style="margin:0;">2. Python 3 — Generate 94-Character US NACHA Direct Deposit (<code>.ach</code>)</h2>
         <a class="btn btn-outline" href="./cookbook/payroll_csv_to_nacha_ach.py" download>Download .py</a>
       </div>
-      <p style="color:var(--muted);font-size:0.9rem;">Verifies 9-digit Federal Reserve ABA routing checksums (`3-7-1` MOD-10), computes entry hashes, and pads final output to strict `9999...` block-of-10 lines for Chase, BofA, Wells Fargo, Citi, and Silicon Valley Bank:</p>
+      <p style="color:var(--muted);font-size:0.9rem;">Verifies 9-digit Federal Reserve ABA routing checksums (<code>3-7-1</code> MOD-10), computes entry hashes, and pads final output to strict <code>9999...</code> block-of-10 lines for Chase, BofA, Wells Fargo, Citi, and Silicon Valley Bank:</p>
       <pre class="code-box">import json, os, urllib.request
 
 url = f"https://api.apify.com/v2/acts/finops_studio~nacha-ach-file-generator/run-sync-get-dataset-items?token={os.environ['APIFY_TOKEN']}"
@@ -144,19 +144,19 @@ open("payroll.ach", "w").write(items[0]["achContent"])</pre>
     <!-- Recipe 3 & 4 Grid -->
     <div class="grid-3">
       <div class="sandbox-card">
-        <h3 style="margin-top:0;">3. Python — Parse Corporate `BAI2` to JSON/SQL</h3>
-        <p style="color:var(--muted);font-size:0.89rem;">Unwrap `88` continuation lines and verify `49/98/99` control totals from JPMorgan, BofA CashPro, and Wells Fargo CEO statements before loading into Postgres or Snowflake.</p>
+        <h3 style="margin-top:0;">3. Python — Parse Corporate <code>BAI2</code> to JSON/SQL</h3>
+        <p style="color:var(--muted);font-size:0.89rem;">Unwrap <code>88</code> continuation lines and verify <code>49/98/99</code> control totals from JPMorgan, BofA CashPro, and Wells Fargo CEO statements before loading into Postgres or Snowflake.</p>
         <a href="./cookbook/bai2_to_json_and_csv.py" download>Download bai2_to_json_and_csv.py &rarr;</a>
       </div>
 
       <div class="sandbox-card">
-        <h3 style="margin-top:0;">4. Python — Stripe/Shopify &rarr; German `DATEV` CSV</h3>
-        <p style="color:var(--muted);font-size:0.89rem;">Generate certified `EXTF` v700 semicolon `Buchungsstapel` files (`SKR03` / `SKR04`) ready for German Steuerberater import in DATEV Rechnungswesen.</p>
+        <h3 style="margin-top:0;">4. Python — Stripe/Shopify &rarr; German <code>DATEV</code> CSV</h3>
+        <p style="color:var(--muted);font-size:0.89rem;">Generate certified <code>EXTF</code> v700 semicolon <code>Buchungsstapel</code> files (<code>SKR03</code> / <code>SKR04</code>) ready for German Steuerberater import in DATEV Rechnungswesen.</p>
         <a href="./cookbook/stripe_to_datev_skr04.py" download>Download stripe_to_datev_skr04.py &rarr;</a>
       </div>
 
       <div class="sandbox-card">
-        <h3 style="margin-top:0;">5. Instant Terminal CLI (`npx`)</h3>
+        <h3 style="margin-top:0;">5. Instant Terminal CLI (<code>npx</code>)</h3>
         <p style="color:var(--muted);font-size:0.89rem;">Run any of our 10 financial tools straight from CI/CD or terminal without installing a package:</p>
         <code>npx github:Geornaden/finops-studio sepa payload.json</code><br/><br/>
         <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Explore All 10 Cloud APIs &rarr;</a>
