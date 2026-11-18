@@ -27,7 +27,7 @@
           "@type": "Offer",
           "price": "0.00",
           "priceCurrency": "USD",
-          "description": "100% free browser CSV column mapper & checksum auditor; $0/mo + $0.02/row bulk Cloud API execution (covered by Apify $5/month free credits)."
+          "description": "100% free browser CSV column mapper & checksum auditor; $9 24h Unlimited Instant Pass or $29 30-Day Pro Pass for bulk bank file export."
         }
       },
       {
@@ -64,7 +64,7 @@
         <a href="./google-sheets-excel-apps-script-sepa-nacha-bacs-aba-automation.html">Sheets &amp; Excel Add-In</a>
         <a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Payroll</a>
         <a href="./for-accounting-firms-payroll-bureaus-and-fintechs.html">CPA &amp; Payroll ROI</a>
-        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open Apify Store ($5 Free/Mo) &rarr;</a>
+        <a class="btn btn-primary" href="#directCheckoutBar">&#128179; Unlock $9 Unlimited Pass &rarr;</a>
       </nav>
     </div>
   </header>
@@ -152,7 +152,7 @@
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button id="btnCopyJson" type="button" class="btn btn-outline">Copy JSON Payload</button>
-          <a id="btnOpenActor" class="btn btn-outline" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Apify Console ($5 Free/Mo) &rarr;</a>
+          <a id="btnOpenActor" class="btn btn-outline" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Enterprise Cloud Store &rarr;</a>
         </div>
       </div>
       <pre id="cloudResultBox" class="code-box" style="display:none;margin-top:12px;min-height:160px;border-color:#34d399;"></pre>
@@ -178,8 +178,8 @@
         <div class="tool-card">
           <div>
             <div class="tag-row"><span class="tag">3. Download Bank File</span></div>
-            <h3>Run Cloud API for $0.02/Row ($0/Mo Fixed)</h3>
-            <p>Paste your free Apify token (`$5/month` starter credits included — ~240 rows/month free!) to download your exact `.xml`, `.ach`, `.bacs`, `.aba`, `.eft`, or `.csv` file immediately.</p>
+            <h3>Unlock $9 24h Unlimited Pass ($0/Mo Fixed)</h3>
+            <p>Click Unlock 24h Unlimited ($9) above for an instant <code>fop_...</code> pass key—no developer signup needed—to download unlimited <code>.xml</code>, <code>.ach</code>, <code>.bacs</code>, <code>.aba</code>, <code>.eft</code>, or <code>.csv</code> batches immediately.</p>
           </div>
         </div>
       </div>
@@ -581,7 +581,7 @@
       if (errors.length === 0) {
         auditBadge.textContent = "ALL " + items.length + " ROWS VALID";
         auditBadge.className = "status-chip status-ok";
-        auditSummary.innerHTML = "&#9989; <strong>Pre-Flight Math Check Passed:</strong> " + items.length + " spreadsheet row(s) &bull; Batch Sum: <strong>" + sumTotal.toFixed(2) + "</strong> &bull; Cloud API Run Cost: <strong>$" + estCost + "</strong> (covered by Apify $5/mo free credits).";
+        auditSummary.innerHTML = "&#9989; <strong>Pre-Flight Math Check Passed:</strong> " + items.length + " spreadsheet row(s) &bull; Batch Sum: <strong>" + sumTotal.toFixed(2) + "</strong> &bull; Unlimited Batch Pass: <strong>$9 (24h)</strong> or <strong>$29 (30-Day Pro)</strong>.";
       } else {
         auditBadge.textContent = errors.length + " CHECKSUM ISSUE(S)";
         auditBadge.className = "status-chip";

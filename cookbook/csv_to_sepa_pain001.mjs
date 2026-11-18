@@ -4,7 +4,7 @@
  * Convert CSV / ERP Vendor Rows into 2026 EPC Structured-Address ISO 20022 SEPA XML (pain.001.001.09).
  *
  * Requires Node.js 18+ (built-in fetch, zero npm dependencies).
- * Cloud API & Free $5 Platform Credit: https://apify.com/finops_studio/sepa-xml-generator
+ * Instant Direct Pass ($9 24h / $29 30d) or Paid Cloud API: https://geornaden.github.io/finops-studio/
  */
 import fs from 'node:fs';
 

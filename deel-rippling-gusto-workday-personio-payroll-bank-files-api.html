@@ -98,7 +98,7 @@
         <a href="./how-it-works-simple.html" style="color:#34d399;font-weight:700;">&#11088; VIP Simple Guide</a>
         <a href="./multi-country-global-payroll-bank-files-sepa-nacha-bacs-aba-cpa005.html">5-Country Router</a>
         <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">1-Click CSV Mapper</a>
-        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Start Free ($5 Credits) &rarr;</a>
+        <a class="btn btn-primary" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html#directCheckoutBar">Unlock $9 Instant Pass (24h Unlimited) &rarr;</a>
       </nav>
     </div>
   </header>
@@ -224,10 +224,10 @@
       const country = document.getElementById('hrisCountry').value;
 
       const totalRowsYr = hc * runsPerYear;
-      // Conservative $8/employee/month middleman payout platform fee vs FinOps Studio $0.02/row (minus $60/yr free Apify credits)
+      // Conservative $8/employee/month middleman payout platform fee vs FinOps Studio ($0.02/row capped at $348/yr Pro Pass)
       const legacyAnnual = hc * 8 * 12;
       const rawApiCost = totalRowsYr * 0.02;
-      const finopsAnnual = Math.max(0, rawApiCost - 60);
+      const finopsAnnual = Math.min(rawApiCost, 348);
       const netSaved = Math.max(0, legacyAnnual - finopsAnnual);
 
       document.getElementById('hrisKpis').innerHTML = `

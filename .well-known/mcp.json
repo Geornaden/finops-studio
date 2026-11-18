@@ -21,7 +21,7 @@
       "type": "streamable-http",
       "url": "https://mcp.apify.com/?actors=finops_studio/sepa-xml-generator,finops_studio/eu-einvoice-xml-generator,finops_studio/nacha-ach-file-generator,finops_studio/bai2-bank-statement-parser,finops_studio/datev-buchungsstapel-generator,finops_studio/aba-cemtex-file-generator,finops_studio/iso20022-pain002-status-parser,finops_studio/uk-bacs-standard18-generator,finops_studio/canada-cpa005-eft-generator",
       "authRequired": true,
-      "description": "Full unlimited production MCP suite via Apify ($0/mo + $0.02/tx, includes $5/mo free credits)."
+      "description": "Full unlimited production MCP suite via Apify Paid Plan ($0/mo base + $0.02/tx) or FinOps Direct Pass ($9 24h / $29 30d)."
     }
   ],
   "pricing": {

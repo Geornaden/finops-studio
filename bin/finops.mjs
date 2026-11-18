@@ -670,7 +670,7 @@ async function handleMcpCallTool(name, args = {}) {
             `Cloud API key not configured (set FINOPS_PASS_KEY or APIFY_TOKEN).\n\n` +
             `To run ${cloudTool.name} in production:\n` +
             `1. Instant No-Signup Pass ($9 24h Unlimited / $29 30d Pro via PayPal or Card): https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html — set FINOPS_PASS_KEY=fop_... in your MCP env.\n` +
-            `2. Apify Cloud ($5/month free starter credits): https://apify.com/${cloudTool.slug.replace('~', '/')} — set APIFY_TOKEN in your MCP env.\n` +
+            `2. Apify Cloud (Paid Plan Pay-Per-Use): https://apify.com/${cloudTool.slug.replace('~', '/')} — set APIFY_TOKEN in your MCP env.\n` +
             `3. Hosted Remote MCP Subscriptions: https://mcprush.com/geornaden-2/finops-studio-banking-payroll-e-invoicing-mcp`
         }
       ]
@@ -845,7 +845,7 @@ if (cmd === 'mcp' || cmd === '--mcp') {
     process.exit(1);
   }
   if (!passKey && !token) {
-    console.error('Error: Set FINOPS_PASS_KEY ($9/$29 Instant Pass at https://geornaden.github.io/finops-studio/) or APIFY_TOKEN ($5/mo free credits at https://apify.com/finops_studio).');
+    console.error('Error: Set FINOPS_PASS_KEY ($9/$29 Instant Pass at https://geornaden.github.io/finops-studio/) or a paid APIFY_TOKEN (https://apify.com/finops_studio).');
     process.exit(1);
   }
   const body = fs.readFileSync(payloadPath, 'utf8');

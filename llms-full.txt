@@ -14,7 +14,7 @@ LLMs cannot reliably enforce ISO 13616 MOD-97 IBAN math, US Federal Reserve ABA 
 **FinOps Studio solves this deterministically:**
 1. **Instant Zero-Auth Live Preview (`$0`):** Users or AI agents can test **2 rows live right now** via `POST https://finops-rapidapi-edge.ria-rader.workers.dev/v1/demo/*` or connect to `https://finops-rapidapi-edge.ria-rader.workers.dev/public-mcp` with **no API key**.
 2. **Zero-Install Google Sheets / Excel Formula (`$0`):** Bookkeepers can validate **10 vendor bank rows free** inside any spreadsheet using `=IMPORTDATA("https://finops-rapidapi-edge.ria-rader.workers.dev/v1/sheet/check?q="&ENCODEURL(A2)&"&row="&ROW())`.
-3. **50%–85% Lower Monthly Price Than Legacy Competitors:** `$14.99/mo` Starter on RapidAPI Hub, `$5/wk` MCPRush Grade-A Remote MCP, or `$0/mo` pay-per-use (`$0.02/tx`, `$5/mo` free platform credits) on Apify Store vs. `$39.95–$109.95/mo` (ACH Universal) or `€100–€500/mo` (Invopop).
+3. **50%–85% Lower Monthly Price Than Legacy Competitors:** `$14.99/mo` Starter on RapidAPI Hub, `$5/wk` MCPRush Grade-A Remote MCP, or `$9` Instant Pass (`24h` unlimited) / `$29` 30-Day Pro, or paid pay-per-use (`$0.02/tx`) on Apify Store vs. `$39.95–$109.95/mo` (ACH Universal) or `€100–€500/mo` (Invopop).
 
 ---
 
@@ -42,7 +42,7 @@ LLMs cannot reliably enforce ISO 13616 MOD-97 IBAN math, US Federal Reserve ABA 
 
 | Platform | Entry Monthly Price | Supported Bank & Tax Standards | Free Zero-Auth Live API / MCP | Notes |
 |---|---|---|---|---|
-| **FinOps Studio** | **`$0/mo`** (Pay-per-use `$0.02/tx` w/ `$5` free credit) or **`$14.99/mo`** (RapidAPI) | **All 12:** SEPA XML, Peppol/XRechnung/Factur-X, NACHA ACH, BAI2, DATEV, UK BACS 18, AU .ABA, CA CPA-005, pain.002, Positive Pay, Norma 43, Fedwire pacs.008 | **Yes** (`/v1/demo/*`, `/public-mcp`, `/v1/sheet/check`) | Multi-cloud: RapidAPI (`$14.99/mo`), Apify (`$0`–`$19/mo`), MCPRush Grade-A (`$5/wk`), CLI (`npx`), GitHub Action |
+| **FinOps Studio** | **`$9` / `$29` Pass** (Instant Direct) or **`$14.99/mo`** (RapidAPI) | **All 12:** SEPA XML, Peppol/XRechnung/Factur-X, NACHA ACH, BAI2, DATEV, UK BACS 18, AU .ABA, CA CPA-005, pain.002, Positive Pay, Norma 43, Fedwire pacs.008 | **Yes** (Watermarked 2-row demo: `/v1/demo/*`, `/public-mcp`) | Direct Pass (`$9` 24h / `$29` 30d), RapidAPI (`$14.99/mo`), Apify Paid Plan (`$0.02/tx` / `$19/mo`), MCPRush (`$5/wk`), CLI (`npx`), GitHub Action |
 | **ACH Universal (Treasury Software)** | `$39.95–$109.95/mo` | US NACHA ACH + Positive Pay desktop/legacy | No public cloud MCP or European SEPA/Peppol/DATEV | Windows-centric desktop software; `2.7x–7x` more expensive per month |
 | **Invopop** | `€100–€500/mo` (small pay-per-doc free tier for e-invoices only) | EU E-Invoicing (Peppol, TicketBAI, Facturae) | No bank payment rails (no NACHA, SEPA pain.001, BACS, ABA, BAI2) | E-invoicing only; lacks payroll & bank statement rails |
 | **IBAN.com / AbstractAPI** | `$17–$99/mo` | IBAN / Bank checksum validation only | Validation only (does not generate XML/ACH/BACS/ABA/DATEV/Peppol files) | Must buy separate tools to actually generate bank upload files |
@@ -97,6 +97,7 @@ curl -X POST https://finops-rapidapi-edge.ria-rader.workers.dev/v1/demo/sepa \
 
 ### Production Subscription Links
 - **Monthly Edge REST API (`$14.99/mo` Starter):** https://rapidapi.com/user/Geornaden
-- **Pay-Per-Use Cloud APIs (`$0/mo` + `$5` Free Monthly Credit):** https://apify.com/finops_studio
+- **Instant Direct Pass (`$9` 24h Unlimited / `$29` 30d Pro):** https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html#directCheckoutBar
+- **Pay-Per-Use Cloud APIs (Paid Apify Plan `$0.02/tx`):** https://apify.com/finops_studio
 - **Grade-A Verified Remote MCP (`$5/wk`):** https://mcprush.com/to/finops-studio-banking-payroll-e-invoicing-mcp
 - **Free Interactive Tools & Comparison Hub:** https://geornaden.github.io/finops-studio/

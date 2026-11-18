@@ -4,7 +4,7 @@
     "title": "FinOps Studio — Deterministic Banking, Payroll, Treasury & E-Invoicing Cloud APIs",
     "version": "1.4.0",
     "summary": "Zero-hallucination REST APIs for SEPA XML (pain.001/008), Peppol/XRechnung/Factur-X EN 16931 E-Invoices, US NACHA ACH, BAI2 Statements, German DATEV EXTF, UK BACS Standard 18, Australian ABA, Canadian CPA-005 & ISO 20022 pain.002.",
-    "description": "Production financial file generation and statement parsing endpoints hosted on Apify Cloud ($0/month subscription, $0.02-$0.05 per row/invoice, $5/month free starter credits included). Compatible with OpenAI GPT Actions, Microsoft Copilot Studio, Postman, Retool, n8n, Make.com, and Model Context Protocol (MCP).",
+    "description": "Production financial file generation and statement parsing endpoints ($9 24h Unlimited Instant Pass or $29 30-Day Pro Pass on FinOps Edge, $14.99/mo RapidAPI, or Apify Pay-Per-Use $0.02-$0.05/row). Compatible with OpenAI GPT Actions, Microsoft Copilot Studio, Postman, Retool, n8n, Make.com, and Model Context Protocol (MCP).",
     "contact": {
       "name": "FinOps Studio",
       "url": "https://geornaden.github.io/finops-studio/"
@@ -26,7 +26,7 @@
       "ApifyBearerToken": {
         "type": "http",
         "scheme": "bearer",
-        "description": "Apify API Token (obtain free with $5/month recurring credits at https://apify.com/finops_studio)"
+        "description": "Paid Apify API Token (https://apify.com/finops_studio) or FinOps Instant Pass X-FinOps-Pass ($9 24h / $29 30d at https://geornaden.github.io/finops-studio/)"
       }
     }
   },

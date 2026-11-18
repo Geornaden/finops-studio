@@ -27,7 +27,7 @@
           "@type": "Offer",
           "price": "0.00",
           "priceCurrency": "USD",
-          "description": "Free visual EN 16931 invoice builder & BR-CO-10..16 VAT math auditor; $0/mo + $0.05/invoice Cloud XML generation (covered by Apify $5/month free credits)."
+          "description": "Free visual EN 16931 invoice builder & BR-CO-10..16 VAT math auditor; $9 24h Unlimited Pass or $29 30-Day Pro Pass for instant XML generation."
         }
       },
       {
@@ -151,12 +151,12 @@
 
       <div style="margin-top:16px;padding:14px;border-radius:10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:1;">
-          <input id="einvToken" type="password" placeholder="Optional: Paste Apify API Token (apify_api_...) to generate &amp; download EN 16931 XML right here" style="min-width:290px;flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.84rem;" />
-          <button id="btnRunEinv" type="button" class="btn btn-primary">&#9889; Generate &amp; Download EN 16931 XML ($0.05)</button>
+          <input id="einvToken" type="password" placeholder="Paste Instant Pass Key (fop_...) OR Paid Cloud Token" style="min-width:290px;flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:#f8fafc;font-size:0.84rem;" />
+          <button id="btnRunEinv" type="button" class="btn btn-primary">&#9889; Generate &amp; Download EN 16931 XML</button>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button id="btnCopyEinvJson" type="button" class="btn btn-outline">Copy JSON Payload</button>
-          <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Open in Apify Store ($5 Free/Mo) &rarr;</a>
+          <a class="btn btn-primary" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html#directCheckoutBar">&#128179; Unlock $9 Instant Pass (24h Unlimited) &rarr;</a>
         </div>
       </div>
       <pre id="einvXmlResult" class="code-box" style="display:none;margin-top:12px;min-height:180px;border-color:#34d399;"></pre>
@@ -311,20 +311,36 @@
       setTimeout(function () { e.target.textContent = "Copy JSON Payload"; }, 1800);
     });
 
+    try {
+      var savedPass = localStorage.getItem("finops_pass_key");
+      if (savedPass && savedPass.indexOf("fop_") === 0 && !g("einvToken")) {
+        document.getElementById("einvToken").value = savedPass;
+      }
+    } catch (e) {}
+
     document.getElementById("btnRunEinv").addEventListener("click", async function (e) {
       var tok = g("einvToken");
       var resBox = document.getElementById("einvXmlResult");
       resBox.style.display = "block";
       if (!tok) {
-        resBox.textContent = "Tip: Paste your free Apify API Token (includes $5/month free credits = ~60+ certified EN 16931 invoices free every month) above, OR click 'Copy JSON Payload' and 'Open in Apify Store'.";
+        resBox.textContent = "Unlock an Instant Pass ($9 for 24h unlimited / $29 for 30-Day Pro via PayPal) at Direct Checkout, then paste your fop_... key above to generate & download certified EN 16931 XML immediately.";
         return;
       }
       e.target.disabled = true;
-      resBox.textContent = "Generating certified EN 16931 XML via finops_studio~eu-einvoice-xml-generator...";
+      var isDirectPass = tok.indexOf("fop_") === 0;
+      resBox.textContent = isDirectPass
+        ? "Generating certified EN 16931 XML via FinOps Edge Instant Pass..."
+        : "Generating certified EN 16931 XML via finops_studio~eu-einvoice-xml-generator...";
       try {
-        var r = await fetch("https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items?token=" + encodeURIComponent(tok), {
+        var endpoint = isDirectPass
+          ? "https://finops-rapidapi-edge.ria-rader.workers.dev/v1/einvoice/generate"
+          : "https://api.apify.com/v2/acts/finops_studio~eu-einvoice-xml-generator/run-sync-get-dataset-items?token=" + encodeURIComponent(tok);
+        var hdrs = isDirectPass
+          ? { "Content-Type": "application/json", "X-FinOps-Pass": tok }
+          : { "Content-Type": "application/json" };
+        var r = await fetch(endpoint, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: hdrs,
           body: document.getElementById("einvJsonOut").textContent
         });
         var data = await r.json();
@@ -332,7 +348,7 @@
           resBox.textContent = "API Error (" + r.status + "): " + JSON.stringify(data, null, 2);
         } else {
           var first = Array.isArray(data) && data[0] ? data[0] : data;
-          var xml = first.xmlString || first.xmlContent || JSON.stringify(data, null, 2);
+          var xml = first.xml || first.xmlString || first.xmlContent || JSON.stringify(data, null, 2);
           resBox.textContent = xml;
           var blob = new Blob([xml], { type: "application/xml;charset=utf-8" });
           var a = document.createElement("a");

@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "FinOps Studio — 9 Live Banking, Payroll, Treasury & E-Invoice APIs",
-    "description": "Ready-to-run Postman Collection for FinOps Studio's zero-subscription Cloud APIs on Apify Store. Set collection variable APIFY_TOKEN (free $5/mo credits at https://apify.com/finops_studio).",
+    "description": "Ready-to-run Postman Collection for FinOps Studio's Cloud APIs. Use an Instant Pass X-FinOps-Pass ($9 24h / $29 30d at https://geornaden.github.io/finops-studio/) or a paid APIFY_TOKEN (https://apify.com/finops_studio).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

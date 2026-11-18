@@ -4,7 +4,7 @@ FinOps Studio Official Cookbook — Recipe #1
 Convert Stripe / Shopify Payouts or Invoices into Official German DATEV EXTF v700 Buchungsstapel CSV (SKR03 / SKR04).
 
 Zero external dependencies required (uses Python 3 standard library).
-Get your free Apify API token ($5/mo platform credit included) at: https://apify.com/finops_studio/datev-buchungsstapel-generator
+Use an Instant Pass (https://geornaden.github.io/finops-studio/) or paid Apify API token (https://apify.com/finops_studio/datev-buchungsstapel-generator)
 """
 import json
 import os

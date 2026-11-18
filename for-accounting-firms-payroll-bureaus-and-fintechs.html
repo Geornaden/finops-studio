@@ -34,7 +34,7 @@
             "name": "How much does FinOps Studio cost compared to legacy ACH, Positive Pay, and EDI software?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "FinOps Studio charges $0.00/month in fixed subscription fees—only $0.03 per batch run plus $0.02 per payment/statement row ($0.05 per EN 16931 e-invoice). New Apify accounts also receive $5.00 in free monthly platform credits, making up to ~240 monthly transactions effectively $0 out of pocket."
+              "text": "FinOps Studio offers an Instant No-Signup Pass ($9 for 24h unlimited batches or $29 for 30-Day Pro), $14.99/mo RapidAPI Starter, or pay-per-use Cloud execution on Apify ($0.03 per batch run + $0.02 per row) — with $0.00/mo per-client workstation fees."
             }
           }
         ]
@@ -127,9 +127,9 @@
 
       <div class="grid-3" style="margin-top:20px;">
         <div style="padding:16px;border-radius:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.35);">
-          <div style="font-size:0.8rem;color:#6ee7b7;text-transform:uppercase;letter-spacing:0.04em;">FinOps Studio Gross API Usage</div>
-          <div id="out-gross" style="font-size:1.75rem;font-weight:800;margin:6px 0;">$10.36 / mo</div>
-          <div id="out-net" style="font-size:0.84rem;color:#a7f3d0;">Only <strong>$5.36/mo</strong> after Apify's free $5/mo starter credit!</div>
+          <div style="font-size:0.8rem;color:#6ee7b7;text-transform:uppercase;letter-spacing:0.04em;">FinOps Studio Estimated Cost</div>
+          <div id="out-gross" style="font-size:1.75rem;font-weight:800;margin:6px 0;">$9.00 / 24h Pass</div>
+          <div id="out-net" style="font-size:0.84rem;color:#a7f3d0;">Or lock in unlimited 30-day multi-client runs for <strong>$29 / mo Pro</strong>!</div>
         </div>
 
         <div style="padding:16px;border-radius:10px;background:rgba(15,23,42,0.85);border:1px solid var(--border);">
@@ -195,10 +195,10 @@
     </section>
 
     <div class="sandbox-card" style="margin-top:24px;text-align:center;">
-      <h3 style="margin-top:0;">Test Any Format Free Today — Scale to Millions of Rows</h3>
-      <p style="color:var(--muted);max-width:680px;margin:8px auto 16px;">Every new Apify account includes $5.00 in free monthly credits—enough to run ~240 real SEPA, NACHA ACH, BAI2, or DATEV rows every month for $0.00.</p>
+      <h3 style="margin-top:0;">Preview 2 Rows Free — Unlock Unlimited Batches in 10 Seconds</h3>
+      <p style="color:var(--muted);max-width:680px;margin:8px auto 16px;">Audit unlimited IBANs and routing checksums in-browser free, preview 2 demo rows anytime, or unlock an Instant Pass (<strong>$9 for 24h unlimited</strong> / <strong>$29 for 30-Day Pro</strong>) with zero seat fees.</p>
       <div class="hero-actions" style="justify-content:center;">
-        <a class="btn btn-primary" href="https://apify.com/finops_studio" target="_blank" rel="noopener">Open FinOps Studio on Apify Store &rarr;</a>
+        <a class="btn btn-primary" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html#directCheckoutBar">Unlock $9 Instant Pass (24h Unlimited) &rarr;</a>
         <a class="btn btn-outline" href="./free-bank-file-format-detector-line-length-auditor.html">Try Free Bank File Auditor</a>
         <a class="btn btn-outline" href="./netsuite-odoo-sap-sepa-xml-bai2-nacha-automation.html">NetSuite / Odoo / SAP Guide</a>
       </div>
@@ -222,11 +222,12 @@
       document.getElementById('lbl-rows').textContent = rows.toLocaleString();
       document.getElementById('lbl-batches').textContent = batches.toLocaleString();
       const gross = rows * rate + batches * 0.03;
-      const net = Math.max(0, gross - 5.0);
-      document.getElementById('out-gross').textContent = '$' + gross.toFixed(2) + ' / mo';
-      document.getElementById('out-net').innerHTML = net === 0
-        ? '<strong>$0.00 / mo net</strong> (100% covered by Apify\'s free $5/mo starter credit!)'
-        : 'Only <strong>$' + net.toFixed(2) + '/mo</strong> after Apify\'s free $5/mo starter credit!';
+      document.getElementById('out-gross').textContent = gross > 29
+        ? '$29.00 / mo (30-Day Pro)'
+        : '$' + Math.max(9, gross).toFixed(2) + ' / mo';
+      document.getElementById('out-net').innerHTML = gross > 29
+        ? 'Save even more with our <strong>$29 30-Day Pro Pass</strong> or <strong>$9 24h Unlimited Pass</strong> vs $149+/mo rivals!'
+        : 'Or run unlimited same-day batches with an instant <strong>$9 (24h Unlimited) Pass</strong> — zero seat lock-in!';
     }
     calcRoi();
   </script>
