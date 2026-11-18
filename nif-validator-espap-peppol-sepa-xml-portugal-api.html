@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validador NIF / NIPC (MOD-11), IBAN PT50 / NIB, Fatura&ccedil;&atilde;o Eletr&oacute;nica eSPap CIUS-PT &amp; SEPA XML API | FinOps Studio</title>
+  <meta name="description" content="Validador gratuito offline para empresas em Portugal: verifique NIF e NIPC de 9 d&iacute;gitos (MOD-11), IBAN PT50 / NIB (CGD, Millennium bcp, Novo Banco, BPI, Santander Totta) e gere payloads CIUS-PT / eSPap (Peppol 9946) e SEPA pain.001.001.09." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/nif-validator-espap-peppol-sepa-xml-portugal-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Validador NIF / NIPC (MOD-11), IBAN PT50, eSPap / Peppol 9946 &amp; SEPA XML Portugal" />
+  <meta property="og:description" content="Valide matematicamente NIF/NIPC (MOD-11) e IBAN PT50 (CGD, Millennium bcp, Novo Banco, BPI, Santander) antes de emitir faturas CIUS-PT ou lotes SEPA XML." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/nif-validator-espap-peppol-sepa-xml-portugal-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Validador NIF / NIPC Portugal (MOD-11), IBAN PT50 & Gerador eSPap / SEPA XML",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "inLanguage": ["pt-PT", "en"],
+        "url": "https://geornaden.github.io/finops-studio/nif-validator-espap-peppol-sepa-xml-portugal-api.html",
+        "offers": { "@type": "Offer", "price": "0.00", "priceCurrency": "EUR" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Como é validado matematicamente um NIF ou NIPC português de 9 dígitos (MOD-11)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Multiplicam-se os primeiros 8 dígitos pelos pesos [9, 8, 7, 6, 5, 4, 3, 2], calcula-se o resto da divisão por 11, e o 9.º dígito de controlo deve ser igual a 0 (se resto < 2) ou (11 - resto). Para faturação eletrónica eSPap / Peppol em Portugal, utiliza-se o esquema 9946 (PT + NIF)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Qual é a estrutura de um IBAN português PT50 de 25 caracteres?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Todos os IBAN portugueses têm exatamente 25 caracteres e começam por PT50 seguidos pelos 21 dígitos do NIB nacional (4 dígitos do código do banco como 0035 CGD ou 0033 Millennium bcp, 4 dígitos do balcão, 11 dígitos da conta e 2 dígitos de controlo NIB)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .pt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 14px 0; }
+    .pt-field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; font-weight: 700; }
+    .pt-field input { width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #f8fafc; font-size: 0.9rem; font-family: monospace; }
+    .pt-result { margin-top: 10px; padding: 12px 14px; border-radius: 10px; background: #0b1120; border: 1px solid var(--border); font-size: 0.88rem; line-height: 1.55; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html">In&iacute;cio</a>
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">&#128202; CSV para SEPA XML</a>
+        <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">CIUS-PT / Peppol Builder</a>
+        <a href="./ireland-portugal-luxembourg-sepa-xml-pain001-peppol-api.html">Guia PT / IE / LU</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">API SEPA XML &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127477;&#127481; Portugal Tesouraria &amp; Fatura&ccedil;&atilde;o eSPap / CIUS-PT &bull; NIF/NIPC MOD-11 &bull; PT50 IBAN &bull; SEPA pain.001.001.09</span>
+      <h1>Validador NIF / NIPC (MOD-11), IBAN <code>PT50</code> &amp; Gerador eSPap / SEPA XML</h1>
+      <p>Verifique instantaneamente o <strong>NIF / NIPC</strong> de clientes e fornecedores (algoritmo <code>MOD-11</code> da Autoridade Tribut&aacute;ria), identifique bancos portugueses pelo <strong>IBAN <code>PT50</code></strong> (<strong>CGD</strong>, <strong>Millennium bcp</strong>, <strong>Novo Banco</strong>, <strong>BPI</strong>, <strong>Santander Totta</strong>) e gere lotes <strong>SEPA XML <code>pain.001.001.09</code></strong> sem erros <code>BE04</code>.</p>
+      <div class="hero-actions">
+        <button id="ptBuy24h" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#9889; Passe 24h Ilimitado SEPA &amp; Peppol ($9)</button>
+        <button id="ptBuy30d" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fbbf24;font-weight:700;">&#128640; Passe Pro 30 Dias + API ($29)</button>
+        <a class="btn btn-outline" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">&#128202; Converter Excel/CSV em SEPA XML &rarr;</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:22px;">
+      <h2 style="margin-top:0;">Validador Interativo NIF / NIPC (MOD-11) &amp; IBAN <code>PT50</code> / NIB</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button id="btnPtBcp" type="button" class="btn btn-outline">Exemplo: NIPC Empresa + Millennium bcp</button>
+        <button id="btnPtCgd" type="button" class="btn btn-outline">Exemplo: NIPC + Caixa Geral de Dep&oacute;sitos</button>
+        <button id="btnPtBad" type="button" class="btn btn-outline">Testar NIF Inv&aacute;lido</button>
+      </div>
+
+      <div class="pt-grid">
+        <div class="pt-field">
+          <label for="ptNif">NIF / NIPC Portugal (9 D&iacute;gitos)</label>
+          <input id="ptNif" type="text" value="PT 502 011 378" />
+        </div>
+        <div class="pt-field">
+          <label for="ptIban">IBAN Portugal (25 Carateres PT50)</label>
+          <input id="ptIban" type="text" value="PT50 0033 0000 4547 8901 2340 5" />
+        </div>
+        <div class="pt-field">
+          <label for="ptSupplier">Fornecedor (Lda / S.A. / Unipessoal)</label>
+          <input id="ptSupplier" type="text" value="TECNOLOGIA ATLANTICO LDA" />
+        </div>
+        <div class="pt-field">
+          <label for="ptCity">Localidade / Concelho (Regra SEPA 2026 BE04)</label>
+          <input id="ptCity" type="text" value="Lisboa" />
+        </div>
+        <div class="pt-field">
+          <label for="ptNet">Valor Base s/ IVA (EUR &bull; IVA 23%)</label>
+          <input id="ptNet" type="text" value="1200.00" />
+        </div>
+      </div>
+
+      <div id="ptAuditBox" class="pt-result"></div>
+
+      <div class="sandbox-grid" style="margin-top:16px;">
+        <div>
+          <div class="pane-label">
+            <span>Payload SEPA <code>pain.001.001.09</code> (CGD / bcp / BPI / Novo Banco)</span>
+            <button id="btnCopyPtSepa" type="button" class="btn btn-outline" style="padding:4px 9px;font-size:0.75rem;">Copiar JSON SEPA</button>
+          </div>
+          <pre id="ptSepaOut" class="code-box" style="min-height:190px;"></pre>
+        </div>
+        <div>
+          <div class="pane-label">
+            <span>Payload Fatura Eletr&oacute;nica eSPap / Peppol <code>9946</code></span>
+            <button id="btnCopyPtInv" type="button" class="btn btn-outline" style="padding:4px 9px;font-size:0.75rem;">Copiar JSON Peppol</button>
+          </div>
+          <pre id="ptInvOut" class="code-box" style="min-height:190px;"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><strong>FinOps Studio</strong> &bull; APIs SEPA XML <code>pain.001.001.09</code> &amp; Fatura&ccedil;&atilde;o Eletr&oacute;nica Peppol EN 16931</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="./ireland-portugal-luxembourg-sepa-xml-pain001-peppol-api.html">Guia Portugal</a>
+          <a href="./facturacion-electronica-2026-peppol-sepa-xml-espana.html">Espa&ntilde;a SEPA &amp; Norma 43</a>
+          <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">Validador SEPA BE04</a>
+          <a href="./index.html">12 APIs Banc&aacute;rias</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var PT_BANKS = {
+        "0007": { name: "Novo Banco", bic: "BESCPTPLXXX" },
+        "0010": { name: "Banco BPI", bic: "BBPIPTPLXXX" },
+        "0018": { name: "Banco Santander Totta", bic: "TOTAPTPLXXX" },
+        "0019": { name: "BBVA Portugal", bic: "BBVAPTPLXXX" },
+        "0023": { name: "ActivoBank", bic: "ACTVPTPLXXX" },
+        "0033": { name: "Millennium bcp", bic: "BCOMPTPLXXX" },
+        "0035": { name: "Caixa Geral de Depósitos (CGD)", bic: "CGDIPTPLXXX" },
+        "0036": { name: "Banco Montepio", bic: "MPIOPTPLXXX" },
+        "0045": { name: "Crédito Agrícola", bic: "CCCMPTPLXXX" },
+        "0269": { name: "Bankinter Portugal", bic: "BKBKPTPLXXX" }
+      };
+
+      function buildValidPtIban(bank4, branch4, acct11) {
+        var nib19 = bank4 + branch4 + acct11;
+        var r = 0;
+        for (var i = 0; i < nib19.length; i++) r = (r * 10 + Number(nib19[i])) % 97;
+        var nibChk = String(98 - ((r * 100) % 97)).padStart(2, "0");
+        return "PT50" + nib19 + nibChk;
+      }
+
+      function validateNif(raw) {
+        var d = String(raw || "").toUpperCase().replace(/^PT/, "").replace(/[^0-9]/g, "");
+        if (!/^[0-9]{9}$/.test(d)) return { valid: false, reason: "Introduza 9 dígitos numéricos para o NIF / NIPC." };
+        var sum = 0;
+        for (var i = 0; i < 8; i++) sum += Number(d[i]) * (9 - i);
+        var rem = sum % 11;
+        var exp = rem < 2 ? 0 : (11 - rem);
+        if (Number(d[8]) !== exp) {
+          return { valid: false, reason: "Dígito de controlo MOD-11 inválido (esperado " + exp + ", recebido " + d[8] + ")." };
+        }
+        var kind = d[0] === "5" ? "Pessoa Coletiva / Empresa (NIPC)" : (["1", "2", "3"].indexOf(d[0]) !== -1 ? "Pessoa Singular (NIF)" : "Entidade Registada AT");
+        return { valid: true, digits: d, vat: "PT" + d, kind: kind };
+      }
+
+      function validatePtIban(raw) {
+        var c = String(raw || "").replace(/\s+/g, "").toUpperCase();
+        if (!/^PT50[0-9]{21}$/.test(c)) return { valid: false, reason: "O IBAN português deve ter 25 carateres começando por PT50." };
+        var rearr = c.slice(4) + c.slice(0, 4);
+        var exp = rearr.replace(/[A-Z]/g, function (ch) { return String(ch.charCodeAt(0) - 55); });
+        var rem = 0;
+        for (var i = 0; i < exp.length; i++) rem = (rem * 10 + Number(exp[i])) % 97;
+        if (rem !== 1) return { valid: false, reason: "Falha na soma de controlo ISO 13616 MOD-97 do IBAN." };
+        var bank4 = c.slice(4, 8);
+        var meta = PT_BANKS[bank4] || { name: "Banco em Portugal (" + bank4 + ")", bic: "CGDIPTPLXXX" };
+        return { valid: true, clean: c, nib: c.slice(4), bankCode: bank4, bank: meta };
+      }
+
+      document.getElementById("ptIban").value = buildValidPtIban("0033", "0000", "45478901234");
+
+      function render() {
+        var nif = validateNif(document.getElementById("ptNif").value);
+        var ib = validatePtIban(document.getElementById("ptIban").value);
+        var sup = String(document.getElementById("ptSupplier").value || "FORNECEDOR LDA").trim();
+        var city = String(document.getElementById("ptCity").value || "Lisboa").trim();
+        var net = Number(document.getElementById("ptNet").value || 0);
+        if (!(net > 0)) net = 100;
+        var iva = Math.round(net * 23) / 100;
+        var total = Math.round((net + iva) * 100) / 100;
+
+        var out = [];
+        out.push(nif.valid
+          ? "&#128994; <strong>NIF / NIPC V&Aacute;LIDO:</strong> <code>" + nif.vat + "</code> (" + nif.kind + " &bull; MOD-11 Verificado &bull; Peppol Endpoint <code>9946:" + nif.vat + "</code>)"
+          : "&#128308; <strong>NIF / NIPC INV&Aacute;LIDO:</strong> " + nif.reason);
+
+        out.push(ib.valid
+          ? "&#128994; <strong>IBAN PT50 V&Aacute;LIDO:</strong> <code>" + ib.clean + "</code> (" + ib.bank.name + " &bull; BIC <code>" + ib.bank.bic + "</code> &bull; NIB <code>" + ib.nib + "</code>)"
+          : "&#128308; <strong>IBAN PT50 INV&Aacute;LIDO:</strong> " + ib.reason);
+
+        document.getElementById("ptAuditBox").innerHTML = out.join("<br/>");
+
+        var sepa = {
+          schemaVersion: "pain.001.001.09",
+          initiatingPartyName: "GRUPO TEJO SGPS SA",
+          debtorName: "GRUPO TEJO SGPS SA",
+          debtorIban: buildValidPtIban("0035", "0001", "00012345678"),
+          debtorBic: "CGDIPTPLXXX",
+          transactions: [
+            {
+              name: sup,
+              iban: ib.valid ? ib.clean : buildValidPtIban("0033", "0000", "45478901234"),
+              bic: ib.valid ? ib.bank.bic : "BCOMPTPLXXX",
+              amount: Number(total.toFixed(2)),
+              remittanceInfo: "Fatura FT 2026/108 NIF " + (nif.valid ? nif.digits : "502011378"),
+              country: "PT",
+              townName: city
+            }
+          ]
+        };
+
+        var inv = {
+          format: "peppol-ubl-3.0",
+          invoiceNumber: "FT-2026-108",
+          issueDate: new Date().toISOString().slice(0, 10),
+          dueDate: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
+          currency: "EUR",
+          buyerReference: "COMPROMISSO-ESPAP-2026",
+          seller: {
+            name: sup,
+            vatId: nif.valid ? nif.vat : "PT502011378",
+            endpointScheme: "9946",
+            endpointId: nif.valid ? nif.vat : "PT502011378",
+            city: city,
+            postalCode: "1050-010",
+            country: "PT",
+            iban: ib.valid ? ib.clean : buildValidPtIban("0033", "0000", "45478901234")
+          },
+          buyer: {
+            name: "GRUPO TEJO SGPS SA",
+            vatId: "PT500100144",
+            endpointScheme: "9946",
+            endpointId: "PT500100144",
+            city: "Porto",
+            postalCode: "4000-123",
+            country: "PT"
+          },
+          lines: [
+            { description: "Serviços de Automação Financeira SEPA & CIUS-PT", quantity: 1, unitPrice: net.toFixed(2), vatRate: 23 }
+          ]
+        };
+
+        document.getElementById("ptSepaOut").textContent = JSON.stringify(sepa, null, 2);
+        document.getElementById("ptInvOut").textContent = JSON.stringify(inv, null, 2);
+      }
+
+      ["ptNif", "ptIban", "ptSupplier", "ptCity", "ptNet"].forEach(function (id) {
+        document.getElementById(id).addEventListener("input", render);
+      });
+
+      document.getElementById("btnPtBcp").addEventListener("click", function () {
+        document.getElementById("ptNif").value = "PT 502 011 378";
+        document.getElementById("ptIban").value = buildValidPtIban("0033", "0000", "45478901234");
+        document.getElementById("ptSupplier").value = "TECNOLOGIA ATLANTICO LDA";
+        document.getElementById("ptCity").value = "Lisboa";
+        render();
+      });
+
+      document.getElementById("btnPtCgd").addEventListener("click", function () {
+        document.getElementById("ptNif").value = "PT 500 100 144";
+        document.getElementById("ptIban").value = buildValidPtIban("0035", "0651", "00098765430");
+        document.getElementById("ptSupplier").value = "SOLUCOES DOURO SA";
+        document.getElementById("ptCity").value = "Porto";
+        render();
+      });
+
+      document.getElementById("btnPtBad").addEventListener("click", function () {
+        document.getElementById("ptNif").value = "PT 502 011 379";
+        render();
+      });
+
+      document.getElementById("btnCopyPtSepa").addEventListener("click", function (e) {
+        if (navigator.clipboard) navigator.clipboard.writeText(document.getElementById("ptSepaOut").textContent);
+        var b = e.target, o = b.textContent; b.textContent = "Copiado!"; setTimeout(function () { b.textContent = o; }, 1600);
+      });
+      document.getElementById("btnCopyPtInv").addEventListener("click", function (e) {
+        if (navigator.clipboard) navigator.clipboard.writeText(document.getElementById("ptInvOut").textContent);
+        var b = e.target, o = b.textContent; b.textContent = "Copiado!"; setTimeout(function () { b.textContent = o; }, 1600);
+      });
+
+      document.getElementById("ptBuy24h").addEventListener("click", function (e) {
+        if (window.startFinOpsCheckout) window.startFinOpsCheckout("batch24h", { btn: e.target });
+      });
+      document.getElementById("ptBuy30d").addEventListener("click", function (e) {
+        if (window.startFinOpsCheckout) window.startFinOpsCheckout("pro30d", { btn: e.target });
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

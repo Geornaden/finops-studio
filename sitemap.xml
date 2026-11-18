@@ -470,4 +470,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.96</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/nif-validator-espap-peppol-sepa-xml-portugal-api.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.96</priority>
+  </url>
 </urlset>
