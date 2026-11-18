@@ -539,8 +539,10 @@
         sumBox.innerHTML = sumHtml;
 
         var trs = '';
-        for (var v = 0; v < visibleRows.length; v++) {
-          var item = visibleRows[v];
+        var hasPass = Boolean(window.__finopsVerifiedActivePass);
+        var rowsToRender = (!hasPass && visibleRows.length > 3) ? visibleRows.slice(0, 3) : visibleRows;
+        for (var v = 0; v < rowsToRender.length; v++) {
+          var item = rowsToRender[v];
           var stColor = item.status === 'RJCT' ? '#fca5a5' : (item.status === 'ACWC' || item.status === 'PART' ? '#fde68a' : '#86efac');
           trs += '<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">' +
             '<td style="padding:8px 10px;font-weight:700;color:' + stColor + ';"><code>' + escapeHtml(item.status) + '</code></td>' +
@@ -551,11 +553,19 @@
             '<td style="padding:8px 10px;font-size:0.79rem;color:#e2e8f0;">' + escapeHtml(item.fix) + '</td>' +
             '</tr>';
         }
+        if (!hasPass && visibleRows.length > 3) {
+          trs += '<tr><td colspan="6" style="padding:12px;text-align:center;background:rgba(245,158,11,0.10);color:#fde68a;font-size:0.84rem;">' +
+            '&#128274; Showing 3 of ' + visibleRows.length + ' status records in free preview — ' +
+            '<button type="button" onclick="window.startFinOpsCheckout && window.startFinOpsCheckout(\'batch24h\')" style="padding:5px 11px;border-radius:6px;border:none;background:#f59e0b;color:#111827;font-weight:800;cursor:pointer;">Unlock Full Unlimited CSV Export ($9 24h Pass)</button>' +
+            '</td></tr>';
+        }
         if (!trs) {
           trs = '<tr><td colspan="6" style="padding:14px;text-align:center;color:var(--muted);">No matching status items to display.</td></tr>';
         }
         tbody.innerHTML = trs;
       }
+
+      window.addEventListener('finops-pass-active', parsePain002);
 
       document.getElementById('btnP002Mixed').addEventListener('click', function () {
         xmlBox.value = MIXED_XML;
@@ -584,8 +594,10 @@
       document.getElementById('btnExportP002Csv').addEventListener('click', function () {
         var header = ['level', 'status', 'end_to_end_or_msg_id', 'counterparty', 'iban', 'amount', 'currency', 'iso_reason_code', 'plain_english_fix'];
         var lines = [header.join(',')];
-        for (var i = 0; i < decodedRows.length; i++) {
-          var r = decodedRows[i];
+        var hasPass = Boolean(window.__finopsVerifiedActivePass);
+        var exportRows = (!hasPass && decodedRows.length > 2) ? decodedRows.slice(0, 2) : decodedRows;
+        for (var i = 0; i < exportRows.length; i++) {
+          var r = exportRows[i];
           lines.push([
             csvCell(r.level),
             csvCell(r.status),
@@ -597,6 +609,9 @@
             csvCell(r.reasonCode),
             csvCell(r.fix)
           ].join(','));
+        }
+        if (!hasPass && decodedRows.length > 2) {
+          lines.push('"# FREE PREVIEW CAP (2 OF ' + decodedRows.length + ' ROWS) — Unlock full pain.002 CSV ($9 Pass): https://geornaden.github.io/finops-studio/"');
         }
         var blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
         var url = URL.createObjectURL(blob);

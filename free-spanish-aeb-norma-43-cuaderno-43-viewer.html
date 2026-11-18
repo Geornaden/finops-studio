@@ -461,51 +461,51 @@
       if (lastParsedRows.length > 0) {
         exportBtn.disabled = false;
         wrap.style.display = 'block';
-        wrap.innerHTML = `<table class="tx-table">
-          <thead>
-            <tr>
-              <th>Fecha Op.</th>
-              <th>Fecha Valor</th>
-              <th>IBAN ES</th>
-              <th>Tipo</th>
-              <th>Importe (EUR)</th>
-              <th>Concepto AEB</th>
-              <th>Referencia 1</th>
-              <th>Concepto Ampliado (Reg. 22 + 23)</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${lastParsedRows.map(r => `
-              <tr>
-                <td>${r.opDate}</td>
-                <td>${r.valDate}</td>
-                <td><code>${r.iban}</code></td>
-                <td><strong>${r.type}</strong></td>
-                <td style="color:${r.type === 'HABER' ? '#34d399' : '#f87171'};font-weight:700;">${r.amountEur}</td>
-                <td>${r.commonConcept}</td>
-                <td>${r.ref1 || '-'}</td>
-                <td>${r.description || '-'}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>`;
+        const hasPass = Boolean(window.__finopsVerifiedActivePass);
+        const rowsToShow = (!hasPass && lastParsedRows.length > 3) ? lastParsedRows.slice(0, 3) : lastParsedRows;
+        const rowsHtml = rowsToShow.map(r => (
+          '<tr>' +
+            '<td>' + r.opDate + '</td>' +
+            '<td>' + r.valDate + '</td>' +
+            '<td><code>' + r.iban + '</code></td>' +
+            '<td><strong>' + r.type + '</strong></td>' +
+            '<td style="color:' + (r.type === 'HABER' ? '#34d399' : '#f87171') + ';font-weight:700;">' + r.amountEur + '</td>' +
+            '<td>' + r.commonConcept + '</td>' +
+            '<td>' + (r.ref1 || '-') + '</td>' +
+            '<td>' + (r.description || '-') + '</td>' +
+          '</tr>'
+        )).join('') + ((!hasPass && lastParsedRows.length > 3)
+          ? '<tr><td colspan="8" style="padding:12px;text-align:center;background:rgba(245,158,11,0.10);color:#fde68a;font-size:0.84rem;">&#128274; Vista previa gratuita (3 de ' + lastParsedRows.length + ' apuntes) — <button type="button" onclick="window.startFinOpsCheckout && window.startFinOpsCheckout(\'batch24h\')" style="padding:5px 11px;border-radius:6px;border:none;background:#f59e0b;color:#111827;font-weight:800;cursor:pointer;">Desbloquear CSV Completo ($9 24h Pass)</button></td></tr>'
+          : '');
+        wrap.innerHTML = '<table class="tx-table">' +
+          '<thead><tr>' +
+            '<th>Fecha Op.</th><th>Fecha Valor</th><th>IBAN ES</th><th>Tipo</th><th>Importe (EUR)</th><th>Concepto AEB</th><th>Referencia 1</th><th>Concepto Ampliado (Reg. 22 + 23)</th>' +
+          '</tr></thead>' +
+          '<tbody>' + rowsHtml + '</tbody></table>';
       } else {
         exportBtn.disabled = true;
         wrap.style.display = 'none';
       }
     }
 
+    window.addEventListener('finops-pass-active', auditNorma43);
+
     function downloadN43Csv() {
       if (!lastParsedRows.length) return;
       const headers = ['IBAN', 'Banco', 'Titular', 'Fecha_Operacion', 'Fecha_Valor', 'Tipo', 'Importe_EUR', 'Concepto_AEB', 'Referencia_1', 'Descripcion'];
       const esc = v => '"' + String(v || '').replace(/"/g, '""') + '"';
       const csvLines = [headers.join(',')];
-      lastParsedRows.forEach(r => {
+      const hasPass = Boolean(window.__finopsVerifiedActivePass);
+      const exportRows = (!hasPass && lastParsedRows.length > 2) ? lastParsedRows.slice(0, 2) : lastParsedRows;
+      exportRows.forEach(r => {
         csvLines.push([
           esc(r.iban), esc(r.bankName), esc(r.holder), esc(r.opDate), esc(r.valDate),
           esc(r.type), esc(r.amountEur), esc(r.commonConcept), esc(r.ref1), esc(r.description)
         ].join(','));
       });
+      if (!hasPass && lastParsedRows.length > 2) {
+        csvLines.push('"# VISTA PREVIA GRATUITA (2 DE ' + lastParsedRows.length + ' APUNTES) — Desbloquee CSV completo ($9 Pass): https://geornaden.github.io/finops-studio/"');
+      }
       const blob = new Blob(['\uFEFF' + csvLines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);

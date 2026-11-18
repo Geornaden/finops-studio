@@ -300,7 +300,7 @@ function runLocalPreFlightAudit(toolKey, rawText, cfg) {
     `=== FINOPS STUDIO PRE-FLIGHT MATHEMATICAL AUDIT (${statusOk ? "PASSED" : "ACTION NEEDED"}) ===`,
     `Target Engine : ${cfg.label} (${cfg.actorSlug.replace("~", "/")})`,
     `Batch Volume  : ${rowCount} row(s) detected`,
-    `Est. API Cost : $${estCost} USD total ($0.00 out-of-pocket using Apify's $5/mo free starter credits)`,
+    `Instant Pass  : $9 Unlimited 24h Pass or $29 30-Day Pro Pass (zero monthly lock-in)`,
     "",
     passes.length ? "Verified Checks:\n" + passes.map((p) => "  [OK] " + p).join("\n") : "",
     warnings.length ? "\nPre-Flight Warnings:\n" + warnings.map((w) => "  [!]  " + w).join("\n") : "",
@@ -455,7 +455,7 @@ export function initSandbox(defaultTool = "sepa") {
       statusEl.textContent = `${audit.statusOk ? "PRE-FLIGHT OK" : "CHECK WARNINGS"} • ${audit.rowCount} rows • Est. $${audit.estCost}`;
       if (upsellEl) {
         upsellEl.style.display = "flex";
-        upsellEl.querySelector("span").innerHTML = `<strong>Pre-Flight Audit Complete (${audit.rowCount} rows, est. $${audit.estCost}):</strong> Launch our isolated Cloud Engine on Apify Store ($5/mo free credits included) to generate your bank-uploadable file.`;
+        upsellEl.querySelector("span").innerHTML = `<strong>Pre-Flight Audit Complete (${audit.rowCount} rows):</strong> Unlock an Instant 24h Unlimited Pass ($9) right here to generate &amp; download your full bank-uploadable file.`;
       }
     } else {
       outputEl.textContent = cfg.output;

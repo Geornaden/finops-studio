@@ -601,8 +601,10 @@
         reportBox.innerHTML = html;
 
         var rowsHtml = '';
-        for (var t = 0; t < transactions.length; t++) {
-          var tx = transactions[t];
+        var hasPass = Boolean(window.__finopsVerifiedActivePass);
+        var txToRender = (!hasPass && transactions.length > 3) ? transactions.slice(0, 3) : transactions;
+        for (var t = 0; t < txToRender.length; t++) {
+          var tx = txToRender[t];
           var amtColor = tx.direction === 'DEBIT' ? '#fca5a5' : '#86efac';
           rowsHtml += '<tr style="border-bottom:1px solid rgba(148,163,184,0.14);">' +
             '<td style="padding:8px 10px;"><code>' + escapeHtml(tx.accountNumber) + '</code></td>' +
@@ -614,11 +616,19 @@
             '<td style="padding:8px 10px;font-size:0.78rem;color:#cbd5e1;">' + escapeHtml(tx.remittance.join(' ') || '—') + '</td>' +
             '</tr>';
         }
+        if (!hasPass && transactions.length > 3) {
+          rowsHtml += '<tr><td colspan="7" style="padding:12px;text-align:center;background:rgba(245,158,11,0.10);color:#fde68a;font-size:0.84rem;">' +
+            '&#128274; Showing 3 of ' + transactions.length + ' transactions in free preview — ' +
+            '<button type="button" onclick="window.startFinOpsCheckout && window.startFinOpsCheckout(\'batch24h\')" style="padding:5px 11px;border-radius:6px;border:none;background:#f59e0b;color:#111827;font-weight:800;cursor:pointer;">Unlock Full Unlimited CSV Export ($9 24h Pass)</button>' +
+            '</td></tr>';
+        }
         if (!rowsHtml) {
           rowsHtml = '<tr><td colspan="7" style="padding:14px;text-align:center;color:var(--muted);">No Record 16 detail transactions found in current input.</td></tr>';
         }
         txBody.innerHTML = rowsHtml;
       }
+
+      window.addEventListener('finops-pass-active', auditBai2);
 
       document.getElementById('btnBaiClean').addEventListener('click', function () {
         rawBox.value = CLEAN_BAI2;
@@ -646,8 +656,10 @@
       document.getElementById('btnDownloadCsv').addEventListener('click', function () {
         var header = ['account_number', 'currency', 'bai_type_code', 'direction', 'type_description', 'signed_amount', 'bank_reference', 'customer_reference', 'stitched_remittance_88'];
         var lines = [header.join(',')];
-        for (var i = 0; i < lastTransactions.length; i++) {
-          var tx = lastTransactions[i];
+        var hasPass = Boolean(window.__finopsVerifiedActivePass);
+        var exportRows = (!hasPass && lastTransactions.length > 2) ? lastTransactions.slice(0, 2) : lastTransactions;
+        for (var i = 0; i < exportRows.length; i++) {
+          var tx = exportRows[i];
           lines.push([
             csvCell(tx.accountNumber),
             csvCell(tx.currency),
@@ -659,6 +671,9 @@
             csvCell(tx.custRef),
             csvCell(tx.remittance.join(' '))
           ].join(','));
+        }
+        if (!hasPass && lastTransactions.length > 2) {
+          lines.push('"# FREE PREVIEW CAP (2 OF ' + lastTransactions.length + ' ROWS) — Unlock full reconciled BAI2 CSV ($9 Pass): https://geornaden.github.io/finops-studio/"');
         }
         var blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
         var url = URL.createObjectURL(blob);

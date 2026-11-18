@@ -461,6 +461,8 @@
           .then((r) => r.json())
           .then((j) => {
             if (j.ok && j.active) {
+              window.__finopsVerifiedActivePass = true;
+              try { window.dispatchEvent(new CustomEvent('finops-pass-active')); } catch {}
               const label = j.plan === 'pro30d' ? '30d Pro' : j.plan === 'test1usd' ? '$1 Live Test' : '24h Unlimited';
               wPassActiveChip.textContent = `🟢 ACTIVE PASS: ${savedPassKey} (${label})`;
               wPassActiveChip.style.color = '#34d399';
@@ -797,7 +799,7 @@
             if (stripPP) stripPP.style.display = 'inline-block';
             if (mapperPP) mapperPP.style.display = 'inline-flex';
           } else {
-            if (mapperTitle) mapperTitle.innerHTML = '&#127359;&#65039; Instant No-Signup Production Access (PayPal Instant Pass &bull; $5 Free Apify Credits Also Available)';
+            if (mapperTitle) mapperTitle.innerHTML = '&#127359;&#65039; Instant No-Signup Production Access ($9 24h Unlimited Pass &bull; $29 30-Day Pro)';
           }
         })
         .catch(() => {});
