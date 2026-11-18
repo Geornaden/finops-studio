@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr-FR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validateur SIREN / SIRET (Luhn), TVA Intracommunautaire FR, Cl&eacute; RIB IBAN, Factur-X 2026 &amp; SEPA XML API | FinOps Studio</title>
+  <meta name="description" content="Outil gratuit hors-ligne de validation comptable France 2026 : v&eacute;rifiez SIREN (9 chiffres), SIRET (14 chiffres Luhn), num&eacute;ro de TVA FR (MOD-97), IBAN / Cl&eacute; RIB (BNP Paribas, Soci&eacute;t&eacute; G&eacute;n&eacute;rale, Cr&eacute;dit Agricole, Qonto) et g&eacute;n&eacute;rez vos fichiers Factur-X / Peppol 0009 &amp; SEPA pain.001.001.09." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/siret-tva-validator-facturx-peppol-sepa-xml-france-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Validateur SIREN / SIRET, TVA FR, Cl&eacute; RIB &amp; API Factur-X / SEPA 2026" />
+  <meta property="og:description" content="Contr&ocirc;lez math&eacute;matiquement vos SIRET fournisseurs, cl&eacute;s TVA FR et IBAN RIB avant envoi Chorus Pro / PDP / Peppol 0009 ou virement SEPA XML." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/siret-tva-validator-facturx-peppol-sepa-xml-france-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Validateur SIREN SIRET, TVA Intracommunautaire FR, IBAN RIB & Générateur Factur-X / SEPA",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "inLanguage": ["fr-FR", "en"],
+        "url": "https://geornaden.github.io/finops-studio/siret-tva-validator-facturx-peppol-sepa-xml-france-api.html",
+        "offers": { "@type": "Offer", "price": "0.00", "priceCurrency": "EUR" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Comment calculer la clé de TVA intracommunautaire française à partir du SIREN ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "La clé numérique à 2 chiffres du numéro de TVA intracommunautaire français (FRXX999999999) se calcule selon la formule officielle DGFiP : Clé = (12 + 3 × (SIREN modulo 97)) modulo 97. Le SIREN à 9 chiffres et le SIRET à 14 chiffres sont vérifiés par l'algorithme de Luhn (modulo 10)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Quel identifiant Peppol / Factur-X utiliser pour la réforme de la facturation électronique 2026 en France ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "En France (réforme DGFiP Factur-X / Chorus Pro / PDP), l'identifiant d'adressage électronique utilise le schéma ISO 6523 0009 pour le SIRET à 14 chiffres (ou 9957 pour le numéro de TVA FR) au format EN 16931."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .fr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 14px 0; }
+    .fr-field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; font-weight: 700; }
+    .fr-field input, .fr-field select { width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #f8fafc; font-size: 0.9rem; font-family: monospace; }
+    .fr-result { margin-top: 10px; padding: 12px 14px; border-radius: 10px; background: #0b1120; border: 1px solid var(--border); font-size: 0.88rem; line-height: 1.55; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html">Accueil</a>
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">&#128202; CSV vers SEPA XML</a>
+        <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Factur-X Builder</a>
+        <a href="./facturation-electronique-2026-peppol-factur-x-xml.html">Guide R&eacute;forme 2026</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">API Cloud SEPA &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127467;&#127479; R&eacute;forme Facturation &Eacute;lectronique 2026 &bull; SIREN/SIRET Luhn &bull; TVA FR MOD-97 &bull; SEPA pain.001.001.09</span>
+      <h1>Validateur SIREN / SIRET, TVA FR, Cl&eacute; RIB IBAN &amp; G&eacute;n&eacute;rateur Factur-X / SEPA XML</h1>
+      <p>V&eacute;rifiez instantan&eacute;ment vos identifiants fournisseurs <strong>SIRET (14 chiffres)</strong>, calculez automatiquement la <strong>cl&eacute; TVA intracommunautaire FR</strong> et contr&ocirc;lez les <strong>IBAN / RIB</strong> (<strong>BNP Paribas</strong>, <strong>Soci&eacute;t&eacute; G&eacute;n&eacute;rale</strong>, <strong>Cr&eacute;dit Agricole</strong>, <strong>Qonto</strong>) avant rejet bancaire <code>BE04</code> ou rejet <strong>Chorus Pro / PDP</strong>.</p>
+      <div class="hero-actions">
+        <button id="frBuy24h" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#9889; Pass 24h Illimit&eacute; SEPA &amp; Factur-X ($9)</button>
+        <button id="frBuy30d" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fbbf24;font-weight:700;">&#128640; Pass Pro 30 Jours + API ($29)</button>
+        <a class="btn btn-outline" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">&#128202; Convertir Excel/CSV en SEPA XML &rarr;</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:22px;">
+      <h2 style="margin-top:0;">Contr&ocirc;leur Interactif SIRET (Luhn), TVA FR (MOD-97) &amp; IBAN / Code Banque</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button id="btnFrBnp" type="button" class="btn btn-outline">Exemple : SIRET Valide + BNP Paribas</button>
+        <button id="btnFrCa" type="button" class="btn btn-outline">Exemple : Cr&eacute;dit Agricole + Facture 20% TVA</button>
+        <button id="btnFrBad" type="button" class="btn btn-outline">Tester Erreur Cl&eacute; SIRET / TVA</button>
+      </div>
+
+      <div class="fr-grid">
+        <div class="fr-field">
+          <label for="frSiret">SIRET (14 chiffres) ou SIREN (9 chiffres)</label>
+          <input id="frSiret" type="text" value="732 829 320 00074" />
+        </div>
+        <div class="fr-field">
+          <label for="frTva">N&deg; TVA Intracommunautaire (Auto-v&eacute;rifi&eacute;)</label>
+          <input id="frTva" type="text" value="FR42732829320" />
+        </div>
+        <div class="fr-field">
+          <label for="frIban">IBAN Fournisseur (27 caract&egrave;res FR)</label>
+          <input id="frIban" type="text" value="FR76 3000 6000 0112 3456 7890 189" />
+        </div>
+        <div class="fr-field">
+          <label for="frVendor">Raison Sociale Fournisseur</label>
+          <input id="frVendor" type="text" value="ATELIER NUMERIQUE PARIS SAS" />
+        </div>
+        <div class="fr-field">
+          <label for="frCity">Ville (Obligatoire SEPA 2026 BE04)</label>
+          <input id="frCity" type="text" value="Paris" />
+        </div>
+        <div class="fr-field">
+          <label for="frHt">Montant HT (EUR &bull; TVA 20%)</label>
+          <input id="frHt" type="text" value="1450.00" />
+        </div>
+      </div>
+
+      <div id="frAuditBox" class="fr-result"></div>
+
+      <div class="sandbox-grid" style="margin-top:16px;">
+        <div>
+          <div class="pane-label">
+            <span>Payload SEPA <code>pain.001.001.09</code> (Anti-Rejet BE04)</span>
+            <button id="btnCopyFrSepa" type="button" class="btn btn-outline" style="padding:4px 9px;font-size:0.75rem;">Copier JSON SEPA</button>
+          </div>
+          <pre id="frSepaOut" class="code-box" style="min-height:190px;"></pre>
+        </div>
+        <div>
+          <div class="pane-label">
+            <span>Payload Factur-X / Peppol <code>0009</code> (EN 16931)</span>
+            <button id="btnCopyFrInv" type="button" class="btn btn-outline" style="padding:4px 9px;font-size:0.75rem;">Copier JSON Factur-X</button>
+          </div>
+          <pre id="frInvOut" class="code-box" style="min-height:190px;"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><strong>FinOps Studio</strong> &bull; APIs SEPA XML <code>pain.001.001.09</code>, Factur-X &amp; Peppol EN 16931</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="./facturation-electronique-2026-peppol-factur-x-xml.html">Factur-X 2026</a>
+          <a href="./belgium-2026-peppol-france-facturx-xml-api-migration.html">Migration FR/BE</a>
+          <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">Validateur SEPA BE04</a>
+          <a href="./index.html">12 APIs Bancaires</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var FR_BANKS = {
+        "30004": { name: "BNP Paribas", bic: "BNPAFRPPXXX" },
+        "30003": { name: "Société Générale", bic: "SOGEFRPPXXX" },
+        "30002": { name: "LCL (Le Crédit Lyonnais)", bic: "CRLYFRPPXXX" },
+        "30006": { name: "Crédit Agricole", bic: "AGRIFRPPXXX" },
+        "10278": { name: "Crédit Mutuel", bic: "CMCIFR2AXXX" },
+        "30066": { name: "CIC (Crédit Industriel et Commercial)", bic: "CMCIFRPPXXX" },
+        "20041": { name: "La Banque Postale", bic: "PSSTFRPPMON" },
+        "16958": { name: "Qonto (Olinda SAS)", bic: "QNTOFRP1XXX" },
+        "10096": { name: "CIC Lyonnaise de Banque", bic: "CMCIFRPPXXX" },
+        "17515": { name: "Caisse d'Épargne Île-de-France", bic: "CEPAFRPP751" }
+      };
+
+      function luhnCheck(str) {
+        if (!/^[0-9]+$/.test(str)) return false;
+        var sum = 0;
+        for (var i = 0; i < str.length; i++) {
+          var d = Number(str[str.length - 1 - i]);
+          if (i % 2 === 1) {
+            d *= 2;
+            if (d > 9) d -= 9;
+          }
+          sum += d;
+        }
+        return sum > 0 && sum % 10 === 0;
+      }
+
+      function expectedFrTva(siren9) {
+        if (!/^[0-9]{9}$/.test(siren9)) return "";
+        var k = (12 + 3 * (Number(siren9) % 97)) % 97;
+        return "FR" + String(k).padStart(2, "0") + siren9;
+      }
+
+      function checkIbanMod97(iban) {
+        var c = String(iban || "").replace(/\s+/g, "").toUpperCase();
+        if (!/^FR[0-9]{2}[0-9A-Z]{23}$/.test(c)) return false;
+        var rearr = c.slice(4) + c.slice(0, 4);
+        var exp = rearr.replace(/[A-Z]/g, function (ch) { return String(ch.charCodeAt(0) - 55); });
+        var rem = 0;
+        for (var i = 0; i < exp.length; i++) rem = (rem * 10 + Number(exp[i])) % 97;
+        return rem === 1;
+      }
+
+      function render() {
+        var rawS = String(document.getElementById("frSiret").value || "").replace(/\s+/g, "");
+        var rawTva = String(document.getElementById("frTva").value || "").replace(/\s+/g, "").toUpperCase();
+        var rawIban = String(document.getElementById("frIban").value || "").replace(/\s+/g, "").toUpperCase();
+        var vendor = String(document.getElementById("frVendor").value || "FOURNISSEUR SAS").trim();
+        var city = String(document.getElementById("frCity").value || "Paris").trim();
+        var ht = Number(document.getElementById("frHt").value || 0);
+        if (!(ht > 0)) ht = 100;
+        var tvaAmt = Math.round(ht * 20) / 100;
+        var ttc = Math.round((ht + tvaAmt) * 100) / 100;
+
+        var siren9 = rawS.slice(0, 9);
+        var isSiret14 = rawS.length === 14;
+        var isLaPoste = siren9 === "356000000" && isSiret14;
+        var digitSum = rawS.split("").reduce(function (a, b) { return a + Number(b || 0); }, 0);
+        var siretOk = (rawS.length === 9 && luhnCheck(rawS)) || (isSiret14 && (luhnCheck(rawS) || (isLaPoste && digitSum % 5 === 0)));
+        var calcTva = expectedFrTva(siren9);
+        var tvaOk = Boolean(calcTva) && rawTva === calcTva;
+        var ibanOk = checkIbanMod97(rawIban);
+        var codeBanque = rawIban.length === 27 ? rawIban.slice(4, 9) : "";
+        var codeGuichet = rawIban.length === 27 ? rawIban.slice(9, 14) : "";
+        var cleRib = rawIban.length === 27 ? rawIban.slice(25, 27) : "";
+        var bankMeta = FR_BANKS[codeBanque] || { name: "Établissement bancaire FR (" + (codeBanque || "?") + ")", bic: "BNPAFRPPXXX" };
+
+        var out = [];
+        out.push(siretOk
+          ? "&#128994; <strong>" + (isSiret14 ? "SIRET (14)" : "SIREN (9)") + " VALIDE :</strong> <code>" + rawS + "</code> (Luhn MOD-10 v&eacute;rifi&eacute; &bull; Peppol Endpoint <code>0009:" + rawS + "</code>)"
+          : "&#128308; <strong>SIRET / SIREN INVALIDE :</strong> &Eacute;chec du contr&ocirc;le Luhn MOD-10 sur <code>" + rawS + "</code>.");
+
+        out.push(tvaOk
+          ? "&#128994; <strong>TVA Intracommunautaire FR VALIDE :</strong> <code>" + rawTva + "</code> (Cl&eacute; DGFiP MOD-97 exacte)"
+          : "&#128308; <strong>TVA FR INCOH&Eacute;RENTE :</strong> Pour le SIREN <code>" + siren9 + "</code>, la TVA attendue est <code>" + (calcTva || "FR..") + "</code>.");
+
+        out.push(ibanOk
+          ? "&#128994; <strong>IBAN FR (27 car.) VALIDE :</strong> Banque <code>" + codeBanque + "</code> (" + bankMeta.name + " &bull; BIC <code>" + bankMeta.bic + "</code> &bull; Guichet <code>" + codeGuichet + "</code> &bull; Cl&eacute; RIB <code>" + cleRib + "</code>)"
+          : "&#128308; <strong>IBAN FR INVALIDE :</strong> V&eacute;rifiez la longueur (27 caract&egrave;res) et la cl&eacute; ISO 13616 MOD-97.");
+
+        document.getElementById("frAuditBox").innerHTML = out.join("<br/>");
+
+        var sepaJson = {
+          schemaVersion: "pain.001.001.09",
+          initiatingPartyName: "GROUPE HEXAGONE SAS",
+          debtorName: "GROUPE HEXAGONE SAS",
+          debtorIban: "FR7630004008040001080549536",
+          debtorBic: "BNPAFRPPXXX",
+          transactions: [
+            {
+              name: vendor,
+              iban: rawIban,
+              bic: bankMeta.bic,
+              amount: Number(ttc.toFixed(2)),
+              remittanceInfo: "Facture 2026 SIRET " + rawS,
+              country: "FR",
+              townName: city
+            }
+          ]
+        };
+
+        var invJson = {
+          format: "factur-x-en16931",
+          invoiceNumber: "FA-2026-0901",
+          issueDate: new Date().toISOString().slice(0, 10),
+          dueDate: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
+          currency: "EUR",
+          buyerReference: "ENGAGEMENT-2026",
+          seller: {
+            name: vendor,
+            vatId: calcTva || rawTva,
+            endpointScheme: "0009",
+            endpointId: rawS,
+            city: city,
+            postalCode: "75008",
+            country: "FR",
+            iban: rawIban
+          },
+          buyer: {
+            name: "GROUPE HEXAGONE SAS",
+            vatId: "FR40552100554",
+            endpointScheme: "0009",
+            endpointId: "55210055400013",
+            city: "Lyon",
+            postalCode: "69002",
+            country: "FR"
+          },
+          lines: [
+            { description: "Prestation Cloud & Conformité Factur-X", quantity: 1, unitPrice: ht.toFixed(2), vatRate: 20 }
+          ]
+        };
+
+        document.getElementById("frSepaOut").textContent = JSON.stringify(sepaJson, null, 2);
+        document.getElementById("frInvOut").textContent = JSON.stringify(invJson, null, 2);
+      }
+
+      ["frSiret", "frTva", "frIban", "frVendor", "frCity", "frHt"].forEach(function (id) {
+        document.getElementById(id).addEventListener("input", render);
+      });
+
+      document.getElementById("btnFrBnp").addEventListener("click", function () {
+        document.getElementById("frSiret").value = "732 829 320 00074";
+        document.getElementById("frTva").value = "FR42732829320";
+        document.getElementById("frIban").value = "FR76 3000 4008 0400 0108 0549 536";
+        document.getElementById("frVendor").value = "ATELIER NUMERIQUE PARIS SAS";
+        document.getElementById("frCity").value = "Paris";
+        render();
+      });
+
+      document.getElementById("btnFrCa").addEventListener("click", function () {
+        document.getElementById("frSiret").value = "552 100 554 00013";
+        document.getElementById("frTva").value = "FR40552100554";
+        document.getElementById("frIban").value = "FR76 3000 6000 0112 3456 7890 189";
+        document.getElementById("frVendor").value = "INDUSTRIE RHONE ALPES SA";
+        document.getElementById("frCity").value = "Lyon";
+        render();
+      });
+
+      document.getElementById("btnFrBad").addEventListener("click", function () {
+        document.getElementById("frSiret").value = "732 829 320 00079";
+        document.getElementById("frTva").value = "FR99732829320";
+        render();
+      });
+
+      document.getElementById("btnCopyFrSepa").addEventListener("click", function (e) {
+        if (navigator.clipboard) navigator.clipboard.writeText(document.getElementById("frSepaOut").textContent);
+        var b = e.target, o = b.textContent; b.textContent = "Copié !"; setTimeout(function () { b.textContent = o; }, 1600);
+      });
+      document.getElementById("btnCopyFrInv").addEventListener("click", function (e) {
+        if (navigator.clipboard) navigator.clipboard.writeText(document.getElementById("frInvOut").textContent);
+        var b = e.target, o = b.textContent; b.textContent = "Copié !"; setTimeout(function () { b.textContent = o; }, 1600);
+      });
+
+      document.getElementById("frBuy24h").addEventListener("click", function (e) {
+        if (window.startFinOpsCheckout) window.startFinOpsCheckout("batch24h", { btn: e.target });
+      });
+      document.getElementById("frBuy30d").addEventListener("click", function (e) {
+        if (window.startFinOpsCheckout) window.startFinOpsCheckout("pro30d", { btn: e.target });
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

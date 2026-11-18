@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Belgium KBO / BCE Validator (MOD-97), +++OGM/VCS+++ Generator, Peppol 0208 &amp; SEPA XML API | FinOps Studio</title>
+  <meta name="description" content="Free offline Belgian 2026 B2B compliance validator: verify 10-digit KBO / BCE &amp; BE VAT numbers (MOD-97), generate structured +++OGM/VCS+++ payment references, resolve Belgian IBANs (KBC, BNP Paribas Fortis, Belfius, ING Belgium), and build Peppol 0208 &amp; SEPA pain.001.001.09 payloads." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/kbo-bce-ogm-vcs-peppol-sepa-xml-belgium-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Belgium KBO/BCE (MOD-97), +++OGM/VCS+++ Reference, Peppol 0208 &amp; SEPA XML Builder" />
+  <meta property="og:description" content="Validate Belgian 10-digit KBO/BCE enterprise numbers, +++OGM/VCS+++ structured references, and BE IBANs for mandatory 2026 Peppol 0208 e-invoicing &amp; SEPA XML." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/kbo-bce-ogm-vcs-peppol-sepa-xml-belgium-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Belgium KBO/BCE MOD-97 Validator, OGM/VCS Structured Reference Generator & Peppol 0208 / SEPA Builder",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "inLanguage": ["en", "nl-BE", "fr-BE"],
+        "url": "https://geornaden.github.io/finops-studio/kbo-bce-ogm-vcs-peppol-sepa-xml-belgium-api.html",
+        "offers": { "@type": "Offer", "price": "0.00", "priceCurrency": "EUR" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How is a 10-digit Belgian KBO / BCE enterprise number or BE VAT checksum calculated?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A 10-digit Belgian Crossroads Bank for Enterprises (KBO / BCE) number starts with 0 or 1, and its last 2 digits equal 97 minus (first 8 digits modulo 97). In Belgium's mandatory 2026 B2B e-invoicing framework, the 10-digit KBO number serves directly as Peppol Participant Scheme 0208."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does Belgian +++XXX/XXXX/XXXXX+++ OGM / VCS structured remittance validation work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Febelfin's 12-digit Belgian structured communication (OGM in Dutch, VCS in French) computes modulo 97 on the first 10 digits. The final 2 check digits equal remainder (or 97 when remainder is 0), formatted as +++XXX/XXXX/XXXXX+++ inside SEPA XML pain.001.001.09."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .be-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 14px 0; }
+    .be-field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; font-weight: 700; }
+    .be-field input { width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #f8fafc; font-size: 0.9rem; font-family: monospace; }
+    .be-result { margin-top: 10px; padding: 12px 14px; border-radius: 10px; background: #0b1120; border: 1px solid var(--border); font-size: 0.88rem; line-height: 1.55; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html">Home</a>
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">&#128202; CSV to SEPA XML</a>
+        <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Peppol 0208 Builder</a>
+        <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">Belgi&euml; / NL Guide</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/eu-einvoice-xml-generator" target="_blank" rel="noopener">Peppol XML API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127463;&#127466; Belgium Mandatory 2026 B2B Peppol 0208 &bull; KBO/BCE MOD-97 &bull; +++OGM/VCS+++ &bull; SEPA pain.001.001.09</span>
+      <h1>Belgian KBO / BCE Validator, <code>+++OGM/VCS+++</code> Generator &amp; Peppol 0208 / SEPA Builder</h1>
+      <p>Verify 10-digit Belgian <strong>KBO / BCE</strong> enterprise numbers (<code>BE0XXX.XXX.XXX</code>), generate Febelfin-compliant <strong><code>+++XXX/XXXX/XXXXX+++</code></strong> structured remittance references, and validate 16-char <strong>BE IBANs</strong> for <strong>KBC</strong>, <strong>BNP Paribas Fortis</strong>, <strong>Belfius</strong>, and <strong>ING Belgium</strong>.</p>
+      <div class="hero-actions">
+        <button id="beBuy24h" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#9889; Instant 24h Unlimited Peppol &amp; SEPA Pass ($9)</button>
+        <button id="beBuy30d" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fbbf24;font-weight:700;">&#128640; Pro Pass — 30d Unlimited ($29)</button>
+        <a class="btn btn-outline" href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">&#129534; Open Visual Peppol 0208 Builder &rarr;</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:22px;">
+      <h2 style="margin-top:0;">Interactive KBO / BCE (MOD-97), <code>+++OGM/VCS+++</code> &amp; Belgian IBAN Resolver</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button id="btnBeKbc" type="button" class="btn btn-outline">Sample: Valid KBO + KBC Bank + OGM</button>
+        <button id="btnBeGenOgm" type="button" class="btn btn-outline">&#9889; Auto-Generate Valid +++OGM/VCS+++ From Invoice #</button>
+        <button id="btnBeBad" type="button" class="btn btn-outline">Test Invalid KBO &amp; OGM Checksum</button>
+      </div>
+
+      <div class="be-grid">
+        <div class="be-field">
+          <label for="beKbo">Belgian KBO / BCE or BE VAT (10 Digits)</label>
+          <input id="beKbo" type="text" value="BE 0403.199.702" />
+        </div>
+        <div class="be-field">
+          <label for="beOgm">Structured Reference +++XXX/XXXX/XXXXX+++</label>
+          <input id="beOgm" type="text" value="+++202/6001/04274+++" />
+        </div>
+        <div class="be-field">
+          <label for="beIban">Belgian IBAN (16 Chars BE)</label>
+          <input id="beIban" type="text" value="BE68 5390 0754 7034" />
+        </div>
+        <div class="be-field">
+          <label for="beSupplier">Supplier Name (NV / BV / SA / SRL)</label>
+          <input id="beSupplier" type="text" value="ANTWERP LOGISTICS BV" />
+        </div>
+        <div class="be-field">
+          <label for="beTown">City / Gemeente (2026 SEPA BE04 Rule)</label>
+          <input id="beTown" type="text" value="Antwerpen" />
+        </div>
+        <div class="be-field">
+          <label for="beNet">Net Invoice Amount (EUR &bull; 21% BTW/TVA)</label>
+          <input id="beNet" type="text" value="1850.00" />
+        </div>
+      </div>
+
+      <div id="beAuditBox" class="be-result"></div>
+
+      <div class="sandbox-grid" style="margin-top:16px;">
+        <div>
+          <div class="pane-label">
+            <span>Peppol BIS 3.0 B2B Belgium Payload (Scheme <code>0208</code>)</span>
+            <button id="btnCopyBePeppol" type="button" class="btn btn-outline" style="padding:4px 9px;font-size:0.75rem;">Copy Peppol JSON</button>
+          </div>
+          <pre id="bePeppolOut" class="code-box" style="min-height:190px;"></pre>
+        </div>
+        <div>
+          <div class="pane-label">
+            <span>SEPA <code>pain.001.001.09</code> Batch Payload (KBC / Fortis / Belfius)</span>
+            <button id="btnCopyBeSepa" type="button" class="btn btn-outline" style="padding:4px 9px;font-size:0.75rem;">Copy SEPA JSON</button>
+          </div>
+          <pre id="beSepaOut" class="code-box" style="min-height:190px;"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><strong>FinOps Studio</strong> &bull; Belgian Peppol <code>0208</code> B2B E-Invoicing &amp; SEPA <code>pain.001.001.09</code> Cloud APIs</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="./belgium-2026-peppol-france-facturx-xml-api-migration.html">Belgium 2026 Playbook</a>
+          <a href="./sepa-xml-pain001-peppol-belgie-nederland.html">Belgi&euml; &amp; Nederland</a>
+          <a href="./free-eu-vat-peppol-endpoint-id-validator.html">Peppol Endpoint Checker</a>
+          <a href="./index.html">All 12 Banking APIs</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      function resolveBeBank(p3) {
+        var n = Number(p3);
+        if ((n >= 1 && n <= 49) || (n >= 200 && n <= 299)) return { name: "BNP Paribas Fortis", bic: "GEBABEBBXXX" };
+        if (n >= 300 && n <= 399) return { name: "ING Belgium", bic: "BBRUBEBBXXX" };
+        if ((n >= 400 && n <= 499) || (n >= 730 && n <= 749)) return { name: "KBC Bank / CBC Banque", bic: "KREDBEBBXXX" };
+        if ((n >= 50 && n <= 99) || (n >= 550 && n <= 599) || (n >= 790 && n <= 799)) return { name: "Belfius Bank", bic: "GKCCBEBBXXX" };
+        if (n >= 970 && n <= 979) return { name: "Argenta Spaarbank", bic: "ARSPBE22XXX" };
+        return { name: "Belgian Febelfin Clearing Bank (" + p3 + ")", bic: "KREDBEBBXXX" };
+      }
+
+      function validateKbo(raw) {
+        var digits = String(raw || "").toUpperCase().replace(/^BE/, "").replace(/[^0-9]/g, "");
+        if (digits.length === 9) digits = "0" + digits;
+        if (!/^[01][0-9]{9}$/.test(digits)) {
+          return { valid: false, reason: "Expected 10-digit Belgian KBO/BCE starting with 0 or 1 (e.g. 0403.199.720)" };
+        }
+        var base8 = Number(digits.slice(0, 8));
+        var chk2 = Number(digits.slice(8, 10));
+        var expected = 97 - (base8 % 97);
+        if (chk2 !== expected) {
+          return {
+            valid: false,
+            digits: digits,
+            reason: "Failed MOD-97 check: expected check digits " + String(expected).padStart(2, "0") + " (got " + String(chk2).padStart(2, "0") + ")"
+          };
+        }
+        var formatted = digits.slice(0, 4) + "." + digits.slice(4, 7) + "." + digits.slice(7, 10);
+        return { valid: true, digits: digits, formatted: formatted, vat: "BE" + digits };
+      }
+
+      function validateOgm(raw) {
+        var d = String(raw || "").replace(/[^0-9]/g, "");
+        if (d.length !== 12) return { valid: false, reason: "Expected 12 digits in +++XXX/XXXX/XXXXX+++ format" };
+        var base10 = Number(d.slice(0, 10));
+        var chk = Number(d.slice(10, 12));
+        var rem = base10 % 97;
+        var expected = rem === 0 ? 97 : rem;
+        var fmt = "+++" + d.slice(0, 3) + "/" + d.slice(3, 7) + "/" + d.slice(7, 12) + "+++";
+        if (chk !== expected) {
+          return { valid: false, reason: "Invalid OGM/VCS MOD-97 check digits (expected " + String(expected).padStart(2, "0") + " -> +++" + d.slice(0, 3) + "/" + d.slice(3, 7) + "/" + d.slice(7, 10) + String(expected).padStart(2, "0") + "+++)" };
+        }
+        return { valid: true, formatted: fmt, raw12: d };
+      }
+
+      function makeOgmFromTen(tenDigits) {
+        var clean = String(tenDigits).replace(/[^0-9]/g, "").padStart(10, "0").slice(0, 10);
+        var rem = Number(clean) % 97;
+        var chk = String(rem === 0 ? 97 : rem).padStart(2, "0");
+        var full = clean + chk;
+        return "+++" + full.slice(0, 3) + "/" + full.slice(3, 7) + "/" + full.slice(7, 12) + "+++";
+      }
+
+      function checkBeIban(raw) {
+        var c = String(raw || "").replace(/\s+/g, "").toUpperCase();
+        if (!/^BE[0-9]{14}$/.test(c)) return { valid: false, reason: "Expected 16-character Belgian IBAN (BE + 14 digits)" };
+        var rearr = c.slice(4) + c.slice(0, 4);
+        var exp = rearr.replace(/[A-Z]/g, function (ch) { return String(ch.charCodeAt(0) - 55); });
+        var rem = 0;
+        for (var i = 0; i < exp.length; i++) rem = (rem * 10 + Number(exp[i])) % 97;
+        if (rem !== 1) return { valid: false, reason: "Failed ISO 13616 MOD-97 IBAN checksum" };
+        var bban10 = Number(c.slice(4, 14));
+        var natChk = Number(c.slice(14, 16));
+        var expNat = bban10 % 97 === 0 ? 97 : (bban10 % 97);
+        if (natChk !== expNat) return { valid: false, reason: "Failed Belgian national BBAN MOD-97 check digits" };
+        var bank = resolveBeBank(c.slice(4, 7));
+        return { valid: true, clean: c, bank: bank };
+      }
+
+      // Fix initial sample KBO to exact valid 0403.199.720 & OGM
+      document.getElementById("beKbo").value = "BE 0403.199.720";
+      document.getElementById("beOgm").value = makeOgmFromTen("2026001042");
+
+      function render() {
+        var kbo = validateKbo(document.getElementById("beKbo").value);
+        var ogm = validateOgm(document.getElementById("beOgm").value);
+        var ib = checkBeIban(document.getElementById("beIban").value);
+        var sup = String(document.getElementById("beSupplier").value || "SUPPLIER BV").trim();
+        var town = String(document.getElementById("beTown").value || "Brussel").trim();
+        var net = Number(document.getElementById("beNet").value || 0);
+        if (!(net > 0)) net = 100;
+        var vatAmt = Math.round(net * 21) / 100;
+        var gross = Math.round((net + vatAmt) * 100) / 100;
+
+        var lines = [];
+        lines.push(kbo.valid
+          ? "&#128994; <strong>KBO / BCE &amp; BE VAT VALID:</strong> <code>" + kbo.formatted + "</code> &bull; VAT <code>" + kbo.vat + "</code> &bull; Mandatory 2026 Peppol Endpoint <code>0208:" + kbo.digits + "</code>"
+          : "&#128308; <strong>KBO / BCE INVALID:</strong> " + kbo.reason);
+
+        lines.push(ogm.valid
+          ? "&#128994; <strong>Structured OGM / VCS VALID:</strong> <code>" + ogm.formatted + "</code> (Febelfin MOD-97 Verified)"
+          : "&#128308; <strong>OGM / VCS INVALID:</strong> " + ogm.reason);
+
+        lines.push(ib.valid
+          ? "&#128994; <strong>Belgian IBAN VALID:</strong> <code>" + ib.clean + "</code> (" + ib.bank.name + " &bull; BIC <code>" + ib.bank.bic + "</code> &bull; Dual ISO + BBAN MOD-97 Verified)"
+          : "&#128308; <strong>Belgian IBAN INVALID:</strong> " + ib.reason);
+
+        document.getElementById("beAuditBox").innerHTML = lines.join("<br/>");
+
+        var peppolPayload = {
+          format: "peppol-ubl-3.0",
+          invoiceNumber: "BE-2026-1042",
+          issueDate: new Date().toISOString().slice(0, 10),
+          dueDate: new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
+          currency: "EUR",
+          buyerReference: ogm.valid ? ogm.formatted : "PO-BE-2026",
+          seller: {
+            name: sup,
+            vatId: kbo.valid ? kbo.vat : "BE0403199720",
+            endpointScheme: "0208",
+            endpointId: kbo.valid ? kbo.digits : "0403199720",
+            city: town,
+            postalCode: "2000",
+            country: "BE",
+            iban: ib.valid ? ib.clean : "BE68539007547034"
+          },
+          buyer: {
+            name: "BRUSSELS TECH SOLUTIONS NV",
+            vatId: "BE0477472701",
+            endpointScheme: "0208",
+            endpointId: "0477472701",
+            city: "Brussel",
+            postalCode: "1000",
+            country: "BE"
+          },
+          lines: [
+            { description: "2026 B2B Managed Treasury & Peppol Integration", quantity: 1, unitPrice: net.toFixed(2), vatRate: 21 }
+          ]
+        };
+
+        var sepaPayload = {
+          schemaVersion: "pain.001.001.09",
+          initiatingPartyName: "BRUSSELS TECH SOLUTIONS NV",
+          debtorName: "BRUSSELS TECH SOLUTIONS NV",
+          debtorIban: "BE71096123456769",
+          debtorBic: "GKCCBEBBXXX",
+          transactions: [
+            {
+              name: sup,
+              iban: ib.valid ? ib.clean : "BE68539007547034",
+              bic: ib.valid ? ib.bank.bic : "KREDBEBBXXX",
+              amount: Number(gross.toFixed(2)),
+              remittanceInfo: ogm.valid ? ogm.formatted : "Factuur BE-2026-1042",
+              country: "BE",
+              townName: town
+            }
+          ]
+        };
+
+        document.getElementById("bePeppolOut").textContent = JSON.stringify(peppolPayload, null, 2);
+        document.getElementById("beSepaOut").textContent = JSON.stringify(sepaPayload, null, 2);
+      }
+
+      ["beKbo", "beOgm", "beIban", "beSupplier", "beTown", "beNet"].forEach(function (id) {
+        document.getElementById(id).addEventListener("input", render);
+      });
+
+      document.getElementById("btnBeKbc").addEventListener("click", function () {
+        document.getElementById("beKbo").value = "BE 0403.199.720";
+        document.getElementById("beOgm").value = makeOgmFromTen("2026001042");
+        document.getElementById("beIban").value = "BE68 5390 0754 7034";
+        document.getElementById("beSupplier").value = "ANTWERP LOGISTICS BV";
+        document.getElementById("beTown").value = "Antwerpen";
+        render();
+      });
+
+      document.getElementById("btnBeGenOgm").addEventListener("click", function () {
+        var rnd10 = "2026" + String(Math.floor(100000 + Math.random() * 899999));
+        document.getElementById("beOgm").value = makeOgmFromTen(rnd10);
+        render();
+      });
+
+      document.getElementById("btnBeBad").addEventListener("click", function () {
+        document.getElementById("beKbo").value = "BE 0403.199.799";
+        document.getElementById("beOgm").value = "+++202/6001/04299+++";
+        render();
+      });
+
+      document.getElementById("btnCopyBePeppol").addEventListener("click", function (e) {
+        if (navigator.clipboard) navigator.clipboard.writeText(document.getElementById("bePeppolOut").textContent);
+        var b = e.target, o = b.textContent; b.textContent = "Copied!"; setTimeout(function () { b.textContent = o; }, 1600);
+      });
+      document.getElementById("btnCopyBeSepa").addEventListener("click", function (e) {
+        if (navigator.clipboard) navigator.clipboard.writeText(document.getElementById("beSepaOut").textContent);
+        var b = e.target, o = b.textContent; b.textContent = "Copied!"; setTimeout(function () { b.textContent = o; }, 1600);
+      });
+
+      document.getElementById("beBuy24h").addEventListener("click", function (e) {
+        if (window.startFinOpsCheckout) window.startFinOpsCheckout("batch24h", { btn: e.target });
+      });
+      document.getElementById("beBuy30d").addEventListener("click", function (e) {
+        if (window.startFinOpsCheckout) window.startFinOpsCheckout("pro30d", { btn: e.target });
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

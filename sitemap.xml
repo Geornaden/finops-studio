@@ -460,4 +460,14 @@
     <changefreq>weekly</changefreq>
     <priority>0.96</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/siret-tva-validator-facturx-peppol-sepa-xml-france-api.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.96</priority>
+  </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/kbo-bce-ogm-vcs-peppol-sepa-xml-belgium-api.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.96</priority>
+  </url>
 </urlset>
