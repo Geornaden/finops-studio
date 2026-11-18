@@ -127,11 +127,11 @@
           <div id="directCheckoutTitle" style="font-weight:800;font-size:0.95rem;color:#fde68a;">&#9889; Instant No-Signup Production Access (Instant Pass &bull; Zero Subscription)</div>
           <div id="passStatusChip" style="font-size:0.82rem;color:#cbd5e1;margin-top:3px;">Generate unlimited bank files right on this page without creating any third-party developer account.</div>
           <div id="receiptClaimBox" style="display:none;margin-top:10px;padding:9px 11px;border-radius:8px;background:#0f172a;border:1px solid #fbbf24;">
-            <div style="font-size:0.79rem;color:#fde68a;font-weight:700;margin-bottom:5px;">&#9889; Completed checkout? If auto-unlock hasn't arrived yet, paste your Receipt / Transaction ID to activate in 1 second:</div>
+            <div style="font-size:0.79rem;color:#fde68a;font-weight:700;margin-bottom:5px;">&#9889; Completed checkout? If auto-unlock hasn't arrived yet, send us your Receipt / Transaction ID. We verify it against our payment records, then unlock your pass:</div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;">
               <input id="receiptClaimId" type="text" placeholder="Stripe or PayPal Receipt / Transaction ID" style="flex:1;min-width:190px;padding:6px 9px;border-radius:6px;border:1px solid var(--border);background:#020617;color:#f8fafc;font-size:0.8rem;font-family:monospace;" />
               <input id="receiptClaimEmail" type="email" placeholder="Payer email (optional)" style="width:170px;padding:6px 9px;border-radius:6px;border:1px solid var(--border);background:#020617;color:#f8fafc;font-size:0.8rem;" />
-              <button id="btnClaimReceipt" type="button" class="btn btn-primary" style="padding:6px 12px;font-size:0.8rem;">Unlock Pass Now</button>
+              <button id="btnClaimReceipt" type="button" class="btn btn-primary" style="padding:6px 12px;font-size:0.8rem;">Send Receipt</button>
             </div>
           </div>
         </div>
@@ -674,7 +674,7 @@
         return;
       }
       e.target.disabled = true;
-      e.target.textContent = "Verifying...";
+      e.target.textContent = "Sending...";
       try {
         var r = await fetch(EDGE_API + "/v1/checkout/claim-receipt", {
           method: "POST",
@@ -682,7 +682,10 @@
           body: JSON.stringify({ passKey: passKey, receiptId: receiptId, payerEmail: payerEmail })
         });
         var j = await r.json();
-        if (!r.ok || !j.ok) {
+        if (j.pendingReview) {
+          document.getElementById("receiptClaimBox").style.display = "none";
+          chip.innerHTML = "&#128993; <strong>Receipt received.</strong> We check it against our payment records before unlocking, so this is not instant. Keep this page: your pass unlocks here once approved.";
+        } else if (!r.ok || !j.ok) {
           chip.innerHTML = "&#128308; " + (j.error || "Could not verify receipt ID.");
         } else {
           localStorage.setItem("finops_pro_pass", j.passKey);
@@ -694,7 +697,7 @@
         chip.innerHTML = "&#128308; Network error: " + err.message;
       } finally {
         e.target.disabled = false;
-        e.target.textContent = "Unlock Pass Now";
+        e.target.textContent = "Send Receipt";
       }
     });
 
