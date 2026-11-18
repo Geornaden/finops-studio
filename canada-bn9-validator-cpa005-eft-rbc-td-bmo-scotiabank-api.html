@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canada CRA BN9 Validator (Luhn), 0IIITTTTT EFT Routing Converter &amp; CPA-005 API | FinOps Studio</title>
+  <meta name="description" content="Free offline Canadian corporate clearing validator: verify 9-digit CRA Business Numbers (BN9 Luhn + RT/RP/RC), convert cheque MICR (TTTTT-III) to Payments Canada 0IIITTTTT EFT routing (RBC, TD, BMO, Scotiabank, CIBC, Desjardins), and build 1,464-byte CPA-005 EFT payloads." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/canada-bn9-validator-cpa005-eft-rbc-td-bmo-scotiabank-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <meta property="og:title" content="Canada CRA BN9 Validator, 0IIITTTTT Bank Transit Converter &amp; CPA-005 EFT Builder" />
+  <meta property="og:description" content="Validate CRA BN9 / GST-HST numbers and convert cheque MICR (TTTTT-III) to 9-digit EFT routing (0IIITTTTT) before uploading CPA-005 files to RBC, TD, BMO, Scotiabank &amp; CIBC." />
+  <meta property="og:url" content="https://geornaden.github.io/finops-studio/canada-bn9-validator-cpa005-eft-rbc-td-bmo-scotiabank-api.html" />
+  <meta property="og:image" content="https://geornaden.github.io/finops-studio/logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Canada CRA BN9 Checksum, 0IIITTTTT EFT Transit Converter & CPA-005 Builder",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "inLanguage": ["en-CA", "fr-CA"],
+        "url": "https://geornaden.github.io/finops-studio/canada-bn9-validator-cpa005-eft-rbc-td-bmo-scotiabank-api.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "CAD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do you convert a Canadian cheque MICR transit (TTTTT-III) into Payments Canada CPA-005 EFT routing (0IIITTTTT)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Paper Canadian cheques print the 5-digit branch transit first followed by the 3-digit institution number (TTTTT-III, such as 10202-004 for TD Canada Trust). Payments Canada Standard 005 (CPA-005) Electronic Funds Transfer requires a 9-digit routing field formatted as leading zero + 3-digit institution + 5-digit branch transit (0IIITTTTT, e.g. 000410202)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How is a 9-digit CRA Business Number (BN9) or 15-character GST/HST RT account verified?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The 9-digit root of a Canada Revenue Agency Business Number (BN9) uses the ISO/IEC 7812-1 Luhn MOD-10 check digit algorithm. Program accounts append a 2-letter program identifier (RT for GST/HST, RP for Payroll Deductions, RC for Corporate Income Tax, RM for Import/Export) plus a 4-digit reference number such as RT0001."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .ca-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 14px 0; }
+    .ca-field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; font-weight: 700; }
+    .ca-field input, .ca-field select { width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #f8fafc; font-size: 0.9rem; font-family: monospace; }
+    .ca-result { margin-top: 10px; padding: 12px 14px; border-radius: 10px; background: #0b1120; border: 1px solid var(--border); font-size: 0.88rem; line-height: 1.55; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./index.html">Home</a>
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">&#128202; CSV to CPA-005 Mapper</a>
+        <a href="./free-canada-cpa005-eft-file-validator.html">Record Z Auditor</a>
+        <a href="./csv-to-canada-cpa-005-eft-rbc-td-bmo-scotiabank.html">RBC / TD / BMO Guide</a>
+        <a class="btn btn-primary" href="https://apify.com/finops_studio/canada-cpa005-eft-generator" target="_blank" rel="noopener">CA CPA-005 Cloud API &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127464;&#127462; Payments Canada Standard 005 &bull; CRA BN9 Luhn &bull; 0IIITTTTT Converter &bull; 1,464-Byte EFT</span>
+      <h1>Canadian CRA BN9 Validator, <code>0IIITTTTT</code> Transit Converter &amp; CPA-005 EFT Builder</h1>
+      <p>Eliminate rejected Canadian payroll and vendor direct deposits caused by reversed cheque MICR numbers (<code>TTTTT-III</code> vs. <code>0IIITTTTT</code>) or invalid supplier <strong>GST/HST BN15</strong> IDs before uploading to <strong>RBC Express</strong>, <strong>TD Web Business</strong>, <strong>BMO</strong>, <strong>Scotiabank</strong>, <strong>CIBC</strong>, or <strong>Desjardins Acc&egrave;sD</strong>.</p>
+      <div class="hero-actions">
+        <button id="caBuy24h" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#9889; Instant 24h Unlimited CPA-005 Pass ($9)</button>
+        <button id="caBuy30d" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fbbf24;font-weight:700;">&#128640; Pro Pass — 30d Unlimited ($29)</button>
+        <a class="btn btn-outline" href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">&#128202; Convert Excel / CSV to CPA-005 &rarr;</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:22px;">
+      <h2 style="margin-top:0;">Interactive CRA Business Number (BN9 / RT / RP) &amp; <code>0IIITTTTT</code> Bank Resolver</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button id="btnSampleTd" type="button" class="btn btn-outline">Sample: Valid GST/HST + TD Cheque MICR (10202-004)</button>
+        <button id="btnSampleRbc" type="button" class="btn btn-outline">Sample: Payroll RP0001 + RBC EFT (000300002)</button>
+        <button id="btnSampleDesj" type="button" class="btn btn-outline">Sample: Desjardins Qu&eacute;bec (30001-815)</button>
+        <button id="btnSampleBadBn" type="button" class="btn btn-outline">Test Invalid BN9 Checksum</button>
+      </div>
+
+      <div class="ca-grid">
+        <div class="ca-field">
+          <label for="caBn">CRA BN9 or BN15 (e.g. 123456782 RT0001)</label>
+          <input id="caBn" type="text" value="123456782 RT0001" />
+        </div>
+        <div class="ca-field">
+          <label for="caRouting">Cheque MICR (TTTTT-III) OR EFT (0IIITTTTT)</label>
+          <input id="caRouting" type="text" value="10202-004" />
+        </div>
+        <div class="ca-field">
+          <label for="caAcct">Payee Account Number (7–12 Digits)</label>
+          <input id="caAcct" type="text" value="5419823" />
+        </div>
+        <div class="ca-field">
+          <label for="caPayee">Payee / Employee Name (Max 30 Chars)</label>
+          <input id="caPayee" type="text" value="MAPLE LOGISTICS INC" />
+        </div>
+        <div class="ca-field">
+          <label for="caAmt">Amount (CAD)</label>
+          <input id="caAmt" type="text" value="3850.75" />
+        </div>
+        <div class="ca-field">
+          <label for="caCpaCode">CPA Transaction Code</label>
+          <select id="caCpaCode">
+            <option value="450" selected>450 — Accounts Payable / Vendor EFT</option>
+            <option value="200">200 — Payroll Direct Deposit</option>
+            <option value="250">250 — Commission / Bonus Credit</option>
+            <option value="460">460 — Accounts Payable Pre-Authorized Debit</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="caAuditBox" class="ca-result"></div>
+
+      <div style="margin-top:16px;">
+        <div class="pane-label">
+          <span>Ready-to-Run 1,464-Byte CPA-005 API Payload (<code>/v1/cpa005/generate</code>)</span>
+          <button id="btnCopyCaJson" type="button" class="btn btn-outline" style="padding:4px 10px;font-size:0.76rem;">Copy CPA-005 JSON</button>
+        </div>
+        <pre id="caJsonOut" class="code-box" style="min-height:190px;"></pre>
+      </div>
+    </section>
+
+    <section class="grid-3" style="margin-top:26px;">
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">001 BMO</span><span class="tag">002 Scotiabank</span><span class="tag">003 RBC</span><span class="tag">004 TD</span><span class="tag">010 CIBC</span></div>
+          <h3>Big 6 &amp; Desjardins (815) Institution Lookup</h3>
+          <p>Automatically resolves Canadian Financial Institution numbers (<code>001</code> BMO, <code>002</code> Scotiabank, <code>003</code> RBC, <code>004</code> TD, <code>006</code> National Bank, <code>010</code> CIBC, <code>219</code> ATB, <code>815</code> Desjardins) and formats exact 9-byte EFT routing fields.</p>
+        </div>
+      </article>
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">Record A / C / Z</span><span class="tag">6 Segments x 240B</span><span class="tag">Julian Date 0YYDDD</span></div>
+          <h3>Exact 1,464-Byte Payments Canada Standard 005</h3>
+          <p>Generates bank-compliant Record A headers, packed 6-segment Record C credit/debit blocks, Julian dates (<code>0YYDDD</code>), and Record Z control totals with zero floating-point rounding drift.</p>
+        </div>
+      </article>
+      <article class="tool-card">
+        <div>
+          <div class="tag-row"><span class="tag">GST/HST RT0001</span><span class="tag">Payroll RP0001</span><span class="tag">Peppol 0060 / 9955</span></div>
+          <h3>CRA BN9 Luhn &amp; Program Account Audit</h3>
+          <p>Verifies supplier GST/HST (<code>RT</code>) and CRA Payroll (<code>RP</code>) numbers locally in milliseconds before releasing EFT disbursements or onboarding new Canadian vendors.</p>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><strong>FinOps Studio</strong> &bull; Deterministic Canadian CPA-005 EFT, US NACHA &amp; Global Banking APIs</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="./canada-cpa-005-eft-file-generator.html">CPA-005 Generator</a>
+          <a href="./free-canada-cpa005-eft-file-validator.html">CPA-005 Validator</a>
+          <a href="./canada-cpa005-transaction-codes-200-450-1464-byte-record-c-slicer.html">Record C Slicer</a>
+          <a href="./index.html">All 12 Banking APIs</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var BANKS = {
+        "001": "Bank of Montreal (BMO)",
+        "002": "Bank of Nova Scotia (Scotiabank)",
+        "003": "Royal Bank of Canada (RBC)",
+        "004": "Toronto-Dominion Bank (TD Canada Trust)",
+        "006": "National Bank of Canada (Banque Nationale)",
+        "010": "Canadian Imperial Bank of Commerce (CIBC)",
+        "016": "HSBC Bank Canada / RBC",
+        "030": "Canadian Western Bank (CWB)",
+        "039": "Laurentian Bank of Canada",
+        "219": "ATB Financial (Alberta Treasury Branches)",
+        "614": "Tangerine Bank",
+        "809": "Central 1 Credit Union (BC)",
+        "815": "Mouvement Desjardins (Caisses Desjardins)",
+        "828": "Central 1 Credit Union (Ontario)",
+        "837": "Meridian Credit Union"
+      };
+
+      var PROGRAMS = {
+        RT: "GST / HST Account",
+        RP: "Payroll Deductions Account",
+        RC: "Corporate Income Tax Account",
+        RM: "Import / Export Account",
+        RR: "Registered Charity Account",
+        RZ: "Information Return (T5 / NR4) Account"
+      };
+
+      function checkLuhn9(d9) {
+        if (!/^[0-9]{9}$/.test(d9)) return false;
+        var sum = 0;
+        for (var i = 0; i < 9; i++) {
+          var digit = Number(d9[8 - i]);
+          if (i % 2 === 1) {
+            digit *= 2;
+            if (digit > 9) digit -= 9;
+          }
+          sum += digit;
+        }
+        return sum > 0 && sum % 10 === 0;
+      }
+
+      function parseBn(raw) {
+        var clean = String(raw || "").toUpperCase().replace(/[\s-]+/g, "");
+        var m = clean.match(/^([0-9]{9})([A-Z]{2}[0-9]{4})?$/);
+        if (!m) return { valid: false, reason: "Expected 9-digit CRA BN9 or 15-char BN15 (e.g. 123456782RT0001)" };
+        var bn9 = m[1];
+        var suffix = m[2] || "";
+        var ok = checkLuhn9(bn9);
+        if (!ok) return { valid: false, bn9: bn9, reason: "Failed CRA Luhn MOD-10 check digit on 9-digit root " + bn9 };
+        var progCode = suffix ? suffix.slice(0, 2) : "";
+        var progName = progCode ? (PROGRAMS[progCode] || "CRA Program " + progCode) : "BN9 Root Only";
+        return { valid: true, bn9: bn9, normalized: suffix ? (bn9 + " " + suffix) : bn9, program: progName };
+      }
+
+      function parseCanadianRouting(raw) {
+        var s = String(raw || "").trim();
+        var micr = s.match(/^([0-9]{5})[\s-]+([0-9]{3})$/);
+        if (micr) {
+          var tr = micr[1], inst = micr[2];
+          return {
+            valid: true,
+            sourceFormat: "Cheque MICR (TTTTT-III)",
+            institution: inst,
+            transit: tr,
+            eft9: "0" + inst + tr,
+            micrFormatted: tr + "-" + inst,
+            bankName: BANKS[inst] || ("Canadian Financial Institution #" + inst)
+          };
+        }
+        var digits = s.replace(/[\s-]+/g, "");
+        if (/^0[0-9]{8}$/.test(digits)) {
+          var inst2 = digits.slice(1, 4), tr2 = digits.slice(4, 9);
+          return {
+            valid: true,
+            sourceFormat: "Payments Canada EFT 9-Digit (0IIITTTTT)",
+            institution: inst2,
+            transit: tr2,
+            eft9: digits,
+            micrFormatted: tr2 + "-" + inst2,
+            bankName: BANKS[inst2] || ("Canadian Financial Institution #" + inst2)
+          };
+        }
+        if (/^[0-9]{8}$/.test(digits)) {
+          var tr3 = digits.slice(0, 5), inst3 = digits.slice(5, 8);
+          return {
+            valid: true,
+            sourceFormat: "8-Digit MICR (TTTTTIII)",
+            institution: inst3,
+            transit: tr3,
+            eft9: "0" + inst3 + tr3,
+            micrFormatted: tr3 + "-" + inst3,
+            bankName: BANKS[inst3] || ("Canadian Financial Institution #" + inst3)
+          };
+        }
+        return { valid: false, reason: "Enter Cheque MICR (e.g. 10202-004) or 9-digit EFT routing (e.g. 000410202)" };
+      }
+
+      function render() {
+        var bnRes = parseBn(document.getElementById("caBn").value);
+        var rtRes = parseCanadianRouting(document.getElementById("caRouting").value);
+        var acct = String(document.getElementById("caAcct").value || "").replace(/[^0-9]/g, "");
+        var acctOk = /^[0-9]{5,12}$/.test(acct);
+        var payee = String(document.getElementById("caPayee").value || "PAYEE").trim().slice(0, 30);
+        var amt = Number(document.getElementById("caAmt").value || 0);
+        var cpa = document.getElementById("caCpaCode").value;
+
+        var lines = [];
+        lines.push(bnRes.valid
+          ? "&#128994; <strong>CRA Business Number VALID:</strong> <code>" + bnRes.normalized + "</code> (" + bnRes.program + " &bull; Luhn MOD-10 Verified)"
+          : "&#128308; <strong>CRA Business Number INVALID:</strong> " + bnRes.reason);
+
+        lines.push(rtRes.valid
+          ? "&#128994; <strong>Payments Canada EFT Routing:</strong> <code>" + rtRes.eft9 + "</code> &larr; Institution <code>" + rtRes.institution + "</code> (" + rtRes.bankName + ") + Branch Transit <code>" + rtRes.transit + "</code> (Cheque MICR: <code>" + rtRes.micrFormatted + "</code>)"
+          : "&#128308; <strong>Bank Routing INVALID:</strong> " + rtRes.reason);
+
+        lines.push(acctOk
+          ? "&#128994; <strong>Payee Account Length OK:</strong> <code>" + acct + "</code> (" + acct.length + " digits, CPA-005 max 12)"
+          : "&#128993; <strong>Payee Account Warning:</strong> Enter 5–12 numeric digits for Canadian EFT clearing.");
+
+        document.getElementById("caAuditBox").innerHTML = lines.join("<br/>");
+
+        var payload = {
+          originatorId: "ACMECA0001",
+          originatorShortName: "ACME CANADA",
+          originatorLongName: "ACME CANADA CORP",
+          destinationDataCentre: "00400",
+          fileCreationNumber: "0001",
+          returnInstitution: rtRes.valid ? rtRes.institution : "004",
+          returnTransit: rtRes.valid ? rtRes.transit : "10202",
+          returnAccount: "1002345",
+          dueDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
+          transactions: [
+            {
+              name: payee,
+              institution: rtRes.valid ? rtRes.institution : "004",
+              transit: rtRes.valid ? rtRes.transit : "10202",
+              accountNumber: acct || "5419823",
+              amount: Number(amt > 0 ? amt.toFixed(2) : "100.00"),
+              cpaCode: cpa,
+              crossReference: bnRes.valid ? ("BN-" + bnRes.bn9) : "INV-CA-001"
+            }
+          ]
+        };
+        document.getElementById("caJsonOut").textContent = JSON.stringify(payload, null, 2);
+      }
+
+      ["caBn", "caRouting", "caAcct", "caPayee", "caAmt", "caCpaCode"].forEach(function (id) {
+        document.getElementById(id).addEventListener("input", render);
+        document.getElementById(id).addEventListener("change", render);
+      });
+
+      document.getElementById("btnSampleTd").addEventListener("click", function () {
+        document.getElementById("caBn").value = "123456782 RT0001";
+        document.getElementById("caRouting").value = "10202-004";
+        document.getElementById("caAcct").value = "5419823";
+        document.getElementById("caPayee").value = "MAPLE LOGISTICS INC";
+        document.getElementById("caCpaCode").value = "450";
+        render();
+      });
+      document.getElementById("btnSampleRbc").addEventListener("click", function () {
+        document.getElementById("caBn").value = "868941238 RP0001";
+        document.getElementById("caRouting").value = "000300002";
+        document.getElementById("caAcct").value = "1094821";
+        document.getElementById("caPayee").value = "SOPHIE TREMBLAY";
+        document.getElementById("caCpaCode").value = "200";
+        render();
+      });
+      document.getElementById("btnSampleDesj").addEventListener("click", function () {
+        document.getElementById("caBn").value = "123456782 RT0002";
+        document.getElementById("caRouting").value = "30001-815";
+        document.getElementById("caAcct").value = "0882419";
+        document.getElementById("caPayee").value = "SERVICES NORDIQUE QC INC";
+        document.getElementById("caCpaCode").value = "450";
+        render();
+      });
+      document.getElementById("btnSampleBadBn").addEventListener("click", function () {
+        document.getElementById("caBn").value = "123456789 RT0001";
+        render();
+      });
+
+      document.getElementById("btnCopyCaJson").addEventListener("click", function (e) {
+        if (navigator.clipboard) navigator.clipboard.writeText(document.getElementById("caJsonOut").textContent);
+        var b = e.target, old = b.textContent;
+        b.textContent = "Copied!";
+        setTimeout(function () { b.textContent = old; }, 1600);
+      });
+
+      document.getElementById("caBuy24h").addEventListener("click", function (e) {
+        if (window.startFinOpsCheckout) window.startFinOpsCheckout("batch24h", { btn: e.target });
+      });
+      document.getElementById("caBuy30d").addEventListener("click", function (e) {
+        if (window.startFinOpsCheckout) window.startFinOpsCheckout("pro30d", { btn: e.target });
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
