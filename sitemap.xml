@@ -490,4 +490,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.98</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/nif-cif-validator-verifactu-norma43-sepa-xml-espana-api.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.96</priority>
+  </url>
 </urlset>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validador NIF/CIF España, Conversor CCC a IBAN ES (MOD-11), Norma 43 y SEPA pain.001 / Veri*factu API | FinOps Studio</title>
+  <meta name="description" content="Validador offline de NIF, CIF societario, NIE y CCC español (20 dígitos con doble dígito de control MOD-11 a IBAN ES de 24 caracteres) para CaixaBank, BBVA, Santander, Sabadell y Bankinter, con generación JSON SEPA pain.001.001.09, Peppol 9920 y AEB Norma 43." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/nif-cif-validator-verifactu-norma43-sepa-xml-espana-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Validador Español NIF/CIF/NIE, Conversor CCC Dual MOD-11 a IBAN ES y Generador SEPA/Peppol 9920",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "inLanguage": "es-ES",
+        "url": "https://geornaden.github.io/finops-studio/nif-cif-validator-verifactu-norma43-sepa-xml-espana-api.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "¿Cómo se valida el doble dígito de control MOD-11 de una cuenta bancaria CCC española de 20 dígitos?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Un CCC español consta de 4 dígitos de entidad, 4 de oficina, 2 dígitos de control y 10 dígitos de cuenta. El primer dígito de control valida 00 + Entidad + Oficina con pesos [1, 2, 4, 8, 5, 10, 9, 7, 3, 6] módulo 11, y el segundo valida los 10 dígitos de cuenta con los mismos pesos módulo 11. Después se calcula el prefijo ES + dígito MOD-97 para obtener el IBAN de 24 caracteres."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Cómo se automatizan SEPA Cuaderno 34.14, facturas Peppol 9920 y extractos AEB Norma 43 sin suscripción mensual?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Las comprobaciones de NIF/CIF, CCC e IBAN ES en esta página son 100% gratuitas en su navegador. Para generar ficheros XML SEPA pain.001.001.09, facturas Peppol/Facturae EN 16931 y convertir extractos Cuaderno 43 completos, FinOps Studio ofrece pases sin suscripción de $9 USD (24h ilimitado) o $29 USD (30 días Pro) con Tarjeta, Apple Pay, Google Pay o PayPal."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .es-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 14px 0; }
+    .es-field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; font-weight: 700; }
+    .es-field input, .es-field select { width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: #f8fafc; font-size: 0.9rem; font-family: monospace; }
+    .es-result { margin-top: 10px; padding: 12px 14px; border-radius: 10px; background: #0b1120; border: 1px solid var(--border); font-size: 0.88rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html">&#128202; Conversor CSV a SEPA</a>
+        <a href="./free-spanish-aeb-norma-43-cuaderno-43-viewer.html">Visor AEB Norma 43</a>
+        <a href="./free-sepa-xml-pain001-xsd-be04-validator.html">Validador SEPA BE04</a>
+        <a href="./verifactu-ley-crea-y-crece-peppol-norma-43-api-espana.html">Guía Veri*factu ES</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="pill">&#127466;&#127480; España Tesorería y Facturación 2026 &bull; NIF/CIF Dual &bull; CCC MOD-11 a IBAN ES &bull; Cuaderno 43 &bull; Peppol 9920</span>
+      <h1>Validador Español <code>NIF / CIF / NIE</code>, Conversor <code>CCC</code> (Dual <code>MOD-11</code>) a <code>IBAN ES</code> y Generador SEPA / Peppol / Norma 43</h1>
+      <p>Verifique gratis en su navegador el dígito de control de <strong>NIF/DNI, NIE y CIF societario</strong>, convierta cualquier código <strong>CCC de 20 dígitos</strong> (<code>CaixaBank</code>, <code>BBVA</code>, <code>Santander</code>, <code>Sabadell</code>, <code>Bankinter</code>) en un <strong>IBAN ES de 24 caracteres</strong> y genere remesas <strong>SEPA <code>pain.001.001.09</code></strong> o facturas <strong>Peppol <code>9920</code> / Veri*factu / Norma 43</strong> con Pase Instantáneo ($9 USD / 24h).</p>
+      <div class="hero-actions">
+        <button id="esBuy24h" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#128179; Pase Ilimitado 24h ($9 USD)</button>
+        <button id="esBuy30d" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fde68a;font-weight:700;">&#128640; Pase Pro 30 Días + API/MCP ($29 USD)</button>
+        <a class="btn btn-outline" href="./free-spanish-aeb-norma-43-cuaderno-43-viewer.html">Abrir Visor AEB Norma 43 &rarr;</a>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:22px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <h2 style="margin:0;">Validador Interactivo <code>NIF / CIF / NIE</code> + Conversor <code>CCC (MOD-11) &rarr; IBAN ES (MOD-97)</code></h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnSampleCaixa" type="button" class="btn btn-outline">Ejemplo CaixaBank (CIF B)</button>
+          <button id="btnSampleBbva" type="button" class="btn btn-outline">Ejemplo BBVA (NIF/DNI)</button>
+          <button id="btnSampleBadEs" type="button" class="btn btn-outline">Probar Error CCC/CIF</button>
+        </div>
+      </div>
+
+      <div class="es-grid">
+        <div class="es-field">
+          <label for="esTaxId">NIF / CIF / NIE Español</label>
+          <input id="esTaxId" type="text" value="B85905495" />
+        </div>
+        <div class="es-field">
+          <label for="esCcc">CCC Español (20 dígitos o IBAN ES24)</label>
+          <input id="esCcc" type="text" value="21000418450200051332" />
+        </div>
+        <div class="es-field">
+          <label for="esPayee">Razón Social / Beneficiario</label>
+          <input id="esPayee" type="text" value="SOLUCIONES DIGITALES IBERIA SL" />
+        </div>
+        <div class="es-field">
+          <label for="esAmount">Importe Base / Remesa (EUR)</label>
+          <input id="esAmount" type="text" value="2450.00" />
+        </div>
+        <div class="es-field">
+          <label for="esInvoice">Ref. Factura / Concepto Cuaderno 34</label>
+          <input id="esInvoice" type="text" value="FAC-2026-0891" />
+        </div>
+      </div>
+
+      <div id="esValidationBox" class="es-result"></div>
+
+      <div style="margin-top:14px;">
+        <div class="pane-label">
+          <span><strong>Payload JSON listo para FinOps SEPA <code>pain.001.001.09</code> &amp; Peppol <code>9920</code></strong></span>
+          <button id="btnCopyEsJson" type="button" class="btn btn-outline" style="padding:5px 10px;font-size:0.8rem;">Copiar JSON</button>
+        </div>
+        <pre id="esJsonOut" class="code-box" style="min-height:175px;font-size:0.8rem;"></pre>
+      </div>
+    </section>
+
+    <section class="sandbox-card" style="margin-top:22px;overflow-x:auto;">
+      <h2 style="margin-top:0;">Códigos Bancarios Españoles Frecuentes (Entidad <code>CCC</code> &rarr; <code>BIC SWIFT</code>)</h2>
+      <table style="width:100%;border-collapse:collapse;font-size:0.9rem;text-align:left;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);color:#fde68a;">
+            <th style="padding:10px;">Entidad Bancaria</th>
+            <th style="padding:10px;">Código Entidad (4 díg.)</th>
+            <th style="padding:10px;">BIC / SWIFT</th>
+            <th style="padding:10px;">Formatos FinOps Compatibles</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(148,163,184,0.16);"><td style="padding:10px;"><strong>CaixaBank</strong></td><td style="padding:10px;"><code>2100</code></td><td style="padding:10px;"><code>CAIXESBBXXX</code></td><td style="padding:10px;">SEPA <code>pain.001.001.09</code>, Norma 43, <code>pain.002</code></td></tr>
+          <tr style="border-bottom:1px solid rgba(148,163,184,0.16);"><td style="padding:10px;"><strong>BBVA</strong></td><td style="padding:10px;"><code>0182</code></td><td style="padding:10px;"><code>BBVAESMMXXX</code></td><td style="padding:10px;">SEPA <code>pain.001.001.09</code>, Norma 43, Peppol <code>9920</code></td></tr>
+          <tr style="border-bottom:1px solid rgba(148,163,184,0.16);"><td style="padding:10px;"><strong>Banco Santander</strong></td><td style="padding:10px;"><code>0049</code></td><td style="padding:10px;"><code>BSCHESMMXXX</code></td><td style="padding:10px;">SEPA <code>pain.001.001.09</code>, Norma 43, SWIFT <code>pacs.008</code></td></tr>
+          <tr style="border-bottom:1px solid rgba(148,163,184,0.16);"><td style="padding:10px;"><strong>Banco Sabadell</strong></td><td style="padding:10px;"><code>0081</code></td><td style="padding:10px;"><code>BSABESBBXXX</code></td><td style="padding:10px;">SEPA <code>pain.001.001.09</code>, Norma 43, Peppol</td></tr>
+          <tr><td style="padding:10px;"><strong>Bankinter</strong></td><td style="padding:10px;"><code>0128</code></td><td style="padding:10px;"><code>BKBKESMMXXX</code></td><td style="padding:10px;">SEPA <code>pain.001.001.09</code>, Norma 43, Peppol</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="./index.html">&larr; FinOps Studio Home</a> &bull;
+      <a href="./free-spanish-aeb-norma-43-cuaderno-43-viewer.html">Visor AEB Norma 43</a> &bull;
+      <a href="./verifactu-ley-crea-y-crece-peppol-norma-43-api-espana.html">Veri*factu &amp; Ley Crea y Crece</a> &bull;
+      <a href="./free-peppol-xrechnung-facturx-invoice-xml-builder.html">Constructor Peppol EN 16931</a>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var ES_BANKS = {
+      '2100': { name: 'CaixaBank', bic: 'CAIXESBBXXX' },
+      '0182': { name: 'BBVA', bic: 'BBVAESMMXXX' },
+      '0049': { name: 'Banco Santander', bic: 'BSCHESMMXXX' },
+      '0081': { name: 'Banco Sabadell', bic: 'BSABESBBXXX' },
+      '0128': { name: 'Bankinter', bic: 'BKBKESMMXXX' },
+      '1465': { name: 'ING España', bic: 'INGDESMMXXX' },
+      '2085': { name: 'Ibercaja', bic: 'CAZRES2ZXXX' },
+      '2103': { name: 'Unicaja Banco', bic: 'UCJAES2MXXX' },
+      '0073': { name: 'Openbank', bic: 'OPENESMMXXX' }
+    };
+
+    function validateEsTaxId(raw) {
+      var v = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (v.indexOf('ES') === 0 && v.length === 11) v = v.slice(2);
+      var letters = 'TRWAGMYFPDXBNJZSQVHLCKE';
+      if (/^[0-9]{8}[A-Z]$/.test(v)) {
+        var exp = letters[Number(v.slice(0, 8)) % 23];
+        return { ok: exp === v[8], kind: 'NIF / DNI Persona Física', norm: v, vat: 'ES' + v, msg: exp === v[8] ? 'Letra DNI válida (' + exp + ')' : 'Letra inválida (esperada ' + exp + ')' };
+      }
+      if (/^[XYZ][0-9]{7}[A-Z]$/.test(v)) {
+        var pre = { X: '0', Y: '1', Z: '2' }[v[0]] + v.slice(1, 8);
+        var expNie = letters[Number(pre) % 23];
+        return { ok: expNie === v[8], kind: 'NIE Extranjero', norm: v, vat: 'ES' + v, msg: expNie === v[8] ? 'Letra NIE válida (' + expNie + ')' : 'Letra inválida (esperada ' + expNie + ')' };
+      }
+      if (/^[ABCDEFGHJNPQRSUVW][0-9]{7}[0-9A-J]$/.test(v)) {
+        var digits = v.slice(1, 8);
+        var even = Number(digits[1]) + Number(digits[3]) + Number(digits[5]);
+        var odd = 0;
+        [0, 2, 4, 6].forEach(function (i) {
+          var p = Number(digits[i]) * 2;
+          odd += Math.floor(p / 10) + (p % 10);
+        });
+        var unit = (even + odd) % 10;
+        var ctrlDigit = String((10 - unit) % 10);
+        var ctrlLetter = 'JABCDEFGHI'[Number(ctrlDigit)];
+        var valid = v[8] === ctrlDigit || v[8] === ctrlLetter;
+        return { ok: valid, kind: 'CIF Societario', norm: v, vat: 'ES' + v, msg: valid ? 'Control CIF válido (' + v[8] + ')' : 'Control CIF inválido (esperado ' + ctrlDigit + '/' + ctrlLetter + ')' };
+      }
+      return { ok: false, kind: 'Desconocido', norm: v, vat: '', msg: 'Formato NIF/CIF/NIE no reconocido' };
+    }
+
+    function cccCheckDigit(tenDigits) {
+      var w = [1, 2, 4, 8, 5, 10, 9, 7, 3, 6];
+      var s = 0;
+      for (var i = 0; i < 10; i++) s += Number(tenDigits[i]) * w[i];
+      var d = 11 - (s % 11);
+      if (d === 11) return '0';
+      if (d === 10) return '1';
+      return String(d);
+    }
+
+    function ibanMod97Check(iban) {
+      var clean = iban.replace(/[^A-Z0-9]/g, '').toUpperCase();
+      var rearr = clean.slice(4) + clean.slice(0, 4);
+      var expanded = '';
+      for (var i = 0; i < rearr.length; i++) {
+        var c = rearr.charCodeAt(i);
+        expanded += (c >= 65 && c <= 90) ? String(c - 55) : rearr[i];
+      }
+      var rem = 0;
+      for (var j = 0; j < expanded.length; j++) rem = (rem * 10 + Number(expanded[j])) % 97;
+      return rem;
+    }
+
+    function parseAndValidateCccOrIban(raw) {
+      var clean = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      var ccc = clean;
+      if (clean.indexOf('ES') === 0 && clean.length === 24) ccc = clean.slice(4);
+      if (!/^[0-9]{20}$/.test(ccc)) {
+        return { ok: false, iban: '', bank: null, msg: 'Introduzca exactamente 20 dígitos CCC o 24 caracteres de IBAN ES' };
+      }
+      var d1Exp = cccCheckDigit('00' + ccc.slice(0, 8));
+      var d2Exp = cccCheckDigit(ccc.slice(10, 20));
+      var cccOk = (ccc[8] === d1Exp && ccc[9] === d2Exp);
+      var mod = ibanMod97Check('ES00' + ccc);
+      var calcCheck = String(98 - mod).padStart(2, '0');
+      var fullIban = 'ES' + calcCheck + ccc;
+      var bankInfo = ES_BANKS[ccc.slice(0, 4)] || { name: 'Entidad ES ' + ccc.slice(0, 4), bic: 'ESBICXXX' };
+      if (!cccOk) {
+        return { ok: false, iban: fullIban, bank: bankInfo, msg: 'Fallo MOD-11 en CCC (DC esperado ' + d1Exp + d2Exp + ', recibido ' + ccc.slice(8, 10) + ')' };
+      }
+      if (clean.indexOf('ES') === 0 && clean !== fullIban) {
+        return { ok: false, iban: fullIban, bank: bankInfo, msg: 'Dígito IBAN incorrecto (debería ser ES' + calcCheck + '...)' };
+      }
+      return { ok: true, iban: fullIban, bank: bankInfo, msg: 'Doble MOD-11 CCC + MOD-97 IBAN válido (' + bankInfo.name + ')' };
+    }
+
+    function refreshEs() {
+      var tax = validateEsTaxId(document.getElementById('esTaxId').value);
+      var acct = parseAndValidateCccOrIban(document.getElementById('esCcc').value);
+      var payee = String(document.getElementById('esPayee').value || 'EMPRESA ESPAÑA SL').trim();
+      var amt = Math.max(0.01, Number(document.getElementById('esAmount').value || '1000')).toFixed(2);
+      var inv = String(document.getElementById('esInvoice').value || 'FAC-2026-01').trim();
+
+      var out = document.getElementById('esValidationBox');
+      out.style.borderColor = (tax.ok && acct.ok) ? '#34d399' : '#f87171';
+      out.innerHTML =
+        '<div><strong>Identificador Fiscal (' + tax.kind + '):</strong> ' + (tax.ok ? '&#9989; ' : '&#9888;&#65039; ') + tax.msg + ' &bull; VAT Europeo / Peppol <code>9920</code>: <code>' + (tax.vat || 'N/A') + '</code></div>' +
+        '<div style="margin-top:6px;"><strong>Cuenta Bancaria España:</strong> ' + (acct.ok ? '&#9989; ' : '&#9888;&#65039; ') + acct.msg + (acct.iban ? ' &bull; <strong>IBAN Calculado:</strong> <code>' + acct.iban + '</code>' : '') + '</div>';
+
+      var payload = {
+        schemaVersion: 'pain.001.001.09',
+        country: 'ES',
+        verifactuPeppolParticipant: tax.vat ? ('9920:' + tax.vat) : '',
+        debtorName: 'MI EMPRESA ESPAÑA SL',
+        debtorIban: 'ES9121000418450200051332',
+        debtorBic: 'CAIXESBBXXX',
+        transactions: [{
+          name: payee,
+          taxId: tax.norm,
+          iban: acct.iban || 'ES9121000418450200051332',
+          bic: acct.bank ? acct.bank.bic : 'CAIXESBBXXX',
+          amount: Number(amt),
+          currency: 'EUR',
+          remittanceInfo: inv,
+          country: 'ES',
+          townName: 'Madrid'
+        }]
+      };
+      document.getElementById('esJsonOut').textContent = JSON.stringify(payload, null, 2);
+    }
+
+    document.getElementById('btnSampleCaixa').addEventListener('click', function () {
+      document.getElementById('esTaxId').value = 'B85905495';
+      document.getElementById('esCcc').value = '21000418450200051332';
+      document.getElementById('esPayee').value = 'CAIXA PROVEEDOR LOGISTICA SL';
+      refreshEs();
+    });
+    document.getElementById('btnSampleBbva').addEventListener('click', function () {
+      document.getElementById('esTaxId').value = '12345678Z';
+      document.getElementById('esCcc').value = '01822370420201552384';
+      document.getElementById('esPayee').value = 'CONSULTORIA MADRID ASOCIADOS';
+      refreshEs();
+    });
+    document.getElementById('btnSampleBadEs').addEventListener('click', function () {
+      document.getElementById('esTaxId').value = 'B85905490';
+      document.getElementById('esCcc').value = '21000418990200051332';
+      refreshEs();
+    });
+    ['esTaxId', 'esCcc', 'esPayee', 'esAmount', 'esInvoice'].forEach(function (id) {
+      document.getElementById(id).addEventListener('input', refreshEs);
+    });
+    document.getElementById('btnCopyEsJson').addEventListener('click', function (e) {
+      navigator.clipboard.writeText(document.getElementById('esJsonOut').textContent || '');
+      e.target.textContent = '¡Copiado!';
+      setTimeout(function () { e.target.textContent = 'Copiar JSON'; }, 1800);
+    });
+    document.getElementById('esBuy24h').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('batch24h', { btn: e.target });
+    });
+    document.getElementById('esBuy30d').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('pro30d', { btn: e.target });
+    });
+    refreshEs();
+  })();
+  </script>
+</body>
+</html>
