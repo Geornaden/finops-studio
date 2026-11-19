@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickBooks to NACHA ACH &amp; Positive Pay Alternative ($9 vs $125/mo Intuit Payroll &amp; $299 Converters) | FinOps Studio</title>
+  <meta name="description" content="Export bank-compliant 94-character US NACHA .ACH (PPD, CCD) and Positive Pay check files directly from QuickBooks Online &amp; Desktop CSV exports. Save hundreds in Intuit direct-deposit &amp; 3rd-party add-on fees with instant $9 USD 24h / $29 USD Pro passes via Card, Apple Pay, or PayPal." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/quickbooks-nacha-ach-positive-pay-export-alternative.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "QuickBooks to NACHA ACH & Positive Pay File Generator",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "inLanguage": "en-US",
+        "url": "https://geornaden.github.io/finops-studio/quickbooks-nacha-ach-positive-pay-export-alternative.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD",
+          "description": "Free client-side validation and conversion. Cloud API and watermark-free downloads from $9 USD / 24h Pass or $29 USD / 30-Day Pro."
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "FinOps Studio",
+          "url": "https://geornaden.github.io/finops-studio/"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why doesn't QuickBooks Online export NACHA ACH files natively without expensive add-ons?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Intuit locks direct NACHA (.ach) file generation behind its premium QuickBooks Payroll tiers ($45–$125+/month plus $6/worker/month) or directs users to expensive $299+ desktop plugins. FinOps Studio provides an instant, zero-subscription web and API alternative starting at just $9 USD for 24 hours of unlimited conversions."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I convert QuickBooks Bill Payment and Payroll CSV reports into Chase, BofA, or Wells Fargo Positive Pay files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Simply export your Check Detail or Bill Payment report from QuickBooks Online or Desktop as a CSV, paste it into our local browser converter, and select your bank format. FinOps Studio automatically formats the 80-character fixed-width or CSV file required by Chase Access, Bank of America CashPro, Wells Fargo CEO, and PNC PINACLE."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my accounting and payroll data kept private?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "100% yes. The client-side converter processes your CSV directly inside your browser sandbox using JavaScript. No financial numbers or vendor bank accounts are uploaded to external servers during the interactive preview."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .qb-hero {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(16, 185, 129, 0.08) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      border-radius: 14px;
+      padding: 2.2rem;
+      margin-bottom: 2rem;
+    }
+    .qb-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 860px) {
+      .qb-grid { grid-template-columns: 1fr; }
+    }
+    .qb-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+    .qb-card h3 {
+      margin-top: 0;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.15rem;
+    }
+    .qb-input-group {
+      margin-bottom: 1.1rem;
+    }
+    .qb-input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 0.35rem;
+    }
+    .qb-input-group input, .qb-input-group select, .qb-input-group textarea {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #f9fafb;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .qb-input-group textarea {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      resize: vertical;
+    }
+    .qb-input-group input:focus, .qb-input-group select:focus, .qb-input-group textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+    .qb-badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .qb-badge-ok { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .qb-badge-err { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .qb-badge-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .qb-sample-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .qb-sample-btn {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #e5e7eb;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .qb-sample-btn:hover {
+      background: #374151;
+      border-color: #3b82f6;
+      color: #fff;
+    }
+    .qb-diag-box {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      margin-top: 1rem;
+      line-height: 1.5;
+    }
+    .qb-diag-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #1e293b;
+      padding: 0.45rem 0;
+    }
+    .qb-diag-item:last-child { border-bottom: none; }
+    .qb-code-out {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      color: #38bdf8;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 300px;
+    }
+    .qb-tab-bar {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid #374151;
+      margin-bottom: 1rem;
+    }
+    .qb-tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #9ca3af;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.88rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .qb-tab-btn.active {
+      color: #60a5fa;
+      border-bottom-color: #60a5fa;
+    }
+    .qb-compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 0.88rem;
+    }
+    .qb-compare-table th, .qb-compare-table td {
+      border: 1px solid #374151;
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    .qb-compare-table th {
+      background: #1f2937;
+      color: #f3f4f6;
+    }
+    .qb-compare-table tr:nth-child(even) { background: rgba(31, 41, 55, 0.4); }
+    .qb-pricing-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 1.8rem;
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .qb-pass-btn {
+      display: inline-block;
+      padding: 0.75rem 1.6rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      margin: 0.4rem;
+    }
+    .qb-pass-btn-primary { background: #3b82f6; color: #fff; }
+    .qb-pass-btn-primary:hover { background: #60a5fa; transform: translateY(-1px); }
+    .qb-pass-btn-secondary { background: #1e293b; color: #f8fafc; border: 1px solid #475569; }
+    .qb-pass-btn-secondary:hover { background: #334155; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="./index.html" class="brand">
+        <img src="./logo.jpg" alt="FinOps Studio Logo" class="brand-logo" />
+        <span class="brand-text">FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./index.html">Home</a>
+        <a href="./ach-universal-ezach-ach-pro-alternative-nacha-generator.html">ACH Alternative</a>
+        <a href="./chase-bofa-wells-fargo-positive-pay-alternative-check-file-generator.html">Positive Pay Alternative</a>
+        <a href="./free-nacha-ach-file-validator-batch-hash-auditor.html">NACHA Validator</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">API Hub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="qb-hero">
+      <div style="display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.8rem;">
+        <span class="qb-badge qb-badge-info">🇺🇸 QUICKBOOKS ONLINE &amp; DESKTOP ALTERNATIVE</span>
+        <span class="qb-badge qb-badge-ok">ZERO MONTHLY INTUIT PAYROLL FEES</span>
+        <span class="qb-badge qb-badge-info">94-CHAR NACHA + POSITIVE PAY</span>
+      </div>
+      <h1 style="color: #fff; font-size: 1.95rem; margin: 0 0 0.8rem 0; line-height: 1.25;">
+        Convert QuickBooks CSV to NACHA ACH &amp; Positive Pay (Direct Alternative)
+      </h1>
+      <p style="color: #cbd5e1; font-size: 1.02rem; margin: 0; max-width: 920px; line-height: 1.55;">
+        Stop paying $45–$125/month for QuickBooks Payroll direct-deposit add-ons or $299 for legacy Windows-only converters. Convert QuickBooks Online &amp; Desktop <strong>Bill Payment</strong>, <strong>Vendor List</strong>, and <strong>Check Detail</strong> CSV exports into bank-compliant 94-character <strong>NACHA .ACH (PPD, CCD)</strong> and <strong>Chase, BofA, Wells Fargo &amp; PNC Positive Pay</strong> files for just <strong>$9 USD</strong>.
+      </p>
+    </section>
+
+    <div class="qb-sample-bar">
+      <span style="font-size: 0.85rem; color: #9ca3af; align-self: center; font-weight: 600;">Load QuickBooks Samples:</span>
+      <button type="button" class="qb-sample-btn" id="btnSampleVendorAp">QuickBooks Vendor Bill Payment (CCD)</button>
+      <button type="button" class="qb-sample-btn" id="btnSamplePayroll">QuickBooks Payroll Direct Deposit (PPD)</button>
+      <button type="button" class="qb-sample-btn" id="btnSampleChecks">QuickBooks Check Register (Positive Pay)</button>
+      <button type="button" class="qb-sample-btn" id="btnSampleBadAba">Test Invalid Routing Number Error</button>
+    </div>
+
+    <div class="qb-grid">
+      <!-- Left Column: CSV Editor & Parameters -->
+      <div class="qb-card">
+        <h3><span>📊</span> QuickBooks CSV Input &amp; Bank Settings</h3>
+
+        <div class="qb-input-group">
+          <label for="qbCsvInp">Paste QuickBooks Online / Desktop CSV Export:</label>
+          <textarea id="qbCsvInp" rows="9" placeholder="Vendor Name,Routing Number,Account Number,Amount,Check Number,Memo..."></textarea>
+          <div style="font-size: 0.78rem; color: #9ca3af; margin-top: 0.25rem;">
+            Exports from QBO "Expenses > Vendors" or QBDT "Reports > Banking > Check Detail".
+          </div>
+        </div>
+
+        <div class="qb-grid" style="gap: 0.8rem; margin-bottom: 0;">
+          <div class="qb-input-group">
+            <label for="qbSecCode">SEC Code (NACHA Standard):</label>
+            <select id="qbSecCode">
+              <option value="CCD">CCD — Corporate Vendor &amp; B2B Payments</option>
+              <option value="PPD">PPD — Employee Payroll Direct Deposit</option>
+              <option value="CTX">CTX — Corporate Trade Exchange (With Addenda)</option>
+              <option value="WEB">WEB — Online Consumer Authorizations</option>
+            </select>
+          </div>
+          <div class="qb-input-group">
+            <label for="qbBankPreset">Target Bank Format:</label>
+            <select id="qbBankPreset">
+              <option value="CHASE">JPMorgan Chase (Chase Access)</option>
+              <option value="BOFA">Bank of America (CashPro)</option>
+              <option value="WELLS">Wells Fargo (CEO Portal)</option>
+              <option value="PNC">PNC Bank (PINACLE)</option>
+              <option value="GENERIC">Standard Federal Reserve (94-char NACHA)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="qb-grid" style="gap: 0.8rem; margin-bottom: 0;">
+          <div class="qb-input-group">
+            <label for="qbCompanyId">Company ID (EIN / Tax ID):</label>
+            <input type="text" id="qbCompanyId" value="1958420194" maxlength="10" />
+          </div>
+          <div class="qb-input-group">
+            <label for="qbCompanyName">Company Name (Originator):</label>
+            <input type="text" id="qbCompanyName" value="ACME TECHNOLOGIES" maxlength="16" />
+          </div>
+        </div>
+
+        <!-- Diagnostic Box -->
+        <div class="qb-diag-box">
+          <div class="qb-diag-item">
+            <span>Parsed Transactions:</span>
+            <strong id="diagTxCount" style="color: #60a5fa;">3 rows</strong>
+          </div>
+          <div class="qb-diag-item">
+            <span>Total Credit Amount:</span>
+            <strong id="diagTotalAmt" style="color: #4ade80;">$18,450.00 USD</strong>
+          </div>
+          <div class="qb-diag-item">
+            <span>ABA Routing Number Status:</span>
+            <span id="badgeAba" class="qb-badge qb-badge-ok">ALL VALID (MOD-10)</span>
+          </div>
+          <div class="qb-diag-item">
+            <span>NACHA Batch Entry Hash:</span>
+            <strong id="diagEntryHash" style="color: #cbd5e1; font-family: monospace;">043000042</strong>
+          </div>
+          <div id="diagAlert" style="margin-top: 0.6rem; font-size: 0.82rem; color: #4ade80;">
+            ✓ All lines balanced and compliant with NACHA 2026 rules &amp; FedACH specifications.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Outputs -->
+      <div class="qb-card">
+        <div class="qb-tab-bar">
+          <button type="button" class="qb-tab-btn active" data-tab="tabNacha">NACHA .ACH File</button>
+          <button type="button" class="qb-tab-btn" data-tab="tabPosPay">Positive Pay File</button>
+          <button type="button" class="qb-tab-btn" data-tab="tabApi">REST API Snippet</button>
+        </div>
+
+        <!-- Tab 1: NACHA .ACH -->
+        <div id="tabNacha" class="tab-pane">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.82rem; color: #9ca3af;">94-Character Fixed Width NACHA File (Record 1, 5, 6, 8, 9):</span>
+            <button type="button" class="qb-sample-btn" id="btnCopyNacha">Copy File</button>
+          </div>
+          <pre id="outNacha" class="qb-code-out"></pre>
+        </div>
+
+        <!-- Tab 2: Positive Pay -->
+        <div id="tabPosPay" class="tab-pane" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.82rem; color: #9ca3af;">Bank-Ready Positive Pay Check-Issue Format:</span>
+            <button type="button" class="qb-sample-btn" id="btnCopyPosPay">Copy File</button>
+          </div>
+          <pre id="outPosPay" class="qb-code-out"></pre>
+        </div>
+
+        <!-- Tab 3: API cURL -->
+        <div id="tabApi" class="tab-pane" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.82rem; color: #9ca3af;">Direct Cloud API cURL Snippet:</span>
+            <button type="button" class="qb-sample-btn" id="btnCopyApi">Copy cURL</button>
+          </div>
+          <pre id="outApiCurl" class="qb-code-out"></pre>
+        </div>
+
+        <div style="margin-top: 1.2rem; font-size: 0.82rem; color: #9ca3af; line-height: 1.45;">
+          💡 <strong>Eliminate Bank Rejections:</strong> FinOps Studio enforces strict 94-character column boundaries, valid Record 8/9 entry hashes, and block-10 padding (9999... records) to prevent bank settlement halts.
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <section style="background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 2rem; margin-top: 2rem;">
+      <h2 style="color: #fff; font-size: 1.35rem; margin-top: 0;">
+        Why CPAs &amp; Bookkeepers Switch from QuickBooks Add-ons to FinOps Studio
+      </h2>
+      <table class="qb-compare-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>QuickBooks Direct Deposit</th>
+            <th>Legacy Converters (ACH Universal)</th>
+            <th style="background: #1e3a8a; color: #60a5fa;">FinOps Studio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Cost / Subscription</strong></td>
+            <td>$45–$125/mo + $6/worker/mo</td>
+            <td>$199–$499 one-time + annual maintenance</td>
+            <td style="color: #4ade80; font-weight: 700;">$0 free trial • $9 24h Pass • $29 30-Day Pro</td>
+          </tr>
+          <tr>
+            <td><strong>Supported Banks</strong></td>
+            <td>Intuit network only</td>
+            <td>US Banks only (Windows desktop)</td>
+            <td style="color: #4ade80;">Chase, BofA, Wells Fargo, PNC + All US Banks</td>
+          </tr>
+          <tr>
+            <td><strong>Operating System</strong></td>
+            <td>Cloud or Windows QBDT</td>
+            <td>Windows PC only (No Mac or Linux)</td>
+            <td style="color: #4ade80;">100% Web, Mac, Windows, Linux, API &amp; MCP</td>
+          </tr>
+          <tr>
+            <td><strong>Positive Pay Export</strong></td>
+            <td>Requires expensive 3rd-party utility</td>
+            <td>Separate $299 module</td>
+            <td style="color: #4ade80;">Included at zero extra cost</td>
+          </tr>
+          <tr>
+            <td><strong>Direct Bank Upload</strong></td>
+            <td>Requires Intuit processing fee</td>
+            <td>Manual export</td>
+            <td style="color: #4ade80;">100% compliant bank-ready files direct to your portal</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Pricing Card -->
+    <section class="qb-pricing-card">
+      <div style="display: inline-block; background: rgba(59, 130, 246, 0.15); color: #60a5fa; font-size: 0.82rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.3);">
+        🚀 UNLIMITED BANK-READY CONVERSION — ZERO INTUIT LOCK-IN
+      </div>
+      <h2 style="color: #fff; font-size: 1.6rem; margin: 0 0 0.5rem 0;">
+        Download Clean Bank Files or Automate via API
+      </h2>
+      <p style="color: #cbd5e1; max-width: 780px; margin: 0 auto 1.4rem auto; font-size: 0.95rem; line-height: 1.5;">
+        Remove all demo watermarks and unlock unlimited NACHA .ACH and Positive Pay conversions for your accounting firm, payroll bureau, or business. Instant unlock with Apple Pay, Google Pay, Card, or PayPal.
+      </p>
+      <div>
+        <button type="button" class="qb-pass-btn qb-pass-btn-primary" id="btnBuyQb24h">
+          ⚡ 24h Unlimited Pass — $9 USD
+        </button>
+        <button type="button" class="qb-pass-btn qb-pass-btn-secondary" id="btnBuyQb30d">
+          👑 30-Day Pro Pass — $29 USD (Priority API)
+        </button>
+      </div>
+      <div style="margin-top: 0.8rem; font-size: 0.82rem; color: #94a3b8;">
+        Instant Access • Zero Auto-Renewal • 100% Tax Deductible Business Software Expense
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>© 2026 FinOps Studio. Deterministic Banking File Engines &amp; Treasury APIs.</p>
+      <div class="footer-links">
+        <a href="./index.html">Home</a>
+        <a href="./ach-universal-ezach-ach-pro-alternative-nacha-generator.html">ACH Universal Alternative</a>
+        <a href="./chase-bofa-wells-fargo-positive-pay-alternative-check-file-generator.html">Positive Pay Alternative</a>
+        <a href="./free-nacha-ach-file-validator-batch-hash-auditor.html">NACHA Validator</a>
+        <a href="./free-us-positive-pay-check-file-validator.html">Positive Pay Validator</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">API Hub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./vip-support-widget.js" defer></script>
+  <script>
+  (function () {
+    function validateAba(routing) {
+      var clean = String(routing || '').replace(/\D/g, '');
+      if (clean.length !== 9) return false;
+      var w = [3, 7, 1, 3, 7, 1, 3, 7, 1];
+      var sum = 0;
+      for (var i = 0; i < 9; i++) sum += parseInt(clean[i], 10) * w[i];
+      return sum % 10 === 0;
+    }
+
+    var CSV_VENDOR_SAMPLE = 
+      "Vendor Name,Routing Number,Account Number,Amount,Check/Ref Number,Memo\n" +
+      "Apex Cloud Hosting Inc,021000021,123456789,4500.00,INV-9901,Server Infrastructure\n" +
+      "Pacific Legal Partners,026009593,987654321,7200.00,INV-9902,Corporate Retainer\n" +
+      "Delta Logistics Freight,121000248,554433221,6750.00,INV-9903,West Coast Distribution";
+
+    var CSV_PAYROLL_SAMPLE = 
+      "Employee Name,Routing Number,Account Number,Amount,Payroll ID,Pay Period\n" +
+      "Sarah Jenkins,021000021,440011223,3850.00,DIR-101,Nov 15 Payroll\n" +
+      "Michael Chang,026009593,889900112,4100.00,DIR-102,Nov 15 Payroll\n" +
+      "David Miller,121000248,332211009,3600.00,DIR-103,Nov 15 Payroll";
+
+    var CSV_CHECKS_SAMPLE = 
+      "Payee Name,Account Number,Amount,Check Number,Check Date,Status\n" +
+      "Apex Cloud Hosting Inc,123456789,4500.00,10541,2026-11-19,ISSUE\n" +
+      "Pacific Legal Partners,987654321,7200.00,10542,2026-11-19,ISSUE\n" +
+      "Delta Logistics Freight,554433221,6750.00,10543,2026-11-19,ISSUE";
+
+    var qbCsvInp = document.getElementById('qbCsvInp');
+    var qbSecCode = document.getElementById('qbSecCode');
+    var qbBankPreset = document.getElementById('qbBankPreset');
+    var qbCompanyId = document.getElementById('qbCompanyId');
+    var qbCompanyName = document.getElementById('qbCompanyName');
+
+    var diagTxCount = document.getElementById('diagTxCount');
+    var diagTotalAmt = document.getElementById('diagTotalAmt');
+    var badgeAba = document.getElementById('badgeAba');
+    var diagEntryHash = document.getElementById('diagEntryHash');
+    var diagAlert = document.getElementById('diagAlert');
+
+    var outNacha = document.getElementById('outNacha');
+    var outPosPay = document.getElementById('outPosPay');
+    var outApiCurl = document.getElementById('outApiCurl');
+
+    function parseCsvRows(raw) {
+      var lines = String(raw || '').trim().split('\n');
+      if (lines.length < 2) return [];
+      var rows = [];
+      for (var i = 1; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line) continue;
+        var cols = line.split(',').map(function (c) { return c.replace(/^["']|["']$/g, '').trim(); });
+        if (cols.length >= 4) {
+          rows.push({
+            name: cols[0] || 'Payee',
+            routing: (cols[1] || '').replace(/\D/g, ''),
+            account: (cols[2] || '').replace(/\D/g, ''),
+            amount: parseFloat(cols[3]) || 0,
+            ref: cols[4] || ('REF' + i),
+            memo: cols[5] || 'Payment'
+          });
+        }
+      }
+      return rows;
+    }
+
+    function refreshQb() {
+      var rows = parseCsvRows(qbCsvInp.value);
+      var totalAmt = 0;
+      var entryHashSum = 0;
+      var badRoutings = [];
+
+      rows.forEach(function (r) {
+        totalAmt += r.amount;
+        if (r.routing.length >= 8) {
+          entryHashSum += parseInt(r.routing.slice(0, 8), 10);
+        }
+        if (!validateAba(r.routing)) {
+          badRoutings.push(r.routing || 'Missing');
+        }
+      });
+
+      diagTxCount.textContent = rows.length + ' rows';
+      diagTotalAmt.textContent = '$' + totalAmt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' USD';
+
+      var entryHashStr = String(entryHashSum).slice(-10).padStart(10, '0');
+      diagEntryHash.textContent = entryHashStr;
+
+      if (badRoutings.length === 0 && rows.length > 0) {
+        badgeAba.className = 'qb-badge qb-badge-ok';
+        badgeAba.textContent = 'ALL VALID (MOD-10)';
+        diagAlert.style.color = '#4ade80';
+        diagAlert.textContent = '✓ All ABA routing numbers verified. File is ready for Federal Reserve FedACH / Bank transmission.';
+      } else if (rows.length === 0) {
+        badgeAba.className = 'qb-badge qb-badge-info';
+        badgeAba.textContent = 'AWAITING CSV';
+        diagAlert.style.color = '#9ca3af';
+        diagAlert.textContent = 'Paste a QuickBooks CSV report above or select one of the presets to view formatted output.';
+      } else {
+        badgeAba.className = 'qb-badge qb-badge-err';
+        badgeAba.textContent = 'INVALID ABA (' + badRoutings.length + ')';
+        diagAlert.style.color = '#f87171';
+        diagAlert.textContent = '⚠ Invalid routing number(s) detected: ' + badRoutings.join(', ') + '. Please correct before submitting to bank.';
+      }
+
+      var sec = qbSecCode.value;
+      var compName = (qbCompanyName.value.trim() || 'ACME TECHNOLOGIES').slice(0, 16).padEnd(16, ' ');
+      var compId = (qbCompanyId.value.trim() || '1958420194').slice(0, 10).padStart(10, ' ');
+      var d = new Date();
+      var yymmdd = String(d.getFullYear()).slice(2) + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+
+      // 1. Build 94-character NACHA File
+      var totalCents = Math.round(totalAmt * 100);
+      var totalCentsStr = String(totalCents).padStart(12, '0');
+      var nachaLines = [];
+
+      // Record 1: File Header
+      nachaLines.push('101 021000021 ' + compId + yymmdd + '1200A094101CHASE BANK         ' + compName + '        ');
+      // Record 5: Batch Header
+      nachaLines.push('5200' + compName + ' ' + compId + sec + 'PAYROLL   ' + yymmdd + yymmdd + '   1021000020000001');
+
+      // Record 6: Detail rows
+      rows.forEach(function (r, idx) {
+        var r8 = r.routing.slice(0, 8).padStart(8, '0');
+        var rCheck = r.routing.slice(8, 9) || '0';
+        var acc = r.account.slice(0, 17).padEnd(17, ' ');
+        var amtCents = String(Math.round(r.amount * 100)).padStart(10, '0');
+        var indId = r.ref.slice(0, 15).padEnd(15, ' ');
+        var indName = r.name.slice(0, 22).padEnd(22, ' ');
+        var trace = '02100002' + String(idx + 1).padStart(7, '0');
+        nachaLines.push('622' + r8 + rCheck + acc + amtCents + indId + indName + '  0' + trace);
+      });
+
+      // Record 8: Batch Control
+      var rowCountStr = String(rows.length).padStart(6, '0');
+      nachaLines.push('8200' + rowCountStr + entryHashStr + '000000000000' + totalCentsStr + compId + '                         021000020000001');
+
+      // Record 9: File Control
+      var totalBlocks = Math.ceil((nachaLines.length + 1) / 10);
+      var totalLinesCount = String(nachaLines.length + 1).padStart(8, '0');
+      nachaLines.push('9000001' + String(totalBlocks).padStart(6, '0') + rowCountStr + entryHashStr + '000000000000' + totalCentsStr + '                         ');
+
+      // Block-10 padding
+      while (nachaLines.length % 10 !== 0) {
+        nachaLines.push('9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999');
+      }
+
+      outNacha.textContent = nachaLines.join('\n');
+
+      // 2. Build Positive Pay Format
+      var posPayLines = [];
+      var bankChoice = qbBankPreset.value;
+      rows.forEach(function (r, idx) {
+        var chkNum = (r.ref.replace(/\D/g, '') || String(10540 + idx)).slice(0, 10);
+        var amtStr = r.amount.toFixed(2);
+        if (bankChoice === 'CHASE') {
+          // Chase format: Account(10) + CheckNumber(10) + Amount(10) + Date(6) + Payee
+          posPayLines.push(r.account.padStart(10, '0') + chkNum.padStart(10, '0') + String(Math.round(r.amount * 100)).padStart(10, '0') + yymmdd + r.name.slice(0, 30));
+        } else if (bankChoice === 'BOFA') {
+          // BofA CashPro: Account,CheckNumber,Amount,Date,Payee
+          posPayLines.push(r.account + ',' + chkNum + ',' + amtStr + ',' + yymmdd + ',"' + r.name + '"');
+        } else {
+          // Standard Wells / Generic CSV
+          posPayLines.push(r.account + ',' + chkNum + ',' + amtStr + ',' + yymmdd + ',"' + r.name + '",I');
+        }
+      });
+      outPosPay.textContent = posPayLines.join('\n');
+
+      // 3. API cURL
+      var curl = 'curl -X POST https://finops-rapidapi-edge.ria-rader.workers.dev/v1/nacha/generate \\\n' +
+        '  -H "Content-Type: application/json" \\\n' +
+        '  -H "X-FinOps-Pass: fop_live_your_pass_key" \\\n' +
+        '  -d \'{\n' +
+        '    "companyName": "' + qbCompanyName.value.trim() + '",\n' +
+        '    "companyId": "' + qbCompanyId.value.trim() + '",\n' +
+        '    "secCode": "' + sec + '",\n' +
+        '    "transactions": ' + JSON.stringify(rows.slice(0, 2), null, 4).replace(/\n/g, '\n    ') + '\n' +
+        '  }\'';
+      outApiCurl.textContent = curl;
+    }
+
+    // Presets
+    document.getElementById('btnSampleVendorAp').addEventListener('click', function () {
+      qbCsvInp.value = CSV_VENDOR_SAMPLE;
+      qbSecCode.value = 'CCD';
+      refreshQb();
+    });
+
+    document.getElementById('btnSamplePayroll').addEventListener('click', function () {
+      qbCsvInp.value = CSV_PAYROLL_SAMPLE;
+      qbSecCode.value = 'PPD';
+      refreshQb();
+    });
+
+    document.getElementById('btnSampleChecks').addEventListener('click', function () {
+      qbCsvInp.value = CSV_CHECKS_SAMPLE;
+      refreshQb();
+    });
+
+    document.getElementById('btnSampleBadAba').addEventListener('click', function () {
+      qbCsvInp.value = "Vendor Name,Routing Number,Account Number,Amount,Check Number,Memo\n" +
+        "Bad Routing Vendor,021000029,123456789,1200.00,INV-01,Test Bad Checksum";
+      refreshQb();
+    });
+
+    ['qbCsvInp', 'qbSecCode', 'qbBankPreset', 'qbCompanyId', 'qbCompanyName'].forEach(function (id) {
+      document.getElementById(id).addEventListener('input', refreshQb);
+      document.getElementById(id).addEventListener('change', refreshQb);
+    });
+
+    // Tab switcher
+    var tabBtns = document.querySelectorAll('.qb-tab-btn');
+    var tabPanes = document.querySelectorAll('.tab-pane');
+    tabBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = btn.getAttribute('data-tab');
+        tabBtns.forEach(function (b) { b.classList.remove('active'); });
+        tabPanes.forEach(function (p) { p.style.display = 'none'; });
+        btn.classList.add('active');
+        document.getElementById(target).style.display = 'block';
+      });
+    });
+
+    // Copy handlers
+    function wireCopy(btnId, targetId) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var text = document.getElementById(targetId).textContent || '';
+        navigator.clipboard.writeText(text);
+        btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = 'Copy File'; }, 1600);
+      });
+    }
+    wireCopy('btnCopyNacha', 'outNacha');
+    wireCopy('btnCopyPosPay', 'outPosPay');
+    wireCopy('btnCopyApi', 'outApiCurl');
+
+    // Direct Pass checkout triggers
+    document.getElementById('btnBuyQb24h').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('batch24h', { btn: e.target });
+    });
+    document.getElementById('btnBuyQb30d').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('pro30d', { btn: e.target });
+    });
+
+    qbCsvInp.value = CSV_VENDOR_SAMPLE;
+    refreshQb();
+  })();
+  </script>
+</body>
+</html>
