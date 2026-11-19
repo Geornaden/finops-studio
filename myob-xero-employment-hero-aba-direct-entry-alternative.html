@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MYOB, Xero &amp; Employment Hero to Australian ABA Direct Entry Alternative (CommBiz, NAB, Westpac, ANZ) | FinOps Studio</title>
+  <meta name="description" content="Convert MYOB, Xero &amp; Employment Hero payroll or supplier CSV exports into bank-compliant 120-character CEMTEX .ABA files with BSB validation &amp; Record 7 balancing. $0/mo alternative." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/myob-xero-employment-hero-aba-direct-entry-alternative.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Convert MYOB, Xero & Employment Hero CSV Exports to 120-Character Australian ABA Files (CommBiz, NAB, Westpac, ANZ)",
+        "url": "https://geornaden.github.io/finops-studio/myob-xero-employment-hero-aba-direct-entry-alternative.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Step-by-step Australian corporate payroll guide and interactive browser tool converting MYOB, Xero, and Employment Hero CSV files into bank-compliant 120-character CEMTEX .ABA files."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why do Australian banks reject standard CSV exports from MYOB or Xero?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Australian commercial portals like CommBiz (CBA), NAB Connect, Westpac Corporate Online, and ANZ Transactive require strict 120-character fixed-width CEMTEX .ABA files adhering to AusPayNet standards (Record Type 0 Descriptive, Record Type 1 Details with BSB format XXX-XXX, and Record Type 7 File Total with net/credit/debit penny hashes). Raw CSV spreadsheets lack fixed-width column padding and hash totals."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is an APCA / User Identification Number in an Australian ABA file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The APCA (Australian Payments Clearing Association) number is a 6-digit numeric identifier assigned by your bank to authorized Direct Entry users. It is placed in characters 57-62 of Record Type 0 and allows the bank to verify your authority to upload bulk debit or credit files."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does FinOps Studio replace expensive payroll add-ons and desktop converters?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Traditional desktop software charges $250 to $1,200 annually per user. FinOps Studio provides an instant deterministic browser tool and Cloudflare Edge API for $9 USD (24h unlimited pass) or $29 USD (30-day Pro pass) with zero recurring monthly subscription or software contracts."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .aba-hero {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(16, 185, 129, 0.08) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 14px;
+      padding: 2.2rem;
+      margin-bottom: 2rem;
+    }
+    .aba-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 860px) {
+      .aba-grid { grid-template-columns: 1fr; }
+    }
+    .aba-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+    .aba-card h3 {
+      margin-top: 0;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.15rem;
+    }
+    .aba-input-group {
+      margin-bottom: 1.1rem;
+    }
+    .aba-input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 0.35rem;
+    }
+    .aba-input-group input, .aba-input-group select, .aba-input-group textarea {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #f9fafb;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .aba-input-group textarea {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      resize: vertical;
+    }
+    .aba-input-group input:focus, .aba-input-group select:focus, .aba-input-group textarea:focus {
+      outline: none;
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+    }
+    .aba-badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .aba-badge-ok { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .aba-badge-err { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .aba-badge-info { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .aba-sample-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .aba-sample-btn {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #e5e7eb;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .aba-sample-btn:hover {
+      background: #374151;
+      border-color: #f59e0b;
+      color: #fff;
+    }
+    .aba-tab-nav {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid #374151;
+      margin-bottom: 1rem;
+    }
+    .aba-tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #9ca3af;
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .aba-tab-btn.active {
+      color: #fbbf24;
+      border-bottom-color: #f59e0b;
+    }
+    .aba-output-pre {
+      background: #030712;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1rem;
+      color: #e5e7eb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+      max-height: 380px;
+    }
+    .aba-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.88rem;
+    }
+    .aba-stat-label { color: #9ca3af; }
+    .aba-stat-val { font-weight: 600; color: #f3f4f6; }
+    .aba-pricing-card {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid #f59e0b;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 2.5rem;
+      box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.15);
+    }
+    .aba-pass-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      padding: 0.85rem 1.75rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    .aba-pass-btn-primary {
+      background: #d97706;
+      color: #fff;
+    }
+    .aba-pass-btn-primary:hover {
+      background: #b45309;
+      box-shadow: 0 0 15px rgba(217, 119, 6, 0.4);
+    }
+    .aba-pass-btn-secondary {
+      background: #059669;
+      color: #fff;
+    }
+    .aba-pass-btn-secondary:hover {
+      background: #047857;
+      box-shadow: 0 0 15px rgba(5, 150, 105, 0.4);
+    }
+    .table-compare {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    .table-compare th, .table-compare td {
+      border: 1px solid #374151;
+      padding: 0.8rem 1rem;
+      text-align: left;
+    }
+    .table-compare th {
+      background: #1f2937;
+      color: #f3f4f6;
+    }
+    .table-compare tr:nth-child(even) {
+      background: rgba(31, 41, 55, 0.5);
+    }
+    .aba-bank-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .aba-bank-box {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .aba-bank-box h4 {
+      margin: 0 0 0.35rem 0;
+      color: #fbbf24;
+      font-size: 0.95rem;
+    }
+    .aba-bank-box p {
+      margin: 0;
+      font-size: 0.78rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">BSB Checker</a>
+        <a href="./free-australian-aba-file-validator-record-7-auditor.html">ABA Validator</a>
+        <a href="./aba-cemtex-file-generator.html">ABA Spec</a>
+        <a class="btn btn-primary" href="#abaPricingBar">⚡ Unlock $9 Pass &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="aba-hero">
+      <div style="display: inline-block; background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 0.82rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem; border: 1px solid rgba(245, 158, 11, 0.3);">
+        🇦🇺 AUSTRALIAN BECS DIRECT ENTRY CONVERTER — $0/MO ALTERNATIVE
+      </div>
+      <h1 style="color: #fff; font-size: 2.1rem; line-height: 1.25; margin-bottom: 0.75rem;">
+        MYOB, Xero &amp; Employment Hero to Australian ABA Direct Entry Alternative
+      </h1>
+      <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.6; max-width: 820px; margin-bottom: 1.2rem;">
+        Convert MYOB AccountRight, Xero Australia &amp; Employment Hero (KeyPay) wage or supplier CSV exports into bank-compliant 120-character CEMTEX .ABA files. Validates BSB numbers and calculates Record 7 credit/debit totals for CommBiz, NAB Connect, Westpac &amp; ANZ.
+      </p>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; font-size: 0.85rem; color: #9ca3af;">
+        <span>✅ Exact 120-byte record length</span>
+        <span>✅ Automatic Record 7 hash balancing</span>
+        <span>✅ BSB format validation (XXX-XXX)</span>
+        <span>✅ $0/mo Desktop software subscription</span>
+      </div>
+    </section>
+
+    <!-- Interactive ABA Converter & Diagnostic Tool -->
+    <section id="abaConverter" class="aba-card" style="margin-bottom: 2.5rem;">
+      <h3>
+        <span>⚙️</span> Interactive MYOB &amp; Xero to CEMTEX .ABA Generator
+      </h3>
+      <p style="color: #9ca3af; font-size: 0.9rem; margin-bottom: 1.2rem;">
+        Select an Australian accounting sample preset below or paste your raw payroll/supplier CSV. The engine formats strict 120-character CEMTEX records in real time.
+      </p>
+
+      <div class="aba-sample-bar">
+        <button type="button" class="aba-sample-btn" id="btnSampleMyobPayroll">🇦🇺 MYOB AccountRight (Staff Wages)</button>
+        <button type="button" class="aba-sample-btn" id="btnSampleXeroAu">💼 Xero Australia (Supplier Bills)</button>
+        <button type="button" class="aba-sample-btn" id="btnSampleKeyPay">⚡ Employment Hero / KeyPay (Weekly Pay)</button>
+        <button type="button" class="aba-sample-btn" id="btnSampleBadBsb" style="border-color: #ef4444; color: #f87171;">⚠️ Test Invalid BSB</button>
+      </div>
+
+      <div class="aba-grid">
+        <!-- Left: Input Settings & CSV -->
+        <div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+            <div class="aba-input-group">
+              <label for="abaBankFi">User Financial Institution</label>
+              <select id="abaBankFi">
+                <option value="CBA">Commonwealth Bank (CBA)</option>
+                <option value="NAB">National Australia Bank (NAB)</option>
+                <option value="WPC">Westpac Banking Corp (WPC)</option>
+                <option value="ANZ">ANZ Banking Group (ANZ)</option>
+                <option value="MAC">Macquarie Bank (MAC)</option>
+              </select>
+            </div>
+            <div class="aba-input-group">
+              <label for="abaApcaId">6-Digit APCA / User ID Number</label>
+              <input type="text" id="abaApcaId" value="123456" placeholder="123456" maxlength="6" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+            <div class="aba-input-group">
+              <label for="abaTraceBsb">Originating BSB (XXX-XXX)</label>
+              <input type="text" id="abaTraceBsb" value="062-000" placeholder="062-000" maxlength="7" />
+            </div>
+            <div class="aba-input-group">
+              <label for="abaTraceAcc">Originating Account (Up to 9 Digits)</label>
+              <input type="text" id="abaTraceAcc" value="87654321" placeholder="87654321" maxlength="9" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+            <div class="aba-input-group">
+              <label for="abaUserName">User Preferred Name (26 Chars)</label>
+              <input type="text" id="abaUserName" value="APEX LOGISTICS PTY LTD" placeholder="APEX LOGISTICS PTY LTD" maxlength="26" />
+            </div>
+            <div class="aba-input-group">
+              <label for="abaDesc">Entry Description (12 Chars)</label>
+              <input type="text" id="abaDesc" value="PAYROLL" placeholder="PAYROLL" maxlength="12" />
+            </div>
+          </div>
+
+          <div class="aba-input-group">
+            <label for="abaCsvInp">Raw Accounting CSV (Payee Name, BSB, Account Number, Amount, Reference)</label>
+            <textarea id="abaCsvInp" rows="7" placeholder="Payee Name,BSB,Account Number,Amount,Reference"></textarea>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Diagnostics -->
+        <div>
+          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 1.2rem; margin-bottom: 1.2rem;">
+            <h4 style="margin: 0 0 0.8rem 0; color: #f3f4f6; font-size: 0.95rem; display: flex; justify-content: space-between;">
+              <span>Pre-Flight CEMTEX Audit</span>
+              <span id="abaStatusBadge" class="aba-badge aba-badge-ok">READY</span>
+            </h4>
+            
+            <div class="aba-stat-row">
+              <span class="aba-stat-label">Total Payment Rows (Record 1):</span>
+              <span class="aba-stat-val" id="diagTxCount">3</span>
+            </div>
+            <div class="aba-stat-row">
+              <span class="aba-stat-label">Total Amount (AUD $):</span>
+              <span class="aba-stat-val" id="diagTotalAmt">$11,450.00</span>
+            </div>
+            <div class="aba-stat-row">
+              <span class="aba-stat-label">Total Amount (Cents):</span>
+              <span class="aba-stat-val" id="diagTotalCents">1145000</span>
+            </div>
+            <div class="aba-stat-row">
+              <span class="aba-stat-label">Processing Date (DDMMYY):</span>
+              <span class="aba-stat-val" id="diagProcDate" style="font-family: monospace; color: #fbbf24;">191126</span>
+            </div>
+            <div class="aba-stat-row">
+              <span class="aba-stat-label">Australian BSB Format:</span>
+              <span class="aba-stat-val" id="diagBsbCheck"><span class="aba-badge aba-badge-ok">VALID</span></span>
+            </div>
+            <div class="aba-stat-row">
+              <span class="aba-stat-label">Record 7 File Control Hash:</span>
+              <span class="aba-stat-val" id="diagRec7Bal" style="color: #4ade80;">BALANCED (Net = Credit)</span>
+            </div>
+            <div class="aba-stat-row">
+              <span class="aba-stat-label">Record Width Compliance:</span>
+              <span class="aba-stat-val" id="diagLineLen" style="color: #4ade80;">120 / 120 Chars (Strict)</span>
+            </div>
+          </div>
+
+          <div id="diagAlert" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 0.8rem; color: #f87171; font-size: 0.85rem; margin-bottom: 1rem;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Output Tabs -->
+      <div class="aba-tab-nav">
+        <button type="button" class="aba-tab-btn active" data-tab="tabAbaFile">Bank-Ready .ABA File (120 Chars)</button>
+        <button type="button" class="aba-tab-btn" data-tab="tabBreakdown">CEMTEX Record Slicer</button>
+        <button type="button" class="aba-tab-btn" data-tab="tabApi">Cloud API &amp; cURL</button>
+      </div>
+
+      <div id="tabAbaFile" class="tab-pane">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span style="font-size: 0.8rem; color: #9ca3af;">Fixed-width 120-character format compliant with CommBiz, NAB, Westpac &amp; ANZ:</span>
+          <div>
+            <button type="button" class="aba-sample-btn" id="btnDownloadAba" style="background: #d97706; color: #fff; border-color: #f59e0b;">⬇️ Download .aba File</button>
+            <button type="button" class="aba-sample-btn" id="btnCopyAba">Copy File</button>
+          </div>
+        </div>
+        <pre class="aba-output-pre" id="outAbaFile"></pre>
+      </div>
+
+      <div id="tabBreakdown" class="tab-pane" style="display: none;">
+        <div style="margin-bottom: 0.5rem; font-size: 0.8rem; color: #9ca3af;">
+          Line-by-line label mapping (Record 0 Descriptive, Record 1 Detail Payments, Record 7 File Total):
+        </div>
+        <pre class="aba-output-pre" id="outBreakdown"></pre>
+      </div>
+
+      <div id="tabApi" class="tab-pane" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span style="font-size: 0.8rem; color: #9ca3af;">Automate Australian .ABA generation directly in Python, Node.js or n8n:</span>
+          <button type="button" class="aba-sample-btn" id="btnCopyApi">Copy cURL</button>
+        </div>
+        <pre class="aba-output-pre" id="outApiCurl"></pre>
+      </div>
+    </section>
+
+    <!-- Bank Compatibility -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="color: #fff; font-size: 1.4rem; margin-bottom: 0.5rem;">Supported Australian Commercial Banking Portals</h2>
+      <p style="color: #9ca3af; font-size: 0.95rem; margin-bottom: 1.2rem;">
+        Files generated by FinOps Studio comply with AusPayNet BECS specifications and are verified on all major Australian banks:
+      </p>
+      <div class="aba-bank-grid">
+        <div class="aba-bank-box">
+          <h4>CommBiz (CBA)</h4>
+          <p>Direct Entry payments, staff payroll runs &amp; supplier batch clearing.</p>
+        </div>
+        <div class="aba-bank-box">
+          <h4>NAB Connect</h4>
+          <p>Direct Credit &amp; Payroll .ABA file upload with automatic Record 7 hash matching.</p>
+        </div>
+        <div class="aba-bank-box">
+          <h4>Westpac Corporate Online</h4>
+          <p>Business Banking &amp; Corporate Online Direct Entry BECS transmission.</p>
+        </div>
+        <div class="aba-bank-box">
+          <h4>ANZ Transactive</h4>
+          <p>Domestic Direct Entry bulk upload with 120-character line length validation.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison Table: FinOps Studio vs Legacy Bureaus -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="color: #fff; font-size: 1.4rem; margin-bottom: 0.5rem;">Why Australian Accountants Switch to FinOps Studio</h2>
+      <p style="color: #9ca3af; font-size: 0.95rem; margin-bottom: 1.2rem;">
+        Compare the cost and agility of FinOps Studio against legacy desktop software and bureau add-ons:
+      </p>
+
+      <table class="table-compare">
+        <thead>
+          <tr>
+            <th>Feature / Capability</th>
+            <th>Desktop Converters</th>
+            <th>Payroll Bureau Add-ons</th>
+            <th>FinOps Studio ($9 Pass)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Annual Cost</strong></td>
+            <td>$250 – $800 / year</td>
+            <td>$600 – $1,800 / year</td>
+            <td style="color: #4ade80;"><strong>$9 USD (24h) or $29 USD (30-Day Pro)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Subscription Lock-in</strong></td>
+            <td>Annual Auto-Renewing</td>
+            <td>Monthly Per-Employee Fees</td>
+            <td style="color: #4ade80;"><strong>Zero Lock-in ($0 recurring monthly commitment)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Setup Time</strong></td>
+            <td>Windows installer &amp; license key</td>
+            <td>Accountant setup &amp; onboarding</td>
+            <td style="color: #4ade80;"><strong>Instant in-browser &amp; API access</strong></td>
+          </tr>
+          <tr>
+            <td><strong>MYOB &amp; Xero CSV Support</strong></td>
+            <td>Custom column setup</td>
+            <td>Locked to specific app</td>
+            <td style="color: #4ade80;"><strong>1-click CSV to 120-character CEMTEX .ABA</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Record 7 Hash Calculation</strong></td>
+            <td>Manual verification</td>
+            <td>Automated</td>
+            <td style="color: #4ade80;"><strong>Built-in mathematical credit/debit/net balancing</strong></td>
+          </tr>
+          <tr>
+            <td><strong>API &amp; AI Agent Integration</strong></td>
+            <td>None (Desktop only)</td>
+            <td>Closed proprietary API</td>
+            <td style="color: #4ade80;"><strong>Deterministic Cloudflare Edge API + MCP</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Pricing Card -->
+    <section id="abaPricingBar" class="aba-pricing-card">
+      <div style="display: inline-block; background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 0.82rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem; border: 1px solid rgba(245, 158, 11, 0.3);">
+        🚀 UNLIMITED BANK-READY CONVERSION — ZERO SOFTWARE SUBSCRIPTIONS
+      </div>
+      <h2 style="color: #fff; font-size: 1.6rem; margin: 0 0 0.5rem 0;">
+        Download Clean Australian .ABA Files or Automate via API
+      </h2>
+      <p style="color: #cbd5e1; max-width: 780px; margin: 0 auto 1.4rem auto; font-size: 0.95rem; line-height: 1.5;">
+        Remove all demo watermarks and unlock unlimited Australian CEMTEX .ABA conversions for your bookkeeper practice, payroll bureau, or business. Instant unlock with Apple Pay, Google Pay, Card, or PayPal.
+      </p>
+      <div>
+        <button type="button" class="aba-pass-btn aba-pass-btn-primary" id="btnBuyAba24h">
+          ⚡ 24h Unlimited Pass — $9 USD
+        </button>
+        <button type="button" class="aba-pass-btn aba-pass-btn-secondary" id="btnBuyAba30d">
+          👑 30-Day Pro Pass — $29 USD (Priority API)
+        </button>
+      </div>
+      <div style="margin-top: 0.8rem; font-size: 0.82rem; color: #94a3b8;">
+        Instant Access • Zero Auto-Renewal • 100% Tax Deductible Business Software Expense
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>© 2026 FinOps Studio. Deterministic Banking File Engines &amp; Treasury APIs.</p>
+      <div class="footer-links">
+        <a href="./index.html">Home</a>
+        <a href="./aba-cemtex-file-generator.html">ABA Generator Spec</a>
+        <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">BSB Checker</a>
+        <a href="./free-australian-aba-file-validator-record-7-auditor.html">Record 7 Auditor</a>
+        <a href="./australian-aba-transaction-codes-50-53-13-record-1-column-slicer.html">ABA Code Slicer</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">API Hub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./vip-support-widget.js" defer></script>
+  <script>
+  (function () {
+    function getDDMMYY(d) {
+      var day = String(d.getDate()).padStart(2, '0');
+      var month = String(d.getMonth() + 1).padStart(2, '0');
+      var yy = String(d.getFullYear()).slice(-2);
+      return day + month + yy;
+    }
+
+    var CSV_MYOB_PAYROLL = 
+      "Employee Name,BSB,Account Number,Amount,Reference\n" +
+      "Liam Campbell,062-000,12345678,3850.00,WAGES NOV\n" +
+      "Chloe Wilson,083-004,23456789,4100.00,WAGES NOV\n" +
+      "Jack Taylor,032-000,34567890,3500.00,WAGES NOV";
+
+    var CSV_XERO_AU = 
+      "Supplier Name,BSB,Account Number,Amount,Invoice Ref\n" +
+      "Sydney Cloud Hosting,062-000,98765432,4500.00,INV-8821\n" +
+      "Melbourne Legal Chambers,083-004,87654321,5200.00,INV-8822\n" +
+      "Brisbane Logistics Express,032-000,76543210,1750.00,INV-8823";
+
+    var CSV_KEYPAY = 
+      "Employee Name,BSB,Account Number,Amount,Pay ID\n" +
+      "Grace Kelly,062-000,43218765,2200.00,PAY-WK46\n" +
+      "Noah Smith,083-004,67891234,3100.00,PAY-WK46\n" +
+      "Isla Martin,032-000,98123456,2450.00,PAY-WK46";
+
+    var abaCsvInp = document.getElementById('abaCsvInp');
+    var abaBankFi = document.getElementById('abaBankFi');
+    var abaApcaId = document.getElementById('abaApcaId');
+    var abaTraceBsb = document.getElementById('abaTraceBsb');
+    var abaTraceAcc = document.getElementById('abaTraceAcc');
+    var abaUserName = document.getElementById('abaUserName');
+    var abaDesc = document.getElementById('abaDesc');
+
+    var diagTxCount = document.getElementById('diagTxCount');
+    var diagTotalAmt = document.getElementById('diagTotalAmt');
+    var diagTotalCents = document.getElementById('diagTotalCents');
+    var diagProcDate = document.getElementById('diagProcDate');
+    var diagBsbCheck = document.getElementById('diagBsbCheck');
+    var diagRec7Bal = document.getElementById('diagRec7Bal');
+    var diagLineLen = document.getElementById('diagLineLen');
+    var diagAlert = document.getElementById('diagAlert');
+    var abaStatusBadge = document.getElementById('abaStatusBadge');
+
+    var outAbaFile = document.getElementById('outAbaFile');
+    var outBreakdown = document.getElementById('outBreakdown');
+    var outApiCurl = document.getElementById('outApiCurl');
+
+    function parseCsv(raw) {
+      var lines = String(raw || '').trim().split('\n');
+      if (lines.length < 2) return [];
+      var rows = [];
+      for (var i = 1; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line) continue;
+        var cols = line.split(',').map(function (c) { return c.replace(/^["']|["']$/g, '').trim(); });
+        if (cols.length >= 4) {
+          var bsbClean = (cols[1] || '').replace(/[^\d-]/g, '');
+          if (bsbClean.length === 6 && bsbClean.indexOf('-') === -1) {
+            bsbClean = bsbClean.slice(0, 3) + '-' + bsbClean.slice(3);
+          }
+          rows.push({
+            name: cols[0] || 'Beneficiary',
+            bsb: bsbClean,
+            accountNumber: (cols[2] || '').replace(/\D/g, ''),
+            amount: parseFloat(cols[3]) || 0,
+            ref: cols[4] || ('REF' + i)
+          });
+        }
+      }
+      return rows;
+    }
+
+    function refreshAba() {
+      var rows = parseCsv(abaCsvInp.value);
+      var fiCode = (abaBankFi.value || 'CBA').padEnd(3, ' ').slice(0, 3);
+      var apca = (abaApcaId.value || '123456').replace(/\D/g, '').padStart(6, '0').slice(-6);
+      var tBsb = (abaTraceBsb.value || '062-000').trim();
+      if (tBsb.length === 6 && tBsb.indexOf('-') === -1) tBsb = tBsb.slice(0, 3) + '-' + tBsb.slice(3);
+      var tAcc = (abaTraceAcc.value || '87654321').replace(/\D/g, '');
+      var userName = (abaUserName.value || 'USER').toUpperCase().padEnd(26, ' ').slice(0, 26);
+      var desc = (abaDesc.value || 'PAYROLL').toUpperCase().padEnd(12, ' ').slice(0, 12);
+
+      var totalCents = 0;
+      var hasInvalidBsb = false;
+      var hasInvalidAcc = false;
+
+      if (!/^\d{3}-\d{3}$/.test(tBsb)) hasInvalidBsb = true;
+      if (!tAcc || tAcc.length > 9) hasInvalidAcc = true;
+
+      rows.forEach(function (r) {
+        totalCents += Math.round(r.amount * 100);
+        if (!/^\d{3}-\d{3}$/.test(r.bsb)) hasInvalidBsb = true;
+        if (!r.accountNumber || r.accountNumber.length > 9) hasInvalidAcc = true;
+      });
+
+      // Update Diagnostics
+      diagTxCount.textContent = String(rows.length);
+      diagTotalAmt.textContent = '$' + (totalCents / 100).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      diagTotalCents.textContent = String(totalCents);
+
+      var now = new Date();
+      var procDateStr = getDDMMYY(now);
+      diagProcDate.textContent = procDateStr;
+
+      if (hasInvalidBsb || hasInvalidAcc) {
+        diagBsbCheck.innerHTML = '<span class="aba-badge aba-badge-err">INVALID BSB / ACC</span>';
+        diagAlert.style.display = 'block';
+        diagAlert.textContent = '⚠️ Validation Warning: One or more Australian BSB numbers (must be XXX-XXX) or Account Numbers (up to 9 digits) are invalid.';
+        abaStatusBadge.textContent = 'WARNING';
+        abaStatusBadge.className = 'aba-badge aba-badge-err';
+      } else {
+        diagBsbCheck.innerHTML = '<span class="aba-badge aba-badge-ok">VALID AUSTRALIAN BSBS</span>';
+        diagAlert.style.display = 'none';
+        abaStatusBadge.textContent = 'READY';
+        abaStatusBadge.className = 'aba-badge aba-badge-ok';
+      }
+
+      // Build 120-Character CEMTEX Records
+      var abaLines = [];
+      var breakdownLines = [];
+
+      // Record Type 0: Descriptive Record
+      var r0 = '0' + ' '.repeat(17) + '01' + fiCode + ' '.repeat(7) + userName + apca + desc + procDateStr + ' '.repeat(40);
+      r0 = r0.padEnd(120, ' ').slice(0, 120);
+      abaLines.push(r0);
+      breakdownLines.push('[Record 0 Descriptive] ' + r0);
+
+      // Record Type 1: Detail Records
+      rows.forEach(function (r, idx) {
+        var bsb = r.bsb.padEnd(7, ' ').slice(0, 7);
+        var acc = r.accountNumber.padStart(9, ' ').slice(-9);
+        var ind = ' ';
+        var txCode = '50'; // General credit / payroll
+        var amtStr = String(Math.round(r.amount * 100)).padStart(10, '0').slice(-10);
+        var title = (r.name || 'PAYEE').toUpperCase().padEnd(32, ' ').slice(0, 32);
+        var ref = (r.ref || 'PAYMENT').toUpperCase().padEnd(18, ' ').slice(0, 18);
+        var trBsb = tBsb.padEnd(7, ' ').slice(0, 7);
+        var trAcc = tAcc.padStart(9, ' ').slice(-9);
+        var remitter = userName.slice(0, 16).padEnd(16, ' ');
+        var wTax = '00000000';
+
+        var r1 = '1' + bsb + acc + ind + txCode + amtStr + title + ref + trBsb + trAcc + remitter + wTax;
+        r1 = r1.padEnd(120, ' ').slice(0, 120);
+        abaLines.push(r1);
+        breakdownLines.push('[Record 1 Detail ' + (idx + 1) + ']   ' + r1);
+      });
+
+      // Record Type 7: File Total Record
+      var netAmtStr = String(totalCents).padStart(10, '0').slice(-10);
+      var crAmtStr = String(totalCents).padStart(10, '0').slice(-10);
+      var drAmtStr = '0000000000';
+      var countStr = String(rows.length).padStart(6, '0').slice(-6);
+
+      var r7 = '7' + '999-999' + ' '.repeat(12) + netAmtStr + crAmtStr + drAmtStr + ' '.repeat(24) + countStr + ' '.repeat(40);
+      r7 = r7.padEnd(120, ' ').slice(0, 120);
+      abaLines.push(r7);
+      breakdownLines.push('[Record 7 Total]        ' + r7);
+
+      outAbaFile.textContent = abaLines.join('\r\n');
+      outBreakdown.textContent = breakdownLines.join('\n');
+
+      // API snippet
+      var curl = 'curl -X POST https://finops-rapidapi-edge.ria-rader.workers.dev/v1/aba/generate \\\n' +
+        '  -H "Content-Type: application/json" \\\n' +
+        '  -H "X-FinOps-Pass: fop_live_your_pass_key" \\\n' +
+        '  -d \'{\n' +
+        '    "bankCode": "' + fiCode.trim() + '",\n' +
+        '    "userName": "' + userName.trim() + '",\n' +
+        '    "apcaNumber": "' + apca + '",\n' +
+        '    "description": "' + desc.trim() + '",\n' +
+        '    "traceBsb": "' + tBsb + '",\n' +
+        '    "traceAccountNumber": "' + tAcc + '",\n' +
+        '    "transactions": ' + JSON.stringify(rows.slice(0, 2), null, 4).replace(/\n/g, '\n    ') + '\n' +
+        '  }\'';
+      outApiCurl.textContent = curl;
+    }
+
+    // Presets
+    document.getElementById('btnSampleMyobPayroll').addEventListener('click', function () {
+      abaCsvInp.value = CSV_MYOB_PAYROLL;
+      refreshAba();
+    });
+
+    document.getElementById('btnSampleXeroAu').addEventListener('click', function () {
+      abaCsvInp.value = CSV_XERO_AU;
+      refreshAba();
+    });
+
+    document.getElementById('btnSampleKeyPay').addEventListener('click', function () {
+      abaCsvInp.value = CSV_KEYPAY;
+      refreshAba();
+    });
+
+    document.getElementById('btnSampleBadBsb').addEventListener('click', function () {
+      abaCsvInp.value = "Vendor Name,BSB,Account Number,Amount,Reference\n" +
+        "Bad BSB Payee,1234,12345,1200.00,TEST-FAIL";
+      refreshAba();
+    });
+
+    ['abaCsvInp', 'abaBankFi', 'abaApcaId', 'abaTraceBsb', 'abaTraceAcc', 'abaUserName', 'abaDesc'].forEach(function (id) {
+      document.getElementById(id).addEventListener('input', refreshAba);
+      document.getElementById(id).addEventListener('change', refreshAba);
+    });
+
+    // Tab switcher
+    var tabBtns = document.querySelectorAll('.aba-tab-btn');
+    var tabPanes = document.querySelectorAll('.tab-pane');
+    tabBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = btn.getAttribute('data-tab');
+        tabBtns.forEach(function (b) { b.classList.remove('active'); });
+        tabPanes.forEach(function (p) { p.style.display = 'none'; });
+        btn.classList.add('active');
+        document.getElementById(target).style.display = 'block';
+      });
+    });
+
+    // Copy handlers
+    function wireCopy(btnId, targetId) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var text = document.getElementById(targetId).textContent || '';
+        navigator.clipboard.writeText(text);
+        btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = 'Copy File'; }, 1600);
+      });
+    }
+    wireCopy('btnCopyAba', 'outAbaFile');
+    wireCopy('btnCopyApi', 'outApiCurl');
+
+    // Download handler
+    document.getElementById('btnDownloadAba').addEventListener('click', function () {
+      var text = outAbaFile.textContent || '';
+      var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'direct_entry.aba';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Direct Pass checkout triggers
+    document.getElementById('btnBuyAba24h').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('batch24h', { btn: e.target });
+    });
+    document.getElementById('btnBuyAba30d').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('pro30d', { btn: e.target });
+    });
+
+    abaCsvInp.value = CSV_MYOB_PAYROLL;
+    refreshAba();
+  })();
+  </script>
+</body>
+</html>
