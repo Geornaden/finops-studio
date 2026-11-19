@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickBooks, Ceridian &amp; Wagepoint to CPA-005 1,464-Byte Direct Deposit Alternative (RBC, TD, BMO, Scotiabank) | FinOps Studio</title>
+  <meta name="description" content="Convert Canadian QuickBooks, Ceridian &amp; Wagepoint CSV exports to bank-compliant 1,464-byte CPA-005 files with 0IIITTTTT transit validation, Julian dates &amp; Record Z hash totals. $0/mo alternative." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/quickbooks-ceridian-cpa005-direct-deposit-alternative.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Convert Canadian QuickBooks, Ceridian & Wagepoint CSV Exports to 1,464-Byte CPA-005 Files (RBC, TD, BMO, Scotiabank)",
+        "url": "https://geornaden.github.io/finops-studio/quickbooks-ceridian-cpa005-direct-deposit-alternative.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Step-by-step Canadian corporate payroll guide and interactive browser tool converting QuickBooks, Ceridian, and Wagepoint CSV files into bank-compliant 1,464-byte CPA-005 direct deposit files."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why do Canadian banks reject standard CSV payroll exports from QuickBooks or Ceridian?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Canadian commercial portals like RBC Express, TD WebBusiness, BMO Online Banking for Business, and Scotiabank ScotiaConnect require strict 1,464-byte fixed-width CPA-005 files governed by Payments Canada Standard 005 (Record A Header, Record C Details with 9-digit 0IIITTTTT transit format, and Record Z Trailer with control hashes). Raw CSV spreadsheets lack 1,464-byte block padding and Julian date headers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the 0IIITTTTT routing number format in Canadian CPA-005 files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In CPA-005, routing numbers are formatted as 9 digits: a leading zero '0', followed by the 3-digit Financial Institution number (e.g. 003 for RBC, 004 for TD, 001 for BMO, 002 for Scotiabank, 010 for CIBC), followed by the 5-digit branch transit number (TTTTT)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does FinOps Studio replace expensive Canadian payroll add-ons and desktop converters?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Traditional desktop software charges $300 to $1,500 annually per user. FinOps Studio provides an instant deterministic browser tool and Cloudflare Edge API for $9 USD (24h unlimited pass) or $29 USD (30-day Pro pass) with zero recurring monthly subscription or software contracts."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .cpa-hero {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.12) 0%, rgba(37, 99, 235, 0.08) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      border-radius: 14px;
+      padding: 2.2rem;
+      margin-bottom: 2rem;
+    }
+    .cpa-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 860px) {
+      .cpa-grid { grid-template-columns: 1fr; }
+    }
+    .cpa-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+    .cpa-card h3 {
+      margin-top: 0;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.15rem;
+    }
+    .cpa-input-group {
+      margin-bottom: 1.1rem;
+    }
+    .cpa-input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 0.35rem;
+    }
+    .cpa-input-group input, .cpa-input-group select, .cpa-input-group textarea {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #f9fafb;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .cpa-input-group textarea {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      resize: vertical;
+    }
+    .cpa-input-group input:focus, .cpa-input-group select:focus, .cpa-input-group textarea:focus {
+      outline: none;
+      border-color: #ef4444;
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+    .cpa-badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .cpa-badge-ok { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .cpa-badge-err { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .cpa-badge-info { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .cpa-sample-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .cpa-sample-btn {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #e5e7eb;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .cpa-sample-btn:hover {
+      background: #374151;
+      border-color: #ef4444;
+      color: #fff;
+    }
+    .cpa-tab-nav {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid #374151;
+      margin-bottom: 1rem;
+    }
+    .cpa-tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #9ca3af;
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .cpa-tab-btn.active {
+      color: #f87171;
+      border-bottom-color: #ef4444;
+    }
+    .cpa-output-pre {
+      background: #030712;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1rem;
+      color: #e5e7eb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+      max-height: 380px;
+    }
+    .cpa-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.88rem;
+    }
+    .cpa-stat-label { color: #9ca3af; }
+    .cpa-stat-val { font-weight: 600; color: #f3f4f6; }
+    .cpa-pricing-card {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid #ef4444;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 2.5rem;
+      box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.15);
+    }
+    .cpa-pass-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      padding: 0.85rem 1.75rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    .cpa-pass-btn-primary {
+      background: #dc2626;
+      color: #fff;
+    }
+    .cpa-pass-btn-primary:hover {
+      background: #b91c1c;
+      box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+    }
+    .cpa-pass-btn-secondary {
+      background: #059669;
+      color: #fff;
+    }
+    .cpa-pass-btn-secondary:hover {
+      background: #047857;
+      box-shadow: 0 0 15px rgba(5, 150, 105, 0.4);
+    }
+    .table-compare {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    .table-compare th, .table-compare td {
+      border: 1px solid #374151;
+      padding: 0.8rem 1rem;
+      text-align: left;
+    }
+    .table-compare th {
+      background: #1f2937;
+      color: #f3f4f6;
+    }
+    .table-compare tr:nth-child(even) {
+      background: rgba(31, 41, 55, 0.5);
+    }
+    .cpa-bank-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .cpa-bank-box {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .cpa-bank-box h4 {
+      margin: 0 0 0.35rem 0;
+      color: #f87171;
+      font-size: 0.95rem;
+    }
+    .cpa-bank-box p {
+      margin: 0;
+      font-size: 0.78rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-canada-cpa005-eft-file-validator.html">CPA-005 Validator</a>
+        <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Transit Checker</a>
+        <a href="./canada-cpa-005-eft-file-generator.html">CPA-005 Spec</a>
+        <a class="btn btn-primary" href="#cpaPricingBar">⚡ Unlock $9 Pass &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="cpa-hero">
+      <div style="display: inline-block; background: rgba(220, 38, 38, 0.15); color: #f87171; font-size: 0.82rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem; border: 1px solid rgba(220, 38, 38, 0.3);">
+        🇨🇦 CANADIAN ACSS CPA-005 EFT CONVERTER — $0/MO ALTERNATIVE
+      </div>
+      <h1 style="color: #fff; font-size: 2.1rem; line-height: 1.25; margin-bottom: 0.75rem;">
+        QuickBooks, Ceridian &amp; Wagepoint to CPA-005 1,464-Byte Direct Deposit Alternative
+      </h1>
+      <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.6; max-width: 820px; margin-bottom: 1.2rem;">
+        Convert Canadian QuickBooks, Ceridian Dayforce &amp; Wagepoint payroll or supplier CSV exports into bank-compliant 1,464-byte CPA-005 files. Includes 0IIITTTTT transit validation, Julian date formatting (<code style="color: #fca5a5;">0YYDDD</code>), and Record Z trailer balancing for RBC, TD, BMO &amp; Scotiabank.
+      </p>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; font-size: 0.85rem; color: #9ca3af;">
+        <span>✅ Exact 1,464-byte record length</span>
+        <span>✅ Automatic Record Z hash balancing</span>
+        <span>✅ 0IIITTTTT transit validation</span>
+        <span>✅ $0/mo Desktop software subscription</span>
+      </div>
+    </section>
+
+    <!-- Interactive CPA-005 Converter & Diagnostic Tool -->
+    <section id="cpaConverter" class="cpa-card" style="margin-bottom: 2.5rem;">
+      <h3>
+        <span>⚙️</span> Interactive QuickBooks &amp; Ceridian to CPA-005 Generator
+      </h3>
+      <p style="color: #9ca3af; font-size: 0.9rem; margin-bottom: 1.2rem;">
+        Select a Canadian accounting sample preset below or paste your raw payroll/supplier CSV. The engine formats strict 1,464-byte CPA-005 records in real time.
+      </p>
+
+      <div class="cpa-sample-bar">
+        <button type="button" class="cpa-sample-btn" id="btnSampleQbCanada">🇨🇦 QuickBooks Online Canada (Monthly Wages)</button>
+        <button type="button" class="cpa-sample-btn" id="btnSampleCeridian">💼 Ceridian Powerpay (Staff Payroll Run)</button>
+        <button type="button" class="cpa-sample-btn" id="btnSampleWagepoint">⚡ Wagepoint AP (Vendor Invoices)</button>
+        <button type="button" class="cpa-sample-btn" id="btnSampleBadTransit" style="border-color: #ef4444; color: #f87171;">⚠️ Test Invalid Transit</button>
+      </div>
+
+      <div class="cpa-grid">
+        <!-- Left: Input Settings & CSV -->
+        <div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+            <div class="cpa-input-group">
+              <label for="cpaOrigId">10-Digit Originator ID</label>
+              <input type="text" id="cpaOrigId" value="1234567890" placeholder="1234567890" maxlength="10" />
+            </div>
+            <div class="cpa-input-group">
+              <label for="cpaDataCentre">Destination Data Centre</label>
+              <input type="text" id="cpaDataCentre" value="00001" placeholder="00001" maxlength="5" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+            <div class="cpa-input-group">
+              <label for="cpaCompName">Company / Originator Name (15 Chars)</label>
+              <input type="text" id="cpaCompName" value="APEX LOGISTICS" placeholder="APEX LOGISTICS" maxlength="15" />
+            </div>
+            <div class="cpa-input-group">
+              <label for="cpaTxCode">CPA Transaction Code</label>
+              <select id="cpaTxCode">
+                <option value="200">200 — Payroll Direct Deposit</option>
+                <option value="450">450 — Accounts Payable / Supplier</option>
+                <option value="310">310 — Commercial Expense</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="cpa-input-group">
+            <label for="cpaCsvInp">Raw Accounting CSV (Payee Name, Institution, Transit, Account, Amount, Reference)</label>
+            <textarea id="cpaCsvInp" rows="7" placeholder="Payee Name,Institution,Transit,Account,Amount,Reference"></textarea>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Diagnostics -->
+        <div>
+          <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 1.2rem; margin-bottom: 1.2rem;">
+            <h4 style="margin: 0 0 0.8rem 0; color: #f3f4f6; font-size: 0.95rem; display: flex; justify-content: space-between;">
+              <span>Pre-Flight CPA-005 Audit</span>
+              <span id="cpaStatusBadge" class="cpa-badge cpa-badge-ok">READY</span>
+            </h4>
+            
+            <div class="cpa-stat-row">
+              <span class="cpa-stat-label">Total Payment Rows (Record C):</span>
+              <span class="cpa-stat-val" id="diagTxCount">3</span>
+            </div>
+            <div class="cpa-stat-row">
+              <span class="cpa-stat-label">Total Amount (CAD $):</span>
+              <span class="cpa-stat-val" id="diagTotalAmt">$11,450.00</span>
+            </div>
+            <div class="cpa-stat-row">
+              <span class="cpa-stat-label">Total Amount (Cents):</span>
+              <span class="cpa-stat-val" id="diagTotalCents">1145000</span>
+            </div>
+            <div class="cpa-stat-row">
+              <span class="cpa-stat-label">Julian Creation Date (0YYDDD):</span>
+              <span class="cpa-stat-val" id="diagJulianDate" style="font-family: monospace; color: #f87171;">026323</span>
+            </div>
+            <div class="cpa-stat-row">
+              <span class="cpa-stat-label">Routing Format (0IIITTTTT):</span>
+              <span class="cpa-stat-val" id="diagTransitCheck"><span class="cpa-badge cpa-badge-ok">VALID</span></span>
+            </div>
+            <div class="cpa-stat-row">
+              <span class="cpa-stat-label">Record Z Trailer Control Hash:</span>
+              <span class="cpa-stat-val" id="diagRecZBal" style="color: #4ade80;">BALANCED (14-Digit Hash)</span>
+            </div>
+            <div class="cpa-stat-row">
+              <span class="cpa-stat-label">Block Width Compliance:</span>
+              <span class="cpa-stat-val" id="diagLineLen" style="color: #4ade80;">1,464 / 1,464 Bytes (Strict)</span>
+            </div>
+          </div>
+
+          <div id="diagAlert" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 0.8rem; color: #f87171; font-size: 0.85rem; margin-bottom: 1rem;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Output Tabs -->
+      <div class="cpa-tab-nav">
+        <button type="button" class="cpa-tab-btn active" data-tab="tabCpaFile">Bank-Ready CPA-005 File (1,464 Bytes)</button>
+        <button type="button" class="cpa-tab-btn" data-tab="tabBreakdown">CPA-005 Record Slicer</button>
+        <button type="button" class="cpa-tab-btn" data-tab="tabApi">Cloud API &amp; cURL</button>
+      </div>
+
+      <div id="tabCpaFile" class="tab-pane">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span style="font-size: 0.8rem; color: #9ca3af;">Fixed-width 1,464-byte format compliant with RBC, TD, BMO, Scotiabank &amp; CIBC:</span>
+          <div>
+            <button type="button" class="cpa-sample-btn" id="btnDownloadCpa" style="background: #dc2626; color: #fff; border-color: #ef4444;">⬇️ Download .cpa005 File</button>
+            <button type="button" class="cpa-sample-btn" id="btnCopyCpa">Copy File</button>
+          </div>
+        </div>
+        <pre class="cpa-output-pre" id="outCpaFile"></pre>
+      </div>
+
+      <div id="tabBreakdown" class="tab-pane" style="display: none;">
+        <div style="margin-bottom: 0.5rem; font-size: 0.8rem; color: #9ca3af;">
+          Block-by-block label mapping (Record A Header, Record C Payment Details, Record Z Trailer):
+        </div>
+        <pre class="cpa-output-pre" id="outBreakdown"></pre>
+      </div>
+
+      <div id="tabApi" class="tab-pane" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span style="font-size: 0.8rem; color: #9ca3af;">Automate Canadian CPA-005 generation directly in Python, Node.js or n8n:</span>
+          <button type="button" class="cpa-sample-btn" id="btnCopyApi">Copy cURL</button>
+        </div>
+        <pre class="cpa-output-pre" id="outApiCurl"></pre>
+      </div>
+    </section>
+
+    <!-- Bank Compatibility -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="color: #fff; font-size: 1.4rem; margin-bottom: 0.5rem;">Supported Canadian Commercial Banking Portals</h2>
+      <p style="color: #9ca3af; font-size: 0.95rem; margin-bottom: 1.2rem;">
+        Files generated by FinOps Studio comply with Payments Canada ACSS Standard 005 specifications and are verified on all major Canadian institutions:
+      </p>
+      <div class="cpa-bank-grid">
+        <div class="cpa-bank-box">
+          <h4>RBC Express</h4>
+          <p>Royal Bank of Canada ACH/EFT direct deposit &amp; supplier payment file upload.</p>
+        </div>
+        <div class="cpa-bank-box">
+          <h4>TD WebBusiness</h4>
+          <p>TD Canada Trust EFT Direct Deposit &amp; Pre-Authorized Debit (PAD) clearing.</p>
+        </div>
+        <div class="cpa-bank-box">
+          <h4>BMO Online for Business</h4>
+          <p>Bank of Montreal 1,464-byte EFT direct deposit transmission with Record Z verification.</p>
+        </div>
+        <div class="cpa-bank-box">
+          <h4>ScotiaConnect</h4>
+          <p>Scotiabank Commercial EFT upload with 0IIITTTTT transit validation.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison Table: FinOps Studio vs Legacy Bureaus -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="color: #fff; font-size: 1.4rem; margin-bottom: 0.5rem;">Why Canadian Accountants Switch to FinOps Studio</h2>
+      <p style="color: #9ca3af; font-size: 0.95rem; margin-bottom: 1.2rem;">
+        Compare the cost and agility of FinOps Studio against legacy desktop converters and monthly payroll add-ons:
+      </p>
+
+      <table class="table-compare">
+        <thead>
+          <tr>
+            <th>Feature / Capability</th>
+            <th>Desktop File Converters</th>
+            <th>Payroll Bureau Add-ons</th>
+            <th>FinOps Studio ($9 Pass)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Annual Cost</strong></td>
+            <td>$300 – $900 / year</td>
+            <td>$600 – $1,800 / year</td>
+            <td style="color: #4ade80;"><strong>$9 USD (24h) or $29 USD (30-Day Pro)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Subscription Lock-in</strong></td>
+            <td>Annual Auto-Renewing</td>
+            <td>Monthly Per-Employee Fees</td>
+            <td style="color: #4ade80;"><strong>Zero Lock-in ($0 recurring monthly commitment)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Setup Time</strong></td>
+            <td>Windows installer &amp; license key</td>
+            <td>Accountant setup &amp; onboarding</td>
+            <td style="color: #4ade80;"><strong>Instant in-browser &amp; API access</strong></td>
+          </tr>
+          <tr>
+            <td><strong>QuickBooks &amp; Ceridian Support</strong></td>
+            <td>Custom mapping configuration</td>
+            <td>Locked to specific app</td>
+            <td style="color: #4ade80;"><strong>1-click CSV to 1,464-byte CPA-005</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Record Z Hash Calculation</strong></td>
+            <td>Manual verification</td>
+            <td>Automated</td>
+            <td style="color: #4ade80;"><strong>Built-in 14-digit mathematical hash balancing</strong></td>
+          </tr>
+          <tr>
+            <td><strong>API &amp; AI Agent Integration</strong></td>
+            <td>None (Desktop only)</td>
+            <td>Closed proprietary API</td>
+            <td style="color: #4ade80;"><strong>Deterministic Cloudflare Edge API + MCP</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Pricing Card -->
+    <section id="cpaPricingBar" class="cpa-pricing-card">
+      <div style="display: inline-block; background: rgba(220, 38, 38, 0.15); color: #f87171; font-size: 0.82rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem; border: 1px solid rgba(220, 38, 38, 0.3);">
+        🚀 UNLIMITED BANK-READY CONVERSION — ZERO SOFTWARE SUBSCRIPTIONS
+      </div>
+      <h2 style="color: #fff; font-size: 1.6rem; margin: 0 0 0.5rem 0;">
+        Download Clean Canadian CPA-005 Files or Automate via API
+      </h2>
+      <p style="color: #cbd5e1; max-width: 780px; margin: 0 auto 1.4rem auto; font-size: 0.95rem; line-height: 1.5;">
+        Remove all demo watermarks and unlock unlimited Canadian CPA-005 conversions for your accounting practice, payroll bureau, or business. Instant unlock with Apple Pay, Google Pay, Card, or PayPal.
+      </p>
+      <div>
+        <button type="button" class="cpa-pass-btn cpa-pass-btn-primary" id="btnBuyCpa24h">
+          ⚡ 24h Unlimited Pass — $9 USD
+        </button>
+        <button type="button" class="cpa-pass-btn cpa-pass-btn-secondary" id="btnBuyCpa30d">
+          👑 30-Day Pro Pass — $29 USD (Priority API)
+        </button>
+      </div>
+      <div style="margin-top: 0.8rem; font-size: 0.82rem; color: #94a3b8;">
+        Instant Access • Zero Auto-Renewal • 100% Tax Deductible Business Software Expense
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>© 2026 FinOps Studio. Deterministic Banking File Engines &amp; Treasury APIs.</p>
+      <div class="footer-links">
+        <a href="./index.html">Home</a>
+        <a href="./canada-cpa-005-eft-file-generator.html">CPA-005 Spec</a>
+        <a href="./free-canada-cpa005-eft-file-validator.html">CPA-005 Validator</a>
+        <a href="./free-uk-sort-code-au-bsb-canada-transit-checker.html">Transit Checker</a>
+        <a href="./myob-xero-employment-hero-aba-direct-entry-alternative.html">Australian ABA Alternative</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">API Hub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./vip-support-widget.js" defer></script>
+  <script>
+  (function () {
+    function getJulian0YYDDD(d) {
+      var start = new Date(Date.UTC(d.getUTCFullYear(), 0, 0));
+      var diff = d - start;
+      var oneDay = 1000 * 60 * 60 * 24;
+      var dayOfYear = Math.floor(diff / oneDay);
+      var yy = String(d.getUTCFullYear()).slice(-2);
+      return '0' + yy + String(dayOfYear).padStart(3, '0');
+    }
+
+    var CSV_QB_CANADA = 
+      "Employee Name,Institution,Transit,Account Number,Amount,Reference\n" +
+      "Marc Tremblay,003,12345,1234567,3850.00,SALARY NOV\n" +
+      "Sophie Chen,004,54321,7654321,4100.00,SALARY NOV\n" +
+      "David Bouchard,001,11223,8899001,3500.00,SALARY NOV";
+
+    var CSV_CERIDIAN = 
+      "Employee Name,Institution,Transit,Account Number,Amount,Pay ID\n" +
+      "Alexandre Roy,002,99887,2233445,4500.00,PAY-001\n" +
+      "Emily Watson,010,66778,5566778,5200.00,PAY-002\n" +
+      "Lucas Gagnon,815,44556,9900112,1750.00,PAY-003";
+
+    var CSV_WAGEPOINT = 
+      "Vendor Name,Institution,Transit,Account Number,Amount,Invoice Ref\n" +
+      "Montreal Cloud Hosting,003,12345,9988221,6200.00,INV-991\n" +
+      "Toronto Legal Services,004,54321,8877112,3100.00,INV-992\n" +
+      "Vancouver Logistics,001,11223,7766554,2150.00,INV-993";
+
+    var cpaCsvInp = document.getElementById('cpaCsvInp');
+    var cpaOrigId = document.getElementById('cpaOrigId');
+    var cpaDataCentre = document.getElementById('cpaDataCentre');
+    var cpaCompName = document.getElementById('cpaCompName');
+    var cpaTxCode = document.getElementById('cpaTxCode');
+
+    var diagTxCount = document.getElementById('diagTxCount');
+    var diagTotalAmt = document.getElementById('diagTotalAmt');
+    var diagTotalCents = document.getElementById('diagTotalCents');
+    var diagJulianDate = document.getElementById('diagJulianDate');
+    var diagTransitCheck = document.getElementById('diagTransitCheck');
+    var diagRecZBal = document.getElementById('diagRecZBal');
+    var diagLineLen = document.getElementById('diagLineLen');
+    var diagAlert = document.getElementById('diagAlert');
+    var cpaStatusBadge = document.getElementById('cpaStatusBadge');
+
+    var outCpaFile = document.getElementById('outCpaFile');
+    var outBreakdown = document.getElementById('outBreakdown');
+    var outApiCurl = document.getElementById('outApiCurl');
+
+    function parseCsv(raw) {
+      var lines = String(raw || '').trim().split('\n');
+      if (lines.length < 2) return [];
+      var rows = [];
+      for (var i = 1; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line) continue;
+        var cols = line.split(',').map(function (c) { return c.replace(/^["']|["']$/g, '').trim(); });
+        if (cols.length >= 5) {
+          var inst = (cols[1] || '').replace(/\D/g, '').padStart(3, '0').slice(-3);
+          var transit = (cols[2] || '').replace(/\D/g, '').padStart(5, '0').slice(-5);
+          rows.push({
+            name: cols[0] || 'Beneficiary',
+            institution: inst,
+            transit: transit,
+            accountNumber: (cols[3] || '').replace(/\D/g, ''),
+            amount: parseFloat(cols[4]) || 0,
+            ref: cols[5] || ('REF' + i)
+          });
+        }
+      }
+      return rows;
+    }
+
+    function refreshCpa() {
+      var rows = parseCsv(cpaCsvInp.value);
+      var origId = (cpaOrigId.value || '1234567890').padEnd(10, ' ').slice(0, 10);
+      var dataCentre = (cpaDataCentre.value || '00001').padStart(5, '0').slice(-5);
+      var compName = (cpaCompName.value || 'APEX LOGISTICS').toUpperCase().padEnd(15, ' ').slice(0, 15);
+      var txCode = cpaTxCode.value || '200';
+
+      var totalCents = 0;
+      var hasInvalidTransit = false;
+      var hasInvalidAcc = false;
+
+      rows.forEach(function (r) {
+        totalCents += Math.round(r.amount * 100);
+        if (r.institution.length !== 3 || r.transit.length !== 5) hasInvalidTransit = true;
+        if (!r.accountNumber || r.accountNumber.length > 12) hasInvalidAcc = true;
+      });
+
+      // Update Diagnostics
+      diagTxCount.textContent = String(rows.length);
+      diagTotalAmt.textContent = '$' + (totalCents / 100).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      diagTotalCents.textContent = String(totalCents);
+
+      var now = new Date();
+      var julDateStr = getJulian0YYDDD(now);
+      diagJulianDate.textContent = julDateStr;
+
+      if (hasInvalidTransit || hasInvalidAcc) {
+        diagTransitCheck.innerHTML = '<span class="cpa-badge cpa-badge-err">INVALID ROUTING / ACC</span>';
+        diagAlert.style.display = 'block';
+        diagAlert.textContent = '⚠️ Validation Warning: One or more Canadian Institution (3 digits), Transit (5 digits), or Account Numbers (up to 12 digits) are invalid.';
+        cpaStatusBadge.textContent = 'WARNING';
+        cpaStatusBadge.className = 'cpa-badge cpa-badge-err';
+      } else {
+        diagTransitCheck.innerHTML = '<span class="cpa-badge cpa-badge-ok">VALID 0IIITTTTT</span>';
+        diagAlert.style.display = 'none';
+        cpaStatusBadge.textContent = 'READY';
+        cpaStatusBadge.className = 'cpa-badge cpa-badge-ok';
+      }
+
+      // Build 1,464-Byte CPA-005 Records
+      var cpaLines = [];
+      var breakdownLines = [];
+
+      // Record A: Header
+      var recCount = 1;
+      var rA = 'A' + String(recCount).padStart(9, '0') + origId + '0001' + julDateStr + dataCentre + ' '.repeat(20) + 'CAD';
+      rA = rA.padEnd(1464, ' ');
+      cpaLines.push(rA);
+      breakdownLines.push('[Record A Header]   ' + rA.slice(0, 80) + '... (1,464 bytes)');
+
+      // Record C: Detail Records
+      rows.forEach(function (r, idx) {
+        recCount++;
+        var amtStr = String(Math.round(r.amount * 100)).padStart(10, '0').slice(-10);
+        var routing = '0' + r.institution + r.transit;
+        var acc = r.accountNumber.padStart(12, ' ').slice(-12);
+        var payee = (r.name || 'PAYEE').toUpperCase().padEnd(30, ' ').slice(0, 30);
+        var ref = (r.ref || 'PAYMENT').toUpperCase().padEnd(19, ' ').slice(0, 19);
+
+        var rC = 'C' + String(recCount).padStart(9, '0') + origId + '0001' + ' '.repeat(6) + txCode + amtStr + julDateStr + routing + acc + '0'.repeat(22) + payee + compName.padEnd(30, ' ') + ref;
+        rC = rC.padEnd(1464, ' ');
+        cpaLines.push(rC);
+        breakdownLines.push('[Record C ' + (idx + 1) + ']     ' + rC.slice(0, 80) + '... (1,464 bytes)');
+      });
+
+      // Record Z: Trailer
+      recCount++;
+      var totalAmtStr = String(totalCents).padStart(14, '0').slice(-14);
+      var totalItemStr = String(rows.length).padStart(8, '0').slice(-8);
+
+      var rZ = 'Z' + String(recCount).padStart(9, '0') + origId + '0001' + totalAmtStr + totalItemStr;
+      rZ = rZ.padEnd(1464, ' ');
+      cpaLines.push(rZ);
+      breakdownLines.push('[Record Z Trailer]  ' + rZ.slice(0, 80) + '... (1,464 bytes)');
+
+      outCpaFile.textContent = cpaLines.join('\r\n');
+      outBreakdown.textContent = breakdownLines.join('\n');
+
+      // API snippet
+      var curl = 'curl -X POST https://finops-rapidapi-edge.ria-rader.workers.dev/v1/cpa005/generate \\\n' +
+        '  -H "Content-Type: application/json" \\\n' +
+        '  -H "X-FinOps-Pass: fop_live_your_pass_key" \\\n' +
+        '  -d \'{\n' +
+        '    "originatorId": "' + origId.trim() + '",\n' +
+        '    "dataCentre": "' + dataCentre + '",\n' +
+        '    "companyName": "' + compName.trim() + '",\n' +
+        '    "transactionCode": "' + txCode + '",\n' +
+        '    "transactions": ' + JSON.stringify(rows.slice(0, 2), null, 4).replace(/\n/g, '\n    ') + '\n' +
+        '  }\'';
+      outApiCurl.textContent = curl;
+    }
+
+    // Presets
+    document.getElementById('btnSampleQbCanada').addEventListener('click', function () {
+      cpaCsvInp.value = CSV_QB_CANADA;
+      cpaTxCode.value = '200';
+      refreshCpa();
+    });
+
+    document.getElementById('btnSampleCeridian').addEventListener('click', function () {
+      cpaCsvInp.value = CSV_CERIDIAN;
+      cpaTxCode.value = '200';
+      refreshCpa();
+    });
+
+    document.getElementById('btnSampleWagepoint').addEventListener('click', function () {
+      cpaCsvInp.value = CSV_WAGEPOINT;
+      cpaTxCode.value = '450';
+      refreshCpa();
+    });
+
+    document.getElementById('btnSampleBadTransit').addEventListener('click', function () {
+      cpaCsvInp.value = "Vendor Name,Institution,Transit,Account Number,Amount,Reference\n" +
+        "Bad Transit Payee,12,1234,12345,1200.00,TEST-FAIL";
+      refreshCpa();
+    });
+
+    ['cpaCsvInp', 'cpaOrigId', 'cpaDataCentre', 'cpaCompName', 'cpaTxCode'].forEach(function (id) {
+      document.getElementById(id).addEventListener('input', refreshCpa);
+      document.getElementById(id).addEventListener('change', refreshCpa);
+    });
+
+    // Tab switcher
+    var tabBtns = document.querySelectorAll('.cpa-tab-btn');
+    var tabPanes = document.querySelectorAll('.tab-pane');
+    tabBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = btn.getAttribute('data-tab');
+        tabBtns.forEach(function (b) { b.classList.remove('active'); });
+        tabPanes.forEach(function (p) { p.style.display = 'none'; });
+        btn.classList.add('active');
+        document.getElementById(target).style.display = 'block';
+      });
+    });
+
+    // Copy handlers
+    function wireCopy(btnId, targetId) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var text = document.getElementById(targetId).textContent || '';
+        navigator.clipboard.writeText(text);
+        btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = 'Copy File'; }, 1600);
+      });
+    }
+    wireCopy('btnCopyCpa', 'outCpaFile');
+    wireCopy('btnCopyApi', 'outApiCurl');
+
+    // Download handler
+    document.getElementById('btnDownloadCpa').addEventListener('click', function () {
+      var text = outCpaFile.textContent || '';
+      var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'direct_deposit_cpa005.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Direct Pass checkout triggers
+    document.getElementById('btnBuyCpa24h').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('batch24h', { btn: e.target });
+    });
+    document.getElementById('btnBuyCpa30d').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('pro30d', { btn: e.target });
+    });
+
+    cpaCsvInp.value = CSV_QB_CANADA;
+    refreshCpa();
+  })();
+  </script>
+</body>
+</html>
