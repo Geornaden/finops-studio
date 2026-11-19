@@ -76,9 +76,13 @@
     hit(`action_click_checkout_${clean}`);
   };
 
-  // Separate search engine / AI crawlers from real human customers
+  // Separate search engine, link-preview & AI crawlers from real human customers
   const ua = navigator.userAgent || '';
-  if (/bot|crawl|spider|slurp|bingpreview|headless|lighthouse|pagespeed|gptbot|claudebot|perplexity/i.test(ua)) {
+  if (
+    /bot|crawl|spider|slurp|bingpreview|headless|lighthouse|pagespeed|gptbot|claudebot|perplexity|facebookexternalhit|twitterbot|slackbot|discordbot|whatsapp|telegrambot|linkedinbot|applebot|ahrefs|semrush|mj12|bytespider|petalbot|curl|wget|python|node|go-http/i.test(ua) ||
+    !navigator.languages ||
+    navigator.languages.length === 0
+  ) {
     hit('search_crawler_hits');
     return;
   }
@@ -88,6 +92,26 @@
   let testedPreviewOrDownload = false;
   let copiedCodeOrWorkflow = false;
   let exitRecorded = false;
+  let humanEngagedRecorded = false;
+
+  // Record a VERIFIED human visit ONLY after real physical interaction (scroll/pointer/key/touch) + >= 2s dwell time
+  const markHumanEngaged = () => {
+    if (humanEngagedRecorded) return;
+    if (Date.now() - startedAt < 2000) return;
+    humanEngagedRecorded = true;
+    hit('verified_human_engaged');
+    window.removeEventListener('pointerdown', markHumanEngaged);
+    window.removeEventListener('keydown', markHumanEngaged);
+    window.removeEventListener('touchstart', markHumanEngaged);
+    window.removeEventListener('scroll', onRealScroll);
+  };
+  const onRealScroll = () => {
+    if ((window.scrollY || document.documentElement.scrollTop || 0) >= 120) markHumanEngaged();
+  };
+  window.addEventListener('pointerdown', markHumanEngaged, { passive: true });
+  window.addEventListener('keydown', markHumanEngaged, { passive: true });
+  window.addEventListener('touchstart', markHumanEngaged, { passive: true });
+  window.addEventListener('scroll', onRealScroll, { passive: true });
 
   // 1. Record real outside human visit + specific page bucket
   hit('page_views_total');
