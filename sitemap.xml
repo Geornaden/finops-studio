@@ -510,4 +510,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.97</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/netsuite-sap-bai2-positive-pay-cash-management-api.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.97</priority>
+  </url>
 </urlset>

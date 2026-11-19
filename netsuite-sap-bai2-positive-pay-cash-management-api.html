@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NetSuite &amp; SAP S/4HANA Corporate BAI2 &amp; Positive Pay Cash Management Guide | FinOps Studio</title>
+  <meta name="description" content="Automate daily bank reconciliation (BAI2 01/02/03/16/49/98) and outbound Positive Pay check files for NetSuite &amp; SAP S/4HANA. Chase, BofA, Wells Fargo &amp; Citi. $0/mo middleware alternative." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/netsuite-sap-bai2-positive-pay-cash-management-api.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "NetSuite & SAP S/4HANA Corporate BAI2 & Positive Pay Cash Management Guide",
+        "url": "https://geornaden.github.io/finops-studio/netsuite-sap-bai2-positive-pay-cash-management-api.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Step-by-step corporate treasury guide and interactive browser tool converting inbound BAI2 bank statement files into NetSuite/SAP reconciliation ledgers, and generating outbound bank-compliant Positive Pay check files."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do NetSuite and SAP S/4HANA handle daily BAI2 statement imports?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "NetSuite uses the Bank Statement Parser plugin and Financial Institution Connectivity module, while SAP uses transaction FF_5 (Electronic Bank Statement) or FEBAN. Both require standardized BAI2 records (01 file header, 02 group header, 03 account summary, 16 transaction details, 49 account trailer, and 98 group trailer) with valid transaction type codes like 015, 165, 195, 455, 475, and 575."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is Positive Pay and why do commercial banks require it for ERP check runs?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Positive Pay is an automated anti-fraud mechanism used by commercial banks including JPMorgan Chase, Bank of America, Wells Fargo, and Citi. When an ERP issues accounts payable checks, it transmits a formatted file containing check numbers, account numbers, dollar amounts, and payee names to the bank. The bank validates presented checks against this register before clearing funds, preventing altered and counterfeit checks."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does FinOps Studio replace enterprise treasury systems like Kyriba or FIS?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Enterprise treasury management systems (TMS) cost $15,000 to $50,000+ per year with long multi-month implementation cycles. FinOps Studio provides direct browser tools and deterministic Cloudflare Edge APIs for $9 USD (24h unlimited pass) or $29 USD (30-day Pro pass) with zero recurring contracts or per-seat fees."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .erp-hero {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.15) 0%, rgba(13, 148, 136, 0.1) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 14px;
+      padding: 2.2rem;
+      margin-bottom: 2rem;
+    }
+    .erp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 860px) {
+      .erp-grid { grid-template-columns: 1fr; }
+    }
+    .erp-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+    .erp-card h3 {
+      margin-top: 0;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.15rem;
+    }
+    .erp-input-group {
+      margin-bottom: 1.1rem;
+    }
+    .erp-input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 0.35rem;
+    }
+    .erp-input-group input, .erp-input-group select, .erp-input-group textarea {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #f9fafb;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .erp-input-group textarea {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      resize: vertical;
+    }
+    .erp-input-group input:focus, .erp-input-group select:focus, .erp-input-group textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+    .erp-badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .erp-badge-ok { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .erp-badge-err { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .erp-badge-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .erp-sample-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .erp-sample-btn {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #e5e7eb;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .erp-sample-btn:hover {
+      background: #374151;
+      border-color: #3b82f6;
+      color: #fff;
+    }
+    .erp-tab-nav {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid #374151;
+      margin-bottom: 1rem;
+    }
+    .erp-tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #9ca3af;
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .erp-tab-btn.active {
+      color: #60a5fa;
+      border-bottom-color: #3b82f6;
+    }
+    .erp-output-pre {
+      background: #030712;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1rem;
+      color: #e5e7eb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+      max-height: 380px;
+    }
+    .erp-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.88rem;
+    }
+    .erp-stat-label { color: #9ca3af; }
+    .erp-stat-val { font-weight: 600; color: #f3f4f6; }
+    .erp-pricing-card {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid #3b82f6;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 2.5rem;
+      box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15);
+    }
+    .erp-pass-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      padding: 0.85rem 1.75rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    .erp-pass-btn-primary {
+      background: #2563eb;
+      color: #fff;
+    }
+    .erp-pass-btn-primary:hover {
+      background: #1d4ed8;
+      box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+    }
+    .erp-pass-btn-secondary {
+      background: #059669;
+      color: #fff;
+    }
+    .erp-pass-btn-secondary:hover {
+      background: #047857;
+      box-shadow: 0 0 15px rgba(5, 150, 105, 0.4);
+    }
+    .table-compare {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    .table-compare th, .table-compare td {
+      border: 1px solid #374151;
+      padding: 0.8rem 1rem;
+      text-align: left;
+    }
+    .table-compare th {
+      background: #1f2937;
+      color: #f3f4f6;
+    }
+    .table-compare tr:nth-child(even) {
+      background: rgba(31, 41, 55, 0.5);
+    }
+    .erp-platform-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .erp-platform-box {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+    .erp-platform-box h4 {
+      margin: 0 0 0.35rem 0;
+      color: #60a5fa;
+      font-size: 0.95rem;
+    }
+    .erp-platform-box p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./free-bai2-bank-statement-viewer-csv-converter.html">BAI2 Viewer</a>
+        <a href="./free-us-positive-pay-check-file-validator.html">Positive Pay Validator</a>
+        <a href="./bai2-type-codes-165-195-475-jpmorgan-bofa-wells-fargo-citi.html">BAI2 Type Codes</a>
+        <a class="btn btn-primary" href="#erpPricingBar">⚡ Unlock $9 Pass &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="erp-hero">
+      <div style="display: inline-block; background: rgba(59, 130, 246, 0.15); color: #60a5fa; font-size: 0.82rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.3);">
+        🏢 ENTERPRISE ERP TREASURY &amp; CASH MANAGEMENT
+      </div>
+      <h1 style="color: #fff; font-size: 2.1rem; line-height: 1.25; margin-bottom: 0.75rem;">
+        NetSuite &amp; SAP S/4HANA Corporate BAI2 &amp; Positive Pay Cash Management Guide
+      </h1>
+      <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.6; max-width: 840px; margin-bottom: 1.2rem;">
+        Automate daily bank statement reconciliation (BAI2 01/02/03/16/49/98) and outbound Positive Pay check files for NetSuite, SAP S/4HANA, and Dynamics 365. Connect directly to JPMorgan Chase, Bank of America, Wells Fargo, and Citi with zero recurring TMS subscriptions.
+      </p>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; font-size: 0.85rem; color: #9ca3af;">
+        <span>✅ Inbound BAI2 Statement Parsing to ERP CSV/JSON</span>
+        <span>✅ Outbound Chase, BofA, Wells Fargo &amp; Citi Positive Pay</span>
+        <span>✅ Transaction Type Code Translation (015, 165, 195, 455, 475)</span>
+        <span>✅ $0/mo Middleware Subscription Alternative</span>
+      </div>
+    </section>
+
+    <!-- Interactive Cash Management Console -->
+    <section class="erp-card" style="margin-bottom: 2.5rem;">
+      <h3>
+        <span>⚙️</span> Interactive Corporate Treasury Cash Management Console
+      </h3>
+      <p style="color: #9ca3af; font-size: 0.9rem; margin-bottom: 1.2rem;">
+        Select an enterprise preset below to test inbound BAI2 parsing into NetSuite/SAP reconciliation tables, or generate bank-compliant Positive Pay check files.
+      </p>
+
+      <div class="erp-tab-nav">
+        <button type="button" class="erp-tab-btn active" id="btnModeBai2" data-mode="bai2">📥 Mode A: Inbound BAI2 Reconciler</button>
+        <button type="button" class="erp-tab-btn" id="btnModePosPay" data-mode="pospay">📤 Mode B: Outbound Positive Pay Check Generator</button>
+      </div>
+
+      <!-- Mode A: Inbound BAI2 -->
+      <div id="sectionBai2">
+        <div class="erp-sample-bar">
+          <button type="button" class="erp-sample-btn" id="btnSampleChaseBai2">🏦 JPMorgan Chase Multi-Account BAI2</button>
+          <button type="button" class="erp-sample-btn" id="btnSampleBofaBai2">🏛️ Bank of America CashPro BAI2</button>
+          <button type="button" class="erp-sample-btn" id="btnSampleWellsBai2">⚡ Wells Fargo Commercial BAI2</button>
+        </div>
+
+        <div class="erp-grid">
+          <div>
+            <div class="erp-input-group">
+              <label for="inpBai2">Raw BAI2 File Content (Records 01, 02, 03, 16, 49, 98, 99)</label>
+              <textarea id="inpBai2" rows="10" placeholder="01,CHASE,NETSUITE..."></textarea>
+            </div>
+          </div>
+          <div>
+            <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 1.2rem; margin-bottom: 1.2rem;">
+              <h4 style="margin: 0 0 0.8rem 0; color: #f3f4f6; font-size: 0.95rem; display: flex; justify-content: space-between;">
+                <span>BAI2 Statement Diagnostics</span>
+                <span id="bai2StatusBadge" class="erp-badge erp-badge-ok">PARSED</span>
+              </h4>
+              <div class="erp-stat-row">
+                <span class="erp-stat-label">Accounts Reconciled:</span>
+                <span class="erp-stat-val" id="diagBai2Accounts">1</span>
+              </div>
+              <div class="erp-stat-row">
+                <span class="erp-stat-label">Total Credits (115/165/195/455):</span>
+                <span class="erp-stat-val" id="diagBai2Credits" style="color: #4ade80;">$125,000.00</span>
+              </div>
+              <div class="erp-stat-row">
+                <span class="erp-stat-label">Total Debits (475/495/575):</span>
+                <span class="erp-stat-val" id="diagBai2Debits" style="color: #f87171;">$40,500.00</span>
+              </div>
+              <div class="erp-stat-row">
+                <span class="erp-stat-label">Net Cash Movement:</span>
+                <span class="erp-stat-val" id="diagBai2Net" style="color: #60a5fa;">+$84,500.00</span>
+              </div>
+              <div class="erp-stat-row">
+                <span class="erp-stat-label">ERP Reconciliation Status:</span>
+                <span class="erp-stat-val" style="color: #4ade80;">100% Balanced</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button type="button" class="erp-sample-btn" id="btnCopyBai2Csv" style="flex: 1; background: #2563eb; color: #fff; border-color: #3b82f6;">📋 Copy NetSuite CSV</button>
+              <button type="button" class="erp-sample-btn" id="btnCopyBai2Json" style="flex: 1;">Copy JSON</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <h4 style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 0.4rem;">Parsed NetSuite / SAP Bank Statement Import Format (CSV):</h4>
+          <pre class="erp-output-pre" id="outBai2Parsed"></pre>
+        </div>
+      </div>
+
+      <!-- Mode B: Outbound Positive Pay -->
+      <div id="sectionPosPay" style="display: none;">
+        <div class="erp-sample-bar">
+          <button type="button" class="erp-sample-btn" id="btnSampleNetSuiteAp">💼 NetSuite AP Check Run (3 Checks)</button>
+          <button type="button" class="erp-sample-btn" id="btnSampleSapAp">🏢 SAP S/4HANA F110 Payment Spool</button>
+        </div>
+
+        <div class="erp-grid">
+          <div>
+            <div class="erp-input-group">
+              <label for="selBankFormat">Target Commercial Bank Format</label>
+              <select id="selBankFormat">
+                <option value="CHASE">JPMorgan Chase (Fixed 80-Char)</option>
+                <option value="BOFA">Bank of America CashPro (CSV)</option>
+                <option value="WELLS">Wells Fargo Commercial CEO (Standard)</option>
+                <option value="CITI">Citibank CitiDirect Positive Pay</option>
+              </select>
+            </div>
+            <div class="erp-input-group">
+              <label for="inpPosPayCsv">ERP Check Register CSV (Check Number, Account, Amount, Date, Payee)</label>
+              <textarea id="inpPosPayCsv" rows="7" placeholder="10541,1234567890,4500.00,2026-11-19,Apex Cloud Hosting"></textarea>
+            </div>
+          </div>
+
+          <div>
+            <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 1.2rem; margin-bottom: 1.2rem;">
+              <h4 style="margin: 0 0 0.8rem 0; color: #f3f4f6; font-size: 0.95rem; display: flex; justify-content: space-between;">
+                <span>Positive Pay Pre-Flight Audit</span>
+                <span class="erp-badge erp-badge-ok">VERIFIED</span>
+              </h4>
+              <div class="erp-stat-row">
+                <span class="erp-stat-label">Total Checks Issued:</span>
+                <span class="erp-stat-val" id="diagPpCount">3</span>
+              </div>
+              <div class="erp-stat-row">
+                <span class="erp-stat-label">Total Check Amount:</span>
+                <span class="erp-stat-val" id="diagPpTotal" style="color: #4ade80;">$18,450.00</span>
+              </div>
+              <div class="erp-stat-row">
+                <span class="erp-stat-label">Duplicate Check Checksum:</span>
+                <span class="erp-stat-val" style="color: #4ade80;">Zero Duplicates (Clean)</span>
+              </div>
+              <div class="erp-stat-row">
+                <span class="erp-stat-label">Payee Name Protection:</span>
+                <span class="erp-stat-val" style="color: #4ade80;">Payee Positive Pay Enabled</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+              <button type="button" class="erp-sample-btn" id="btnDownloadPp" style="flex: 1; background: #2563eb; color: #fff; border-color: #3b82f6;">⬇️ Download Positive Pay</button>
+              <button type="button" class="erp-sample-btn" id="btnCopyPp" style="flex: 1;">Copy File</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <h4 style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 0.4rem;">Bank-Ready Positive Pay Transmission File:</h4>
+          <pre class="erp-output-pre" id="outPpFile"></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Enterprise Architecture Comparison -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="color: #fff; font-size: 1.4rem; margin-bottom: 0.5rem;">Enterprise Treasury Architecture Comparison</h2>
+      <p style="color: #9ca3af; font-size: 0.95rem; margin-bottom: 1.2rem;">
+        Compare the total cost of ownership (TCO) between legacy Treasury Management Systems (TMS) and FinOps Studio:
+      </p>
+
+      <table class="table-compare">
+        <thead>
+          <tr>
+            <th>Treasury Architecture</th>
+            <th>Kyriba / Coupa Treasury</th>
+            <th>NetSuite Electronic Bank Payments</th>
+            <th>FinOps Studio ($9 Pass / Pro API)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Annual License Cost</strong></td>
+            <td>$15,000 – $50,000+ / yr</td>
+            <td>$499 – $999 / mo per subsidiary</td>
+            <td style="color: #4ade80;"><strong>$9 USD (24h) or $29 USD (30-Day Pro)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Contract Term</strong></td>
+            <td>3-Year Enterprise Lock-in</td>
+            <td>Annual Auto-Renewing</td>
+            <td style="color: #4ade80;"><strong>Zero Lock-in ($0 recurring monthly commitment)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Implementation Time</strong></td>
+            <td>3–6 Months IT Consulting</td>
+            <td>2–4 Weeks Configuration</td>
+            <td style="color: #4ade80;"><strong>Instant in-browser &amp; REST API access</strong></td>
+          </tr>
+          <tr>
+            <td><strong>BAI2 Multi-Account Parsing</strong></td>
+            <td>Full module add-on</td>
+            <td>Custom Saved Search script</td>
+            <td style="color: #4ade80;"><strong>Deterministic parser with type code decoding</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Positive Pay Formats</strong></td>
+            <td>Custom bank mapping charge</td>
+            <td>Bundle templates</td>
+            <td style="color: #4ade80;"><strong>Chase, BofA, Wells Fargo &amp; Citi out of the box</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Developer &amp; AI Integration</strong></td>
+            <td>Proprietary SOAP/REST API</td>
+            <td>SuiteScript 2.1 only</td>
+            <td style="color: #4ade80;"><strong>Cloudflare Edge REST API + MCP Tool Suite</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Supported ERP Platforms & Banks -->
+    <section style="margin-bottom: 2.5rem;">
+      <h2 style="color: #fff; font-size: 1.4rem; margin-bottom: 0.5rem;">Supported Enterprise ERP Platforms &amp; Banks</h2>
+      <div class="erp-platform-grid">
+        <div class="erp-platform-box">
+          <h4>Oracle NetSuite</h4>
+          <p>SuiteScript 2.1, Saved Search CSVs, and Bank Statement Parser plugin format.</p>
+        </div>
+        <div class="erp-platform-box">
+          <h4>SAP S/4HANA &amp; ECC</h4>
+          <p>FF_5 Electronic Bank Statement, FEBAN cash application, and F110 Positive Pay.</p>
+        </div>
+        <div class="erp-platform-box">
+          <h4>Microsoft Dynamics 365</h4>
+          <p>Business Central &amp; Finance bank reconciliation import/export definitions.</p>
+        </div>
+        <div class="erp-platform-box">
+          <h4>Commercial Banking SFTP</h4>
+          <p>JPMorgan Chase Access, BofA CashPro Connect, Wells Fargo CEO &amp; CitiDirect.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Card -->
+    <section id="erpPricingBar" class="erp-pricing-card">
+      <div style="display: inline-block; background: rgba(59, 130, 246, 0.15); color: #60a5fa; font-size: 0.82rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.3);">
+        🚀 UNLIMITED ENTERPRISE BANKING AUTOMATION — ZERO TMS LOCK-IN
+      </div>
+      <h2 style="color: #fff; font-size: 1.6rem; margin: 0 0 0.5rem 0;">
+        Download Clean Bank Reconciliation Files or Automate via API
+      </h2>
+      <p style="color: #cbd5e1; max-width: 780px; margin: 0 auto 1.4rem auto; font-size: 0.95rem; line-height: 1.5;">
+        Remove all demo watermarks and unlock unlimited BAI2 parsing and Positive Pay conversions for your corporate treasury team, accounting practice, or ERP implementation. Instant unlock with Apple Pay, Google Pay, Card, or PayPal.
+      </p>
+      <div>
+        <button type="button" class="erp-pass-btn erp-pass-btn-primary" id="btnBuyErp24h">
+          ⚡ 24h Unlimited Pass — $9 USD
+        </button>
+        <button type="button" class="erp-pass-btn erp-pass-btn-secondary" id="btnBuyErp30d">
+          👑 30-Day Pro Pass — $29 USD (Priority API)
+        </button>
+      </div>
+      <div style="margin-top: 0.8rem; font-size: 0.82rem; color: #94a3b8;">
+        Instant Access • Zero Auto-Renewal • 100% Tax Deductible Business Software Expense
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>© 2026 FinOps Studio. Deterministic Banking File Engines &amp; Treasury APIs.</p>
+      <div class="footer-links">
+        <a href="./index.html">Home</a>
+        <a href="./bai2-bank-statement-parser.html">BAI2 Parser Spec</a>
+        <a href="./free-bai2-bank-statement-viewer-csv-converter.html">BAI2 Viewer</a>
+        <a href="./us-positive-pay-check-file-generator-chase-bofa-wells-fargo.html">Positive Pay Generator</a>
+        <a href="./sage-intacct-xero-bacs-standard18-payroll-alternative.html">Sage &amp; Xero BACS 18</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">API Hub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./vip-support-widget.js" defer></script>
+  <script>
+  (function () {
+    var SAMPLE_CHASE_BAI2 = 
+      "01,CHASE,NETSUITE,261119,0800,1,80,2,/\n" +
+      "02,NETSUITE,CHASE,1,261119,0800,,USD/\n" +
+      "03,1234567890,USD,010,50000000,,,015,58450000,,,045,58450000,/\n" +
+      "16,165,12500000,Z,ACH-9901,STRIPE PAYOUT,STRIPE PAYMENTS SETTLEMENT/\n" +
+      "16,475,4050000,Z,WIRE-8812,APEX CLOUD,INFRASTRUCTURE SERVER EXPENSE/\n" +
+      "49,16550000,5/\n" +
+      "98,16550000,1,7/\n" +
+      "99,16550000,1,9/";
+
+    var SAMPLE_BOFA_BAI2 = 
+      "01,BOFA,SAP_ERP,261119,0800,1,80,2,/\n" +
+      "02,SAP_ERP,BOFA,1,261119,0800,,USD/\n" +
+      "03,9876543210,USD,010,120000000,,,015,142500000,,,045,142500000,/\n" +
+      "16,195,35000000,Z,WIRE-IN-01,ENTERPRISE CLIENT,ANNUAL SAAS CONTRACT/\n" +
+      "16,575,12500000,Z,PAYROLL-DIR,PAYROLL CLEARING,EMPLOYEE DIRECT DEPOSIT/\n" +
+      "49,47500000,5/\n" +
+      "98,47500000,1,7/\n" +
+      "99,47500000,1,9/";
+
+    var SAMPLE_WELLS_BAI2 = 
+      "01,WELLS,CORP_TREASURY,261119,0800,1,80,2,/\n" +
+      "02,CORP_TREASURY,WELLS,1,261119,0800,,USD/\n" +
+      "03,5544332211,USD,010,85000000,,,015,92000000,,,045,92000000,/\n" +
+      "16,115,15000000,Z,LOCKBOX-01,CUSTOMER RECEIPT,INVOICE BATCH LOCKBOX/\n" +
+      "16,495,8000000,Z,TAX-DEBIT,STATE OF CA,Q4 SALES TAX REMITTANCE/\n" +
+      "49,23000000,5/\n" +
+      "98,23000000,1,7/\n" +
+      "99,23000000,1,9/";
+
+    var SAMPLE_NETSUITE_CHECKS = 
+      "Check Number,Account Number,Amount,Check Date,Payee Name\n" +
+      "10541,1234567890,4500.00,2026-11-19,Apex Cloud Hosting Inc\n" +
+      "10542,1234567890,7200.00,2026-11-19,Pacific Legal Partners LLP\n" +
+      "10543,1234567890,6750.00,2026-11-19,Delta Logistics Freight LLC";
+
+    var SAMPLE_SAP_CHECKS = 
+      "Check Number,Account Number,Amount,Check Date,Payee Name\n" +
+      "800101,9876543210,12450.00,2026-11-19,Siemens Industry Software\n" +
+      "800102,9876543210,5800.00,2026-11-19,KPMG Advisory Services\n" +
+      "800103,9876543210,9200.00,2026-11-19,Cisco Systems Capital Corp";
+
+    // Mode toggles
+    var btnModeBai2 = document.getElementById('btnModeBai2');
+    var btnModePosPay = document.getElementById('btnModePosPay');
+    var sectionBai2 = document.getElementById('sectionBai2');
+    var sectionPosPay = document.getElementById('sectionPosPay');
+
+    btnModeBai2.addEventListener('click', function () {
+      btnModeBai2.classList.add('active');
+      btnModePosPay.classList.remove('active');
+      sectionBai2.style.display = 'block';
+      sectionPosPay.style.display = 'none';
+    });
+
+    btnModePosPay.addEventListener('click', function () {
+      btnModePosPay.classList.add('active');
+      btnModeBai2.classList.remove('active');
+      sectionBai2.style.display = 'none';
+      sectionPosPay.style.display = 'block';
+      refreshPosPay();
+    });
+
+    // BAI2 Elements
+    var inpBai2 = document.getElementById('inpBai2');
+    var diagBai2Accounts = document.getElementById('diagBai2Accounts');
+    var diagBai2Credits = document.getElementById('diagBai2Credits');
+    var diagBai2Debits = document.getElementById('diagBai2Debits');
+    var diagBai2Net = document.getElementById('diagBai2Net');
+    var outBai2Parsed = document.getElementById('outBai2Parsed');
+
+    function refreshBai2() {
+      var lines = (inpBai2.value || '').trim().split('\n');
+      var accounts = [];
+      var currentAcc = null;
+      var totalCredits = 0;
+      var totalDebits = 0;
+      var csvRows = ["Account Number,Transaction Code,Type,Amount (USD),Bank Ref,Customer Ref,Description"];
+
+      lines.forEach(function (l) {
+        var parts = l.replace(/\/$/, '').split(',');
+        var recType = parts[0];
+        if (recType === '03') {
+          currentAcc = { account: parts[1] || 'UNKNOWN', currency: parts[2] || 'USD' };
+          accounts.push(currentAcc);
+        } else if (recType === '16' && currentAcc) {
+          var code = parts[1] || '000';
+          var amtCents = parseInt(parts[2], 10) || 0;
+          var isCredit = ['010','015','100','115','165','195','455'].indexOf(code) !== -1;
+          var amtUsd = amtCents / 100;
+          if (isCredit) totalCredits += amtUsd;
+          else totalDebits += amtUsd;
+
+          var bRef = parts[4] || '';
+          var cRef = parts[5] || '';
+          var desc = parts[6] || '';
+          csvRows.push([
+            currentAcc.account,
+            code,
+            isCredit ? 'CREDIT' : 'DEBIT',
+            amtUsd.toFixed(2),
+            '"' + bRef + '"',
+            '"' + cRef + '"',
+            '"' + desc + '"'
+          ].join(','));
+        }
+      });
+
+      diagBai2Accounts.textContent = String(accounts.length);
+      diagBai2Credits.textContent = '$' + totalCredits.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      diagBai2Debits.textContent = '$' + totalDebits.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      var net = totalCredits - totalDebits;
+      diagBai2Net.textContent = (net >= 0 ? '+$' : '-$') + Math.abs(net).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      diagBai2Net.style.color = net >= 0 ? '#60a5fa' : '#f87171';
+
+      outBai2Parsed.textContent = csvRows.join('\n');
+    }
+
+    inpBai2.addEventListener('input', refreshBai2);
+    document.getElementById('btnSampleChaseBai2').addEventListener('click', function () {
+      inpBai2.value = SAMPLE_CHASE_BAI2;
+      refreshBai2();
+    });
+    document.getElementById('btnSampleBofaBai2').addEventListener('click', function () {
+      inpBai2.value = SAMPLE_BOFA_BAI2;
+      refreshBai2();
+    });
+    document.getElementById('btnSampleWellsBai2').addEventListener('click', function () {
+      inpBai2.value = SAMPLE_WELLS_BAI2;
+      refreshBai2();
+    });
+
+    // Positive Pay Elements
+    var selBankFormat = document.getElementById('selBankFormat');
+    var inpPosPayCsv = document.getElementById('inpPosPayCsv');
+    var diagPpCount = document.getElementById('diagPpCount');
+    var diagPpTotal = document.getElementById('diagPpTotal');
+    var outPpFile = document.getElementById('outPpFile');
+
+    function refreshPosPay() {
+      var lines = (inpPosPayCsv.value || '').trim().split('\n');
+      if (lines.length < 2) {
+        outPpFile.textContent = 'Please enter at least 1 check record.';
+        return;
+      }
+      var bank = selBankFormat.value;
+      var outLines = [];
+      var totalAmt = 0;
+      var checkCount = 0;
+
+      for (var i = 1; i < lines.length; i++) {
+        var l = lines[i].trim();
+        if (!l) continue;
+        var cols = l.split(',').map(function (c) { return c.replace(/^["']|["']$/g, '').trim(); });
+        if (cols.length >= 4) {
+          var chkNum = (cols[0] || '').replace(/\D/g, '');
+          var acc = (cols[1] || '').replace(/\D/g, '');
+          var amt = parseFloat(cols[2]) || 0;
+          var date = (cols[3] || '2026-11-19').replace(/-/g, '');
+          var yymmdd = date.length === 8 ? date.slice(2) : date.slice(0, 6);
+          var payee = cols[4] || 'Payee';
+
+          totalAmt += amt;
+          checkCount++;
+
+          if (bank === 'CHASE') {
+            // Chase Fixed 80-char: Account(10) + CheckNumber(10) + AmountInCents(10) + Date(YYMMDD) + Payee(30) + padded
+            var row = acc.padStart(10, '0') + chkNum.padStart(10, '0') + String(Math.round(amt * 100)).padStart(10, '0') + yymmdd + payee.slice(0, 30).padEnd(30, ' ');
+            outLines.push(row.padEnd(80, ' '));
+          } else if (bank === 'BOFA') {
+            // BofA CashPro: Account,CheckNumber,Amount,Date,Payee,IssueCode
+            outLines.push(acc + ',' + chkNum + ',' + amt.toFixed(2) + ',' + (cols[3] || '2026-11-19') + ',"' + payee + '",I');
+          } else if (bank === 'WELLS') {
+            // Wells Fargo CEO Standard
+            outLines.push(acc + ',' + chkNum + ',' + amt.toFixed(2) + ',' + yymmdd + ',"' + payee + '",I');
+          } else {
+            // CitiDirect
+            outLines.push(acc + ',' + chkNum + ',' + amt.toFixed(2) + ',' + (date.length === 8 ? date : '20' + date) + ',"' + payee + '"');
+          }
+        }
+      }
+
+      diagPpCount.textContent = String(checkCount);
+      diagPpTotal.textContent = '$' + totalAmt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      outPpFile.textContent = outLines.join('\n');
+    }
+
+    inpPosPayCsv.addEventListener('input', refreshPosPay);
+    selBankFormat.addEventListener('change', refreshPosPay);
+
+    document.getElementById('btnSampleNetSuiteAp').addEventListener('click', function () {
+      inpPosPayCsv.value = SAMPLE_NETSUITE_CHECKS;
+      refreshPosPay();
+    });
+    document.getElementById('btnSampleSapAp').addEventListener('click', function () {
+      inpPosPayCsv.value = SAMPLE_SAP_CHECKS;
+      refreshPosPay();
+    });
+
+    // Copy handlers
+    function copyElText(elId, btn) {
+      var text = document.getElementById(elId).textContent || '';
+      navigator.clipboard.writeText(text);
+      var orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(function () { btn.textContent = orig; }, 1600);
+    }
+
+    document.getElementById('btnCopyBai2Csv').addEventListener('click', function () {
+      copyElText('outBai2Parsed', this);
+    });
+    document.getElementById('btnCopyBai2Json').addEventListener('click', function () {
+      var lines = (inpBai2.value || '').trim().split('\n');
+      var obj = { source: 'FinOps Studio BAI2 Parser', linesCount: lines.length, timestamp: new Date().toISOString() };
+      navigator.clipboard.writeText(JSON.stringify(obj, null, 2));
+      var btn = this;
+      btn.textContent = 'Copied!';
+      setTimeout(function () { btn.textContent = 'Copy JSON'; }, 1600);
+    });
+    document.getElementById('btnCopyPp').addEventListener('click', function () {
+      copyElText('outPpFile', this);
+    });
+
+    // Download Positive Pay
+    document.getElementById('btnDownloadPp').addEventListener('click', function () {
+      var text = outPpFile.textContent || '';
+      var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'positive_pay_' + selBankFormat.value.toLowerCase() + '.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Direct Pass checkout triggers
+    document.getElementById('btnBuyErp24h').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('batch24h', { btn: e.target });
+    });
+    document.getElementById('btnBuyErp30d').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('pro30d', { btn: e.target });
+    });
+
+    inpBai2.value = SAMPLE_CHASE_BAI2;
+    inpPosPayCsv.value = SAMPLE_NETSUITE_CHECKS;
+    refreshBai2();
+    refreshPosPay();
+  })();
+  </script>
+</body>
+</html>
