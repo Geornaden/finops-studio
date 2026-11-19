@@ -525,4 +525,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.97</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/title-escrow-fedwire-faim-to-pacs008-alternative.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.97</priority>
+  </url>
 </urlset>

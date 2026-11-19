@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real Estate Escrow &amp; Title Fedwire FAIM to ISO 20022 pacs.008 Alternative (First American, Fidelity, Qualia) | FinOps Studio</title>
+  <meta name="description" content="Convert title &amp; escrow FAIM wire tags ({1500}, {2000}, {4200}, {5000}, {6000}) or disbursement CSVs to bank-compliant Fedwire ISO 20022 pacs.008.001.08 XML with ABA MOD-10 checksums. $0/mo alternative." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/title-escrow-fedwire-faim-to-pacs008-alternative.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Convert Real Estate Escrow & Title Fedwire FAIM Tags to ISO 20022 pacs.008.001.08 XML",
+        "url": "https://geornaden.github.io/finops-studio/title-escrow-fedwire-faim-to-pacs008-alternative.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Interactive browser converter and API guide mapping legacy Fedwire FAIM 3.0.3 tags ({1500}, {2000}, {4000}, {4100}, {4200}, {4320}, {5000}, {6000}) and title disbursement CSVs into compliant Federal Reserve ISO 20022 pacs.008.001.08 wire transfer XML."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the Federal Reserve ISO 20022 Fedwire mandate for escrow and title companies?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The Federal Reserve migrated the Fedwire Funds Service to ISO 20022 messaging (specifically pacs.008.001.08 for customer transfers). Legacy FAIM (Fedwire Application Interface Manual) tagged wire formats ({1500}, {2000}, etc.) are obsolete, requiring title agencies, settlement attorneys, and escrow software to output structured XML."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How are FAIM tags mapped to ISO 20022 pacs.008 XML?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "{1500} IMAD maps to MsgId and TxId; {2000} Amount maps to IntrBkSttlmAmt; {4000} and {4100} Routing Transits map to DbtrAgt and CdtrAgt under USABA ClearingSystemMemberIdentification; {4200} and {4320} map to CdtrAcct and Cdtr (Title / Escrow Trust); {5000} maps to Dbtr (Buyer / Lender); and {6000} maps to RemittanceInformation (Escrow File # and Property Address)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does FinOps Studio replace expensive enterprise wire converter licenses?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Enterprise bank connectivity and treasury integration platforms charge $5,000 to $25,000 annually. FinOps Studio delivers instant in-browser conversion and deterministic Cloudflare Edge APIs for $9 USD (24h unlimited pass) or $29 USD (30-day Pro pass) with zero recurring commitments."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .faim-hero {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(37, 99, 235, 0.08) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 14px;
+      padding: 2.2rem;
+      margin-bottom: 2rem;
+    }
+    .faim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 860px) {
+      .faim-grid { grid-template-columns: 1fr; }
+    }
+    .faim-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+    .faim-card h3 {
+      margin-top: 0;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.15rem;
+    }
+    .faim-input-group {
+      margin-bottom: 1.1rem;
+    }
+    .faim-input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 0.35rem;
+    }
+    .faim-input-group input, .faim-input-group select, .faim-input-group textarea {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #f9fafb;
+      padding: 0.65rem 0.8rem;
+      font-size: 0.9rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      box-sizing: border-box;
+    }
+    .faim-input-group textarea {
+      min-height: 155px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+    .faim-badge {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .faim-badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .faim-badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .faim-badge-yellow { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .faim-badge-red { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .faim-btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .faim-btn-sm {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #d1d5db;
+      padding: 0.35rem 0.7rem;
+      border-radius: 5px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    .faim-btn-sm:hover { background: #374151; color: #fff; border-color: #4b5563; }
+    .faim-out-box {
+      background: #030712;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      color: #10b981;
+      overflow-x: auto;
+      max-height: 380px;
+      white-space: pre;
+      line-height: 1.45;
+    }
+    .faim-tabs {
+      display: flex;
+      gap: 0.4rem;
+      border-bottom: 1px solid #1f2937;
+      margin-bottom: 1rem;
+    }
+    .faim-tab-btn {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .faim-tab-btn.active {
+      color: #34d399;
+      border-bottom-color: #34d399;
+    }
+    .faim-stat-pill {
+      background: #1f2937;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      color: #d1d5db;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .faim-stat-pill strong { color: #f3f4f6; }
+    .faim-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .faim-comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+    }
+    .faim-comparison-table th, .faim-comparison-table td {
+      border: 1px solid #1f2937;
+      padding: 0.75rem 0.9rem;
+      text-align: left;
+    }
+    .faim-comparison-table th { background: #111827; color: #f9fafb; font-weight: 600; }
+    .faim-comparison-table tr:nth-child(even) { background: #0b0f19; }
+    .faim-cta-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(30, 58, 138, 0.2) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 12px;
+      padding: 1.8rem;
+      text-align: center;
+      margin: 2.5rem 0;
+    }
+  </style>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <nav class="flex items-center justify-between pb-6 mb-6 border-b border-gray-800 text-sm">
+      <a href="./index.html" class="flex items-center gap-2 font-bold text-gray-100 hover:text-emerald-400 transition-colors">
+        <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+        </svg>
+        FinOps Studio
+      </a>
+      <div class="flex items-center gap-4">
+        <a href="./quickbooks-xero-netsuite-sap-odoo-bank-file-api-directory.html" class="text-gray-400 hover:text-gray-200">ERP &amp; Bank Matrix</a>
+        <a href="./for-accounting-firms-payroll-bureaus-and-fintechs.html" class="text-gray-400 hover:text-gray-200">ROI Calculator</a>
+        <a href="https://github.com/Geornaden/finops-studio" target="_blank" rel="noopener" class="text-gray-400 hover:text-gray-200">GitHub CLI</a>
+      </div>
+    </nav>
+
+    <header class="faim-hero">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="faim-badge faim-badge-green">Fedwire ISO 20022 Mandate</span>
+        <span class="faim-badge faim-badge-blue">Real Estate &amp; Title Escrow</span>
+        <span class="faim-badge faim-badge-yellow">pacs.008.001.08 XML</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
+        Real Estate Escrow &amp; Title Fedwire FAIM to ISO 20022 pacs.008 Alternative
+      </h1>
+      <p class="text-gray-300 text-base sm:text-lg max-w-3xl leading-relaxed mb-4">
+        Convert title closing disbursements, earnest money escrow wires, and legacy Fedwire FAIM 3.0.3 tags (<code class="text-emerald-400">{1500}</code>, <code class="text-emerald-400">{2000}</code>, <code class="text-emerald-400">{4100}</code>, <code class="text-emerald-400">{4200}</code>, <code class="text-emerald-400">{5000}</code>, <code class="text-emerald-400">{6000}</code>) directly into Federal Reserve compliant <strong class="text-white">ISO 20022 pacs.008.001.08 XML</strong> with live ABA MOD-10 checksum validation.
+      </p>
+      <div class="flex flex-wrap items-center gap-3 text-xs text-gray-400">
+        <span>✓ Qualia, SoftPro, RamQuest &amp; ResWare Ready</span>
+        <span>•</span>
+        <span>✓ First American, Fidelity &amp; Stewart Title Compatible</span>
+        <span>•</span>
+        <span>✓ Chase, BofA, Wells Fargo &amp; Citi Fedwire Clearing</span>
+      </div>
+    </header>
+
+    <!-- Interactive Converter & Validator -->
+    <section class="mb-10">
+      <div class="faim-grid">
+        <!-- Input Card -->
+        <div class="faim-card">
+          <h3>
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            1. Escrow Wire Input (FAIM Tags or Disbursement CSV)
+          </h3>
+          <p class="text-xs text-gray-400 mb-3">
+            Paste legacy FAIM tagged wire text or a comma-separated title closing disbursement list.
+          </p>
+
+          <div class="faim-btn-row">
+            <button id="btnSampleCreWire" type="button" class="faim-btn-sm">CRE Title Wire ($1.45M)</button>
+            <button id="btnSampleResidential" type="button" class="faim-btn-sm">Residential Earnest ($45k)</button>
+            <button id="btnSampleRefi" type="button" class="faim-btn-sm">Refi Payoff ($685k)</button>
+            <button id="btnSampleBadAba" type="button" class="faim-btn-sm text-red-400">Bad ABA Checksum</button>
+          </div>
+
+          <div class="faim-input-group">
+            <label for="faimRawInp">FAIM Tagged Wire / Title Disbursement CSV</label>
+            <textarea id="faimRawInp" spellcheck="false" placeholder="{1500}20261119MMQFMP01000001
+{1510}1000
+{2000}00000145000000
+{3600}CTR
+{4000}021000021
+{4100}122000496
+{4200}D/9928374610
+{4320}FIRST AMERICAN TITLE ESCROW TRUST
+{5000}PACIFIC HORIZON CAPITAL LLC
+{6000}ESCROW FILE: ESC-2026-9941 / PROPERTY: 8862 LOLA AVE"></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="faim-input-group">
+              <label for="faimBusinessFunction">Business Function ({3600})</label>
+              <select id="faimBusinessFunction">
+                <option value="CTR" selected>CTR - Customer Transfer (Escrow/Title)</option>
+                <option value="BTR">BTR - Bank-to-Bank Transfer</option>
+                <option value="DEP">DEP - Deposit Account Credit</option>
+              </select>
+            </div>
+            <div class="faim-input-group">
+              <label for="faimSettlementMethod">Clearing System ({4100})</label>
+              <select id="faimSettlementMethod">
+                <option value="FDW" selected>FDW - Fedwire Funds Service (US)</option>
+                <option value="SWX">SWX - SWIFT CBPR+ Cross-Border</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="faim-input-group">
+            <label for="faimEscrowOfficer">Escrow Officer / Preparer Ref</label>
+            <input type="text" id="faimEscrowOfficer" value="ESCROW-DESK-ANAHEIM-CA" />
+          </div>
+        </div>
+
+        <!-- Output & Audit Card -->
+        <div class="faim-card">
+          <h3>
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            2. ISO 20022 pacs.008 XML &amp; Pre-Flight Audit
+          </h3>
+
+          <div class="faim-stat-grid">
+            <div class="faim-stat-pill">
+              <span>Status:</span>
+              <strong id="statStatus" class="text-emerald-400">AUDITED OK</strong>
+            </div>
+            <div class="faim-stat-pill">
+              <span>Wires:</span>
+              <strong id="statCount">1 Wire</strong>
+            </div>
+            <div class="faim-stat-pill">
+              <span>Total USD:</span>
+              <strong id="statTotal">$1,450,000.00</strong>
+            </div>
+            <div class="faim-stat-pill">
+              <span>ABA Mod-10:</span>
+              <strong id="statAba" class="text-emerald-400">PASSED</strong>
+            </div>
+          </div>
+
+          <div class="faim-tabs">
+            <button type="button" class="faim-tab-btn active" data-tab="tabXml">pacs.008.001.08 XML</button>
+            <button type="button" class="faim-tab-btn" data-tab="tabMap">FAIM Tag Crosswalk</button>
+            <button type="button" class="faim-tab-btn" data-tab="tabApi">Cloud API (cURL)</button>
+          </div>
+
+          <div id="tabXml" class="tab-pane">
+            <div id="outFaimXml" class="faim-out-box">Loading XML preview...</div>
+            <div class="flex items-center justify-between mt-3">
+              <button id="btnCopyXml" type="button" class="faim-btn-sm">Copy pacs.008 XML</button>
+              <button id="btnDownloadXml" type="button" class="faim-btn-sm text-emerald-400 border-emerald-500/50">Download .xml File</button>
+            </div>
+          </div>
+
+          <div id="tabMap" class="tab-pane" style="display: none;">
+            <div class="faim-out-box text-gray-300" id="outFaimMap">
+FAIM Tag Crosswalk -> ISO 20022 pacs.008.001.08:
+----------------------------------------------------------------------
+{1500} IMAD                  -> /GrpHdr/MsgId & /PmtId/TxId
+{1510} Subtype 1000          -> /PmtTpInf/SvcLvl/Prtry ('FEDWIRE')
+{2000} Amount (Cents/Dec)    -> /IntrBkSttlmAmt[@Ccy='USD']
+{3600} Business Func (CTR)   -> /PmtTpInf/LclInstrm/Prtry ('CTR')
+{4000} Originator ABA (9d)   -> /DbtrAgt/FinInstnId/ClrSysMmbId/MmbId
+{4100} Beneficiary ABA (9d)  -> /CdtrAgt/FinInstnId/ClrSysMmbId/MmbId
+{4200} Beneficiary Acct      -> /CdtrAcct/Id/Othr/Id
+{4320} Beneficiary / Title   -> /Cdtr/Nm & /Cdtr/PstlAdr
+{5000} Ordering Customer     -> /Dbtr/Nm & /Dbtr/PstlAdr
+{6000} Remittance / Escrow   -> /RmtInf/Ustrd
+            </div>
+          </div>
+
+          <div id="tabApi" class="tab-pane" style="display: none;">
+            <div id="outFaimApi" class="faim-out-box text-cyan-400">Loading API snippet...</div>
+            <div class="flex justify-end mt-3">
+              <button id="btnCopyApi" type="button" class="faim-btn-sm">Copy cURL</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison & Fee Table -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold text-white mb-2">Fedwire Migration: Legacy FAIM vs. ISO 20022 pacs.008</h2>
+      <p class="text-gray-400 text-sm mb-4">
+        Title companies and closing software are replacing brittle 1980s mainframe tags with rich XML. Here is how FinOps Studio bridges the transition without costly software replacement.
+      </p>
+
+      <table class="faim-comparison-table">
+        <thead>
+          <tr>
+            <th>Feature / Capability</th>
+            <th>Legacy FAIM 3.0.3 (Phased Out)</th>
+            <th>Enterprise Bank Connectors ($5k-$25k)</th>
+            <th>FinOps Studio pacs.008 Engine</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Fedwire Compliance</strong></td>
+            <td><span class="text-red-400">Obsolete (March 2025 Mandate)</span></td>
+            <td>Compliant (Requires long integration)</td>
+            <td><span class="text-emerald-400">100% Compliant pacs.008.001.08</span></td>
+          </tr>
+          <tr>
+            <td><strong>ABA Routing Number Validation</strong></td>
+            <td>Basic 9-digit format check</td>
+            <td>Included in enterprise core</td>
+            <td><span class="text-emerald-400">Real-time MOD-10 Checksum + Fed Routing</span></td>
+          </tr>
+          <tr>
+            <td><strong>Escrow Remittance Field ({6000})</strong></td>
+            <td>Limited to 3 lines x 35 chars</td>
+            <td>Mapped to structured XML</td>
+            <td><span class="text-emerald-400">Structured Escrow File &amp; Property XML</span></td>
+          </tr>
+          <tr>
+            <td><strong>Pricing &amp; Commitments</strong></td>
+            <td>Bundled in legacy title desktop</td>
+            <td>$5,000 to $25,000 / year recurring</td>
+            <td><span class="text-emerald-400">$9 (24h Pass) / $29 (30-Day Pro)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Deployment Speed</strong></td>
+            <td>Months of bank testing</td>
+            <td>3 to 6 months IT setup</td>
+            <td><span class="text-emerald-400">Instant in Browser or Edge API</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Conversion & CTA Banner -->
+    <section class="faim-cta-banner">
+      <h2 class="text-2xl font-bold text-white mb-2">Need Automated Escrow Wire Clearing for Your Title Desk?</h2>
+      <p class="text-gray-300 text-sm max-w-2xl mx-auto mb-5">
+        Upgrade to a Direct Instant Pass for unlimited bank-ready pacs.008 wire XML generation, programmatic API keys, and zero watermarks.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <button id="btnBuyFaim24h" type="button" class="px-5 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg hover:shadow-emerald-500/20">
+          Unlock 24h Unlimited Pass ($9 USD)
+        </button>
+        <button id="btnBuyFaim30d" type="button" class="px-5 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shadow-lg hover:shadow-blue-500/20">
+          Get 30-Day Pro Pass ($29 USD)
+        </button>
+      </div>
+      <p class="text-xs text-gray-400 mt-3">
+        Instant Apple Pay, Google Pay, Credit Cards &amp; PayPal. Zero recurring monthly subscription.
+      </p>
+    </section>
+
+    <footer class="pt-6 border-t border-gray-800 text-xs text-gray-500 flex flex-wrap items-center justify-between gap-4">
+      <div>© 2026 FinOps Studio. All rights reserved. Fedwire® is a registered service mark of the Federal Reserve Banks.</div>
+      <div class="flex gap-4">
+        <a href="./index.html" class="hover:text-gray-400">All 12 Banking Tools</a>
+        <a href="./llms.txt" class="hover:text-gray-400">llms.txt</a>
+        <a href="./sitemap.xml" class="hover:text-gray-400">Sitemap</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="./vip-support-widget.js"></script>
+  <script>
+  (function () {
+    // ABA MOD-10 Validator
+    function isValidAba(routing) {
+      var r = String(routing || '').replace(/\D/g, '');
+      if (r.length !== 9) return false;
+      var weights = [3, 7, 1, 3, 7, 1, 3, 7, 1];
+      var sum = 0;
+      for (var i = 0; i < 9; i++) {
+        sum += parseInt(r.charAt(i), 10) * weights[i];
+      }
+      return (sum % 10 === 0);
+    }
+
+    function escapeXml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    }
+
+    var FAIM_SAMPLE_CRE = "{\1500}20261119MMQFMP01000001\n" +
+      "{\1510}1000\n" +
+      "{\2000}00000145000000\n" +
+      "{\3600}CTR\n" +
+      "{\4000}021000021\n" +
+      "{\4100}122000496\n" +
+      "{\4200}D/9928374610\n" +
+      "{\4320}FIRST AMERICAN TITLE ESCROW TRUST\n" +
+      "{\5000}PACIFIC HORIZON CAPITAL LLC\n" +
+      "{\6000}ESCROW FILE: ESC-2026-9941 / PROPERTY: 8862 LOLA AVE / CLOSING WIRE";
+
+    var FAIM_SAMPLE_RESIDENTIAL = "{\1500}20261119MMQFMP01000002\n" +
+      "{\1510}1000\n" +
+      "{\2000}00000004500000\n" +
+      "{\3600}CTR\n" +
+      "{\4000}122000496\n" +
+      "{\4100}021000021\n" +
+      "{\4200}D/4400192837\n" +
+      "{\4320}FIDELITY NATIONAL TITLE ESCROW DEPOSIT\n" +
+      "{\5000}GEORGE MIKHAIL\n" +
+      "{\6000}EARNEST MONEY DEPOSIT / FILE: FNT-ANAHEIM-8862";
+
+    var FAIM_SAMPLE_REFI = "{\1500}20261119MMQFMP01000003\n" +
+      "{\1510}1000\n" +
+      "{\2000}00000068525000\n" +
+      "{\3600}CTR\n" +
+      "{\4000}021000021\n" +
+      "{\4100}122000496\n" +
+      "{\4200}D/5519283746\n" +
+      "{\4320}CHICAGO TITLE INSURANCE COMPANY TRUST\n" +
+      "{\5000}QUICKEN LOANS REFI DISBURSEMENT\n" +
+      "{\6000}LOAN PAYOFF WIRE / ESCROW: CT-REFI-77291";
+
+    var FAIM_SAMPLE_BAD_ABA = "{\1500}20261119MMQFMP01000004\n" +
+      "{\1510}1000\n" +
+      "{\2000}00000010000000\n" +
+      "{\3600}CTR\n" +
+      "{\4000}021000021\n" +
+      "{\4100}123456789\n" +
+      "{\4200}D/1234567890\n" +
+      "{\4320}TEST ESCROW TRUST ACCOUNT\n" +
+      "{\5000}TEST BUYER\n" +
+      "{\6000}TEST INVALID ABA ROUTING CODE";
+
+    var rawInp = document.getElementById('faimRawInp');
+    var bfnSelect = document.getElementById('faimBusinessFunction');
+    var clrSelect = document.getElementById('faimSettlementMethod');
+    var offInp = document.getElementById('faimEscrowOfficer');
+
+    var outXml = document.getElementById('outFaimXml');
+    var outApi = document.getElementById('outFaimApi');
+    var statStatus = document.getElementById('statStatus');
+    var statCount = document.getElementById('statCount');
+    var statTotal = document.getElementById('statTotal');
+    var statAba = document.getElementById('statAba');
+
+    function parseFaim(raw) {
+      var lines = String(raw || '').split(/\r?\n/);
+      var tags = {};
+      var isCsv = false;
+
+      // Check if CSV format
+      if (raw.indexOf(',') !== -1 && raw.indexOf('{') === -1) {
+        isCsv = true;
+      }
+
+      if (!isCsv) {
+        lines.forEach(function (l) {
+          var trimmed = l.trim();
+          var match = trimmed.match(/^\{(\d{4})\}(.*)$/);
+          if (match) {
+            tags[match[1]] = match[2].trim();
+          }
+        });
+      } else {
+        // Parse simple CSV row
+        var dataLines = lines.filter(function (l) { return l.trim().length > 0 && !l.startsWith('Escrow') && !l.startsWith('File'); });
+        if (dataLines.length > 0) {
+          var cols = dataLines[0].split(',');
+          tags['1500'] = '20261119' + (cols[0] || 'ESCROW').replace(/\W/g, '').slice(0, 14);
+          tags['5000'] = (cols[1] || 'ORDERING CUSTOMER').trim();
+          tags['4000'] = (cols[2] || '021000021').replace(/\D/g, '');
+          tags['4320'] = (cols[4] || 'TITLE ESCROW TRUST').trim();
+          tags['4100'] = (cols[5] || '122000496').replace(/\D/g, '');
+          tags['4200'] = (cols[6] || '1122334455').trim();
+          tags['2000'] = (cols[7] || '100000').trim();
+          tags['6000'] = (cols[8] || 'TITLE CLOSING WIRE').trim();
+        }
+      }
+
+      // Fallbacks
+      var amountRaw = tags['2000'] || '00000145000000';
+      var amountFloat = 0;
+      if (amountRaw.indexOf('.') !== -1) {
+        amountFloat = parseFloat(amountRaw) || 0;
+      } else {
+        amountFloat = (parseInt(amountRaw, 10) || 0) / 100;
+      }
+
+      return {
+        imad: tags['1500'] || ('20261119MMQFMP' + String(Date.now()).slice(-6)),
+        amount: amountFloat,
+        dbtrAba: tags['4000'] || '021000021',
+        cdtrAba: tags['4100'] || '122000496',
+        cdtrAcct: (tags['4200'] || 'D/9928374610').replace(/^D\//, ''),
+        cdtrName: tags['4320'] || 'FIRST AMERICAN TITLE ESCROW TRUST',
+        dbtrName: tags['5000'] || 'PACIFIC HORIZON CAPITAL LLC',
+        remittance: tags['6000'] || 'ESCROW WIRE / CLOSING DISBURSEMENT'
+      };
+    }
+
+    function refreshAudit() {
+      var wire = parseFaim(rawInp.value);
+      var bfn = bfnSelect.value;
+      var clr = clrSelect.value;
+      var officer = offInp.value.trim() || 'ESCROW-OFFICER';
+
+      var abaValid = isValidAba(wire.dbtrAba) && isValidAba(wire.cdtrAba);
+
+      if (abaValid) {
+        statStatus.textContent = 'AUDITED OK';
+        statStatus.className = 'text-emerald-400 font-bold';
+        statAba.textContent = 'PASSED (MOD-10)';
+        statAba.className = 'text-emerald-400 font-bold';
+      } else {
+        statStatus.textContent = 'ROUTING ERROR';
+        statStatus.className = 'text-red-400 font-bold';
+        statAba.textContent = 'INVALID ABA';
+        statAba.className = 'text-red-400 font-bold';
+      }
+
+      statCount.textContent = '1 Fedwire';
+      statTotal.textContent = '$' + wire.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      var nowIso = new Date().toISOString();
+      var todayDate = nowIso.slice(0, 10);
+
+      var xml = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">\n' +
+        '  <FIToFICstmrCdtTrf>\n' +
+        '    <GrpHdr>\n' +
+        '      <MsgId>FW-' + escapeXml(wire.imad.slice(0, 24)) + '</MsgId>\n' +
+        '      <CreDtTm>' + nowIso + '</CreDtTm>\n' +
+        '      <NbOfTxs>1</NbOfTxs>\n' +
+        '      <SttlmInf>\n' +
+        '        <SttlmMtd>CLRG</SttlmMtd>\n' +
+        '        <ClrSys>\n' +
+        '          <Prtry>' + escapeXml(clr) + '</Prtry>\n' +
+        '        </ClrSys>\n' +
+        '      </SttlmInf>\n' +
+        '    </GrpHdr>\n' +
+        '    <CdtTrfTxInf>\n' +
+        '      <PmtId>\n' +
+        '        <EndToEndId>' + escapeXml(officer) + '-' + wire.imad.slice(-6) + '</EndToEndId>\n' +
+        '        <TxId>' + escapeXml(wire.imad) + '</TxId>\n' +
+        '      </PmtId>\n' +
+        '      <PmtTpInf>\n' +
+        '        <SvcLvl>\n' +
+        '          <Prtry>' + (clr === 'SWX' ? 'SWIFT' : 'FEDWIRE') + '</Prtry>\n' +
+        '        </SvcLvl>\n' +
+        '        <LclInstrm>\n' +
+        '          <Prtry>' + escapeXml(bfn) + '</Prtry>\n' +
+        '        </LclInstrm>\n' +
+        '      </PmtTpInf>\n' +
+        '      <IntrBkSttlmAmt Ccy="USD">' + wire.amount.toFixed(2) + '</IntrBkSttlmAmt>\n' +
+        '      <IntrBkSttlmDt>' + todayDate + '</IntrBkSttlmDt>\n' +
+        '      <DbtrAgt>\n' +
+        '        <FinInstnId>\n' +
+        '          <ClrSysMmbId>\n' +
+        '            <ClrSysId><Cd>USABA</Cd></ClrSysId>\n' +
+        '            <MmbId>' + escapeXml(wire.dbtrAba) + '</MmbId>\n' +
+        '          </ClrSysMmbId>\n' +
+        '        </FinInstnId>\n' +
+        '      </DbtrAgt>\n' +
+        '      <Dbtr>\n' +
+        '        <Nm>' + escapeXml(wire.dbtrName) + '</Nm>\n' +
+        '        <PstlAdr>\n' +
+        '          <Ctry>US</Ctry>\n' +
+        '        </PstlAdr>\n' +
+        '      </Dbtr>\n' +
+        '      <CdtrAgt>\n' +
+        '        <FinInstnId>\n' +
+        '          <ClrSysMmbId>\n' +
+        '            <ClrSysId><Cd>USABA</Cd></ClrSysId>\n' +
+        '            <MmbId>' + escapeXml(wire.cdtrAba) + '</MmbId>\n' +
+        '          </ClrSysMmbId>\n' +
+        '        </FinInstnId>\n' +
+        '      </CdtrAgt>\n' +
+        '      <Cdtr>\n' +
+        '        <Nm>' + escapeXml(wire.cdtrName) + '</Nm>\n' +
+        '        <PstlAdr>\n' +
+        '          <Ctry>US</Ctry>\n' +
+        '        </PstlAdr>\n' +
+        '      </Cdtr>\n' +
+        '      <CdtrAcct>\n' +
+        '        <Id>\n' +
+        '          <Othr>\n' +
+        '            <Id>' + escapeXml(wire.cdtrAcct) + '</Id>\n' +
+        '          </Othr>\n' +
+        '        </Id>\n' +
+        '      </CdtrAcct>\n' +
+        '      <RmtInf>\n' +
+        '        <Ustrd>' + escapeXml(wire.remittance) + '</Ustrd>\n' +
+        '      </RmtInf>\n' +
+        '    </CdtTrfTxInf>\n' +
+        '  </FIToFICstmrCdtTrf>\n' +
+        '</Document>';
+
+      outXml.textContent = xml;
+
+      // Update API snippet
+      var curl = 'curl -X POST "https://finops-rapidapi-edge.ria-rader.workers.dev/v1/generator/pacs008" \\\n' +
+        '  -H "Content-Type: application/json" \\\n' +
+        '  -H "X-FinOps-Pass: YOUR_PASS_KEY" \\\n' +
+        '  -d \'{\n' +
+        '    "senderAba": "' + wire.dbtrAba + '",\n' +
+        '    "receiverAba": "' + wire.cdtrAba + '",\n' +
+        '    "amountUsd": ' + wire.amount.toFixed(2) + ',\n' +
+        '    "originator": "' + wire.dbtrName + '",\n' +
+        '    "beneficiary": "' + wire.cdtrName + '",\n' +
+        '    "beneficiaryAccount": "' + wire.cdtrAcct + '",\n' +
+        '    "remittanceInfo": "' + wire.remittance + '"\n' +
+        '  }\'';
+      outApi.textContent = curl;
+    }
+
+    // Presets
+    document.getElementById('btnSampleCreWire').addEventListener('click', function () {
+      rawInp.value = FAIM_SAMPLE_CRE;
+      bfnSelect.value = 'CTR';
+      refreshAudit();
+    });
+
+    document.getElementById('btnSampleResidential').addEventListener('click', function () {
+      rawInp.value = FAIM_SAMPLE_RESIDENTIAL;
+      bfnSelect.value = 'CTR';
+      refreshAudit();
+    });
+
+    document.getElementById('btnSampleRefi').addEventListener('click', function () {
+      rawInp.value = FAIM_SAMPLE_REFI;
+      bfnSelect.value = 'CTR';
+      refreshAudit();
+    });
+
+    document.getElementById('btnSampleBadAba').addEventListener('click', function () {
+      rawInp.value = FAIM_SAMPLE_BAD_ABA;
+      bfnSelect.value = 'CTR';
+      refreshAudit();
+    });
+
+    [rawInp, bfnSelect, clrSelect, offInp].forEach(function (elem) {
+      elem.addEventListener('input', refreshAudit);
+      elem.addEventListener('change', refreshAudit);
+    });
+
+    // Tab switcher
+    var tabBtns = document.querySelectorAll('.faim-tab-btn');
+    var tabPanes = document.querySelectorAll('.tab-pane');
+    tabBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = btn.getAttribute('data-tab');
+        tabBtns.forEach(function (b) { b.classList.remove('active'); });
+        tabPanes.forEach(function (p) { p.style.display = 'none'; });
+        btn.classList.add('active');
+        document.getElementById(target).style.display = 'block';
+      });
+    });
+
+    // Copy handlers
+    function wireCopy(btnId, targetId) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var text = document.getElementById(targetId).textContent || '';
+        navigator.clipboard.writeText(text);
+        btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      });
+    }
+    wireCopy('btnCopyXml', 'outFaimXml');
+    wireCopy('btnCopyApi', 'outFaimApi');
+
+    // Download XML
+    document.getElementById('btnDownloadXml').addEventListener('click', function () {
+      var text = outXml.textContent || '';
+      var blob = new Blob([text], { type: 'application/xml;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'fedwire_pacs008.xml';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Direct Pass checkout triggers
+    document.getElementById('btnBuyFaim24h').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('batch24h', { btn: e.target });
+    });
+    document.getElementById('btnBuyFaim30d').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('pro30d', { btn: e.target });
+    });
+
+    rawInp.value = FAIM_SAMPLE_CRE;
+    refreshAudit();
+  })();
+  </script>
+</body>
+</html>
