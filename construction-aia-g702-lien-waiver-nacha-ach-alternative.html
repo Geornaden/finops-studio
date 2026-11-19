@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Construction AIA G702 &amp; Lien Waiver to NACHA CCD+ ACH Alternative (Procore, QuickBooks, Textura) | FinOps Studio</title>
+  <meta name="description" content="Convert construction progress billings, AIA G702/G703 spreadsheets &amp; lien waiver schedules to bank-compliant 94-character NACHA CCD+ ACH files with Record 7 addenda, retainage math &amp; ABA MOD-10 checks. $0/mo alternative." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/construction-aia-g702-lien-waiver-nacha-ach-alternative.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Convert Construction AIA G702 Billings & Lien Waiver Schedules to NACHA CCD+ ACH Files",
+        "url": "https://geornaden.github.io/finops-studio/construction-aia-g702-lien-waiver-nacha-ach-alternative.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Interactive browser converter and API guide converting commercial construction progress payments, AIA G702 retainage calculations, and subcontractor lien waivers into compliant 94-character NACHA CCD+ ACH files with Record 7 addenda."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the NACHA CCD+ format for construction subcontractor disbursements?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "NACHA CCD+ (Corporate Credit or Debit with Addenda) is the standard banking format used by General Contractors (GCs) and commercial banks (Chase, BofA, Wells Fargo, PNC, Truist) to disburse progress payments to trade subcontractors. Unlike standard PPD consumer payroll, CCD+ includes a 94-character Record 7 (Addenda Record, Type 05) carrying remittance details such as AIA G702 Application numbers, retainage withheld (5% or 10%), invoice references, and lien waiver verification."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why do commercial banks reject construction ACH exports from QuickBooks or Excel?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Standard bank portals require strict 94-character fixed-width NACHA formatting with 10-block record padding (padded with lines of 9s), Entry Hash sum calculations, and ABA MOD-10 routing number validation. Raw Excel or CSV files lack the required Record 1 Header, Record 5 Company Batch Header, Record 7 Addenda lines, and Record 9 File Control blocks."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does FinOps Studio replace expensive construction treasury and payment software?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Specialized construction financial software charges $3,000 to $12,000 annually. FinOps Studio delivers instant in-browser NACHA CCD+ generation and deterministic Cloudflare Edge APIs for $9 USD (24h unlimited pass) or $29 USD (30-day Pro pass) with zero recurring commitments."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .const-hero {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(37, 99, 235, 0.08) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 14px;
+      padding: 2.2rem;
+      margin-bottom: 2rem;
+    }
+    .const-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 860px) {
+      .const-grid { grid-template-columns: 1fr; }
+    }
+    .const-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+    .const-card h3 {
+      margin-top: 0;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.15rem;
+    }
+    .const-input-group {
+      margin-bottom: 1.1rem;
+    }
+    .const-input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 0.35rem;
+    }
+    .const-input-group input, .const-input-group select, .const-input-group textarea {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #f9fafb;
+      padding: 0.65rem 0.8rem;
+      font-size: 0.9rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      box-sizing: border-box;
+    }
+    .const-input-group textarea {
+      min-height: 155px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+    .const-badge {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .const-badge-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .const-badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .const-badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .const-badge-red { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .const-btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .const-btn-sm {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #d1d5db;
+      padding: 0.35rem 0.7rem;
+      border-radius: 5px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    .const-btn-sm:hover { background: #374151; color: #fff; border-color: #4b5563; }
+    .const-out-box {
+      background: #030712;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      color: #f59e0b;
+      overflow-x: auto;
+      max-height: 380px;
+      white-space: pre;
+      line-height: 1.45;
+    }
+    .const-tabs {
+      display: flex;
+      gap: 0.4rem;
+      border-bottom: 1px solid #1f2937;
+      margin-bottom: 1rem;
+    }
+    .const-tab-btn {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .const-tab-btn.active {
+      color: #fbbf24;
+      border-bottom-color: #fbbf24;
+    }
+    .const-stat-pill {
+      background: #1f2937;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      color: #d1d5db;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .const-stat-pill strong { color: #f3f4f6; }
+    .const-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .const-comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+    }
+    .const-comparison-table th, .const-comparison-table td {
+      border: 1px solid #1f2937;
+      padding: 0.75rem 0.9rem;
+      text-align: left;
+    }
+    .const-comparison-table th { background: #111827; color: #f9fafb; font-weight: 600; }
+    .const-comparison-table tr:nth-child(even) { background: #0b0f19; }
+    .const-cta-banner {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(30, 58, 138, 0.2) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 12px;
+      padding: 1.8rem;
+      text-align: center;
+      margin: 2.5rem 0;
+    }
+  </style>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <nav class="flex items-center justify-between pb-6 mb-6 border-b border-gray-800 text-sm">
+      <a href="./index.html" class="flex items-center gap-2 font-bold text-gray-100 hover:text-amber-400 transition-colors">
+        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+        </svg>
+        FinOps Studio
+      </a>
+      <div class="flex items-center gap-4">
+        <a href="./quickbooks-xero-netsuite-sap-odoo-bank-file-api-directory.html" class="text-gray-400 hover:text-gray-200">ERP &amp; Bank Matrix</a>
+        <a href="./for-accounting-firms-payroll-bureaus-and-fintechs.html" class="text-gray-400 hover:text-gray-200">ROI Calculator</a>
+        <a href="https://github.com/Geornaden/finops-studio" target="_blank" rel="noopener" class="text-gray-400 hover:text-gray-200">GitHub CLI</a>
+      </div>
+    </nav>
+
+    <header class="const-hero">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="const-badge const-badge-amber">US Construction &amp; Trades</span>
+        <span class="const-badge const-badge-blue">AIA G702 / G703 Retainage</span>
+        <span class="const-badge const-badge-green">NACHA CCD+ (Record 7 Addenda)</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
+        Construction AIA G702 &amp; Lien Waiver to NACHA CCD+ ACH Alternative
+      </h1>
+      <p class="text-gray-300 text-base sm:text-lg max-w-3xl leading-relaxed mb-4">
+        Convert contractor progress billing spreadsheets, Procore, and QuickBooks exports into bank-compliant <strong class="text-white">94-character NACHA CCD+ .ACH files</strong> with automated 5% or 10% retainage math, conditional/unconditional lien waiver tracking, and Record 7 addenda lines for Chase, Bank of America, Wells Fargo, and PNC.
+      </p>
+      <div class="flex flex-wrap items-center gap-3 text-xs text-gray-400">
+        <span>✓ General Contractor (GC) &amp; Subcontractor Ready</span>
+        <span>•</span>
+        <span>✓ 94-Char Fixed Width &amp; Block-10 Padding</span>
+        <span>•</span>
+        <span>✓ Real-time ABA MOD-10 Routing Validation</span>
+      </div>
+    </header>
+
+    <!-- Interactive Converter & Validator -->
+    <section class="mb-10">
+      <div class="const-grid">
+        <!-- Input Card -->
+        <div class="const-card">
+          <h3>
+            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            1. Subcontractor Progress Billing CSV
+          </h3>
+          <p class="text-xs text-gray-400 mb-3">
+            Paste progress billings with gross amount, retainage percentage, and AIA application number.
+          </p>
+
+          <div class="const-btn-row">
+            <button id="btnSampleCommercial" type="button" class="const-btn-sm">Commercial High-Rise ($485k)</button>
+            <button id="btnSampleSubdivision" type="button" class="const-btn-sm">Subdivision Trades ($128k)</button>
+            <button id="btnSampleCloseout" type="button" class="const-btn-sm">Final Retainage Release</button>
+            <button id="btnSampleBadAba" type="button" class="const-btn-sm text-red-400">Bad Routing Test</button>
+          </div>
+
+          <div class="const-input-group">
+            <label for="constRawInp">Disbursement CSV (Subcontractor, ABA, Account, Gross, Retain%, App#, Trade, Waiver)</label>
+            <textarea id="constRawInp" spellcheck="false" placeholder="Subcontractor Name,ABA Routing,Account Number,Gross Amount,Retainage Pct,AIA App Number,Trade Scope,Lien Waiver Status
+TITAN CONCRETE CORP,021000021,9876543210,240000.00,10,APP-04,FOUNDATIONS & SLABS,CONDITIONAL_RECVD
+APEX MECHANICAL HVAC,122000496,1122334455,165000.00,10,APP-03,COMMERCIAL DUCTWORK,CONDITIONAL_RECVD
+VANGUARD ELECTRICAL,071000288,5544332211,80250.00,10,APP-02,SWITCHGEAR & CONDUIT,CONDITIONAL_RECVD"></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="const-input-group">
+              <label for="constOriginAba">GC Originator ABA Routing</label>
+              <input type="text" id="constOriginAba" value="021000021" />
+            </div>
+            <div class="const-input-group">
+              <label for="constCompanyId">Company ID (EIN / 10-Digit)</label>
+              <input type="text" id="constCompanyId" value="1958473620" />
+            </div>
+          </div>
+
+          <div class="const-input-group">
+            <label for="constCompanyName">General Contractor Company Name</label>
+            <input type="text" id="constCompanyName" value="PACIFIC HORIZON BUILDERS LLC" />
+          </div>
+        </div>
+
+        <!-- Output & Audit Card -->
+        <div class="const-card">
+          <h3>
+            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            2. NACHA CCD+ ACH &amp; Retainage Schedule
+          </h3>
+
+          <div class="const-stat-grid">
+            <div class="const-stat-pill">
+              <span>Status:</span>
+              <strong id="statStatus" class="text-amber-400">AUDITED OK</strong>
+            </div>
+            <div class="const-stat-pill">
+              <span>Net ACH:</span>
+              <strong id="statNetTotal">$436,725.00</strong>
+            </div>
+            <div class="const-stat-pill">
+              <span>Retained:</span>
+              <strong id="statRetained" class="text-amber-400">$48,525.00</strong>
+            </div>
+            <div class="const-stat-pill">
+              <span>Block-10:</span>
+              <strong id="statBlock" class="text-emerald-400">PADDED (20)</strong>
+            </div>
+          </div>
+
+          <div class="const-tabs">
+            <button type="button" class="const-tab-btn active" data-tab="tabNacha">NACHA CCD+ .ACH</button>
+            <button type="button" class="const-tab-btn" data-tab="tabSchedule">Disbursal &amp; Retainage Table</button>
+            <button type="button" class="const-tab-btn" data-tab="tabApi">Cloud API (cURL)</button>
+          </div>
+
+          <div id="tabNacha" class="tab-pane">
+            <div id="outNachaFile" class="const-out-box">Loading NACHA CCD+ preview...</div>
+            <div class="flex items-center justify-between mt-3">
+              <button id="btnCopyNacha" type="button" class="const-btn-sm">Copy NACHA File</button>
+              <button id="btnDownloadNacha" type="button" class="const-btn-sm text-amber-400 border-amber-500/50">Download .ach File</button>
+            </div>
+          </div>
+
+          <div id="tabSchedule" class="tab-pane" style="display: none;">
+            <div class="const-out-box text-gray-300" id="outScheduleTable">Loading schedule...</div>
+          </div>
+
+          <div id="tabApi" class="tab-pane" style="display: none;">
+            <div id="outConstApi" class="const-out-box text-cyan-400">Loading API snippet...</div>
+            <div class="flex justify-end mt-3">
+              <button id="btnCopyApi" type="button" class="const-btn-sm">Copy cURL</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison & Fee Table -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold text-white mb-2">Construction Payments: Excel vs. Enterprise Treasury vs. FinOps Studio</h2>
+      <p class="text-gray-400 text-sm mb-4">
+        General contractors often spend hours manually re-keying AIA progress draws into bank portals or paying exorbitant software licenses. Here is the modern alternative.
+      </p>
+
+      <table class="const-comparison-table">
+        <thead>
+          <tr>
+            <th>Feature / Capability</th>
+            <th>Manual Bank Re-Keying</th>
+            <th>Enterprise Construction Treasury ($3k-$12k)</th>
+            <th>FinOps Studio CCD+ Engine</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Record 7 Addenda Support</strong></td>
+            <td><span class="text-red-400">Manual typing or omitted</span></td>
+            <td>Supported (Complex ERP setup)</td>
+            <td><span class="text-emerald-400">Automated 94-Char Type 05 Addenda</span></td>
+          </tr>
+          <tr>
+            <td><strong>Retainage Accounting (5%/10%)</strong></td>
+            <td>Manual calculator mistakes</td>
+            <td>Integrated into general ledger</td>
+            <td><span class="text-emerald-400">Instant Automated Net Calculation</span></td>
+          </tr>
+          <tr>
+            <td><strong>Block-10 &amp; Hash Validation</strong></td>
+            <td>Bank file upload rejections</td>
+            <td>Built into core module</td>
+            <td><span class="text-emerald-400">Deterministic MOD-10 &amp; Block-10 Padding</span></td>
+          </tr>
+          <tr>
+            <td><strong>Pricing &amp; Commitments</strong></td>
+            <td>Wasted accounting staff hours</td>
+            <td>$3,000 to $12,000 / year recurring</td>
+            <td><span class="text-emerald-400">$9 (24h Pass) / $29 (30-Day Pro)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Turnaround Time</strong></td>
+            <td>2-3 business days</td>
+            <td>Weeks of onboarding</td>
+            <td><span class="text-emerald-400">Instant in Browser or Edge API</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Conversion & CTA Banner -->
+    <section class="const-cta-banner">
+      <h2 class="text-2xl font-bold text-white mb-2">Ready to Streamline Subcontractor Progress Draws?</h2>
+      <p class="text-gray-300 text-sm max-w-2xl mx-auto mb-5">
+        Unlock a Direct Instant Pass for unlimited NACHA CCD+ bank-ready file creation, API keys, and zero watermarks.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <button id="btnBuyConst24h" type="button" class="px-5 py-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm transition-all shadow-lg hover:shadow-amber-500/20">
+          Unlock 24h Unlimited Pass ($9 USD)
+        </button>
+        <button id="btnBuyConst30d" type="button" class="px-5 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shadow-lg hover:shadow-blue-500/20">
+          Get 30-Day Pro Pass ($29 USD)
+        </button>
+      </div>
+      <p class="text-xs text-gray-400 mt-3">
+        Instant Apple Pay, Google Pay, Credit Cards &amp; PayPal. Zero recurring monthly subscription.
+      </p>
+    </section>
+
+    <footer class="pt-6 border-t border-gray-800 text-xs text-gray-500 flex flex-wrap items-center justify-between gap-4">
+      <div>© 2026 FinOps Studio. All rights reserved. AIA® is a registered trademark of The American Institute of Architects. NACHA® is a registered trademark of the National Automated Clearing House Association.</div>
+      <div class="flex gap-4">
+        <a href="./index.html" class="hover:text-gray-400">All 12 Banking Tools</a>
+        <a href="./llms.txt" class="hover:text-gray-400">llms.txt</a>
+        <a href="./sitemap.xml" class="hover:text-gray-400">Sitemap</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="./vip-support-widget.js"></script>
+  <script>
+  (function () {
+    // ABA MOD-10 Validator
+    function isValidAba(routing) {
+      var r = String(routing || '').replace(/\D/g, '');
+      if (r.length !== 9) return false;
+      var weights = [3, 7, 1, 3, 7, 1, 3, 7, 1];
+      var sum = 0;
+      for (var i = 0; i < 9; i++) {
+        sum += parseInt(r.charAt(i), 10) * weights[i];
+      }
+      return (sum % 10 === 0);
+    }
+
+    function pad(str, len, char, right) {
+      str = String(str || '');
+      while (str.length < len) {
+        str = right ? (str + (char || ' ')) : ((char || ' ') + str);
+      }
+      return str.slice(0, len);
+    }
+
+    var CSV_COMMERCIAL = "Subcontractor Name,ABA Routing,Account Number,Gross Amount,Retainage Pct,AIA App Number,Trade Scope,Lien Waiver Status\n" +
+      "TITAN CONCRETE CORP,021000021,9876543210,240000.00,10,APP-04,FOUNDATIONS & SLABS,CONDITIONAL_RECVD\n" +
+      "APEX MECHANICAL HVAC,122000496,1122334455,165000.00,10,APP-03,COMMERCIAL DUCTWORK,CONDITIONAL_RECVD\n" +
+      "VANGUARD ELECTRICAL,071000288,5544332211,80250.00,10,APP-02,SWITCHGEAR & CONDUIT,CONDITIONAL_RECVD";
+
+    var CSV_SUBDIVISION = "Subcontractor Name,ABA Routing,Account Number,Gross Amount,Retainage Pct,AIA App Number,Trade Scope,Lien Waiver Status\n" +
+      "SIERRA FRAMING PROS,122000496,4455667788,68000.00,5,APP-01,ROUGH CARPENTRY,CONDITIONAL_RECVD\n" +
+      "PACIFIC ROOFING CORP,021000021,9988776655,34000.00,5,APP-01,TILE & UNDERLAYMENT,CONDITIONAL_RECVD\n" +
+      "DELTA PLUMBING LLC,071000288,1122998833,26400.00,5,APP-02,TOP-OUT PLUMBING,CONDITIONAL_RECVD";
+
+    var CSV_CLOSEOUT = "Subcontractor Name,ABA Routing,Account Number,Gross Amount,Retainage Pct,AIA App Number,Trade Scope,Lien Waiver Status\n" +
+      "TITAN CONCRETE CORP,021000021,9876543210,24000.00,0,FINAL-RETAIN,RETAINAGE RELEASE,UNCONDITIONAL_FINAL\n" +
+      "APEX MECHANICAL HVAC,122000496,1122334455,16500.00,0,FINAL-RETAIN,RETAINAGE RELEASE,UNCONDITIONAL_FINAL\n" +
+      "VANGUARD ELECTRICAL,071000288,5544332211,8025.00,0,FINAL-RETAIN,RETAINAGE RELEASE,UNCONDITIONAL_FINAL";
+
+    var CSV_BAD_ROUTING = "Subcontractor Name,ABA Routing,Account Number,Gross Amount,Retainage Pct,AIA App Number,Trade Scope,Lien Waiver Status\n" +
+      "BAD ROUTING SUB,123456789,9999999999,50000.00,10,APP-01,DEMOLITION,CONDITIONAL_RECVD";
+
+    var rawInp = document.getElementById('constRawInp');
+    var originAbaInp = document.getElementById('constOriginAba');
+    var compIdInp = document.getElementById('constCompanyId');
+    var compNameInp = document.getElementById('constCompanyName');
+
+    var outNacha = document.getElementById('outNachaFile');
+    var outSchedule = document.getElementById('outScheduleTable');
+    var outApi = document.getElementById('outConstApi');
+
+    var statStatus = document.getElementById('statStatus');
+    var statNetTotal = document.getElementById('statNetTotal');
+    var statRetained = document.getElementById('statRetained');
+    var statBlock = document.getElementById('statBlock');
+
+    function parseCsv(raw) {
+      var lines = String(raw || '').split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
+      var items = [];
+      var headerSkipped = false;
+
+      lines.forEach(function (l) {
+        if (!headerSkipped && (l.toLowerCase().includes('subcontractor') || l.toLowerCase().includes('routing'))) {
+          headerSkipped = true;
+          return;
+        }
+        var parts = l.split(',');
+        if (parts.length >= 4) {
+          var gross = parseFloat(parts[3]) || 0;
+          var retainPct = parseFloat(parts[4]) || 0;
+          var retainAmt = (gross * retainPct) / 100;
+          var netAmt = gross - retainAmt;
+          items.push({
+            name: (parts[0] || 'SUBCONTRACTOR').trim().toUpperCase(),
+            aba: (parts[1] || '021000021').replace(/\D/g, ''),
+            acct: (parts[2] || '1234567890').trim(),
+            gross: gross,
+            retainPct: retainPct,
+            retainAmt: retainAmt,
+            net: netAmt,
+            appNum: (parts[5] || 'APP-01').trim().toUpperCase(),
+            trade: (parts[6] || 'TRADE WORK').trim().toUpperCase(),
+            waiver: (parts[7] || 'CONDITIONAL').trim().toUpperCase()
+          });
+        }
+      });
+      return items;
+    }
+
+    function refreshAudit() {
+      var items = parseCsv(rawInp.value);
+      var originAba = (originAbaInp.value || '021000021').replace(/\D/g, '');
+      var compId = (compIdInp.value || '1958473620').trim();
+      var compName = (compNameInp.value || 'PACIFIC HORIZON BUILDERS LLC').trim().toUpperCase();
+
+      var allAbasValid = isValidAba(originAba);
+      var grossTotal = 0;
+      var retainTotal = 0;
+      var netTotal = 0;
+      var entryHashSum = 0;
+
+      items.forEach(function (it) {
+        if (!isValidAba(it.aba)) allAbasValid = false;
+        grossTotal += it.gross;
+        retainTotal += it.retainAmt;
+        netTotal += it.net;
+        var r8 = parseInt(it.aba.slice(0, 8), 10) || 0;
+        entryHashSum = (entryHashSum + r8) % 10000000000;
+      });
+
+      if (allAbasValid && items.length > 0) {
+        statStatus.textContent = 'AUDITED OK';
+        statStatus.className = 'text-amber-400 font-bold';
+      } else {
+        statStatus.textContent = 'ROUTING ERROR';
+        statStatus.className = 'text-red-400 font-bold';
+      }
+
+      statNetTotal.textContent = '$' + netTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      statRetained.textContent = '$' + retainTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      var today = new Date();
+      var yymmdd = today.toISOString().slice(2, 10).replace(/-/g, '');
+      var hhmm = String(today.getHours()).padStart(2, '0') + String(today.getMinutes()).padStart(2, '0');
+
+      var lines = [];
+
+      // Record 1 - File Header
+      var rec1 = '1' +
+        '01' +
+        ' ' + pad(originAba, 9, ' ', true) +
+        ' ' + pad(compId, 9, ' ', true) +
+        yymmdd +
+        hhmm +
+        'A' +
+        '094' +
+        '10' +
+        '1' +
+        pad('CHASE/BOFA', 23, ' ', true) +
+        pad(compName, 23, ' ', true) +
+        pad('G702', 8, ' ', true);
+      lines.push(rec1);
+
+      // Record 5 - Batch Header (CCD+)
+      var rec5 = '5' +
+        '220' +
+        pad(compName, 16, ' ', true) +
+        pad('AIA DRAW', 20, ' ', true) +
+        pad(compId, 10, ' ', true) +
+        'CCD' +
+        'CONST DRAW' +
+        yymmdd +
+        yymmdd +
+        '   ' +
+        '1' +
+        originAba.slice(0, 8) +
+        '0000001';
+      lines.push(rec5);
+
+      var entryCount = 0;
+      var addendaCount = 0;
+
+      items.forEach(function (it, idx) {
+        entryCount++;
+        addendaCount++;
+        var seqStr = pad(String(idx + 1), 7, '0', false);
+        var netCents = Math.round(it.net * 100);
+
+        // Record 6 - Entry Detail
+        var rec6 = '6' +
+          '22' +
+          it.aba.slice(0, 8) +
+          it.aba.slice(8, 9) +
+          pad(it.acct, 17, ' ', true) +
+          pad(String(netCents), 10, '0', false) +
+          pad(it.appNum, 15, ' ', true) +
+          pad(it.name, 22, ' ', true) +
+          '  ' +
+          '1' +
+          originAba.slice(0, 8) +
+          seqStr;
+        lines.push(rec6);
+
+        // Record 7 - Addenda Record (Type 05 CCD+)
+        var addendaInfo = '\\EDI\\AIA\\' + it.appNum + '\\NET\\RET_' + it.retainPct + 'PCT\\WAIVER_' + it.waiver.slice(0, 4) + '\\';
+        var rec7 = '7' +
+          '05' +
+          pad(addendaInfo, 80, ' ', true) +
+          '0001' +
+          seqStr;
+        lines.push(rec7);
+      });
+
+      var totalRecordsInBatch = entryCount + addendaCount;
+      var netCentsTotal = Math.round(netTotal * 100);
+      var hashStr = pad(String(entryHashSum), 10, '0', false);
+
+      // Record 8 - Batch Control
+      var rec8 = '8' +
+        '220' +
+        pad(String(totalRecordsInBatch), 6, '0', false) +
+        hashStr +
+        pad('0', 12, '0', false) +
+        pad(String(netCentsTotal), 12, '0', false) +
+        pad(compId, 10, ' ', true) +
+        pad('', 19, ' ', true) +
+        pad('', 6, ' ', true) +
+        originAba.slice(0, 8) +
+        '0000001';
+      lines.push(rec8);
+
+      var totalLinesBefore9 = lines.length + 1; // +1 for Record 9
+      var remainder = totalLinesBefore9 % 10;
+      var padLinesNeeded = remainder === 0 ? 0 : (10 - remainder);
+      var totalFileLines = totalLinesBefore9 + padLinesNeeded;
+      var blockCount = totalFileLines / 10;
+
+      statBlock.textContent = 'PADDED (' + totalFileLines + ')';
+
+      // Record 9 - File Control
+      var rec9 = '9' +
+        '000001' +
+        pad(String(blockCount), 6, '0', false) +
+        pad(String(totalRecordsInBatch), 8, '0', false) +
+        hashStr +
+        pad('0', 12, '0', false) +
+        pad(String(netCentsTotal), 12, '0', false) +
+        pad('', 39, ' ', true);
+      lines.push(rec9);
+
+      // Block-10 padding with lines of 9s
+      for (var p = 0; p < padLinesNeeded; p++) {
+        lines.push(pad('', 94, '9', true));
+      }
+
+      outNacha.textContent = lines.join('\n');
+
+      // Schedule Table
+      var tableHtml = 'AIA G702 Progress Billing & Retainage Schedule Breakdown:\n' +
+        '----------------------------------------------------------------------------------------------------\n' +
+        pad('Subcontractor Trade', 26, ' ', true) +
+        pad('Gross Claim', 14, ' ', true) +
+        pad('Retain %', 10, ' ', true) +
+        pad('Retain Amt', 14, ' ', true) +
+        pad('Net ACH CCD+', 16, ' ', true) +
+        pad('Lien Waiver', 16, ' ', true) + '\n' +
+        '----------------------------------------------------------------------------------------------------\n';
+
+      items.forEach(function (it) {
+        tableHtml += pad(it.name.slice(0, 24), 26, ' ', true) +
+          pad('$' + it.gross.toFixed(2), 14, ' ', true) +
+          pad(it.retainPct + '%', 10, ' ', true) +
+          pad('$' + it.retainAmt.toFixed(2), 14, ' ', true) +
+          pad('$' + it.net.toFixed(2), 16, ' ', true) +
+          pad(it.waiver, 16, ' ', true) + '\n';
+      });
+
+      tableHtml += '----------------------------------------------------------------------------------------------------\n' +
+        pad('TOTALS:', 26, ' ', true) +
+        pad('$' + grossTotal.toFixed(2), 14, ' ', true) +
+        pad('', 10, ' ', true) +
+        pad('$' + retainTotal.toFixed(2), 14, ' ', true) +
+        pad('$' + netTotal.toFixed(2), 16, ' ', true) + '\n';
+
+      outSchedule.textContent = tableHtml;
+
+      // Update API snippet
+      var curl = 'curl -X POST "https://finops-rapidapi-edge.ria-rader.workers.dev/v1/generator/nacha" \\\n' +
+        '  -H "Content-Type: application/json" \\\n' +
+        '  -H "X-FinOps-Pass: YOUR_PASS_KEY" \\\n' +
+        '  -d \'{\n' +
+        '    "companyName": "' + compName + '",\n' +
+        '    "standardEntryClass": "CCD",\n' +
+        '    "originAba": "' + originAba + '",\n' +
+        '    "entries": ' + JSON.stringify(items.slice(0, 2)) + '\n' +
+        '  }\'';
+      outApi.textContent = curl;
+    }
+
+    // Presets
+    document.getElementById('btnSampleCommercial').addEventListener('click', function () {
+      rawInp.value = CSV_COMMERCIAL;
+      refreshAudit();
+    });
+
+    document.getElementById('btnSampleSubdivision').addEventListener('click', function () {
+      rawInp.value = CSV_SUBDIVISION;
+      refreshAudit();
+    });
+
+    document.getElementById('btnSampleCloseout').addEventListener('click', function () {
+      rawInp.value = CSV_CLOSEOUT;
+      refreshAudit();
+    });
+
+    document.getElementById('btnSampleBadAba').addEventListener('click', function () {
+      rawInp.value = CSV_BAD_ROUTING;
+      refreshAudit();
+    });
+
+    [rawInp, originAbaInp, compIdInp, compNameInp].forEach(function (elem) {
+      elem.addEventListener('input', refreshAudit);
+      elem.addEventListener('change', refreshAudit);
+    });
+
+    // Tab switcher
+    var tabBtns = document.querySelectorAll('.const-tab-btn');
+    var tabPanes = document.querySelectorAll('.tab-pane');
+    tabBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = btn.getAttribute('data-tab');
+        tabBtns.forEach(function (b) { b.classList.remove('active'); });
+        tabPanes.forEach(function (p) { p.style.display = 'none'; });
+        btn.classList.add('active');
+        document.getElementById(target).style.display = 'block';
+      });
+    });
+
+    // Copy handlers
+    function wireCopy(btnId, targetId) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var text = document.getElementById(targetId).textContent || '';
+        navigator.clipboard.writeText(text);
+        btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      });
+    }
+    wireCopy('btnCopyNacha', 'outNachaFile');
+    wireCopy('btnCopyApi', 'outConstApi');
+
+    // Download handler
+    document.getElementById('btnDownloadNacha').addEventListener('click', function () {
+      var text = outNacha.textContent || '';
+      var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'construction_ccd_plus.ach';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Direct Pass checkout triggers
+    document.getElementById('btnBuyConst24h').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('batch24h', { btn: e.target });
+    });
+    document.getElementById('btnBuyConst30d').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('pro30d', { btn: e.target });
+    });
+
+    rawInp.value = CSV_COMMERCIAL;
+    refreshAudit();
+  })();
+  </script>
+</body>
+</html>
