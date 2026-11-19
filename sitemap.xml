@@ -475,4 +475,14 @@
     <changefreq>weekly</changefreq>
     <priority>0.96</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/ach-universal-ezach-ach-pro-alternative-nacha-generator.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.98</priority>
+  </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/sepa-generator-pro-banklint-alternative-pain001-xml.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.98</priority>
+  </url>
 </urlset>

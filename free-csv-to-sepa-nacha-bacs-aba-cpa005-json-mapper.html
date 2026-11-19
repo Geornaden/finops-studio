@@ -136,10 +136,9 @@
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button id="btnBuyTest1" type="button" class="btn btn-primary" style="display:none;background:linear-gradient(135deg,#10b981,#059669);color:#04130d;border:none;font-weight:800;">&#129514; $1 Live Test Pass (2h)</button>
           <button id="btnBuyBatch24h" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#128179; Unlock 24h Unlimited ($9)</button>
           <button id="btnBuyPro30d" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fde68a;font-weight:700;">&#128640; Unlock 30-Day Pro ($29)</button>
-          <button id="btnBuyPayPalAlt" type="button" class="btn btn-outline" style="display:none;border-color:#60a5fa;color:#93c5fd;font-weight:700;">PayPal ($9)</button>
+          <button id="btnBuyPayPalAlt" type="button" class="btn btn-outline" style="display:none;border-color:#60a5fa;color:#93c5fd;font-weight:700;">PayPal ($9 USD)</button>
           <button id="btnFree2RowDemo" type="button" class="btn btn-outline" style="border-color:#38bdf8;color:#38bdf8;">&#127379; Run Free 2-Row Live Test</button>
           <button id="btnCopyCfoMapper" type="button" class="btn btn-outline" style="border-color:#64748b;color:#cbd5e1;">&#128203; Send to Boss/CFO</button>
         </div>
@@ -153,6 +152,13 @@
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button id="btnCopyJson" type="button" class="btn btn-outline">Copy JSON Payload</button>
           <a id="btnOpenActor" class="btn btn-outline" href="https://apify.com/finops_studio/sepa-xml-generator" target="_blank" rel="noopener">Enterprise Cloud Store &rarr;</a>
+        </div>
+      </div>
+      <div id="demoUnlockBanner" style="display:none;margin-top:12px;padding:12px 14px;border-radius:10px;background:rgba(245,158,11,0.14);border:1px solid #f59e0b;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div style="font-size:0.86rem;color:#fde68a;font-weight:700;flex:1;min-width:260px;">&#128274; Watermarked Demo Preview — Remove the watermark &amp; download your bank-ready file in 10 seconds (Card, Apple Pay, Google Pay, Cash App, Link or PayPal — USD):</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnUnlockAfterDemo9" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#128179; Remove Watermark &amp; Download — $9 USD (24h Unlimited)</button>
+          <button id="btnUnlockAfterDemo29" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fde68a;font-weight:700;">&#128640; 30-Day Pro Pass — $29 USD</button>
         </div>
       </div>
       <pre id="cloudResultBox" class="code-box" style="display:none;margin-top:12px;min-height:160px;border-color:#34d399;"></pre>
@@ -627,7 +633,7 @@
         var r = await fetch(EDGE_API + "/v1/checkout/start", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plan: ["test1usd", "pro30d", "batch24h"].includes(plan) ? plan : "batch24h", provider: provider || "auto", returnUrl: location.href.split("#")[0] })
+          body: JSON.stringify({ plan: ["pro30d", "batch24h"].includes(plan) ? plan : "batch24h", provider: provider || "auto", returnUrl: location.href.split("#")[0] })
         });
         var j = await r.json();
         if (!r.ok || !j.ok || !j.checkoutUrl) throw new Error(j.error || "Checkout error");
@@ -642,13 +648,12 @@
       }
     }
 
-    var btnTest1 = document.getElementById("btnBuyTest1");
-    if (location.search.indexOf("test_checkout=1") !== -1 && btnTest1) {
-      btnTest1.style.display = "inline-block";
-    }
-    if (btnTest1) btnTest1.addEventListener("click", function (e) { startMapperCheckout("test1usd", e.target); });
     document.getElementById("btnBuyBatch24h").addEventListener("click", function (e) { startMapperCheckout("batch24h", e.target); });
     document.getElementById("btnBuyPro30d").addEventListener("click", function (e) { startMapperCheckout("pro30d", e.target); });
+    var btnDemoUnlock9 = document.getElementById("btnUnlockAfterDemo9");
+    if (btnDemoUnlock9) btnDemoUnlock9.addEventListener("click", function (e) { startMapperCheckout("batch24h", e.target); });
+    var btnDemoUnlock29 = document.getElementById("btnUnlockAfterDemo29");
+    if (btnDemoUnlock29) btnDemoUnlock29.addEventListener("click", function (e) { startMapperCheckout("pro30d", e.target); });
     var btnPPAlt = document.getElementById("btnBuyPayPalAlt");
     if (btnPPAlt) btnPPAlt.addEventListener("click", function (e) { startMapperCheckout("batch24h", e.target, "paypal"); });
     var btnCfoMap = document.getElementById("btnCopyCfoMapper");
@@ -704,6 +709,7 @@
     document.getElementById("btnFree2RowDemo").addEventListener("click", async function (e) {
       var fmt = fmtSel.value;
       var resBox = document.getElementById("cloudResultBox");
+      var unlockBanner = document.getElementById("demoUnlockBanner");
       resBox.style.display = "block";
       e.target.disabled = true;
       resBox.textContent = "Running free 2-row live cloud demo on FinOps Edge...";
@@ -719,6 +725,10 @@
         });
         var data = await r.json();
         resBox.textContent = JSON.stringify(data, null, 2);
+        var tokNow = (document.getElementById("directToken")?.value || localStorage.getItem("finops_pro_pass") || "").trim();
+        if (unlockBanner && !(tokNow.indexOf("fop_") === 0 && window.__finopsVerifiedActivePass)) {
+          unlockBanner.style.display = "flex";
+        }
       } catch (err) {
         resBox.textContent = "Demo error: " + err.message;
       } finally {
@@ -815,6 +825,8 @@
           fileBody = first[cfg.outKey] || first.xmlContent || first.fileContent || JSON.stringify(data, null, 2);
         }
         resBox.textContent = fileBody;
+        var unlockBannerDone = document.getElementById("demoUnlockBanner");
+        if (unlockBannerDone) unlockBannerDone.style.display = "none";
         var blob = new Blob([fileBody], { type: "text/plain;charset=utf-8" });
         var a = document.createElement("a");
         a.href = URL.createObjectURL(blob);

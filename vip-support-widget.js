@@ -51,7 +51,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          plan: ['test1usd', 'pro30d', 'batch24h'].includes(plan) ? plan : 'batch24h',
+          plan: ['pro30d', 'batch24h'].includes(plan) ? plan : 'batch24h',
           provider: opts.provider || 'auto',
           returnUrl,
           payerEmail: opts.customerEmail || opts.payerEmail || undefined
