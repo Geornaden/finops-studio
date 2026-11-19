@@ -806,5 +806,66 @@
     refreshPosPay();
   })();
   </script>
+
+  <!-- FinOps Direct Pass Download & Copy Guard -->
+  <script id="finops-download-paywall-guard">
+    (function () {
+      const gatedIds = [
+        'btnDownloadAba', 'btnDownloadCpa', 'btnDownloadNacha', 'btnDownloadSepa',
+        'btnDownloadPeppol', 'btnDownloadPp', 'btnDownloadNz', 'btnDownloadBacs', 'btnDownloadXml',
+        'btnCopyAba', 'btnCopyCpa', 'btnCopyNacha', 'btnCopySepa', 'btnCopyPeppol',
+        'btnCopyPp', 'btnCopyBai2Csv', 'btnCopyBai2Json', 'btnCopyNz', 'btnCopyBacs', 'btnCopyXml'
+      ];
+      const previewIds = [
+        'abaOutput', 'cpaPreview', 'outNachaFile', 'outSepaXml', 'outPeppolXml',
+        'outAbaFile', 'outPpFile', 'nzPreview', 'outCpaFile', 'outBacsFile', 'outFaimXml', 'bacsOutput'
+      ];
+
+      function syncPaywallState() {
+        const unlocked = Boolean(window.__finopsVerifiedActivePass);
+        for (const id of gatedIds) {
+          const btn = document.getElementById(id);
+          if (!btn) continue;
+          if (!btn.dataset.origLabel) btn.dataset.origLabel = btn.textContent.trim();
+          if (unlocked) {
+            btn.textContent = btn.dataset.origLabel;
+          } else if (id.startsWith('btnDownload')) {
+            btn.textContent = '🔒 Unlock & Download ($9 Pass)';
+          } else {
+            btn.textContent = '🔒 Unlock & Copy ($9 Pass)';
+          }
+        }
+        for (const pid of previewIds) {
+          const el = document.getElementById(pid);
+          if (!el) continue;
+          el.style.userSelect = unlocked ? 'text' : 'none';
+          el.oncopy = unlocked ? null : function (ev) {
+            ev.preventDefault();
+            if (typeof window.startFinOpsCheckout === 'function') window.startFinOpsCheckout('batch24h');
+          };
+        }
+      }
+
+      document.addEventListener('click', function (e) {
+        const btn = e.target && e.target.closest ? e.target.closest('button') : null;
+        if (!btn || !gatedIds.includes(btn.id)) return;
+        if (window.__finopsVerifiedActivePass) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        if (typeof window.startFinOpsCheckout === 'function') {
+          window.startFinOpsCheckout('batch24h', { btn: btn });
+        } else {
+          window.location.href = './free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html';
+        }
+      }, true);
+
+      window.addEventListener('finops-pass-active', syncPaywallState);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', syncPaywallState);
+      } else {
+        syncPaywallState();
+      }
+    })();
+  </script>
 </body>
 </html>

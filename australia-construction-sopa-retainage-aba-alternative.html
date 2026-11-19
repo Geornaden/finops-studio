@@ -411,10 +411,10 @@ METRO SCAFFOLDING,012-003,99887766,SOPA-09,6200.00,5</textarea>
           </p>
         </div>
         <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-          <button class="aba-btn aba-btn-primary" onclick="initDirectCheckout('batch24h')">
+          <button class="aba-btn aba-btn-primary" onclick="window.startFinOpsCheckout('batch24h', { btn: this })">
             Get 24h Unlimited Pass ($9 USD)
           </button>
-          <button class="aba-btn aba-btn-secondary" onclick="initDirectCheckout('pro30d')">
+          <button class="aba-btn aba-btn-secondary" onclick="window.startFinOpsCheckout('pro30d', { btn: this })">
             Get 30-Day Pro Pass ($29 USD)
           </button>
         </div>
@@ -634,6 +634,67 @@ CUSTOM CEILINGS NSW,062-111,55667788,CLAIM-99,7400.00,5`;
 
     // Initial calculation
     calculateSopaAndAba();
+  </script>
+
+  <!-- FinOps Direct Pass Download & Copy Guard -->
+  <script id="finops-download-paywall-guard">
+    (function () {
+      const gatedIds = [
+        'btnDownloadAba', 'btnDownloadCpa', 'btnDownloadNacha', 'btnDownloadSepa',
+        'btnDownloadPeppol', 'btnDownloadPp', 'btnDownloadNz', 'btnDownloadBacs', 'btnDownloadXml',
+        'btnCopyAba', 'btnCopyCpa', 'btnCopyNacha', 'btnCopySepa', 'btnCopyPeppol',
+        'btnCopyPp', 'btnCopyBai2Csv', 'btnCopyBai2Json', 'btnCopyNz', 'btnCopyBacs', 'btnCopyXml'
+      ];
+      const previewIds = [
+        'abaOutput', 'cpaPreview', 'outNachaFile', 'outSepaXml', 'outPeppolXml',
+        'outAbaFile', 'outPpFile', 'nzPreview', 'outCpaFile', 'outBacsFile', 'outFaimXml', 'bacsOutput'
+      ];
+
+      function syncPaywallState() {
+        const unlocked = Boolean(window.__finopsVerifiedActivePass);
+        for (const id of gatedIds) {
+          const btn = document.getElementById(id);
+          if (!btn) continue;
+          if (!btn.dataset.origLabel) btn.dataset.origLabel = btn.textContent.trim();
+          if (unlocked) {
+            btn.textContent = btn.dataset.origLabel;
+          } else if (id.startsWith('btnDownload')) {
+            btn.textContent = '🔒 Unlock & Download ($9 Pass)';
+          } else {
+            btn.textContent = '🔒 Unlock & Copy ($9 Pass)';
+          }
+        }
+        for (const pid of previewIds) {
+          const el = document.getElementById(pid);
+          if (!el) continue;
+          el.style.userSelect = unlocked ? 'text' : 'none';
+          el.oncopy = unlocked ? null : function (ev) {
+            ev.preventDefault();
+            if (typeof window.startFinOpsCheckout === 'function') window.startFinOpsCheckout('batch24h');
+          };
+        }
+      }
+
+      document.addEventListener('click', function (e) {
+        const btn = e.target && e.target.closest ? e.target.closest('button') : null;
+        if (!btn || !gatedIds.includes(btn.id)) return;
+        if (window.__finopsVerifiedActivePass) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        if (typeof window.startFinOpsCheckout === 'function') {
+          window.startFinOpsCheckout('batch24h', { btn: btn });
+        } else {
+          window.location.href = './free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html';
+        }
+      }, true);
+
+      window.addEventListener('finops-pass-active', syncPaywallState);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', syncPaywallState);
+      } else {
+        syncPaywallState();
+      }
+    })();
   </script>
 </body>
 </html>
