@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en-NZ">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Zealand Construction Contracts Act (CCA) Retention Trust to Direct Credit Alternative | FinOps Studio</title>
+  <meta name="description" content="Convert New Zealand builder CCA payment schedules, subcontractor progress claims &amp; statutory 2023 retention trust withholding into bank-compliant Direct Credit files for ANZ Direct Online, ASB FastNet, BNZ &amp; Westpac. $9 USD direct pass." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/new-zealand-construction-cca-retention-direct-credit-alternative.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Convert New Zealand Construction Contracts Act (CCA) 10% Retention Trust & Progress Claims to Direct Credit Files (ANZ, ASB, BNZ, Westpac)",
+        "url": "https://geornaden.github.io/finops-studio/new-zealand-construction-cca-retention-direct-credit-alternative.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Deterministic New Zealand construction payment clearing engine converting Construction Contracts Act (CCA) progress payment schedules, statutory 2023 retention trust account withholding, and 16-digit NZ bank account numbers into compliant Direct Credit files."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does statutory retention money work under the New Zealand Construction Contracts Act (CCA) 2023 Amendment?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under the Construction Contracts (Retention Money) Amendment Act 2023, head contractors in New Zealand who hold retention money must hold it on trust in a separate compliant bank account with a registered NZ bank, or hold a compliant financial instrument. Retention money cannot be used for working capital. When issuing payment schedules under CCA Section 21, the certified progress claim is reduced by agreed retention (typically 5%–10%), which must be allocated to the trust account while the net balance is paid to the subcontractor."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why do New Zealand corporate bank portals reject standard accounting CSV exports for trade contractor disbursements?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "New Zealand business banking platforms—such as ANZ Direct Online, ASB FastNet Business, BNZ Business, and Westpac Corporate Online—require standardized Direct Credit electronic entry files formatted with strict 16-digit account strings (BB-bbbb-AAAAAAA-SSS), 12-character Particulars/Code/Reference fields, and self-balancing batch control records."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does FinOps Studio replace expensive enterprise construction ERPs for Kiwi contractors?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Enterprise construction software like Procore, Jobpac, or Viewpoint charge thousands of dollars in monthly subscriptions. FinOps Studio provides an instant deterministic browser converter and cloud API for $9 USD (24h unlimited pass) or $29 USD (30-day Pro pass) with zero recurring monthly lock-in."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .nz-hero {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(16, 185, 129, 0.08) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(14, 165, 233, 0.3);
+      border-radius: 14px;
+      padding: 2.2rem;
+      margin-bottom: 2rem;
+    }
+    .nz-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 860px) {
+      .nz-grid { grid-template-columns: 1fr; }
+    }
+    .nz-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+    .nz-card h3 {
+      margin-top: 0;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.15rem;
+    }
+    .nz-input-group {
+      margin-bottom: 1.1rem;
+    }
+    .nz-input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 0.35rem;
+    }
+    .nz-input-group input, .nz-input-group select, .nz-input-group textarea {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #f9fafb;
+      padding: 0.65rem 0.85rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      box-sizing: border-box;
+    }
+    .nz-input-group textarea {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      line-height: 1.45;
+      resize: vertical;
+    }
+    .nz-input-group input:focus, .nz-input-group select:focus, .nz-input-group textarea:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+    .nz-btn-bar {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .nz-btn {
+      background: #0284c7;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.65rem 1.25rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s ease;
+    }
+    .nz-btn:hover { background: #0369a1; }
+    .nz-btn-outline {
+      background: transparent;
+      color: #cbd5e1;
+      border: 1px solid #4b5563;
+      border-radius: 6px;
+      padding: 0.65rem 1.1rem;
+      font-weight: 500;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .nz-btn-outline:hover {
+      background: #1f2937;
+      color: #fff;
+      border-color: #9ca3af;
+    }
+    .nz-sample-btn {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .nz-sample-btn:hover {
+      background: #334155;
+      color: #f8fafc;
+      border-color: #64748b;
+    }
+    .nz-stat-box {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .nz-stat-val {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+    .nz-stat-lbl {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .nz-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+      font-size: 0.88rem;
+    }
+    .nz-table th {
+      background: #1f2937;
+      color: #f3f4f6;
+      padding: 0.75rem;
+      text-align: left;
+      border: 1px solid #374151;
+    }
+    .nz-table td {
+      padding: 0.75rem;
+      border: 1px solid #374151;
+      color: #cbd5e1;
+    }
+    .nz-table tr:nth-child(even) { background: #111827; }
+    .nz-table tr:nth-child(odd) { background: #0b0f19; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="./index.html"><span class="brand-badge">FS</span><span>FinOps Studio</span></a>
+      <nav class="nav-links">
+        <a href="./australia-construction-sopa-retainage-aba-alternative.html">AU SOPA ABA</a>
+        <a href="./canada-construction-lien-holdback-cpa005-alternative.html">CA Lien CPA-005</a>
+        <a href="./uk-cis-hmrc-construction-bacs-payroll-alternative.html">UK CIS BACS</a>
+        <a class="btn btn-primary" href="#nzPricingBar">⚡ Unlock $9 Pass &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="nz-hero">
+      <div style="display: inline-block; background: rgba(14, 165, 233, 0.15); color: #38bdf8; font-size: 0.82rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem; border: 1px solid rgba(14, 165, 233, 0.3);">
+        🇳🇿 NEW ZEALAND CCA 2023 RETENTION TRUST &amp; DIRECT CREDIT ALTERNATIVE
+      </div>
+      <h1 style="color: #fff; font-size: 2.1rem; line-height: 1.25; margin-bottom: 0.75rem;">
+        New Zealand Construction Contracts Act (CCA) Retention Trust to Direct Credit Alternative
+      </h1>
+      <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.6; max-width: 820px; margin-bottom: 1.2rem;">
+        Convert Kiwi builder CCA payment claims, statutory 2023 retention trust deductions, and 16-digit NZ bank account numbers into bank-compliant Direct Credit payment files. Supported by ANZ Direct Online, ASB FastNet Business, BNZ Business &amp; Westpac Corporate.
+      </p>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; font-size: 0.85rem; color: #9ca3af;">
+        <span>✅ 2023 CCA Retention Money Amendment compliance</span>
+        <span>✅ 16-digit NZ bank account validation (BB-bbbb-AAAAAAA-SSS)</span>
+        <span>✅ Strict 12-character Particulars, Code &amp; Reference formatting</span>
+        <span>✅ $0/mo Desktop software subscription ($9 USD pass)</span>
+      </div>
+    </section>
+
+    <!-- Interactive NZ CCA Direct Credit Generator -->
+    <section id="nzConverter" class="nz-card" style="margin-bottom: 2.5rem;">
+      <h3>
+        <span>⚙️</span> Interactive NZ CCA Progress Claim &amp; Retention Direct Credit Generator
+      </h3>
+      <p style="color: #9ca3af; font-size: 0.9rem; margin-bottom: 1.2rem;">
+        Select a New Zealand commercial construction preset below or paste your raw subcontractor progress claims. The engine automatically calculates the 10% statutory retention trust deduction, validates 16-digit NZ account strings, and formats bank-ready Direct Credit files.
+      </p>
+
+      <div class="nz-btn-bar">
+        <button type="button" class="nz-sample-btn" id="btnPresetAuckland">🏢 Auckland Commercial Fitout &amp; Glazing (10% Retention)</button>
+        <button type="button" class="nz-sample-btn" id="btnPresetWellington">🏗️ Wellington Structural Steel &amp; Concrete (10% Retention)</button>
+        <button type="button" class="nz-sample-btn" id="btnPresetChristchurch">🚜 Christchurch Earthworks &amp; Civil (10% Retention)</button>
+        <button type="button" class="nz-sample-btn" id="btnPresetRelease">🔓 Practical Completion Retention Release Run (0% Withheld)</button>
+      </div>
+
+      <div class="nz-grid">
+        <!-- Left: Configuration & Input -->
+        <div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+            <div class="nz-input-group">
+              <label for="nzPayerName">Main Contractor Name (Max 20 Chars)</label>
+              <input type="text" id="nzPayerName" value="HAWTHORN CONST NZ" maxlength="20" />
+            </div>
+            <div class="nz-input-group">
+              <label for="nzPayerAccount">Payer 16-Digit NZ Account</label>
+              <input type="text" id="nzPayerAccount" value="01-0102-0123456-000" maxlength="18" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+            <div class="nz-input-group">
+              <label for="nzBankFormat">Target NZ Bank Clearing Platform</label>
+              <select id="nzBankFormat">
+                <option value="anz" selected>ANZ Direct Online / DeskBank (Standard Direct Credit)</option>
+                <option value="asb">ASB FastNet Business (Direct Credit)</option>
+                <option value="bnz">BNZ Business (Direct Credit Batch)</option>
+                <option value="westpac">Westpac Corporate Online (Direct Entry)</option>
+              </select>
+            </div>
+            <div class="nz-input-group">
+              <label for="nzRetentionPct">Statutory Retention Trust %</label>
+              <select id="nzRetentionPct">
+                <option value="10.0" selected>10.0% — Statutory Contract Standard (CCA 2023)</option>
+                <option value="5.0">5.0% — Reduced Practical Completion Holdback</option>
+                <option value="0.0">0.0% — Full Retention Release Run</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="nz-input-group">
+            <label for="nzCsvInp">Subcontractor Claims CSV (Trade Name, 16-Digit Account, Gross Claim, Particulars, Code, Reference)</label>
+            <textarea id="nzCsvInp" rows="8"></textarea>
+          </div>
+
+          <div class="nz-btn-bar">
+            <button type="button" class="nz-btn" id="btnGenerateNz">⚡ Generate Direct Credit File</button>
+            <button type="button" class="nz-btn-outline" id="btnValidateAccounts">🔍 Audit 16-Digit NZ Accounts</button>
+          </div>
+        </div>
+
+        <!-- Right: Summary & File Preview -->
+        <div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1.2rem;">
+            <div class="nz-stat-box">
+              <span class="nz-stat-lbl">Gross Certified Work</span>
+              <span class="nz-stat-val" id="statGrossAmount" style="color:#60a5fa;">$0.00 NZD</span>
+            </div>
+            <div class="nz-stat-box">
+              <span class="nz-stat-lbl">10% Retention to Trust</span>
+              <span class="nz-stat-val" id="statRetentionAmount" style="color:#f59e0b;">$0.00 NZD</span>
+            </div>
+          </div>
+
+          <div class="nz-stat-box" style="margin-bottom: 1.2rem;">
+            <span class="nz-stat-lbl">Net Direct Credit Payouts (Direct to Subcontractors)</span>
+            <span class="nz-stat-val" id="statNetAmount" style="color:#34d399;">$0.00 NZD</span>
+          </div>
+
+          <div class="nz-input-group">
+            <label for="nzPreview">New Zealand Direct Credit File Preview (.DCC / .txt)</label>
+            <textarea id="nzPreview" rows="8" readonly placeholder="Click 'Generate Direct Credit File' to view formatted banking records..."></textarea>
+          </div>
+
+          <div class="nz-btn-bar">
+            <button type="button" class="nz-btn-outline" id="btnCopyNz">📋 Copy Direct Credit</button>
+            <button type="button" class="nz-btn" id="btnDownloadNz" style="background:#059669;">💾 Download .DCC File</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing / Direct Instant Pass Bar -->
+    <section id="nzPricingBar" class="nz-card" style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(15, 23, 42, 0.98) 100%); border-color: rgba(14, 165, 233, 0.4); text-align: center; margin-bottom: 2.5rem;">
+      <h2 style="color: #fff; margin-top: 0;">🚀 Direct New Zealand Construction Instant Passes (Instant Apple Pay &amp; Card)</h2>
+      <p style="color: #cbd5e1; max-width: 680px; margin: 0 auto 1.5rem; font-size: 0.95rem;">
+        Generate unlimited New Zealand Direct Credit subcontractor payment files with zero monthly ERP fees. Direct API execution via Card, Apple Pay, Google Pay, Stripe Link, or PayPal.
+      </p>
+      <div style="display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap;">
+        <div style="background: #1f2937; border: 1px solid #374151; border-radius: 10px; padding: 1.5rem; width: 280px; text-align: left;">
+          <h4 style="margin: 0 0 0.5rem 0; color: #38bdf8; font-size: 1.1rem;">24-Hour Pass</h4>
+          <div style="font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">$9 <span style="font-size: 0.9rem; color: #9ca3af; font-weight: 400;">USD</span></div>
+          <p style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 1rem;">Unlimited New Zealand Direct Credit file conversions for 24 hours. Perfect for 20th of the month subcontractor payment runs.</p>
+          <button type="button" class="nz-btn" style="width: 100%; justify-content: center;" onclick="window.__finopsLaunchCheckout && window.__finopsLaunchCheckout('batch24h')">⚡ Get $9 Pass</button>
+        </div>
+        <div style="background: #1f2937; border: 1px solid #0284c7; border-radius: 10px; padding: 1.5rem; width: 280px; text-align: left; position: relative;">
+          <div style="position: absolute; top: -10px; right: 12px; background: #0284c7; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">POPULAR</div>
+          <h4 style="margin: 0 0 0.5rem 0; color: #38bdf8; font-size: 1.1rem;">30-Day Pro Pass</h4>
+          <div style="font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">$29 <span style="font-size: 0.9rem; color: #9ca3af; font-weight: 400;">USD</span></div>
+          <p style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 1rem;">30 days of unlimited NZ Direct Credit, Australian .ABA, Canadian CPA-005 &amp; UK BACS conversions + priority cloud API access.</p>
+          <button type="button" class="nz-btn" style="width: 100%; justify-content: center; background: #0284c7;" onclick="window.__finopsLaunchCheckout && window.__finopsLaunchCheckout('pro30d')">⚡ Get 30-Day Pro</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- New Zealand Construction Contracts Act Compliance Guide -->
+    <section class="nz-card" style="margin-bottom: 2.5rem;">
+      <h3><span>📖</span> New Zealand Construction Contracts Act (CCA) 2023 Retention Money Requirements</h3>
+      <table class="nz-table">
+        <thead>
+          <tr>
+            <th>Statutory Obligation</th>
+            <th>Legal Requirement (CCA 2023 Amendment)</th>
+            <th>Compliance Risk &amp; Penalties</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Mandatory Trust Status</strong></td>
+            <td>Retention money withheld under a commercial construction contract is deemed to be held on trust as soon as it is withheld from a payment claim.</td>
+            <td>Strict liability offence for failing to hold retention money properly. Maximum penalty of <strong>$200,000 for companies</strong> and <strong>$50,000 for directors</strong>.</td>
+          </tr>
+          <tr>
+            <td><strong>Separate Bank Account</strong></td>
+            <td>Retention funds must be held in a designated trust account with a registered NZ bank (ANZ, ASB, BNZ, Westpac, Kiwibank) or covered by a qualifying financial instrument.</td>
+            <td>Funds cannot be commingled with head contractor operating cash flow or used as working capital under any circumstance.</td>
+          </tr>
+          <tr>
+            <td><strong>Accounting Records &amp; Inspection</strong></td>
+            <td>Head contractors must maintain proper accounting ledger records identifying each subcontractor, retention amounts withheld, and trust deposits.</td>
+            <td>Subcontractors have a statutory right to inspect retention records quarterly at zero charge.</td>
+          </tr>
+          <tr>
+            <td><strong>Section 21 Payment Schedules</strong></td>
+            <td>Payers must issue a payment schedule within statutory timeframes specifying scheduled amount, retention deductions, and net payable.</td>
+            <td>Failure to provide a schedule triggers the full claimed amount becoming a statutory debt due immediately.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer style="border-top: 1px solid #1f2937; padding: 2rem 0; margin-top: 3rem; text-align: center; color: #9ca3af; font-size: 0.85rem;">
+    <div class="container">
+      <p style="margin-bottom: 0.5rem;">FinOps Studio &bull; Deterministic Financial Engineering &amp; Bank File Clearing</p>
+      <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+        <a href="./index.html" style="color: #cbd5e1;">Home</a>
+        <a href="./australia-construction-sopa-retainage-aba-alternative.html" style="color: #cbd5e1;">AU SOPA ABA</a>
+        <a href="./canada-construction-lien-holdback-cpa005-alternative.html" style="color: #cbd5e1;">CA Lien CPA-005</a>
+        <a href="./uk-cis-hmrc-construction-bacs-payroll-alternative.html" style="color: #cbd5e1;">UK Construction BACS</a>
+        <a href="./construction-aia-g702-lien-waiver-nacha-ach-alternative.html" style="color: #cbd5e1;">US Construction NACHA</a>
+        <a href="./sitemap.xml" style="color: #cbd5e1;">Sitemap</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./vip-support-widget.js" defer></script>
+
+  <script>
+    // New Zealand Bank Code Dictionary
+    const NZ_BANKS = {
+      '01': 'ANZ Bank New Zealand',
+      '02': 'Bank of New Zealand (BNZ)',
+      '03': 'Westpac New Zealand',
+      '06': 'ASB Bank',
+      '11': 'ANZ Bank New Zealand',
+      '12': 'ASB Bank',
+      '15': 'TSB Bank',
+      '25': 'BNZ',
+      '38': 'Kiwibank'
+    };
+
+    const PRESETS = {
+      auckland: `Auckland Commercial Glazing Ltd,01-0102-0456789-000,92000.00,PAY-PROG-04,INV-8891,RETENTION-10
+Waitemata Electrical Services,06-0201-0987654-000,68500.00,PAY-PROG-04,INV-8892,RETENTION-10
+Tamaki Drywall & Plasterboard,02-0345-0554433-000,45000.00,PAY-PROG-04,INV-8893,RETENTION-10
+Counties HVAC & Refrigeration,03-0199-0112233-000,74000.00,PAY-PROG-04,INV-8894,RETENTION-10`,
+
+      wellington: `Cook Strait Structural Steel,03-0210-0998877-000,145000.00,CAPITAL-P06,STEEL-440,RETENTION-10
+Windy City Concrete Placing,01-0500-0334455-000,88000.00,CAPITAL-P06,CONC-902,RETENTION-10
+Hutt Valley Plumbing & Drainage,02-0520-0776655-000,52000.00,CAPITAL-P06,PLUMB-119,RETENTION-10
+Te Aro Fire Systems Ltd,06-0540-0223344-000,41500.00,CAPITAL-P06,FIRE-051,RETENTION-10`,
+
+      christchurch: `Canterbury Civil & Earthmoving,02-0800-0123987-000,185000.00,CHCH-EXP-08,CIVIL-701,RETENTION-10
+Avon River Asphalting & Kerbing,01-0790-0654321-000,96000.00,CHCH-EXP-08,ASPH-332,RETENTION-10
+Southern Cross Scaffolding Ltd,06-0820-0445566-000,38000.00,CHCH-EXP-08,SCAF-881,RETENTION-10
+Port Hills Foundations Co,03-0855-0991122-000,112000.00,CHCH-EXP-08,FOUND-209,RETENTION-10`,
+
+      release: `Auckland Commercial Glazing Ltd,01-0102-0456789-000,46000.00,PCOMPL-REL,REL-8891,FINAL-RELEASE
+Waitemata Electrical Services,06-0201-0987654-000,34250.00,PCOMPL-REL,REL-8892,FINAL-RELEASE
+Tamaki Drywall & Plasterboard,02-0345-0554433-000,22500.00,PCOMPL-REL,REL-8893,FINAL-RELEASE
+Counties HVAC & Refrigeration,03-0199-0112233-000,37000.00,PCOMPL-REL,REL-8894,FINAL-RELEASE`
+    };
+
+    function loadPreset(key, retentionPct) {
+      document.getElementById('nzCsvInp').value = PRESETS[key] || '';
+      document.getElementById('nzRetentionPct').value = retentionPct;
+      generateNz();
+    }
+
+    document.getElementById('btnPresetAuckland').addEventListener('click', () => loadPreset('auckland', '10.0'));
+    document.getElementById('btnPresetWellington').addEventListener('click', () => loadPreset('wellington', '10.0'));
+    document.getElementById('btnPresetChristchurch').addEventListener('click', () => loadPreset('christchurch', '10.0'));
+    document.getElementById('btnPresetRelease').addEventListener('click', () => loadPreset('release', '0.0'));
+
+    function cleanNzAccount(accStr) {
+      return String(accStr || '').replace(/[^0-9]/g, '');
+    }
+
+    function formatNzAccount(accStr) {
+      const clean = cleanNzAccount(accStr);
+      if (clean.length < 15) return accStr;
+      const bank = clean.slice(0, 2);
+      const branch = clean.slice(2, 6);
+      const acc = clean.slice(6, 13);
+      const sfx = clean.slice(13);
+      return `${bank}-${branch}-${acc}-${sfx}`;
+    }
+
+    function padRight(str, len, char = ' ') {
+      str = String(str || '');
+      return str.length >= len ? str.slice(0, len) : str + char.repeat(len - str.length);
+    }
+
+    function padLeft(str, len, char = '0') {
+      str = String(str || '');
+      return str.length >= len ? str.slice(0, len) : char.repeat(len - str.length) + str;
+    }
+
+    function generateNz() {
+      const payerName = padRight((document.getElementById('nzPayerName').value || 'HAWTHORN CONST NZ').toUpperCase(), 20);
+      const payerAccount = cleanNzAccount(document.getElementById('nzPayerAccount').value || '0101020123456000');
+      const retentionPct = parseFloat(document.getElementById('nzRetentionPct').value) || 0;
+      const csv = document.getElementById('nzCsvInp').value.trim();
+
+      const lines = csv.split('\n').map(l => l.trim()).filter(Boolean);
+      let grossCents = 0;
+      let retentionCents = 0;
+      let netCents = 0;
+      let count = 0;
+
+      const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      let outputLines = [];
+
+      // Header: 12-byte File Identification & Batch Tag
+      outputLines.push(`HDR:NZ-DIRECT-CREDIT:${dateStr}:${payerName.trim()}`);
+
+      lines.forEach((line, idx) => {
+        const parts = line.split(',').map(p => p.trim());
+        if (parts.length < 3) return;
+
+        const tradeName = parts[0];
+        const rawAccount = parts[1];
+        const grossAmount = parseFloat(parts[2]) || 0;
+        const particulars = padRight((parts[3] || 'PAYMENT').toUpperCase(), 12);
+        const code = padRight((parts[4] || `CLAIM-${idx + 1}`).toUpperCase(), 12);
+        const ref = padRight((parts[5] || 'CCA-PROGRESS').toUpperCase(), 12);
+
+        const itemGrossCents = Math.round(grossAmount * 100);
+        const itemRetentionCents = Math.round(itemGrossCents * (retentionPct / 100));
+        const itemNetCents = itemGrossCents - itemRetentionCents;
+
+        grossCents += itemGrossCents;
+        retentionCents += itemRetentionCents;
+        netCents += itemNetCents;
+        count++;
+
+        const cleanAcc = cleanNzAccount(rawAccount);
+        const amtStr = padLeft(itemNetCents, 10);
+        const payeeStr = padRight(tradeName.toUpperCase(), 20);
+
+        // NZ Direct Credit 160-byte Standard Record:
+        // TxType (50 = Direct Credit), Recipient Account (16d), Amount (10d cents), Payee Name (20c), Particulars (12c), Code (12c), Reference (12c), Payer Account (16d), Payer Name (20c)
+        let record = `50,${cleanAcc.slice(0, 16)},${amtStr},${payeeStr},${particulars},${code},${ref},${payerAccount.slice(0, 16)},${payerName}`;
+        outputLines.push(record);
+      });
+
+      // Trailer Record
+      const totalAmtStr = padLeft(netCents, 12);
+      outputLines.push(`TRL:COUNT=${count}:TOTAL=${totalAmtStr}:HASH=${grossCents}`);
+
+      // Update UI displays
+      document.getElementById('statGrossAmount').textContent = `$${(grossCents / 100).toLocaleString('en-NZ', { minimumFractionDigits: 2 })} NZD`;
+      document.getElementById('statRetentionAmount').textContent = `$${(retentionCents / 100).toLocaleString('en-NZ', { minimumFractionDigits: 2 })} NZD`;
+      document.getElementById('statNetAmount').textContent = `$${(netCents / 100).toLocaleString('en-NZ', { minimumFractionDigits: 2 })} NZD`;
+
+      document.getElementById('nzPreview').value = outputLines.join('\n');
+    }
+
+    document.getElementById('btnGenerateNz').addEventListener('click', generateNz);
+
+    document.getElementById('btnValidateAccounts').addEventListener('click', () => {
+      const csv = document.getElementById('nzCsvInp').value.trim();
+      const lines = csv.split('\n').map(l => l.trim()).filter(Boolean);
+      let report = '🇳🇿 New Zealand Bank Account Audit Report:\n\n';
+
+      lines.forEach((line, idx) => {
+        const parts = line.split(',').map(p => p.trim());
+        if (parts.length >= 2) {
+          const clean = cleanNzAccount(parts[1]);
+          const bankCode = clean.slice(0, 2);
+          const bankName = NZ_BANKS[bankCode] || 'Registered NZ Financial Institution';
+          const validLength = clean.length === 15 || clean.length === 16;
+          report += `Row ${idx + 1}: ${parts[0]} -> ${formatNzAccount(parts[1])} | Bank: ${bankName} [${validLength ? 'VALID 16-DIGIT' : 'CHECK LENGTH'}]\n`;
+        }
+      });
+
+      alert(report);
+    });
+
+    document.getElementById('btnCopyNz').addEventListener('click', () => {
+      const text = document.getElementById('nzPreview').value;
+      if (!text) {
+        alert('Please generate the Direct Credit file first.');
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Direct Credit file content copied to clipboard!');
+      });
+    });
+
+    document.getElementById('btnDownloadNz').addEventListener('click', () => {
+      const text = document.getElementById('nzPreview').value;
+      if (!text) {
+        alert('Please generate the Direct Credit file first.');
+        return;
+      }
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `NZ_CCA_RETENTION_DIRECT_CREDIT_${new Date().toISOString().slice(0, 10)}.DCC`;
+      a.click();
+    });
+
+    // Initialize with Auckland preset
+    loadPreset('auckland', '10.0');
+  </script>
+</body>
+</html>
