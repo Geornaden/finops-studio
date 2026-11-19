@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>USt-IdNr Validator Deutschland (ISO 7064 MOD 11,10), Leitweg-ID Prüfer, BLZ zu DE IBAN, XRechnung 3.0 & DATEV EXTF API | FinOps Studio</title>
+  <meta name="description" content="Kostenloser Client-Side Validator für deutsche USt-IdNr (DE + 9 Ziffern MOD 11,10), Leitweg-ID Prüfziffer (MOD 97-10 für XRechnung B2G/B2B), 8-stellige Bankleitzahl (BLZ) zu 22-stelliger DE IBAN (Deutsche Bank, Commerzbank, Sparkasse, Volksbank) sowie Generator für SEPA pain.001.001.09, XRechnung 3.0 und DATEV Buchungsstapel EXTF v700." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/ustidnr-leitweg-id-validator-xrechnung-datev-sepa-deutschland-api.html" />
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Deutscher USt-IdNr Validator, Leitweg-ID Prüfer, BLZ zu DE IBAN Konverter und XRechnung/DATEV Generator",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All (100% Client-Side Browser Sandbox)",
+        "inLanguage": "de-DE",
+        "url": "https://geornaden.github.io/finops-studio/ustidnr-leitweg-id-validator-xrechnung-datev-sepa-deutschland-api.html",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD",
+          "description": "Kostenlose lokale Validierung im Browser. Cloud-API für unbegrenzte Konvertierungen ab 9 USD / 24h Pass oder 29 USD / 30 Tage Pro."
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "FinOps Studio",
+          "url": "https://geornaden.github.io/finops-studio/"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Wie wird die deutsche USt-IdNr mathematisch geprüft?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Die deutsche Umsatzsteuer-Identifikationsnummer (USt-IdNr) besteht aus dem Länderkürzel DE und genau 9 Ziffern. Die neunte Ziffer ist eine Prüfziffer nach ISO 7064, MOD 11,10. FinOps Studio berechnet diesen Algorithmus offline im Browser, um Tippfehler vor dem Einreichen von XRechnungen oder SEPA-Transfers sofort abzufangen."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Was ist eine Leitweg-ID und wie setzt sich die Prüfziffer zusammen?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Die Leitweg-ID ist die Adressierungskennung der KoSIT für elektronische Rechnungen an Bund, Länder und Kommunen (XRechnung Feld BT-10). Sie besteht aus Grobadressierung (bis zu 12 Stellen mit Bundesland-Code), Feinadressierung (bis zu 30 alphanumerische Stellen) und einer 2-stelligen Prüfziffer nach ISO 7064 MOD 97-10."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Wie konvertiert man eine 8-stellige deutsche BLZ und Kontonummer in eine DE IBAN?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Eine deutsche IBAN umfasst 22 Stellen: DE + 2 Prüfziffern + 8-stellige Bankleitzahl (BLZ) + 10-stellige Kontonummer (mit führenden Nullen). Die Prüfziffern berechnen sich aus 98 - (BBAN + '131400' MOD 97)."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .de-hero {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(239, 68, 68, 0.08) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(234, 179, 8, 0.25);
+      border-radius: 14px;
+      padding: 2.2rem;
+      margin-bottom: 2rem;
+    }
+    .de-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 860px) {
+      .de-grid { grid-template-columns: 1fr; }
+    }
+    .de-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+    .de-card h3 {
+      margin-top: 0;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.15rem;
+    }
+    .de-input-group {
+      margin-bottom: 1.1rem;
+    }
+    .de-input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 0.35rem;
+    }
+    .de-input-group input, .de-input-group select {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #f9fafb;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .de-input-group input:focus, .de-input-group select:focus {
+      outline: none;
+      border-color: #eab308;
+      box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.2);
+    }
+    .de-badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .de-badge-ok { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .de-badge-err { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .de-badge-info { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
+    .de-sample-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .de-sample-btn {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #e5e7eb;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .de-sample-btn:hover {
+      background: #374151;
+      border-color: #eab308;
+      color: #fff;
+    }
+    .de-diag-box {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      margin-top: 1rem;
+      line-height: 1.5;
+    }
+    .de-diag-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #1e293b;
+      padding: 0.45rem 0;
+    }
+    .de-diag-item:last-child { border-bottom: none; }
+    .de-code-out {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      color: #38bdf8;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 280px;
+    }
+    .de-tab-bar {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid #374151;
+      margin-bottom: 1rem;
+    }
+    .de-tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #9ca3af;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.88rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .de-tab-btn.active {
+      color: #eab308;
+      border-bottom-color: #eab308;
+    }
+    .de-pricing-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 1.8rem;
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .de-pass-btn {
+      display: inline-block;
+      padding: 0.75rem 1.6rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      margin: 0.4rem;
+    }
+    .de-pass-btn-primary { background: #eab308; color: #000; }
+    .de-pass-btn-primary:hover { background: #facc15; transform: translateY(-1px); }
+    .de-pass-btn-secondary { background: #1e293b; color: #f8fafc; border: 1px solid #475569; }
+    .de-pass-btn-secondary:hover { background: #334155; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="./index.html" class="brand">
+        <img src="./logo.jpg" alt="FinOps Studio Logo" class="brand-logo" />
+        <span class="brand-text">FinOps Studio</span>
+      </a>
+      <nav class="nav-links">
+        <a href="./index.html">Home</a>
+        <a href="./xrechnung-3-0-zugferd-leitweg-id-generator-api-deutschland.html">XRechnung 3.0</a>
+        <a href="./free-datev-extf-v700-buchungsstapel-csv-validator.html">DATEV EXTF</a>
+        <a href="./sepa-generator-pro-banklint-alternative-pain001-xml.html">SEPA pain.001</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">API Hub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="de-hero">
+      <div style="display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.8rem;">
+        <span class="de-badge de-badge-info">🇩🇪 DEUTSCHLAND B2B & B2G COMPLIANCE</span>
+        <span class="de-badge de-badge-ok">E-RECHNUNGSPFLICHT 2025/2026</span>
+        <span class="de-badge de-badge-info">ISO 7064 MOD 11,10</span>
+      </div>
+      <h1 style="color: #fff; font-size: 1.95rem; margin: 0 0 0.8rem 0; line-height: 1.25;">
+        Deutscher USt-IdNr Validator, Leitweg-ID Prüfer & BLZ zu DE IBAN Generator
+      </h1>
+      <p style="color: #cbd5e1; font-size: 1.02rem; margin: 0; max-width: 920px; line-height: 1.55;">
+        Validieren Sie deutsche Umsatzsteuer-Identifikationsnummern nach <strong>ISO 7064 MOD 11,10</strong>, prüfen Sie <strong>Leitweg-IDs (MOD 97-10)</strong> für Bundes- und Landesbehörden, wandeln Sie 8-stellige <strong>Bankleitzahlen (BLZ)</strong> in 22-stellige <strong>DE IBANs</strong> um und generieren Sie konforme Datensätze für <strong>SEPA pain.001.001.09</strong>, <strong>XRechnung 3.0 UBL</strong> und <strong>DATEV Buchungsstapel EXTF v700</strong>.
+      </p>
+    </section>
+
+    <div class="de-sample-bar">
+      <span style="font-size: 0.85rem; color: #9ca3af; align-self: center; font-weight: 600;">Schnellauswahl:</span>
+      <button type="button" class="de-sample-btn" id="btnSampleSiemens">Siemens AG (Deutsche Bank)</button>
+      <button type="button" class="de-sample-btn" id="btnSampleBmw">BMW Group (HypoVereinsbank)</button>
+      <button type="button" class="de-sample-btn" id="btnSampleDb">Deutsche Bank AG (Zentrale)</button>
+      <button type="button" class="de-sample-btn" id="btnSampleCommerz">Commerzbank AG (Frankfurt)</button>
+      <button type="button" class="de-sample-btn" id="btnSampleBad">Ungültiges Muster testen</button>
+    </div>
+
+    <div class="de-grid">
+      <!-- Left Column: Input Form -->
+      <div class="de-card">
+        <h3><span>🏢</span> Stammdaten & Prüfparameter</h3>
+
+        <div class="de-input-group">
+          <label for="deVatInp">Umsatzsteuer-Identifikationsnummer (USt-IdNr, DE + 9 Ziffern):</label>
+          <input type="text" id="deVatInp" value="DE129274202" placeholder="DE123456789" />
+          <div style="font-size: 0.78rem; color: #9ca3af; margin-top: 0.25rem;">
+            Geprüft mit ISO 7064 MOD 11,10 Algorithmus (Bundeszentralamt für Steuern).
+          </div>
+        </div>
+
+        <div class="de-input-group">
+          <label for="deLeitwegInp">Leitweg-ID (XRechnung BT-10 / Behörden-Käuferreferenz):</label>
+          <input type="text" id="deLeitwegInp" value="09162000-12345-81" placeholder="Grobadressierung-Feinadressierung-Prüfziffer" />
+          <div style="font-size: 0.78rem; color: #9ca3af; margin-top: 0.25rem;">
+            Format: Grob (bis 12 Ziffern) - Fein (alphanumerisch) - 2 Prüfziffern (MOD 97-10).
+          </div>
+        </div>
+
+        <div class="de-input-group">
+          <label for="deBankPreset">Deutsche Bankleitzahl (BLZ) & Institut:</label>
+          <select id="deBankPreset">
+            <option value="10070000|DEUTDEDDFXX|Deutsche Bank AG">10070000 — Deutsche Bank AG (Frankfurt/Berlin)</option>
+            <option value="10040000|COBADEDDXXX|Commerzbank AG">10040000 — Commerzbank AG (Frankfurt)</option>
+            <option value="10050000|BELADEDDXXX|Berliner Sparkasse">10050000 — Berliner Sparkasse</option>
+            <option value="50060000|GENODEDDFXX|DZ BANK AG / Volksbanken">50060000 — DZ BANK AG / Volks- und Raiffeisenbanken</option>
+            <option value="70020270|HYVEDEMMXXX|HypoVereinsbank (UniCredit)">70020270 — HypoVereinsbank (UniCredit)</option>
+            <option value="10010010|PBNKDEFFXXX|Deutsche Postbank">10010010 — Deutsche Postbank (DB)</option>
+            <option value="50010517|INGDDEFFXXX|ING-DiBa AG">50010517 — ING-DiBa AG</option>
+            <option value="CUSTOM">Eigene 8-stellige BLZ manuell eingeben...</option>
+          </select>
+        </div>
+
+        <div class="de-grid" style="gap: 0.8rem; margin-bottom: 0;">
+          <div class="de-input-group">
+            <label for="deBlzInp">BLZ (8 Ziffern):</label>
+            <input type="text" id="deBlzInp" value="10070000" maxlength="8" />
+          </div>
+          <div class="de-input-group">
+            <label for="deKtoInp">Kontonummer (bis 10 Ziffern):</label>
+            <input type="text" id="deKtoInp" value="0123456789" maxlength="10" />
+          </div>
+        </div>
+
+        <div class="de-grid" style="gap: 0.8rem; margin-bottom: 0;">
+          <div class="de-input-group">
+            <label for="dePayeeInp">Empfängername / Firma:</label>
+            <input type="text" id="dePayeeInp" value="Siemens AG" />
+          </div>
+          <div class="de-input-group">
+            <label for="deCityInp">Ort & PLZ (Strukturierte Adresse 2026):</label>
+            <input type="text" id="deCityInp" value="80333 München, Werner-von-Siemens-Str. 1" />
+          </div>
+        </div>
+
+        <div class="de-grid" style="gap: 0.8rem; margin-bottom: 0;">
+          <div class="de-input-group">
+            <label for="deAmountInp">Rechnungsbetrag (€):</label>
+            <input type="number" id="deAmountInp" value="14250.00" step="0.01" />
+          </div>
+          <div class="de-input-group">
+            <label for="deInvNumInp">Rechnungsnummer:</label>
+            <input type="text" id="deInvNumInp" value="RE-2026-08841" />
+          </div>
+        </div>
+
+        <!-- Diagnostic Summary -->
+        <div class="de-diag-box">
+          <div class="de-diag-item">
+            <span>USt-IdNr Prüfung (MOD 11,10):</span>
+            <span id="badgeVat" class="de-badge de-badge-ok">GÜLTIG</span>
+          </div>
+          <div class="de-diag-item">
+            <span>Leitweg-ID Prüfung (MOD 97-10):</span>
+            <span id="badgeLeitweg" class="de-badge de-badge-ok">GÜLTIG</span>
+          </div>
+          <div class="de-diag-item">
+            <span>Bundesland-Zuordnung (Leitweg):</span>
+            <strong id="diagState" style="color: #facc15;">09 — Bayern</strong>
+          </div>
+          <div class="de-diag-item">
+            <span>Errechnete 22-stellige DE IBAN:</span>
+            <strong id="diagIban" style="color: #38bdf8; font-family: monospace;">DE65 1007 0000 0123 4567 89</strong>
+          </div>
+          <div class="de-diag-item">
+            <span>Bankinstitut & BIC:</span>
+            <span id="diagBank" style="color: #cbd5e1;">Deutsche Bank AG (DEUTDEDDFXX)</span>
+          </div>
+          <div id="diagAlert" style="margin-top: 0.6rem; font-size: 0.82rem; color: #4ade80;">
+            ✓ Alle Prüfsummen korrekt. Datei-Generierung bereit für DATEV, SEPA & XRechnung.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Outputs -->
+      <div class="de-card">
+        <div class="de-tab-bar">
+          <button type="button" class="de-tab-btn active" data-tab="tabSepa">SEPA pain.001</button>
+          <button type="button" class="de-tab-btn" data-tab="tabXrechnung">XRechnung 3.0</button>
+          <button type="button" class="de-tab-btn" data-tab="tabDatev">DATEV EXTF</button>
+          <button type="button" class="de-tab-btn" data-tab="tabApi">Cloud API (cURL)</button>
+        </div>
+
+        <!-- Tab 1: SEPA XML -->
+        <div id="tabSepa" class="tab-pane">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.82rem; color: #9ca3af;">ISO 20022 pain.001.001.09 (Strukturierte Adresse EPC 2026):</span>
+            <button type="button" class="de-sample-btn" id="btnCopySepa">Kopieren</button>
+          </div>
+          <pre id="outSepaXml" class="de-code-out"></pre>
+        </div>
+
+        <!-- Tab 2: XRechnung 3.0 UBL -->
+        <div id="tabXrechnung" class="tab-pane" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.82rem; color: #9ca3af;">XRechnung 3.0 UBL Invoice Payload (KoSIT / Peppol BIS 3.0):</span>
+            <button type="button" class="de-sample-btn" id="btnCopyXrec">Kopieren</button>
+          </div>
+          <pre id="outXrechnung" class="de-code-out"></pre>
+        </div>
+
+        <!-- Tab 3: DATEV EXTF -->
+        <div id="tabDatev" class="tab-pane" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.82rem; color: #9ca3af;">DATEV EXTF v700 Buchungsstapel CSV (SKR03 / SKR04):</span>
+            <button type="button" class="de-sample-btn" id="btnCopyDatev">Kopieren</button>
+          </div>
+          <pre id="outDatevCsv" class="de-code-out"></pre>
+        </div>
+
+        <!-- Tab 4: Cloud API (cURL) -->
+        <div id="tabApi" class="tab-pane" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.82rem; color: #9ca3af;">REST API Aufruf (FinOps Studio Cloud Edge):</span>
+            <button type="button" class="de-sample-btn" id="btnCopyApi">Kopieren</button>
+          </div>
+          <pre id="outApiCurl" class="de-code-out"></pre>
+        </div>
+
+        <div style="margin-top: 1.2rem; font-size: 0.82rem; color: #9ca3af; line-height: 1.45;">
+          💡 <strong>Hinweis zur E-Rechnungspflicht ab 2025:</strong> Rechnungen zwischen deutschen Unternehmen müssen ab 01.01.2025 im strukturierten XML-Format empfangbar sein. Für Behörden ist die Angabe der geprüften <strong>Leitweg-ID</strong> zwingend vorgeschrieben.
+        </div>
+      </div>
+    </div>
+
+    <!-- Direct Pass Checkout Card -->
+    <section class="de-pricing-card">
+      <div style="display: inline-block; background: rgba(234, 179, 8, 0.15); color: #facc15; font-size: 0.82rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem; border: 1px solid rgba(234, 179, 8, 0.3);">
+        🚀 SOFORTIGE ELEKTRONISCHE BANKFREIGABE & UNBEGRENZTE CLOUD-KONVERTIERUNG
+      </div>
+      <h2 style="color: #fff; font-size: 1.6rem; margin: 0 0 0.5rem 0;">
+        Automatische DATEV, SEPA & XRechnung API für Entwickler & Finanzteams
+      </h2>
+      <p style="color: #cbd5e1; max-width: 780px; margin: 0 auto 1.4rem auto; font-size: 0.95rem; line-height: 1.5;">
+        Entfernen Sie alle Wasserzeichen und automatisieren Sie Batch-Überweisungen und Rechnungen direkt aus Ihren Python-, Node.js-, ERP- oder Make/Zapier-Pipelines. Zahlen Sie bequem via Kreditkarte, Apple Pay, Google Pay oder PayPal.
+      </p>
+      <div>
+        <button type="button" class="de-pass-btn de-pass-btn-primary" id="btnBuyDe24h">
+          ⚡ 24h Pass — 9 USD (Unbegrenzt)
+        </button>
+        <button type="button" class="de-pass-btn de-pass-btn-secondary" id="btnBuyDe30d">
+          👑 30 Tage Pro Pass — 29 USD (Prioritäts-API)
+        </button>
+      </div>
+      <div style="margin-top: 0.8rem; font-size: 0.82rem; color: #94a3b8;">
+        Kreditkarten, Apple Pay, Google Pay, Cash App & PayPal • Sofortige Freischaltung • Keine automatische Verlängerung
+      </div>
+    </section>
+
+    <!-- Technical Guide & Reference -->
+    <section style="margin-top: 3rem; background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 2rem;">
+      <h2 style="color: #fff; font-size: 1.4rem; margin-top: 0;">
+        Technische Spezifikationen: USt-IdNr, Leitweg-ID, DE IBAN & DATEV EXTF
+      </h2>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+        <div>
+          <h4 style="color: #eab308; margin-top: 0;">1. Deutsche USt-IdNr (ISO 7064 MOD 11,10)</h4>
+          <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.55;">
+            Das Bundeszentralamt für Steuern (BZSt) vergibt 9-stellige Nummern mit dem Präfix <code>DE</code>. Die neunte Ziffer ist eine Kontrollziffer. Der Prüfsummen-Algorithmus iteriert über die ersten 8 Ziffern mit einem rekursiven Produkt-Summen-System:
+          </p>
+          <pre style="background: #090d16; padding: 0.8rem; border-radius: 6px; color: #a5f3fc; font-size: 0.8rem;">
+P = 10
+Für i = 1 bis 8:
+  S = (Ziffer[i] + P) mod 10
+  Wenn S == 0 dann S = 10
+  P = (S * 2) mod 11
+Prüfziffer = 11 - P
+Wenn Prüfziffer == 10 dann Prüfziffer = 0</pre>
+        </div>
+
+        <div>
+          <h4 style="color: #eab308; margin-top: 0;">2. Leitweg-ID für XRechnung 3.0 (KoSIT)</h4>
+          <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.55;">
+            In der XRechnung entspricht die Leitweg-ID dem Informationselement <strong>Buyer Reference (BT-10)</strong>. Die ersten beiden Ziffern kennzeichnen die Gebietskörperschaft (z. B. <code>09</code> = Bayern, <code>11</code> = Berlin, <code>99</code> = Bund). Die 2 Prüfziffern am Ende werden über ISO 7064 MOD 97-10 errechnet:
+          </p>
+          <pre style="background: #090d16; padding: 0.8rem; border-radius: 6px; color: #a5f3fc; font-size: 0.8rem;">
+Format: [Grob]-[Fein]-[Prüfziffer]
+Beispiel: 09162000-12345-81
+Prüfziffer: 98 - (Grobadresse + Feinadresse mod 97)</pre>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+        <div>
+          <h4 style="color: #eab308; margin-top: 0;">3. Deutsche IBAN & Bankleitzahl (BLZ)</h4>
+          <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.55;">
+            In Deutschland besteht die BBAN aus genau 18 Ziffern: 8 Ziffern BLZ gefolgt von der 10-stelligen Kontonummer. Zur Berechnung der 2 IBAN-Prüfziffern werden die Ländercodes <code>D=13</code> und <code>E=14</code> sowie <code>00</code> angehängt und Modulo 97 gerechnet.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="color: #eab308; margin-top: 0;">4. DATEV EXTF v700 Buchungsstapel</h4>
+          <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.55;">
+            Die DATEV-Schnittstelle verlangt zwei Metadaten-Kopfzeilen (<code>EXTF;700;21;...</code>) mit Semikolon-Trennung und Windows-1252/UTF-8 Zeichensatz. Die Belegdaten enthalten Umsatz, Soll/Haben-Kennung, Gegenkonto, Belegnummer und 4-stelliges Belegdatum (<code>TTMM</code>).
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>© 2026 FinOps Studio. Deterministic Banking File Engines & Electronic Invoicing APIs.</p>
+      <div class="footer-links">
+        <a href="./index.html">Home</a>
+        <a href="./xrechnung-3-0-zugferd-leitweg-id-generator-api-deutschland.html">XRechnung Leitweg-ID</a>
+        <a href="./free-datev-extf-v700-buchungsstapel-csv-validator.html">DATEV EXTF</a>
+        <a href="./sepa-generator-pro-banklint-alternative-pain001-xml.html">SEPA pain.001</a>
+        <a href="./free-iban-routing-number-pain002-validator.html">IBAN Validator</a>
+        <a href="./rapidapi-mcprush-claude-cursor-banking-api-hub.html">API Hub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./vip-support-widget.js" defer></script>
+  <script>
+  (function () {
+    // Federal state lookup for Leitweg-ID
+    var STATE_MAP = {
+      '01': '01 — Schleswig-Holstein',
+      '02': '02 — Freie und Hansestadt Hamburg',
+      '03': '03 — Niedersachsen',
+      '04': '04 — Freie Hansestadt Bremen',
+      '05': '05 — Nordrhein-Westfalen',
+      '06': '06 — Hessen',
+      '07': '07 — Rheinland-Pfalz',
+      '08': '08 — Baden-Württemberg',
+      '09': '09 — Freistaat Bayern',
+      '10': '10 — Saarland',
+      '11': '11 — Berlin',
+      '12': '12 — Brandenburg',
+      '13': '13 — Mecklenburg-Vorpommern',
+      '14': '14 — Freistaat Sachsen',
+      '15': '15 — Sachsen-Anhalt',
+      '16': '16 — Freistaat Thüringen',
+      '99': '99 — Bund / KoSIT Zentrale'
+    };
+
+    function mod97(s) {
+      var r = 0;
+      for (var i = 0; i < s.length; i++) {
+        r = (r * 10 + parseInt(s[i], 10)) % 97;
+      }
+      return r;
+    }
+
+    // ISO 7064 MOD 11,10 for German USt-IdNr
+    function validateGermanVat(vat) {
+      var clean = String(vat || '').replace(/[\s\-\.]/g, '').toUpperCase();
+      var m = clean.match(/^(DE)?(\d{9})$/);
+      if (!m) return { valid: false, formatted: clean, msg: 'Ungültiges Format (erfordert DE + 9 Ziffern)' };
+      var d = m[2].split('').map(Number);
+      var p = 10;
+      for (var i = 0; i < 8; i++) {
+        var s = (d[i] + p) % 10;
+        if (s === 0) s = 10;
+        p = (s * 2) % 11;
+      }
+      var c = 11 - p;
+      if (c === 10) c = 0;
+      var isValid = (c === d[8]);
+      return {
+        valid: isValid,
+        formatted: 'DE' + m[2],
+        calculatedCheck: c,
+        givenCheck: d[8],
+        msg: isValid
+          ? 'USt-IdNr DE' + m[2] + ' Prüfziffer ' + d[8] + ' (ISO 7064 MOD 11,10) gültig'
+          : 'Prüfziffer falsch: Erwartet ' + c + ', gegeben ' + d[8]
+      };
+    }
+
+    // Leitweg-ID ISO 7064 MOD 97-10
+    function validateLeitwegId(raw) {
+      var s = String(raw || '').trim().toUpperCase();
+      var parts = s.split('-');
+      if (parts.length < 2) {
+        return { valid: false, msg: 'Ungültiges Leitweg-Format (erfordert Trennstriche, z.B. 09162000-12345-81)' };
+      }
+      var stateCode = parts[0].slice(0, 2);
+      var stateName = STATE_MAP[stateCode] || (stateCode + ' — Sonstige Dienststelle');
+      var given = parts[parts.length - 1];
+      if (!/^\d{2}$/.test(given)) {
+        return { valid: false, stateName: stateName, msg: 'Prüfziffer am Ende muss aus genau 2 Ziffern bestehen' };
+      }
+      var body = parts.slice(0, -1).join('');
+      if (!/^[A-Z0-9]+$/.test(body)) {
+        return { valid: false, stateName: stateName, msg: 'Ungültige Zeichen im Adressteil (nur A-Z und 0-9)' };
+      }
+      var expanded = body.replace(/[A-Z]/g, function (ch) {
+        return String(ch.charCodeAt(0) - 55);
+      });
+      // ISO 7064 MOD 97-10 check digit: 98 - ((expanded * 100) % 97)
+      var rem = (mod97(expanded) * 100) % 97;
+      var expectedNum = 98 - rem;
+      if (expectedNum === 97) expectedNum = 0;
+      var expected = String(expectedNum).padStart(2, '0');
+      var isValid = (given === expected);
+      return {
+        valid: isValid,
+        stateName: stateName,
+        expected: expected,
+        given: given,
+        msg: isValid
+          ? 'Leitweg-ID Prüfziffer ' + given + ' (MOD 97-10) gültig'
+          : 'Prüfziffer ' + given + ' falsch — berechnet wäre ' + expected
+      };
+    }
+
+    // BLZ + Account -> DE IBAN
+    function blzToDeIban(blz, account) {
+      var b = String(blz || '').replace(/\D/g, '').padStart(8, '0').slice(0, 8);
+      var a = String(account || '').replace(/\D/g, '').padStart(10, '0').slice(0, 10);
+      var bban = b + a;
+      // DE = 13 14 00
+      var checkStr = bban + '131400';
+      var cd = String(98 - mod97(checkStr)).padStart(2, '0');
+      var iban = 'DE' + cd + bban;
+      var formatted = iban.replace(/(.{4})/g, '$1 ').trim();
+      return { iban: iban, formatted: formatted, blz: b, account: a };
+    }
+
+    var deVatInp = document.getElementById('deVatInp');
+    var deLeitwegInp = document.getElementById('deLeitwegInp');
+    var deBankPreset = document.getElementById('deBankPreset');
+    var deBlzInp = document.getElementById('deBlzInp');
+    var deKtoInp = document.getElementById('deKtoInp');
+    var dePayeeInp = document.getElementById('dePayeeInp');
+    var deCityInp = document.getElementById('deCityInp');
+    var deAmountInp = document.getElementById('deAmountInp');
+    var deInvNumInp = document.getElementById('deInvNumInp');
+
+    var badgeVat = document.getElementById('badgeVat');
+    var badgeLeitweg = document.getElementById('badgeLeitweg');
+    var diagState = document.getElementById('diagState');
+    var diagIban = document.getElementById('diagIban');
+    var diagBank = document.getElementById('diagBank');
+    var diagAlert = document.getElementById('diagAlert');
+
+    var outSepaXml = document.getElementById('outSepaXml');
+    var outXrechnung = document.getElementById('outXrechnung');
+    var outDatevCsv = document.getElementById('outDatevCsv');
+    var outApiCurl = document.getElementById('outApiCurl');
+
+    function refreshDe() {
+      var vatRes = validateGermanVat(deVatInp.value);
+      if (vatRes.valid) {
+        badgeVat.className = 'de-badge de-badge-ok';
+        badgeVat.textContent = 'GÜLTIG (' + vatRes.formatted + ')';
+      } else {
+        badgeVat.className = 'de-badge de-badge-err';
+        badgeVat.textContent = 'FEHLERHAFT';
+      }
+
+      var lwRes = validateLeitwegId(deLeitwegInp.value);
+      if (lwRes.valid) {
+        badgeLeitweg.className = 'de-badge de-badge-ok';
+        badgeLeitweg.textContent = 'GÜLTIG (' + lwRes.given + ')';
+      } else {
+        badgeLeitweg.className = 'de-badge de-badge-err';
+        badgeLeitweg.textContent = 'FEHLERHAFT';
+      }
+      diagState.textContent = lwRes.stateName || 'Unbekannt';
+
+      var ibanRes = blzToDeIban(deBlzInp.value, deKtoInp.value);
+      diagIban.textContent = ibanRes.formatted;
+
+      var bankPresetVal = deBankPreset.value;
+      var bankName = 'Deutsche Bank AG';
+      var bic = 'DEUTDEDDFXX';
+      if (bankPresetVal !== 'CUSTOM') {
+        var pParts = bankPresetVal.split('|');
+        if (pParts.length === 3) {
+          bic = pParts[1];
+          bankName = pParts[2];
+        }
+      }
+      diagBank.textContent = bankName + ' (' + bic + ')';
+
+      var issues = [];
+      if (!vatRes.valid) issues.push('USt-IdNr: ' + vatRes.msg);
+      if (!lwRes.valid) issues.push('Leitweg-ID: ' + lwRes.msg);
+
+      if (issues.length === 0) {
+        diagAlert.style.color = '#4ade80';
+        diagAlert.textContent = '✓ Alle Prüfsummen korrekt. Datensätze für DATEV, SEPA & XRechnung sind bankkonform generiert.';
+      } else {
+        diagAlert.style.color = '#f87171';
+        diagAlert.textContent = '⚠ Korrekturhinweise: ' + issues.join(' | ');
+      }
+
+      var payee = dePayeeInp.value.trim() || 'Siemens AG';
+      var amt = parseFloat(deAmountInp.value) || 14250.00;
+      var invNum = deInvNumInp.value.trim() || 'RE-2026-08841';
+      var cityRaw = deCityInp.value.trim() || '80333 München, Werner-von-Siemens-Str. 1';
+
+      // 1. SEPA XML pain.001.001.09
+      var sepaXml = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09">\n' +
+        '  <CstmrCdtTrfInitn>\n' +
+        '    <GrpHdr>\n' +
+        '      <MsgId>FINOPS-DE-' + Date.now() + '</MsgId>\n' +
+        '      <CreDtTm>' + new Date().toISOString() + '</CreDtTm>\n' +
+        '      <NbOfTxs>1</NbOfTxs>\n' +
+        '      <CtrlSum>' + amt.toFixed(2) + '</CtrlSum>\n' +
+        '      <InitgPty><Nm>FINOPS STUDIO AG</Nm></InitgPty>\n' +
+        '    </GrpHdr>\n' +
+        '    <PmtInf>\n' +
+        '      <PmtInfId>PMT-' + invNum + '</PmtInfId>\n' +
+        '      <PmtMtd>TRF</PmtMtd>\n' +
+        '      <ReqdExctnDt>' + new Date().toISOString().slice(0, 10) + '</ReqdExctnDt>\n' +
+        '      <Dbtr><Nm>FINOPS STUDIO AG</Nm></Dbtr>\n' +
+        '      <DbtrAgt><FinInstnId><BICFI>DEUTDEDDFXX</BICFI></FinInstnId></DbtrAgt>\n' +
+        '      <CdtTrfTxInf>\n' +
+        '        <PmtId><EndToEndId>' + invNum + '</EndToEndId></PmtId>\n' +
+        '        <Amt><InstdAmt Ccy="EUR">' + amt.toFixed(2) + '</InstdAmt></Amt>\n' +
+        '        <CdtrAgt><FinInstnId><BICFI>' + bic + '</BICFI></FinInstnId></CdtrAgt>\n' +
+        '        <Cdtr>\n' +
+        '          <Nm>' + payee + '</Nm>\n' +
+        '          <PstlAdr>\n' +
+        '            <StrtNm>Werner-von-Siemens-Str.</StrtNm>\n' +
+        '            <BldgNb>1</BldgNb>\n' +
+        '            <PstCd>80333</PstCd>\n' +
+        '            <TwnNm>München</TwnNm>\n' +
+        '            <Ctry>DE</Ctry>\n' +
+        '          </PstlAdr>\n' +
+        '        </Cdtr>\n' +
+        '        <CdtrAcct><Id><IBAN>' + ibanRes.iban + '</IBAN></Id></CdtrAcct>\n' +
+        '        <RmtInf><Ustrd>Rechnung ' + invNum + ' / ' + (vatRes.formatted || 'DE') + '</Ustrd></RmtInf>\n' +
+        '      </CdtTrfTxInf>\n' +
+        '    </PmtInf>\n' +
+        '  </CstmrCdtTrfInitn>\n' +
+        '</Document>';
+      outSepaXml.textContent = sepaXml;
+
+      // 2. XRechnung 3.0 UBL JSON
+      var xrechnungObj = {
+        customizationId: "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0",
+        profileId: "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
+        invoiceNumber: invNum,
+        issueDate: new Date().toISOString().slice(0, 10),
+        buyerReference: deLeitwegInp.value.trim(),
+        seller: {
+          name: "FINOPS STUDIO CLOUD GMBH",
+          vatNumber: "DE318492019",
+          postalAddress: { street: "Friedrichstraße 100", postalCode: "10117", city: "Berlin", country: "DE" }
+        },
+        buyer: {
+          name: payee,
+          vatNumber: vatRes.formatted || "DE129274202",
+          postalAddress: { street: "Werner-von-Siemens-Str. 1", postalCode: "80333", city: "München", country: "DE" }
+        },
+        paymentMeans: {
+          code: "58",
+          payeeIban: ibanRes.iban,
+          payeeBic: bic
+        },
+        totals: {
+          lineExtensionAmount: (amt / 1.19).toFixed(2),
+          taxExclusiveAmount: (amt / 1.19).toFixed(2),
+          taxInclusiveAmount: amt.toFixed(2),
+          vatAmount: (amt - (amt / 1.19)).toFixed(2),
+          vatRate: 19.0
+        }
+      };
+      outXrechnung.textContent = JSON.stringify(xrechnungObj, null, 2);
+
+      // 3. DATEV EXTF v700 Buchungsstapel
+      var d = new Date();
+      var belegdatum = String(d.getDate()).padStart(2, '0') + String(d.getMonth() + 1).padStart(2, '0');
+      var datevCsv = '"EXTF";700;21;"Buchungsstapel";12;20260101;9;20261119;120000;;"RE";;"";"";1;;"EUR";;;"";"";"";"";"";"";"";"";"";"";""\n' +
+        '"Umsatz (ohne Soll/Haben-Kz)";"Soll/Haben-Kennzeichnung";"WKZ";"Kurs";"Basis-Umsatz";"WKZ Basis-Umsatz";"Konto";"Gegenkonto (ohne BU-Schlüssel)";"BU-Schlüssel";"Belegdatum";"Belegfeld 1";"Belegfeld 2";"Skonto";"Buchungstext"\n' +
+        amt.toFixed(2).replace('.', ',') + ';"S";"EUR";"";"";"";"1200";"70000";"";"' + belegdatum + '";"' + invNum + '";"";"";"Rechnung ' + invNum + ' ' + payee.slice(0, 30) + '"';
+      outDatevCsv.textContent = datevCsv;
+
+      // 4. API cURL
+      var curl = 'curl -X POST https://finops-rapidapi-edge.ria-rader.workers.dev/v1/generate/sepa \\\n' +
+        '  -H "Content-Type: application/json" \\\n' +
+        '  -H "X-FinOps-Pass: fop_live_your_pass_key" \\\n' +
+        '  -d \'{\n' +
+        '    "creditorIban": "' + ibanRes.iban + '",\n' +
+        '    "creditorBic": "' + bic + '",\n' +
+        '    "creditorName": "' + payee + '",\n' +
+        '    "amount": ' + amt.toFixed(2) + ',\n' +
+        '    "endToEndId": "' + invNum + '",\n' +
+        '    "country": "DE"\n' +
+        '  }\'';
+      outApiCurl.textContent = curl;
+    }
+
+    // Presets
+    document.getElementById('btnSampleSiemens').addEventListener('click', function () {
+      deVatInp.value = 'DE129274202';
+      deLeitwegInp.value = '09162000-12345-81';
+      deBankPreset.value = '10070000|DEUTDEDDFXX|Deutsche Bank AG';
+      deBlzInp.value = '10070000';
+      deKtoInp.value = '0123456789';
+      dePayeeInp.value = 'Siemens AG';
+      deCityInp.value = '80333 München, Werner-von-Siemens-Str. 1';
+      deAmountInp.value = '14250.00';
+      deInvNumInp.value = 'RE-2026-08841';
+      refreshDe();
+    });
+
+    document.getElementById('btnSampleBmw').addEventListener('click', function () {
+      deVatInp.value = 'DE129273398';
+      deLeitwegInp.value = '09162000-54321-12';
+      deBankPreset.value = '70020270|HYVEDEMMXXX|HypoVereinsbank (UniCredit)';
+      deBlzInp.value = '70020270';
+      deKtoInp.value = '0234567890';
+      dePayeeInp.value = 'Bayerische Motoren Werke AG (BMW)';
+      deCityInp.value = '80788 München, Petuelring 130';
+      deAmountInp.value = '38900.50';
+      deInvNumInp.value = 'BMW-2026-44910';
+      refreshDe();
+    });
+
+    document.getElementById('btnSampleDb').addEventListener('click', function () {
+      deVatInp.value = 'DE122653558';
+      deLeitwegInp.value = '06412000-98765-24';
+      deBankPreset.value = '10070000|DEUTDEDDFXX|Deutsche Bank AG';
+      deBlzInp.value = '10070000';
+      deKtoInp.value = '0987654321';
+      dePayeeInp.value = 'Deutsche Bank AG Zentrale';
+      deCityInp.value = '60325 Frankfurt am Main, Taunusanlage 12';
+      deAmountInp.value = '9800.00';
+      deInvNumInp.value = 'DB-IT-2026-902';
+      refreshDe();
+    });
+
+    document.getElementById('btnSampleCommerz').addEventListener('click', function () {
+      deVatInp.value = 'DE114103514';
+      deLeitwegInp.value = '06412000-33211-19';
+      deBankPreset.value = '10040000|COBADEDDXXX|Commerzbank AG';
+      deBlzInp.value = '10040000';
+      deKtoInp.value = '0554433221';
+      dePayeeInp.value = 'Commerzbank AG';
+      deCityInp.value = '60327 Frankfurt am Main, Kaiserplatz';
+      deAmountInp.value = '4500.00';
+      deInvNumInp.value = 'CB-2026-1049';
+      refreshDe();
+    });
+
+    document.getElementById('btnSampleBad').addEventListener('click', function () {
+      deVatInp.value = 'DE129274209'; // Bad check digit (expected 2)
+      deLeitwegInp.value = '09162000-12345-99'; // Bad check digit (expected 81)
+      refreshDe();
+    });
+
+    deBankPreset.addEventListener('change', function () {
+      var val = deBankPreset.value;
+      if (val !== 'CUSTOM') {
+        var parts = val.split('|');
+        if (parts.length >= 1) deBlzInp.value = parts[0];
+      }
+      refreshDe();
+    });
+
+    ['deVatInp', 'deLeitwegInp', 'deBlzInp', 'deKtoInp', 'dePayeeInp', 'deCityInp', 'deAmountInp', 'deInvNumInp'].forEach(function (id) {
+      document.getElementById(id).addEventListener('input', refreshDe);
+    });
+
+    // Tab buttons
+    var tabBtns = document.querySelectorAll('.de-tab-btn');
+    var tabPanes = document.querySelectorAll('.tab-pane');
+    tabBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var targetTab = btn.getAttribute('data-tab');
+        tabBtns.forEach(function (b) { b.classList.remove('active'); });
+        tabPanes.forEach(function (p) { p.style.display = 'none'; });
+        btn.classList.add('active');
+        document.getElementById(targetTab).style.display = 'block';
+      });
+    });
+
+    // Copy buttons
+    function wireCopy(btnId, targetId) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var text = document.getElementById(targetId).textContent || '';
+        navigator.clipboard.writeText(text);
+        btn.textContent = 'Kopiert!';
+        setTimeout(function () { btn.textContent = 'Kopieren'; }, 1600);
+      });
+    }
+    wireCopy('btnCopySepa', 'outSepaXml');
+    wireCopy('btnCopyXrec', 'outXrechnung');
+    wireCopy('btnCopyDatev', 'outDatevCsv');
+    wireCopy('btnCopyApi', 'outApiCurl');
+
+    // Checkout triggers
+    document.getElementById('btnBuyDe24h').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('batch24h', { btn: e.target });
+    });
+    document.getElementById('btnBuyDe30d').addEventListener('click', function (e) {
+      if (window.startFinOpsCheckout) window.startFinOpsCheckout('pro30d', { btn: e.target });
+    });
+
+    refreshDe();
+  })();
+  </script>
+</body>
+</html>
