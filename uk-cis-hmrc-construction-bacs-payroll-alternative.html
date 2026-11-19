@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UK Construction Industry Scheme (CIS) &amp; HMRC Return to BACS Standard 18 Alternative | FinOps Studio</title>
+  <meta name="description" content="Convert UK CIS subcontractor progress billing, CIS300 monthly returns &amp; spreadsheet exports into bank-compliant 100-character BACS Standard 18 files with 20%/30% CIS tax math, Modulo-11 checks &amp; CONTRA balancing. £0 bureau lock-in." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/uk-cis-hmrc-construction-bacs-payroll-alternative.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Convert UK CIS Subcontractor Billing & HMRC Returns to BACS Standard 18 Bank Files (Barclays, HSBC, Lloyds, NatWest)",
+        "url": "https://geornaden.github.io/finops-studio/uk-cis-hmrc-construction-bacs-payroll-alternative.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Deterministic UK construction payroll converter calculating HMRC 20% and 30% CIS deductions, materials exemptions, and generating bank-ready 100-character BACS Standard 18 direct credit files with CONTRA balancing for UK corporate banking portals."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does the Construction Industry Scheme (CIS) affect subcontractor BACS payments?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under HMRC CIS rules, main contractors must deduct either 20% (for verified subcontractors) or 30% (for unverified subcontractors) from the labour portion of subcontractor invoices before paying them. Materials, plant hire, and VAT are exempt from CIS deductions. The contractor remits the net balance to the subcontractor via BACS Standard 18 and pays the total deducted CIS tax to HMRC by the 19th of each month (or 22nd if paying electronically)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why do UK corporate banks reject CIS payment files exported directly from Excel or accounting packages?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Corporate online banking platforms including Barclays.net, HSBCnet, Lloyds Commercial OnLine, and NatWest Bankline require 100-character fixed-width BACS Standard 18 records. Raw accounting exports often lack the mandatory 100-character line padding, Julian processing date (bYYDDD), Transaction Code 99, and the self-balancing CONTRA debit record for the contractor's bank account."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between CIS gross payment status (0%), standard (20%), and higher deduction (30%)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Subcontractors with Gross Payment Status (0%) receive 100% of their invoiced labour with zero CIS tax withheld. Verified subcontractors have 20% withheld from their labour charges. Unverified subcontractors have 30% withheld. FinOps Studio automatically calculates the exact net payable amount per subcontractor and compiles the net payment into a single 100-character BACS Standard 18 file."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .cis-hero {
+      background: linear-gradient(135deg, rgba(234, 88, 12, 0.12) 0%, rgba(13, 148, 136, 0.08) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      border-radius: 14px;
+      padding: 2.2rem;
+      margin-bottom: 2rem;
+    }
+    .cis-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 860px) {
+      .cis-grid { grid-template-columns: 1fr; }
+    }
+    .cis-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+    .cis-card h3 {
+      margin-top: 0;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.15rem;
+    }
+    .cis-input-group {
+      margin-bottom: 1.1rem;
+    }
+    .cis-input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 0.35rem;
+    }
+    .cis-input-group input, .cis-input-group select, .cis-input-group textarea {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #f9fafb;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .cis-input-group textarea {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      resize: vertical;
+    }
+    .cis-badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .cis-badge-hmrc {
+      background: rgba(234, 88, 12, 0.2);
+      color: #fb923c;
+      border: 1px solid rgba(249, 115, 22, 0.35);
+    }
+    .cis-badge-bacs {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.35);
+    }
+    .cis-summary-box {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin-top: 1rem;
+    }
+    .cis-summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem;
+      color: #94a3b8;
+    }
+    .cis-summary-row.total {
+      font-weight: bold;
+      color: #f8fafc;
+      border-top: 1px solid #334155;
+      padding-top: 0.6rem;
+      margin-top: 0.6rem;
+      font-size: 1rem;
+    }
+    .cis-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.4rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      font-size: 0.95rem;
+      border: none;
+    }
+    .cis-btn-primary {
+      background: #ea580c;
+      color: #ffffff;
+    }
+    .cis-btn-primary:hover {
+      background: #c2410c;
+    }
+    .cis-btn-secondary {
+      background: #374151;
+      color: #e5e7eb;
+    }
+    .cis-btn-secondary:hover {
+      background: #4b5563;
+    }
+    .cis-code-ruler {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.72rem;
+      color: #64748b;
+      background: #090d16;
+      padding: 4px 8px;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+      border: 1px solid #1e293b;
+      border-bottom: none;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .cis-output {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      color: #38bdf8;
+      background: #030712;
+      padding: 12px;
+      border-radius: 0 0 6px 6px;
+      border: 1px solid #1e293b;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center;padding:1rem 0;">
+      <a href="./index.html" style="font-weight:700;font-size:1.25rem;color:#f8fafc;text-decoration:none;display:flex;align-items:center;gap:0.5rem;">
+        <span style="color:#ea580c;">🏗️</span> FinOps Studio
+      </a>
+      <nav style="display:flex;gap:1.2rem;font-size:0.9rem;">
+        <a href="./index.html" style="color:#94a3b8;text-decoration:none;">All Engines</a>
+        <a href="./uk-bacs-standard-18-file-generator.html" style="color:#94a3b8;text-decoration:none;">UK BACS Generator</a>
+        <a href="./sage-intacct-xero-bacs-standard18-payroll-alternative.html" style="color:#94a3b8;text-decoration:none;">Sage &amp; Xero BACS</a>
+        <a href="#calculator" style="color:#ea580c;font-weight:600;text-decoration:none;">Live CIS Converter</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:1.5rem;padding-bottom:3rem;">
+    <!-- Hero Section -->
+    <div class="cis-hero">
+      <div style="display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap;">
+        <span class="cis-badge cis-badge-hmrc">HMRC CIS300 Compliant</span>
+        <span class="cis-badge cis-badge-bacs">100-Char BACS Standard 18</span>
+        <span class="cis-badge" style="background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">$9 USD Direct Pass</span>
+      </div>
+      <h1 style="color:#f8fafc;font-size:2.2rem;margin-top:0;margin-bottom:0.8rem;line-height:1.2;">
+        UK Construction Industry Scheme (CIS) &amp; HMRC Monthly Return to BACS Standard 18
+      </h1>
+      <p style="color:#cbd5e1;font-size:1.05rem;max-width:820px;line-height:1.6;margin-bottom:1.5rem;">
+        Eliminate expensive BACS bureau fees and manual HMRC spreadsheet calculations. Convert UK subcontractor progress billings into bank-ready 100-character BACS Standard 18 files with automated 20% or 30% CIS tax withholding, materials deductions, Julian dates (<code>bYYDDD</code>), and self-balancing CONTRA records for Barclays.net, HSBCnet, Lloyds Commercial, and NatWest Bankline.
+      </p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="#calculator" class="cis-btn cis-btn-primary">Launch Interactive CIS Generator</a>
+        <a href="#pricing" class="cis-btn cis-btn-secondary">View $9 Pass Options</a>
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="cis-card" style="margin-bottom:2rem;">
+      <h3>⚡ Main Contractor Workflow: FinOps Studio vs Traditional Bureaux</h3>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.9rem;color:#cbd5e1;text-align:left;">
+          <thead>
+            <tr style="border-bottom:1px solid #374151;color:#9ca3af;">
+              <th style="padding:0.75rem;">Feature</th>
+              <th style="padding:0.75rem;color:#ea580c;">FinOps Studio CIS Converter</th>
+              <th style="padding:0.75rem;">Traditional BACS Bureau (PTX, AccessPay)</th>
+              <th style="padding:0.75rem;">Manual Banking CSV Upload</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:0.75rem;font-weight:600;">Pricing / Cost</td>
+              <td style="padding:0.75rem;color:#4ade80;font-weight:700;">$9 USD (24h) / $29 USD (30d Pro)</td>
+              <td style="padding:0.75rem;">£1,200 – £4,500/yr + £500 setup</td>
+              <td style="padding:0.75rem;">Free (High bank error rate)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:0.75rem;font-weight:600;">CIS Tax Math (20% / 30% / 0%)</td>
+              <td style="padding:0.75rem;color:#4ade80;">Automated per line with materials deduction</td>
+              <td style="padding:0.75rem;">Requires ERP payroll add-on (££)</td>
+              <td style="padding:0.75rem;">Manual spreadsheet formula (error prone)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:0.75rem;font-weight:600;">100-Char BACS Standard 18</td>
+              <td style="padding:0.75rem;color:#4ade80;">Deterministic strict 100-char alignment</td>
+              <td style="padding:0.75rem;">Supported via proprietary software</td>
+              <td style="padding:0.75rem;color:#ef4444;">Rejected by Barclays/HSBC/Lloyds</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:0.75rem;font-weight:600;">CONTRA Balancing Record</td>
+              <td style="padding:0.75rem;color:#4ade80;">Automated total batch debit record</td>
+              <td style="padding:0.75rem;">Automated</td>
+              <td style="padding:0.75rem;color:#ef4444;">Missing (Batch fails BACS checksum)</td>
+            </tr>
+            <tr>
+              <td style="padding:0.75rem;font-weight:600;">HMRC CIS300 Return Summary</td>
+              <td style="padding:0.75rem;color:#4ade80;">Instant report of total CIS to pay by 19th</td>
+              <td style="padding:0.75rem;">Requires monthly reporting module</td>
+              <td style="padding:0.75rem;">Manual calculation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Interactive Calculator -->
+    <div id="calculator" class="cis-card" style="margin-bottom:2rem;">
+      <h3>🛠️ Interactive CIS Subcontractor to BACS Standard 18 Console</h3>
+      <p style="color:#94a3b8;font-size:0.88rem;margin-bottom:1.5rem;">
+        Enter your originating contractor bank account, add subcontractor payment certificates, and generate the compliant 100-character BACS file with complete CIS deduction math.
+      </p>
+
+      <!-- Preset selector -->
+      <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center;">
+        <span style="font-size:0.85rem;color:#9ca3af;font-weight:600;">1-Click UK Construction Presets:</span>
+        <button id="btnPreset1" type="button" class="cis-btn cis-btn-secondary" style="font-size:0.8rem;padding:0.4rem 0.8rem;">
+          Preset 1: Standard 20% Verified Subbies
+        </button>
+        <button id="btnPreset2" type="button" class="cis-btn cis-btn-secondary" style="font-size:0.8rem;padding:0.4rem 0.8rem;">
+          Preset 2: Mixed 20% &amp; 30% Unregistered + Materials
+        </button>
+        <button id="btnPreset3" type="button" class="cis-btn cis-btn-secondary" style="font-size:0.8rem;padding:0.4rem 0.8rem;">
+          Preset 3: Commercial Fit-Out (0% Gross Subbie)
+        </button>
+      </div>
+
+      <div class="cis-grid">
+        <!-- Originating Contractor Account -->
+        <div>
+          <h4 style="color:#f3f4f6;margin-top:0;margin-bottom:1rem;font-size:0.95rem;">Contractor (Originating) Account</h4>
+          <div class="cis-input-group">
+            <label for="contractorName">Contractor Company Name (Max 18 chars)</label>
+            <input type="text" id="contractorName" value="APEX BUILD LTD" maxlength="18" />
+          </div>
+          <div class="cis-input-group">
+            <label for="contractorSort">Originating Sort Code (6 digits)</label>
+            <input type="text" id="contractorSort" value="200000" maxlength="6" />
+          </div>
+          <div class="cis-input-group">
+            <label for="contractorAccount">Originating Account Number (8 digits)</label>
+            <input type="text" id="contractorAccount" value="87654321" maxlength="8" />
+          </div>
+          <div class="cis-input-group">
+            <label for="bacsDate">BACS Processing Date</label>
+            <input type="date" id="bacsDate" />
+          </div>
+          <div class="cis-input-group">
+            <label for="batchRef">Batch Narration / Ref (Max 18 chars)</label>
+            <input type="text" id="batchRef" value="CIS SUBBIE PAY" maxlength="18" />
+          </div>
+        </div>
+
+        <!-- Subcontractor CSV / Input -->
+        <div>
+          <h4 style="color:#f3f4f6;margin-top:0;margin-bottom:1rem;font-size:0.95rem;">
+            Subcontractors (CSV: Name, SortCode, AccountNo, UTR, Labour£, Materials£, CIS_Rate%)
+          </h4>
+          <div class="cis-input-group">
+            <label for="subbieCsv">Enter Subcontractor Progress Records</label>
+            <textarea id="subbieCsv" rows="9" spellcheck="false">SMITH BRICKWORK,200000,12345678,1234567890,3500.00,450.00,20
+JONES PLUMBING,400515,87654321,9876543210,2200.00,850.00,20
+DAVIES DRYLINING,090126,55443322,1122334455,1800.00,0.00,30
+KENT SCAFFOLDING,600204,99887766,5566778899,4200.00,600.00,0</textarea>
+          </div>
+          <button id="btnGenerate" type="button" class="cis-btn cis-btn-primary" style="width:100%;">
+            ⚡ Calculate CIS &amp; Generate BACS Standard 18 File
+          </button>
+        </div>
+      </div>
+
+      <!-- HMRC CIS Summary Box -->
+      <div class="cis-summary-box">
+        <h4 style="color:#fb923c;margin-top:0;margin-bottom:0.75rem;font-size:0.92rem;display:flex;align-items:center;gap:0.5rem;">
+          <span>📋</span> HMRC CIS300 Monthly Return &amp; Bank Summary
+        </h4>
+        <div class="cis-summary-row">
+          <span>Gross Subcontractor Labour:</span>
+          <span id="sumGrossLabour" style="font-weight:600;color:#f8fafc;">£0.00</span>
+        </div>
+        <div class="cis-summary-row">
+          <span>Total Materials &amp; Plant Deductions (Exempt):</span>
+          <span id="sumMaterials" style="font-weight:600;color:#f8fafc;">£0.00</span>
+        </div>
+        <div class="cis-summary-row" style="color:#fb923c;">
+          <span>Total CIS Deductions (Pay HMRC by 19th):</span>
+          <span id="sumCisDeductions" style="font-weight:700;">£0.00</span>
+        </div>
+        <div class="cis-summary-row total">
+          <span>Total BACS Direct Credit (Net Payable to Subcontractors):</span>
+          <span id="sumNetPayable" style="color:#4ade80;">£0.00</span>
+        </div>
+      </div>
+
+      <!-- 100-Char Output -->
+      <div style="margin-top:1.5rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+          <label style="font-size:0.85rem;font-weight:600;color:#9ca3af;">
+            Generated 100-Character BACS Standard 18 Stream (with CONTRA Debit)
+          </label>
+          <span id="lineStatus" style="font-size:0.78rem;color:#4ade80;font-weight:600;">All lines exactly 100 chars</span>
+        </div>
+        <div class="cis-code-ruler">0000000001111111111222222222233333333334444444444555555555566666666667777777777888888888899999999991
+1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890</div>
+        <pre id="bacsOutput" class="cis-output">Click 'Calculate CIS &amp; Generate BACS Standard 18 File' to generate bank stream...</pre>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem;flex-wrap:wrap;gap:0.75rem;">
+          <button id="btnCopyBacs" type="button" class="cis-btn cis-btn-secondary" style="font-size:0.85rem;padding:0.5rem 1rem;">
+            📋 Copy 100-Char BACS File
+          </button>
+          <button id="btnDownloadBacs" type="button" class="cis-btn cis-btn-secondary" style="font-size:0.85rem;padding:0.5rem 1rem;">
+            💾 Download .bac File
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing / Direct Pass Hook -->
+    <div id="pricing" class="cis-card" style="border:1px solid rgba(234, 88, 12, 0.4);background:linear-gradient(180deg,#111827 0%,#0f172a 100%);margin-bottom:2.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem;">
+        <div>
+          <span class="cis-badge cis-badge-hmrc" style="margin-bottom:0.5rem;">Instant Bank-Ready Pass</span>
+          <h3 style="margin-top:0.4rem;margin-bottom:0.4rem;color:#f8fafc;font-size:1.4rem;">
+            Remove Watermark &amp; Unlock Automated CIS Direct API
+          </h3>
+          <p style="color:#94a3b8;font-size:0.92rem;max-width:640px;line-height:1.5;margin-bottom:0;">
+            Pay with Credit Card, Apple Pay, Google Pay, Link, or PayPal. Instant pass issued on confirmation.
+          </p>
+        </div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <button class="cis-btn cis-btn-primary" onclick="initDirectCheckout('batch24h')">
+            Get 24h Unlimited Pass ($9 USD)
+          </button>
+          <button class="cis-btn cis-btn-secondary" onclick="initDirectCheckout('pro30d')">
+            Get 30-Day Pro Pass ($29 USD)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technical Guide -->
+    <div class="cis-card" style="margin-bottom:2rem;">
+      <h3>📖 Technical Guide: BACS Standard 18 Record Layout for UK CIS Contractors</h3>
+      <p style="color:#cbd5e1;font-size:0.92rem;line-height:1.6;">
+        The BACS Standard 18 format is a fixed-width 100-byte specification with strict character positioning:
+      </p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;color:#94a3b8;margin-top:0.5rem;">
+          <thead>
+            <tr style="border-bottom:1px solid #374151;color:#f1f5f9;">
+              <th style="padding:6px;width:70px;">Cols</th>
+              <th style="padding:6px;width:60px;">Length</th>
+              <th style="padding:6px;width:150px;">Field Name</th>
+              <th style="padding:6px;">Technical Value &amp; Format</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-family:monospace;">01 - 06</td>
+              <td style="padding:6px;">6</td>
+              <td style="padding:6px;color:#f1f5f9;">Destination Sort</td>
+              <td style="padding:6px;">Subcontractor bank sort code (numeric, 6 digits)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-family:monospace;">07 - 14</td>
+              <td style="padding:6px;">8</td>
+              <td style="padding:6px;color:#f1f5f9;">Destination Account</td>
+              <td style="padding:6px;">Subcontractor bank account number (numeric, 8 digits)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-family:monospace;">15 - 15</td>
+              <td style="padding:6px;">1</td>
+              <td style="padding:6px;color:#f1f5f9;">Account Type</td>
+              <td style="padding:6px;"><code>0</code> (Standard UK current or commercial account)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-family:monospace;">16 - 17</td>
+              <td style="padding:6px;">2</td>
+              <td style="padding:6px;color:#f1f5f9;">Transaction Code</td>
+              <td style="padding:6px;"><code>99</code> for Subcontractor Credit, <code>17</code> for Contractor CONTRA Debit</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-family:monospace;">18 - 23</td>
+              <td style="padding:6px;">6</td>
+              <td style="padding:6px;color:#f1f5f9;">Originating Sort</td>
+              <td style="padding:6px;">Contractor corporate bank sort code (numeric, 6 digits)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-family:monospace;">24 - 31</td>
+              <td style="padding:6px;">8</td>
+              <td style="padding:6px;color:#f1f5f9;">Originating Account</td>
+              <td style="padding:6px;">Contractor corporate account number (numeric, 8 digits)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-family:monospace;">32 - 35</td>
+              <td style="padding:6px;">4</td>
+              <td style="padding:6px;color:#f1f5f9;">Free Format / Filler</td>
+              <td style="padding:6px;"><code>0000</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-family:monospace;">36 - 46</td>
+              <td style="padding:6px;">11</td>
+              <td style="padding:6px;color:#f1f5f9;">Amount in Pence</td>
+              <td style="padding:6px;">Exact Net Payable amount in pence, right-aligned, zero-padded (e.g. <code>00000325000</code>)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-family:monospace;">47 - 64</td>
+              <td style="padding:6px;">18</td>
+              <td style="padding:6px;color:#f1f5f9;">Originating Account Name</td>
+              <td style="padding:6px;">Contractor business name, uppercase, left-aligned, space-padded to 18 chars</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-family:monospace;">65 - 82</td>
+              <td style="padding:6px;">18</td>
+              <td style="padding:6px;color:#f1f5f9;">Reference / Narration</td>
+              <td style="padding:6px;">Subbie UTR, invoice, or CIS reference, left-aligned, space-padded to 18 chars</td>
+            </tr>
+            <tr>
+              <td style="padding:6px;font-family:monospace;">83 - 100</td>
+              <td style="padding:6px;">18</td>
+              <td style="padding:6px;color:#f1f5f9;">Destination Account Name</td>
+              <td style="padding:6px;">Subcontractor name, uppercase, left-aligned, space-padded to 18 chars</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div><strong>FinOps Studio</strong> — Deterministic Banking, Treasury &amp; E-Invoicing File APIs on <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>.</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="./sepa-xml-generator.html">SEPA</a><a href="./eu-einvoice-xml-generator.html">EINVOICE</a><a href="./nacha-ach-file-generator.html">NACHA</a><a href="./bai2-bank-statement-parser.html">BAI2</a><a href="./uk-bacs-standard-18-file-generator.html">UK BACS</a><a href="./sage-intacct-xero-bacs-standard18-payroll-alternative.html">SAGE BACS</a><a href="./canada-cpa-005-eft-file-generator.html">CPA-005</a>
+          <a href="./openapi.json">OpenAPI 3.1</a>
+          <a href="./sitemap.xml">Sitemap</a>
+        </div>
+      </div>
+      <p style="margin-top:12px;color:#64748b;font-size:0.8rem;">
+        Disclaimer: FinOps Studio tools are technical file-formatting, parsing, and mathematical checksum utilities provided "as-is", not legal, tax, or financial advice. Always verify your CIS300 figures and subcontractor details with HMRC before submitting returns.
+      </p>
+    </div>
+  </footer>
+
+  <!-- VIP Support & Direct Checkout Script -->
+  <script src="./vip-support-widget.js"></script>
+
+  <script>
+    // Set default date to today
+    const dateInput = document.getElementById('bacsDate');
+    const today = new Date();
+    dateInput.value = today.toISOString().split('T')[0];
+
+    function padRight(str, len) {
+      str = (str || '').toString().trim().toUpperCase().replace(/[^A-Z0-9 \/\-\.]/g, '');
+      while (str.length < len) str += ' ';
+      return str.substring(0, len);
+    }
+
+    function padZeroLeft(num, len) {
+      let str = Math.round(Number(num) || 0).toString();
+      while (str.length < len) str = '0' + str;
+      return str.substring(0, len);
+    }
+
+    function calculateCisAndBacs() {
+      const contractorName = padRight(document.getElementById('contractorName').value || 'CONTRACTOR LTD', 18);
+      const contractorSort = padZeroLeft((document.getElementById('contractorSort').value || '200000').replace(/\D/g, ''), 6);
+      const contractorAccount = padZeroLeft((document.getElementById('contractorAccount').value || '87654321').replace(/\D/g, ''), 8);
+      const batchRef = padRight(document.getElementById('batchRef').value || 'CIS SUBBIE PAY', 18);
+
+      const rawCsv = document.getElementById('subbieCsv').value.trim();
+      const lines = rawCsv.split('\n');
+
+      let totalGrossLabourPence = 0;
+      let totalMaterialsPence = 0;
+      let totalCisPence = 0;
+      let totalNetPence = 0;
+
+      const outputLines = [];
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        const parts = line.split(',');
+        if (parts.length < 5) continue;
+
+        const subbieName = padRight(parts[0], 18);
+        const subbieSort = padZeroLeft((parts[1] || '200000').replace(/\D/g, ''), 6);
+        const subbieAccount = padZeroLeft((parts[2] || '12345678').replace(/\D/g, ''), 8);
+        const subbieUtr = (parts[3] || '').trim();
+        const labourGross = parseFloat(parts[4]) || 0;
+        const materials = parseFloat(parts[5]) || 0;
+        const cisRate = parseFloat(parts[6]) || 20;
+
+        const labourGrossPence = Math.round(labourGross * 100);
+        const materialsPence = Math.round(materials * 100);
+        const cisDeductionPence = Math.round(labourGrossPence * (cisRate / 100));
+        const netPayablePence = (labourGrossPence - cisDeductionPence) + materialsPence;
+
+        totalGrossLabourPence += labourGrossPence;
+        totalMaterialsPence += materialsPence;
+        totalCisPence += cisDeductionPence;
+        totalNetPence += netPayablePence;
+
+        const subbieRef = padRight(subbieUtr ? 'UTR ' + subbieUtr : batchRef, 18);
+
+        // BACS Detail Record: Transaction Code 99 (Direct Credit)
+        // [DestSort 6][DestAcct 8][AcctType 1: '0'][TxCode 2: '99'][OrigSort 6][OrigAcct 8][Filler 4: '0000'][AmtPence 11][OrigName 18][Ref 18][DestName 18]
+        const bacsRow = subbieSort + subbieAccount + '0' + '99' + contractorSort + contractorAccount + '0000' + padZeroLeft(netPayablePence, 11) + contractorName + subbieRef + subbieName;
+        outputLines.push(bacsRow);
+      }
+
+      // CONTRA Record: Transaction Code 17 (Direct Debit on contractor account for total net batch)
+      // [OrigSort 6][OrigAcct 8][AcctType 1: '0'][TxCode 2: '17'][OrigSort 6][OrigAcct 8][Filler 4: '0000'][TotalAmtPence 11][OrigName 18][Ref 18][OrigName 18]
+      const contraRow = contractorSort + contractorAccount + '0' + '17' + contractorSort + contractorAccount + '0000' + padZeroLeft(totalNetPence, 11) + contractorName + padRight('CONTRA TOTAL NET', 18) + contractorName;
+      outputLines.push(contraRow);
+
+      // Update Summary DOM
+      document.getElementById('sumGrossLabour').textContent = '£' + (totalGrossLabourPence / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('sumMaterials').textContent = '£' + (totalMaterialsPence / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('sumCisDeductions').textContent = '£' + (totalCisPence / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('sumNetPayable').textContent = '£' + (totalNetPence / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Check widths
+      let all100 = true;
+      for (const row of outputLines) {
+        if (row.length !== 100) {
+          all100 = false;
+          break;
+        }
+      }
+
+      document.getElementById('lineStatus').textContent = all100 ? '✅ All ' + outputLines.length + ' lines are exactly 100 characters' : '⚠️ Warning: Line length mismatch';
+      document.getElementById('bacsOutput').textContent = outputLines.join('\r\n');
+    }
+
+    document.getElementById('btnGenerate').addEventListener('click', calculateCisAndBacs);
+
+    // Presets
+    document.getElementById('btnPreset1').addEventListener('click', () => {
+      document.getElementById('contractorName').value = 'APEX BUILD LTD';
+      document.getElementById('contractorSort').value = '200000';
+      document.getElementById('contractorAccount').value = '87654321';
+      document.getElementById('subbieCsv').value = 
+`SMITH BRICKWORK,200000,12345678,1234567890,3500.00,450.00,20
+JONES PLUMBING,400515,87654321,9876543210,2200.00,850.00,20
+CLARKE JOINERY,201143,33445566,4455667788,1950.00,120.00,20
+TAYLOR PLASTER,090126,66778899,2233445566,2800.00,310.00,20`;
+      calculateCisAndBacs();
+    });
+
+    document.getElementById('btnPreset2').addEventListener('click', () => {
+      document.getElementById('contractorName').value = 'MERIDIAN INFRA';
+      document.getElementById('contractorSort').value = '400515';
+      document.getElementById('contractorAccount').value = '55667788';
+      document.getElementById('subbieCsv').value = 
+`DAVIES GROUNDWORK,400515,11223344,8899001122,6400.00,1500.00,20
+UNREGISTERED ROOF,200000,99881122,0000000000,2500.00,0.00,30
+WILSON ELECTRICAL,600204,44556611,3344112233,3100.00,800.00,20
+NEW LABOUR HIRE,090126,77889900,0000000000,1400.00,0.00,30`;
+      calculateCisAndBacs();
+    });
+
+    document.getElementById('btnPreset3').addEventListener('click', () => {
+      document.getElementById('contractorName').value = 'VANGUARD FITOUT';
+      document.getElementById('contractorSort').value = '600204';
+      document.getElementById('contractorAccount').value = '99001122';
+      document.getElementById('subbieCsv').value = 
+`PRIME GLAZING LTD,600204,88991122,1122009988,8500.00,2400.00,0
+EXPRESS HVAC UK,201143,55667788,9900223344,4200.00,1100.00,20
+CUSTOM CARPENTRY,400515,33221100,5566001122,2900.00,450.00,20`;
+      calculateCisAndBacs();
+    });
+
+    // Copy & Download
+    document.getElementById('btnCopyBacs').addEventListener('click', () => {
+      const text = document.getElementById('bacsOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('100-character BACS file copied to clipboard!');
+      });
+    });
+
+    document.getElementById('btnDownloadBacs').addEventListener('click', () => {
+      const text = document.getElementById('bacsOutput').textContent;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'BACS_CIS_PAYMENTS_' + (new Date().toISOString().split('T')[0]) + '.bac';
+      a.click();
+    });
+
+    // Trigger initial calculation
+    calculateCisAndBacs();
+  </script>
+</body>
+</html>

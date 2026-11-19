@@ -540,4 +540,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.97</priority>
   </url>
+  <url>
+    <loc>https://geornaden.github.io/finops-studio/uk-cis-hmrc-construction-bacs-payroll-alternative.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.97</priority>
+  </url>
 </urlset>
