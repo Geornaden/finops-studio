@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Australian Construction SOPA &amp; Retention Trust to ABA Direct Entry Alternative | FinOps Studio</title>
+  <meta name="description" content="Convert Australian builder SOPA payment schedules, subcontractor progress claims &amp; statutory retention trust accounting to bank-compliant 120-character CEMTEX .ABA files for CommBiz, NAB Connect, Westpac &amp; ANZ. $9 USD direct pass." />
+  <link rel="canonical" href="https://geornaden.github.io/finops-studio/australia-construction-sopa-retainage-aba-alternative.html" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./telemetry-beacon.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": "Convert Australian Construction SOPA Payment Schedules & Retention Trust Accounting to ABA Direct Entry Files (CommBiz, NAB, Westpac, ANZ)",
+        "url": "https://geornaden.github.io/finops-studio/australia-construction-sopa-retainage-aba-alternative.html",
+        "author": { "@type": "Organization", "name": "FinOps Studio" },
+        "description": "Deterministic Australian construction payroll & subcontractor clearing engine converting Security of Payment Act (SOPA) progress claims, statutory 5%/10% retention trust withholding, and Record 7 balance totals into compliant 120-character CEMTEX .ABA files."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does the Security of Payment Act (SOPA) govern subcontractor progress claims and retention in Australia?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under statutory Australian SOPA frameworks (including NSW, QLD BIF Act, VIC, and WA), head contractors must issue a valid Payment Schedule within statutory deadlines and pay certified amounts. Where retention is held (typically 5% or 10% up to practical completion), statutory rules in jurisdictions like Queensland (Project Trust Accounts) and NSW mandate holding retention in separate trust accounts. FinOps Studio automates the retention deduction math and generates bank-ready .ABA files to pay net progress claims directly to subcontractors."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why do Australian commercial bank portals reject standard accounting CSV exports for subcontractor payouts?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Australian business banking portals like CommBiz (CBA), NAB Connect, Westpac Business Banking Online, and ANZ Transactive require 120-character fixed-width CEMTEX .ABA files conforming to AusPayNet/APCA Direct Entry specifications. Raw CSV exports lack 120-character column alignment, BSB formatting (XXX-XXX), APCA User IDs, and Record 7 credit/debit hash balancing."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does FinOps Studio replace expensive enterprise construction ERPs for .ABA file generation?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Enterprise construction software like Procore, Jobpac, or Viewpoint charge thousands of dollars in monthly SaaS fees. FinOps Studio provides an instant deterministic converter and cloud API for $9 USD (24h unlimited pass) or $29 USD (30-day Pro pass) with zero recurring monthly lock-in."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    .aba-hero {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(14, 165, 233, 0.08) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 14px;
+      padding: 2.2rem;
+      margin-bottom: 2rem;
+    }
+    .aba-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 860px) {
+      .aba-grid { grid-template-columns: 1fr; }
+    }
+    .aba-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+    .aba-card h3 {
+      margin-top: 0;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.15rem;
+    }
+    .aba-input-group {
+      margin-bottom: 1.1rem;
+    }
+    .aba-input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-bottom: 0.35rem;
+    }
+    .aba-input-group input, .aba-input-group select, .aba-input-group textarea {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #f9fafb;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .aba-input-group textarea {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      resize: vertical;
+    }
+    .aba-badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .aba-badge-sopa {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .aba-badge-bank {
+      background: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+    .aba-summary-box {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin-top: 1rem;
+    }
+    .aba-summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem;
+      color: #94a3b8;
+    }
+    .aba-summary-row.total {
+      font-weight: bold;
+      color: #f8fafc;
+      border-top: 1px solid #334155;
+      padding-top: 0.6rem;
+      margin-top: 0.6rem;
+      font-size: 1rem;
+    }
+    .aba-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.4rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      font-size: 0.95rem;
+      border: none;
+    }
+    .aba-btn-primary {
+      background: #059669;
+      color: #ffffff;
+    }
+    .aba-btn-primary:hover {
+      background: #047857;
+    }
+    .aba-btn-secondary {
+      background: #374151;
+      color: #e5e7eb;
+    }
+    .aba-btn-secondary:hover {
+      background: #4b5563;
+    }
+    .aba-code-ruler {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.72rem;
+      color: #64748b;
+      background: #090d16;
+      padding: 4px 8px;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+      border: 1px solid #1e293b;
+      border-bottom: none;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .aba-output {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      color: #34d399;
+      background: #030712;
+      padding: 12px;
+      border-radius: 0 0 6px 6px;
+      border: 1px solid #1e293b;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center;padding:1rem 0;">
+      <a href="./index.html" style="font-weight:700;font-size:1.25rem;color:#f8fafc;text-decoration:none;display:flex;align-items:center;gap:0.5rem;">
+        <span style="color:#10b981;">🦘</span> FinOps Studio
+      </a>
+      <nav style="display:flex;gap:1.2rem;font-size:0.9rem;">
+        <a href="./index.html" style="color:#94a3b8;text-decoration:none;">All Engines</a>
+        <a href="./aba-cemtex-file-generator.html" style="color:#94a3b8;text-decoration:none;">ABA Generator</a>
+        <a href="./myob-xero-employment-hero-aba-direct-entry-alternative.html" style="color:#94a3b8;text-decoration:none;">Xero &amp; MYOB ABA</a>
+        <a href="#calculator" style="color:#10b981;font-weight:600;text-decoration:none;">Live SOPA Converter</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:1.5rem;padding-bottom:3rem;">
+    <!-- Hero Section -->
+    <div class="aba-hero">
+      <div style="display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap;">
+        <span class="aba-badge aba-badge-sopa">Australian SOPA Compliant</span>
+        <span class="aba-badge aba-badge-bank">120-Char CEMTEX .ABA File</span>
+        <span class="aba-badge" style="background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">$9 USD Direct Pass</span>
+      </div>
+      <h1 style="color:#f8fafc;font-size:2.2rem;margin-top:0;margin-bottom:0.8rem;line-height:1.2;">
+        Australian Construction SOPA &amp; Retention Trust to ABA Direct Entry Alternative
+      </h1>
+      <p style="color:#cbd5e1;font-size:1.05rem;max-width:820px;line-height:1.6;margin-bottom:1.5rem;">
+        Eliminate complex ERP lock-ins and manual banking spreadsheets. Convert head contractor progress payment schedules and subcontractor payment claims under the Security of Payment Act into bank-compliant 120-character CEMTEX .ABA files with automated 5% or 10% statutory retention trust math, APCA headers, and Record 7 balance totals for CommBiz (CBA), NAB Connect, Westpac, ANZ, and Macquarie.
+      </p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="#calculator" class="aba-btn aba-btn-primary">Launch Interactive SOPA ABA Generator</a>
+        <a href="#pricing" class="aba-btn aba-btn-secondary">View $9 Pass Options</a>
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="aba-card" style="margin-bottom:2rem;">
+      <h3>⚡ Australian Construction Payroll: FinOps Studio vs Traditional ERPs</h3>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.9rem;color:#cbd5e1;text-align:left;">
+          <thead>
+            <tr style="border-bottom:1px solid #374151;color:#9ca3af;">
+              <th style="padding:0.75rem;">Feature</th>
+              <th style="padding:0.75rem;color:#10b981;">FinOps Studio SOPA ABA</th>
+              <th style="padding:0.75rem;">Enterprise ERP (Procore, Jobpac)</th>
+              <th style="padding:0.75rem;">Manual Bank CSV / Spreadsheet</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:0.75rem;font-weight:600;">Pricing / Cost</td>
+              <td style="padding:0.75rem;color:#4ade80;font-weight:700;">$9 USD (24h) / $29 USD (30d Pro)</td>
+              <td style="padding:0.75rem;">$6,000 – $25,000/yr + implementation</td>
+              <td style="padding:0.75rem;">Free (High bank rejection risk)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:0.75rem;font-weight:600;">Statutory Retention Math (5% / 10%)</td>
+              <td style="padding:0.75rem;color:#4ade80;">Automated per subcontractor line</td>
+              <td style="padding:0.75rem;">Complex ERP configuration</td>
+              <td style="padding:0.75rem;">Manual spreadsheet formula (error prone)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:0.75rem;font-weight:600;">120-Char CEMTEX .ABA Format</td>
+              <td style="padding:0.75rem;color:#4ade80;">Strict APCA / AusPayNet compliance</td>
+              <td style="padding:0.75rem;">Supported via export plugin</td>
+              <td style="padding:0.75rem;color:#ef4444;">Rejected (CSV not supported for Direct Entry)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:0.75rem;font-weight:600;">Record 7 Hash &amp; Balance Verification</td>
+              <td style="padding:0.75rem;color:#4ade80;">Automated credit total + count checks</td>
+              <td style="padding:0.75rem;">Automated</td>
+              <td style="padding:0.75rem;color:#ef4444;">Missing (Batch fails bank hash check)</td>
+            </tr>
+            <tr>
+              <td style="padding:0.75rem;font-weight:600;">Retention Trust Ledger Output</td>
+              <td style="padding:0.75rem;color:#4ade80;">Calculates total trust deposit for compliance</td>
+              <td style="padding:0.75rem;">Dedicated trust accounting module ($$)</td>
+              <td style="padding:0.75rem;">Manual calculation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Interactive Calculator -->
+    <div id="calculator" class="aba-card" style="margin-bottom:2rem;">
+      <h3>🛠️ Interactive Australian Construction SOPA to .ABA Console</h3>
+      <p style="color:#94a3b8;font-size:0.88rem;margin-bottom:1.5rem;">
+        Enter your head contractor bank account and APCA User ID, specify subcontractor payment claims, and generate the compliant 120-character CEMTEX .ABA file with statutory retention trust withholding.
+      </p>
+
+      <!-- Preset selector -->
+      <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center;">
+        <span style="font-size:0.85rem;color:#9ca3af;font-weight:600;">1-Click AU Construction Presets:</span>
+        <button id="btnPreset1" type="button" class="aba-btn aba-btn-secondary" style="font-size:0.8rem;padding:0.4rem 0.8rem;">
+          Preset 1: Commercial (5% Retention)
+        </button>
+        <button id="btnPreset2" type="button" class="aba-btn aba-btn-secondary" style="font-size:0.8rem;padding:0.4rem 0.8rem;">
+          Preset 2: Civil Works (10% Retention)
+        </button>
+        <button id="btnPreset3" type="button" class="aba-btn aba-btn-secondary" style="font-size:0.8rem;padding:0.4rem 0.8rem;">
+          Preset 3: Residential Fitout (5% Retention)
+        </button>
+      </div>
+
+      <div class="aba-grid">
+        <!-- Head Contractor Account -->
+        <div>
+          <h4 style="color:#f3f4f6;margin-top:0;margin-bottom:1rem;font-size:0.95rem;">Head Contractor (Remitter) Account</h4>
+          <div class="aba-input-group">
+            <label for="builderName">Contractor Company Name (Max 26 chars)</label>
+            <input type="text" id="builderName" value="PACIFIC CONSTRUCT PTY LTD" maxlength="26" />
+          </div>
+          <div class="aba-input-group">
+            <label for="builderBank">User Bank Code (3 chars: CBA, NAB, WPC, ANZ, MQG)</label>
+            <input type="text" id="builderBank" value="CBA" maxlength="3" />
+          </div>
+          <div class="aba-input-group">
+            <label for="apcaUserId">APCA User Identification Number (6 digits)</label>
+            <input type="text" id="apcaUserId" value="301245" maxlength="6" />
+          </div>
+          <div class="aba-input-group">
+            <label for="traceBsb">Contractor Trace BSB (Format: XXX-XXX)</label>
+            <input type="text" id="traceBsb" value="062-000" maxlength="7" />
+          </div>
+          <div class="aba-input-group">
+            <label for="traceAccount">Contractor Account Number (Max 9 chars)</label>
+            <input type="text" id="traceAccount" value="10293847" maxlength="9" />
+          </div>
+          <div class="aba-input-group">
+            <label for="abaDate">Processing Date (DDMMYY format)</label>
+            <input type="text" id="abaDate" value="191126" maxlength="6" />
+          </div>
+        </div>
+
+        <!-- Subcontractor Claims Input -->
+        <div>
+          <h4 style="color:#f3f4f6;margin-top:0;margin-bottom:1rem;font-size:0.95rem;">
+            Subcontractor Claims (CSV: Name, BSB, AccountNo, ClaimRef, GrossClaim$, Retention%)
+          </h4>
+          <div class="aba-input-group">
+            <label for="subbieCsv">Enter Subcontractor Progress Claims</label>
+            <textarea id="subbieCsv" rows="11" spellcheck="false">TITAN CONCRETE PTY,062-111,12345678,CLAIM-04,18500.00,5
+APEX STEEL FIXING,083-004,87654321,SOPA-NOV26,12400.00,5
+DELTA FORMWORK,032-024,55443322,INV-8891,9600.00,5
+METRO SCAFFOLDING,012-003,99887766,SOPA-09,6200.00,5</textarea>
+          </div>
+          <button id="btnGenerate" type="button" class="aba-btn aba-btn-primary" style="width:100%;">
+            ⚡ Calculate Retentions &amp; Generate CEMTEX .ABA File
+          </button>
+        </div>
+      </div>
+
+      <!-- Retention Trust & SOPA Summary Box -->
+      <div class="aba-summary-box">
+        <h4 style="color:#34d399;margin-top:0;margin-bottom:0.75rem;font-size:0.92rem;display:flex;align-items:center;gap:0.5rem;">
+          <span>📋</span> Statutory SOPA &amp; Retention Trust Ledger Summary
+        </h4>
+        <div class="aba-summary-row">
+          <span>Gross Certified Subcontractor Progress Claims:</span>
+          <span id="sumGrossClaims" style="font-weight:600;color:#f8fafc;">$0.00</span>
+        </div>
+        <div class="aba-summary-row" style="color:#38bdf8;">
+          <span>Total Statutory Retention Withheld (Transfer to Trust Account):</span>
+          <span id="sumRetentionTrust" style="font-weight:700;">$0.00</span>
+        </div>
+        <div class="aba-summary-row total">
+          <span>Total Net Direct Entry Payout (Record 7 Total):</span>
+          <span id="sumNetAba" style="color:#4ade80;">$0.00</span>
+        </div>
+      </div>
+
+      <!-- 120-Char Output -->
+      <div style="margin-top:1.5rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+          <label style="font-size:0.85rem;font-weight:600;color:#9ca3af;">
+            Generated 120-Character CEMTEX .ABA Stream (Record Types 0, 1 &amp; 7)
+          </label>
+          <span id="lineStatus" style="font-size:0.78rem;color:#4ade80;font-weight:600;">All lines exactly 120 chars</span>
+        </div>
+        <div class="aba-code-ruler">000000000111111111122222222223333333333444444444455555555556666666666777777777788888888889999999999000000000011111111112
+123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890</div>
+        <pre id="abaOutput" class="aba-output">Click 'Calculate Retentions &amp; Generate CEMTEX .ABA File' to generate bank stream...</pre>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem;flex-wrap:wrap;gap:0.75rem;">
+          <button id="btnCopyAba" type="button" class="aba-btn aba-btn-secondary" style="font-size:0.85rem;padding:0.5rem 1rem;">
+            📋 Copy 120-Char ABA File
+          </button>
+          <button id="btnDownloadAba" type="button" class="aba-btn aba-btn-secondary" style="font-size:0.85rem;padding:0.5rem 1rem;">
+            💾 Download .aba File
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing / Direct Pass Hook -->
+    <div id="pricing" class="aba-card" style="border:1px solid rgba(16, 185, 129, 0.4);background:linear-gradient(180deg,#111827 0%,#0f172a 100%);margin-bottom:2.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem;">
+        <div>
+          <span class="aba-badge aba-badge-sopa" style="margin-bottom:0.5rem;">Instant Bank-Ready Pass</span>
+          <h3 style="margin-top:0.4rem;margin-bottom:0.4rem;color:#f8fafc;font-size:1.4rem;">
+            Remove Watermark &amp; Unlock Automated Australian Direct Entry API
+          </h3>
+          <p style="color:#94a3b8;font-size:0.92rem;max-width:640px;line-height:1.5;margin-bottom:0;">
+            Pay with Credit Card, Apple Pay, Google Pay, Link, or PayPal. Instant pass issued on confirmation.
+          </p>
+        </div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <button class="aba-btn aba-btn-primary" onclick="initDirectCheckout('batch24h')">
+            Get 24h Unlimited Pass ($9 USD)
+          </button>
+          <button class="aba-btn aba-btn-secondary" onclick="initDirectCheckout('pro30d')">
+            Get 30-Day Pro Pass ($29 USD)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technical Guide -->
+    <div class="aba-card" style="margin-bottom:2rem;">
+      <h3>📖 Technical Guide: Australian CEMTEX .ABA Record Structure</h3>
+      <p style="color:#cbd5e1;font-size:0.92rem;line-height:1.6;">
+        The Australian Direct Entry CEMTEX specification requires three record types formatted to exactly 120 bytes per row:
+      </p>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;color:#94a3b8;margin-top:0.5rem;">
+          <thead>
+            <tr style="border-bottom:1px solid #374151;color:#f1f5f9;">
+              <th style="padding:6px;width:70px;">Record</th>
+              <th style="padding:6px;width:80px;">Columns</th>
+              <th style="padding:6px;width:150px;">Field Name</th>
+              <th style="padding:6px;">Format &amp; Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-weight:600;color:#34d399;">Type 0</td>
+              <td style="padding:6px;font-family:monospace;">01 - 120</td>
+              <td style="padding:6px;color:#f1f5f9;">Descriptive Record</td>
+              <td style="padding:6px;">Reel 01, User Bank (e.g. CBA), Remitter Name (26 chars), APCA ID (6 digits), Description (12 chars), Date (DDMMYY)</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1f2937;">
+              <td style="padding:6px;font-weight:600;color:#38bdf8;">Type 1</td>
+              <td style="padding:6px;font-family:monospace;">01 - 120</td>
+              <td style="padding:6px;color:#f1f5f9;">Detail Record</td>
+              <td style="padding:6px;">Payee BSB (XXX-XXX), Account (9 chars), Tx Code 53, Net Amount in Cents (10 digits), Account Name (32 chars), Reference (18 chars), Trace BSB/Acct, Remitter Name</td>
+            </tr>
+            <tr>
+              <td style="padding:6px;font-weight:600;color:#a78bfa;">Type 7</td>
+              <td style="padding:6px;font-family:monospace;">01 - 120</td>
+              <td style="padding:6px;color:#f1f5f9;">File Total Record</td>
+              <td style="padding:6px;">BSB 999-999, Total Net Amount (10 digits), Total Credit (10 digits), Total Debit 0000000000, Count of Records (6 digits)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div><strong>FinOps Studio</strong> — Deterministic Banking, Treasury &amp; E-Invoicing File APIs on <a href="https://apify.com/finops_studio" target="_blank" rel="noopener">Apify Store</a>.</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="./sepa-xml-generator.html">SEPA</a><a href="./eu-einvoice-xml-generator.html">EINVOICE</a><a href="./nacha-ach-file-generator.html">NACHA</a><a href="./bai2-bank-statement-parser.html">BAI2</a><a href="./aba-cemtex-file-generator.html">ABA</a><a href="./myob-xero-employment-hero-aba-direct-entry-alternative.html">MYOB &amp; XERO ABA</a>
+          <a href="./openapi.json">OpenAPI 3.1</a>
+          <a href="./sitemap.xml">Sitemap</a>
+        </div>
+      </div>
+      <p style="margin-top:12px;color:#64748b;font-size:0.8rem;">
+        Disclaimer: FinOps Studio tools are technical file-formatting, parsing, and mathematical checksum utilities provided "as-is", not legal, tax, or financial advice. Always verify payment schedule calculations and retention trust compliance with your local state building regulator before transferring funds.
+      </p>
+    </div>
+  </footer>
+
+  <!-- VIP Support & Direct Checkout Script -->
+  <script src="./vip-support-widget.js"></script>
+
+  <script>
+    function padRight(str, len) {
+      str = (str || '').toString().trim().toUpperCase().replace(/[^A-Z0-9 \/\-\.]/g, '');
+      while (str.length < len) str += ' ';
+      return str.substring(0, len);
+    }
+
+    function padZeroLeft(num, len) {
+      let str = Math.round(Number(num) || 0).toString();
+      while (str.length < len) str = '0' + str;
+      return str.substring(0, len);
+    }
+
+    function formatBsb(raw) {
+      const clean = (raw || '').replace(/\D/g, '');
+      if (clean.length === 6) {
+        return clean.substring(0, 3) + '-' + clean.substring(3, 6);
+      }
+      return (raw || '').trim().substring(0, 7);
+    }
+
+    function calculateSopaAndAba() {
+      const builderName = padRight(document.getElementById('builderName').value || 'PACIFIC CONSTRUCT', 26);
+      const builderBank = padRight(document.getElementById('builderBank').value || 'CBA', 3);
+      const apcaUserId = padZeroLeft((document.getElementById('apcaUserId').value || '301245').replace(/\D/g, ''), 6);
+      const traceBsb = formatBsb(document.getElementById('traceBsb').value || '062-000');
+      const traceAccount = padRight((document.getElementById('traceAccount').value || '10293847').replace(/\D/g, ''), 9);
+      const abaDate = padZeroLeft((document.getElementById('abaDate').value || '191126').replace(/\D/g, ''), 6);
+
+      // Record Type 0 (Descriptive Record: 120 chars)
+      // 0 [17 blanks] 01 [Bank 3] [7 blanks] [Name 26] [APCA 6] [Desc 12: 'SOPA SUBBIES'] [Date 6: DDMMYY] [40 blanks]
+      const descLine = '0' + '                 ' + '01' + builderBank + '       ' + builderName + apcaUserId + padRight('SOPA SUBBIES', 12) + abaDate + '                                        ';
+      
+      const rawCsv = document.getElementById('subbieCsv').value.trim();
+      const lines = rawCsv.split('\n');
+
+      let totalGrossCents = 0;
+      let totalRetentionCents = 0;
+      let totalNetCents = 0;
+      let recordCount = 0;
+
+      const outputLines = [descLine];
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        const parts = line.split(',');
+        if (parts.length < 5) continue;
+
+        const subbieName = padRight(parts[0], 32);
+        const subbieBsb = formatBsb(parts[1]);
+        const subbieAccount = padRight((parts[2] || '').replace(/\D/g, ''), 9);
+        const claimRef = padRight(parts[3] || 'SOPA CLAIM', 18);
+        const grossClaim = parseFloat(parts[4]) || 0;
+        const retentionPct = parseFloat(parts[5]) || 5;
+
+        const grossCents = Math.round(grossClaim * 100);
+        const retentionCents = Math.round(grossCents * (retentionPct / 100));
+        const netCents = grossCents - retentionCents;
+
+        totalGrossCents += grossCents;
+        totalRetentionCents += retentionCents;
+        totalNetCents += netCents;
+        recordCount++;
+
+        // Record Type 1 (Detail Record: 120 chars)
+        // 1 [BSB 7: XXX-XXX] [Acct 9] [Ind 1: ' '] [TxCode 2: '53'] [Amt 10] [Title 32] [Ref 18] [TraceBSB 7] [TraceAcct 9] [Remitter 16] [WHT 8: '00000000']
+        const detailRow = '1' + subbieBsb + subbieAccount + ' ' + '53' + padZeroLeft(netCents, 10) + subbieName + claimRef + traceBsb + traceAccount + padRight(builderName, 16) + '00000000';
+        outputLines.push(detailRow);
+      }
+
+      // Record Type 7 (File Total Record: 120 chars)
+      // 7 999-999 [12 blanks] [NetTotal 10] [CreditTotal 10] [DebitTotal 10: '0000000000'] [24 blanks] [Count 6] [40 blanks]
+      const totalLine = '7999-999            ' + padZeroLeft(totalNetCents, 10) + padZeroLeft(totalNetCents, 10) + '0000000000                        ' + padZeroLeft(recordCount, 6) + '                                        ';
+      outputLines.push(totalLine);
+
+      // Update Summary DOM
+      document.getElementById('sumGrossClaims').textContent = '$' + (totalGrossCents / 100).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('sumRetentionTrust').textContent = '$' + (totalRetentionCents / 100).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('sumNetAba').textContent = '$' + (totalNetCents / 100).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Check widths
+      let all120 = true;
+      for (const row of outputLines) {
+        if (row.length !== 120) {
+          all120 = false;
+          break;
+        }
+      }
+
+      document.getElementById('lineStatus').textContent = all120 ? '✅ All ' + outputLines.length + ' lines are exactly 120 characters' : '⚠️ Warning: Line length mismatch';
+      document.getElementById('abaOutput').textContent = outputLines.join('\r\n');
+    }
+
+    document.getElementById('btnGenerate').addEventListener('click', calculateSopaAndAba);
+
+    // Presets
+    document.getElementById('btnPreset1').addEventListener('click', () => {
+      document.getElementById('builderName').value = 'PACIFIC CONSTRUCT PTY LTD';
+      document.getElementById('builderBank').value = 'CBA';
+      document.getElementById('traceBsb').value = '062-000';
+      document.getElementById('traceAccount').value = '10293847';
+      document.getElementById('subbieCsv').value = 
+`TITAN CONCRETE PTY,062-111,12345678,CLAIM-04,18500.00,5
+APEX STEEL FIXING,083-004,87654321,SOPA-NOV26,12400.00,5
+DELTA FORMWORK,032-024,55443322,INV-8891,9600.00,5
+METRO SCAFFOLDING,012-003,99887766,SOPA-09,6200.00,5`;
+      calculateSopaAndAba();
+    });
+
+    document.getElementById('btnPreset2').addEventListener('click', () => {
+      document.getElementById('builderName').value = 'CIVIL HORIZON INFRA';
+      document.getElementById('builderBank').value = 'NAB';
+      document.getElementById('traceBsb').value = '083-004';
+      document.getElementById('traceAccount').value = '55667788';
+      document.getElementById('subbieCsv').value = 
+`EARTHMOVING DYNAMICS,083-004,11223344,PROG-CLAIM-12,34000.00,10
+TRAFFIC LOGISTICS AU,032-024,44556677,SOPA-TL04,14500.00,10
+ASPHALT SEAL PTY LTD,062-000,88990011,INV-3091,22000.00,10`;
+      calculateSopaAndAba();
+    });
+
+    document.getElementById('btnPreset3').addEventListener('click', () => {
+      document.getElementById('builderName').value = 'HARBOUR INTERIORS NSW';
+      document.getElementById('builderBank').value = 'WPC';
+      document.getElementById('traceBsb').value = '032-024';
+      document.getElementById('traceAccount').value = '99001122';
+      document.getElementById('subbieCsv').value = 
+`VANGUARD ELECTRICAL,032-024,77889900,FITOUT-02,11500.00,5
+COASTAL PLUMBING,012-003,33445566,SOPA-PL07,8900.00,5
+CUSTOM CEILINGS NSW,062-111,55667788,CLAIM-99,7400.00,5`;
+      calculateSopaAndAba();
+    });
+
+    // Copy & Download
+    document.getElementById('btnCopyAba').addEventListener('click', () => {
+      const text = document.getElementById('abaOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('120-character CEMTEX .ABA file copied to clipboard!');
+      });
+    });
+
+    document.getElementById('btnDownloadAba').addEventListener('click', () => {
+      const text = document.getElementById('abaOutput').textContent;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'SOPA_PAYMENTS_' + (new Date().toISOString().split('T')[0]) + '.aba';
+      a.click();
+    });
+
+    // Initial calculation
+    calculateSopaAndAba();
+  </script>
+</body>
+</html>
