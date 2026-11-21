@@ -26,6 +26,40 @@
     }
   } catch {}
 
+  window.finopsSafeCopy = function (text) {
+    const str = String(text ?? '');
+    const fallback = () => {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = str;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0;';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch {}
+        document.body.removeChild(ta);
+      } catch {}
+    };
+    try {
+      const orig = window.__finopsOrigWriteText;
+      if (typeof orig === 'function') {
+        return Promise.resolve(orig(str)).catch(() => { fallback(); });
+      }
+    } catch {}
+    fallback();
+    return Promise.resolve();
+  };
+
+  // Protect all inline Copy buttons across all 111 pages from unhandled Clipboard NotAllowedError
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function' && !window.__finopsOrigWriteText) {
+      window.__finopsOrigWriteText = navigator.clipboard.writeText.bind(navigator.clipboard);
+      navigator.clipboard.writeText = function (text) {
+        return window.finopsSafeCopy(text);
+      };
+    }
+  } catch {}
+
   window.getFinOpsPassKey = function () {
     try {
       const k = (localStorage.getItem(LS_PASS) || '').trim();
@@ -787,7 +821,7 @@
         bPP?.addEventListener('click', () => window.startFinOpsCheckout('batch24h', { btn: bPP, provider: 'paypal' }));
         bCfo?.addEventListener('click', () => {
           const shareText = 'FinOps Studio — Deterministic Bank & E-Invoice File Generator ($9 24h Unlimited Pass or $29 30-Day Pro API/MCP Pass, zero subscription): https://geornaden.github.io/finops-studio/free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html';
-          navigator.clipboard?.writeText(shareText);
+          window.finopsSafeCopy(shareText);
           if (bCfo) {
             const old = bCfo.textContent;
             bCfo.textContent = 'Copied CFO Link!';

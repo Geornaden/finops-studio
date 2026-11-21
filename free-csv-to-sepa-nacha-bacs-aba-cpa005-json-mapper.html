@@ -777,13 +777,20 @@
         });
         var data = await r.json();
         var cleanFile = data.xml || data.nachaText || data.csvText || data.csvOutput || "";
-        if (cleanFile) {
+        if (!r.ok && !cleanFile) {
+          var errMsg = data.error || (Array.isArray(data.errors) ? data.errors.join("\n- ") : "HTTP " + r.status);
+          resBox.textContent = "Notice (" + r.status + "): " + errMsg;
+          lastFreeDemoText = "";
+          if (btnDlFreeDemo) btnDlFreeDemo.style.display = "none";
+          if (bannerText) bannerText.innerHTML = "&#9888;&#65039; <strong>" + (r.status === 429 ? "Hourly free test limit reached" : "Fix input issue above") + "</strong> — or unlock unlimited runs right now ($9):";
+        } else if (cleanFile) {
           if (fmt === "nacha" && cleanFile.indexOf("DEMO") === -1) {
             cleanFile = cleanFile + "\nREMARK: FREE 2-ROW DEMO PREVIEW — UNLOCK FULL BATCH ($9) AT FINOPS STUDIO";
           }
           resBox.textContent = cleanFile;
           lastFreeDemoText = cleanFile;
           lastFreeDemoExt = cfg.ext || "test-file.txt";
+          if (btnDlFreeDemo) btnDlFreeDemo.style.display = "inline-flex";
           if (bannerText) {
             var omittedNote = data.rowsOmitted > 0 ? " (" + data.rowsOmitted + " remaining row(s) locked)" : "";
             bannerText.innerHTML = "&#9989; <strong>Free 2-Row Test File Generated!" + omittedNote + "</strong> Download it now to inspect exact bank formatting, or unlock all rows watermark-free ($9):";
@@ -793,6 +800,7 @@
           resBox.textContent = pretty;
           lastFreeDemoText = pretty;
           lastFreeDemoExt = "validation-report.txt";
+          if (btnDlFreeDemo) btnDlFreeDemo.style.display = "inline-flex";
         }
         var tokNow = (document.getElementById("directToken")?.value || localStorage.getItem("finops_pro_pass") || "").trim();
         if (unlockBanner && !(tokNow.indexOf("fop_") === 0 && window.__finopsVerifiedActivePass)) {

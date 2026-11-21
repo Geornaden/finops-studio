@@ -607,7 +607,10 @@ export function initSandbox(defaultTool = "sepa") {
     const cfg = TOOLS_CONFIG[activeKey];
     const payload = JSON.stringify(getApiPayloadObj(cfg), null, 2);
     const snippet = `curl -X POST "https://api.apify.com/v2/acts/${cfg.actorSlug}/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '${payload.replace(/'/g, "'\\''")}'`;
-    await navigator.clipboard.writeText(snippet);
+    try {
+      if (typeof window.finopsSafeCopy === "function") await window.finopsSafeCopy(snippet);
+      else await navigator.clipboard.writeText(snippet);
+    } catch {}
     const orig = curlBtn.textContent;
     curlBtn.textContent = "Copied Working REST cURL!";
     setTimeout(() => { curlBtn.textContent = orig; }, 1800);
