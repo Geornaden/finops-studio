@@ -155,13 +155,24 @@
         </div>
       </div>
       <div id="demoUnlockBanner" style="display:none;margin-top:12px;padding:12px 14px;border-radius:10px;background:rgba(245,158,11,0.14);border:1px solid #f59e0b;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-        <div style="font-size:0.86rem;color:#fde68a;font-weight:700;flex:1;min-width:260px;">&#128274; Watermarked Demo Preview — Remove the watermark &amp; download your bank-ready file in 10 seconds (Card, Apple Pay, Google Pay, Cash App, Link or PayPal — USD):</div>
+        <div id="demoUnlockBannerText" style="font-size:0.86rem;color:#fde68a;font-weight:700;flex:1;min-width:260px;">&#9989; Free 2-Row Test Ready! Download the test file to inspect structure &amp; checksums—or unlock all rows watermark-free in 10 seconds:</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button id="btnUnlockAfterDemo9" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#128179; Remove Watermark &amp; Download — $9 USD (24h Unlimited)</button>
-          <button id="btnUnlockAfterDemo29" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fde68a;font-weight:700;">&#128640; 30-Day Pro Pass — $29 USD</button>
+          <button id="btnDownloadFreeDemo" type="button" class="btn btn-outline" style="border-color:#34d399;color:#6ee7b7;font-weight:800;">&#8681; Download Free 2-Row Test File</button>
+          <button id="btnUnlockAfterDemo9" type="button" class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;border:none;font-weight:800;">&#128179; Remove Watermark &amp; Export All Rows — $9 (24h)</button>
+          <button id="btnUnlockAfterDemo29" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fde68a;font-weight:700;">&#128640; 30-Day Pro Pass — $29</button>
         </div>
       </div>
       <pre id="cloudResultBox" class="code-box" style="display:none;margin-top:12px;min-height:160px;border-color:#34d399;"></pre>
+      <div style="margin-top:14px;padding:13px 15px;border-radius:10px;background:rgba(16,185,129,0.09);border:1px solid rgba(52,211,153,0.4);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:0.84rem;">
+        <div style="flex:1;min-width:260px;color:#e2e8f0;">
+          <strong style="color:#6ee7b7;">&#128736;&#65039; Did Your Bank Portal Reject Your File? (Done-For-You Help)</strong><br />
+          Send us your bank's rejection code or screenshot (zero real account numbers needed) for a <strong>Free Diagnosis</strong>—or grab the <strong>$29 Pro Pass</strong> for priority hands-on template mapping &amp; validation.
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="btnMapperConciergeFree" type="button" class="btn btn-outline" style="border-color:#34d399;color:#6ee7b7;font-weight:700;">&#128248; Free Rejection Diagnosis</button>
+          <button id="btnMapperConcierge29" type="button" class="btn btn-outline" style="border-color:#fbbf24;color:#fde68a;font-weight:700;">&#128640; Priority Fix + 30d Pro ($29)</button>
+        </div>
+      </div>
     </section>
 
     <section style="margin-top:28px;">
@@ -654,6 +665,14 @@
     if (btnDemoUnlock9) btnDemoUnlock9.addEventListener("click", function (e) { startMapperCheckout("batch24h", e.target); });
     var btnDemoUnlock29 = document.getElementById("btnUnlockAfterDemo29");
     if (btnDemoUnlock29) btnDemoUnlock29.addEventListener("click", function (e) { startMapperCheckout("pro30d", e.target); });
+    var btnMapperConcFree = document.getElementById("btnMapperConciergeFree");
+    if (btnMapperConcFree) {
+      btnMapperConcFree.addEventListener("click", function () {
+        if (typeof window.openFinOpsConciergeFix === "function") window.openFinOpsConciergeFix();
+      });
+    }
+    var btnMapperConc29 = document.getElementById("btnMapperConcierge29");
+    if (btnMapperConc29) btnMapperConc29.addEventListener("click", function (e) { startMapperCheckout("pro30d", e.target); });
     var btnPPAlt = document.getElementById("btnBuyPayPalAlt");
     if (btnPPAlt) btnPPAlt.addEventListener("click", function (e) { startMapperCheckout("batch24h", e.target, "paypal"); });
     var btnCfoMap = document.getElementById("btnCopyCfoMapper");
@@ -706,25 +725,75 @@
       }
     });
 
+    var lastFreeDemoText = "";
+    var lastFreeDemoExt = "demo-preview.txt";
+
+    var btnDlFreeDemo = document.getElementById("btnDownloadFreeDemo");
+    if (btnDlFreeDemo) {
+      btnDlFreeDemo.addEventListener("click", function () {
+        if (!lastFreeDemoText) return;
+        var blob = new Blob([lastFreeDemoText], { type: "text/plain;charset=utf-8" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "DEMO_2ROW_" + lastFreeDemoExt;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+    }
+
     document.getElementById("btnFree2RowDemo").addEventListener("click", async function (e) {
       var fmt = fmtSel.value;
+      var cfg = CONFIGS[fmt] || CONFIGS.sepa;
       var resBox = document.getElementById("cloudResultBox");
       var unlockBanner = document.getElementById("demoUnlockBanner");
+      var bannerText = document.getElementById("demoUnlockBannerText");
       resBox.style.display = "block";
       e.target.disabled = true;
-      resBox.textContent = "Running free 2-row live cloud demo on FinOps Edge...";
+      resBox.textContent = "Running free 2-row live cloud test on FinOps Edge...";
       try {
+        var parsedPayload = {};
+        try { parsedPayload = JSON.parse(jsonOut.textContent || "{}"); } catch (ex) {}
         var demoPath = ["sepa", "nacha", "datev"].indexOf(fmt) !== -1 ? "/v1/demo/" + fmt : "/v1/demo/validate";
-        var bodyData = demoPath === "/v1/demo/validate"
-          ? { iban: "DE89370400440532013000", aba: "021000021", ukSortCode: "40-05-15", auBsb: "062-000", caInstitution: "003", caTransit: "10202" }
-          : JSON.parse(jsonOut.textContent || "{}");
+        var bodyData = parsedPayload;
+
+        if (demoPath === "/v1/demo/validate") {
+          var txs = parsedPayload.transactions || parsedPayload.checks || parsedPayload.wires || [];
+          var row0 = txs[0] || {};
+          bodyData = {
+            iban: row0.iban || parsedPayload.debtorIban || "DE89370400440532013000",
+            aba: row0.routingNumber || parsedPayload.immediateDestination || (row0.creditorAgent && row0.creditorAgent.abaRouting) || "021000021",
+            ukSortCode: row0.sortCode || parsedPayload.originatorSortCode || "40-05-15",
+            ukAccountNumber: row0.accountNumber || parsedPayload.originatorAccountNumber || "87654321",
+            auBsb: row0.bsb || parsedPayload.traceBsb || "062-000",
+            caInstitution: row0.institution || parsedPayload.returnInstitution || "003",
+            caTransit: row0.transit || parsedPayload.returnTransit || "10202"
+          };
+        }
+
         var r = await fetch(EDGE_API + demoPath, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(bodyData)
         });
         var data = await r.json();
-        resBox.textContent = JSON.stringify(data, null, 2);
+        var cleanFile = data.xml || data.nachaText || data.csvText || data.csvOutput || "";
+        if (cleanFile) {
+          if (fmt === "nacha" && cleanFile.indexOf("DEMO") === -1) {
+            cleanFile = cleanFile + "\nREMARK: FREE 2-ROW DEMO PREVIEW — UNLOCK FULL BATCH ($9) AT FINOPS STUDIO";
+          }
+          resBox.textContent = cleanFile;
+          lastFreeDemoText = cleanFile;
+          lastFreeDemoExt = cfg.ext || "test-file.txt";
+          if (bannerText) {
+            var omittedNote = data.rowsOmitted > 0 ? " (" + data.rowsOmitted + " remaining row(s) locked)" : "";
+            bannerText.innerHTML = "&#9989; <strong>Free 2-Row Test File Generated!" + omittedNote + "</strong> Download it now to inspect exact bank formatting, or unlock all rows watermark-free ($9):";
+          }
+        } else {
+          var pretty = "=== FREE LIVE EDGE CHECKSUM & PAYLOAD VERIFICATION ===\n" + JSON.stringify(data.checks || data, null, 2) + "\n\nMapped Payload Ready for Production Export (" + (cfg.ext || fmt) + "):\n" + (jsonOut.textContent || "");
+          resBox.textContent = pretty;
+          lastFreeDemoText = pretty;
+          lastFreeDemoExt = "validation-report.txt";
+        }
         var tokNow = (document.getElementById("directToken")?.value || localStorage.getItem("finops_pro_pass") || "").trim();
         if (unlockBanner && !(tokNow.indexOf("fop_") === 0 && window.__finopsVerifiedActivePass)) {
           unlockBanner.style.display = "flex";

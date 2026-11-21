@@ -372,8 +372,16 @@ export function initSandbox(defaultTool = "sepa") {
     const el = document.getElementById(id);
     el?.addEventListener("click", () => triggerCheckout("batch24h", el));
   });
-  const heroProBtn = document.getElementById("btn-hero-pass-30d");
-  heroProBtn?.addEventListener("click", () => triggerCheckout("pro30d", heroProBtn));
+  ["btn-hero-pass-30d", "btn-sandbox-concierge-29"].forEach((id) => {
+    const el = document.getElementById(id);
+    el?.addEventListener("click", () => triggerCheckout("pro30d", el));
+  });
+  ["btn-hero-concierge-fix", "btn-sandbox-concierge-fix"].forEach((id) => {
+    const el = document.getElementById(id);
+    el?.addEventListener("click", () => {
+      if (typeof window.openFinOpsConciergeFix === "function") window.openFinOpsConciergeFix();
+    });
+  });
 
   // Inject Direct Instant Pass ($9/$29) + Apify Bridge right below sandbox-bar
   const sandboxCard = tabsEl.closest(".sandbox-card");
@@ -435,7 +443,7 @@ export function initSandbox(defaultTool = "sepa") {
     lastOutput = cfg.output;
     statusEl.className = "status-chip status-ok";
     statusEl.textContent = cfg.summary;
-    if (runBtn) runBtn.innerHTML = "&#9654; Pre-Flight Check &amp; Preview";
+    if (runBtn) runBtn.innerHTML = "&#127379; Run Free 2-Row Live Test";
     if (storeBtn) {
       storeBtn.href = cfg.storeUrl;
       storeBtn.className = "btn btn-primary";
@@ -445,9 +453,54 @@ export function initSandbox(defaultTool = "sepa") {
     if (upsellEl) upsellEl.style.display = "none";
   }
 
-  function handleRunClick() {
+  async function handleRunClick() {
     const cfg = TOOLS_CONFIG[activeKey];
-    if (inputEl.value.trim() !== cfg.sample.trim()) {
+    const raw = inputEl.value.trim();
+    const demoTools = { sepa: "xml", nacha: "nachaText", einvoice: "xml", datev: "csvText", bai2: "csvOutput" };
+
+    if (raw !== cfg.sample.trim() && demoTools[activeKey]) {
+      let bodyPayload = null;
+      if (activeKey === "bai2") {
+        bodyPayload = { bai2Content: raw };
+      } else if (raw.startsWith("{")) {
+        try { bodyPayload = JSON.parse(raw); } catch {}
+      } else if (activeKey === "sepa") {
+        bodyPayload = { ...getApiPayloadObj(cfg), transactions: undefined, csvTransactions: raw };
+      } else if (activeKey === "nacha") {
+        bodyPayload = { ...getApiPayloadObj(cfg), entries: undefined, csvEntries: raw };
+      } else if (activeKey === "datev") {
+        bodyPayload = { skr: "SKR03", consultantNumber: "12345", clientNumber: "10001", csvBookings: raw };
+      }
+
+      if (bodyPayload) {
+        if (runBtn) runBtn.disabled = true;
+        statusEl.textContent = "RUNNING FREE 2-ROW LIVE TEST...";
+        try {
+          const r = await fetch(`${EDGE_API}/v1/demo/${activeKey}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(bodyPayload)
+          });
+          const data = await r.json();
+          const cleanOut = data[demoTools[activeKey]];
+          if (r.ok && cleanOut) {
+            outputEl.textContent = cleanOut;
+            lastOutput = cleanOut;
+            statusEl.className = "status-chip status-ok";
+            statusEl.textContent = `FREE 2-ROW LIVE TEST READY (${data.rowsProcessed || 2} of ${data.rowsSubmitted || 2} rows) — CLICK DOWNLOAD`;
+            if (upsellEl) {
+              upsellEl.style.display = "flex";
+              upsellEl.querySelector("span").innerHTML = `<strong>&#9989; First ${data.rowsProcessed || 2} row(s) generated live!</strong> Click <strong>Download Free Test File</strong> below to inspect it, or unlock <strong>$9 (24h Unlimited)</strong> to export all ${data.rowsSubmitted || "your"} rows watermark-free.`;
+            }
+            return;
+          }
+        } catch {} finally {
+          if (runBtn) runBtn.disabled = false;
+        }
+      }
+    }
+
+    if (raw !== cfg.sample.trim()) {
       const audit = runLocalPreFlightAudit(activeKey, inputEl.value, cfg);
       outputEl.textContent = audit.report;
       lastOutput = audit.report;

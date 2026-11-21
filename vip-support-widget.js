@@ -517,6 +517,20 @@
       track('open');
     }
 
+    window.openFinOpsConciergeFix = function (opts = {}) {
+      openDrawer('bug');
+      if (bugCat) bugCat.value = 'paid_help';
+      if (bugMsg && !bugMsg.value.trim()) {
+        bugMsg.value =
+          opts.prefill ||
+          'Bank / ERP Rejection Help:\n1) Format & Bank Portal (e.g. Chase NACHA, SEPA pain.001, CommBiz .ABA, Barclays BACS):\n2) Rejection error code or message:\n3) Redacted sample line or header (no real account numbers needed):\n';
+      }
+      setTimeout(() => {
+        if (bugEmail && !bugEmail.value.trim()) bugEmail.focus();
+        else if (bugMsg) bugMsg.focus();
+      }, 80);
+    };
+
     fabBtn.addEventListener('click', () => {
       if (drawer.classList.contains('open')) drawer.classList.remove('open');
       else openDrawer('ai');
@@ -743,7 +757,8 @@
               '<span id="fopStripSub" style="color:#cbd5e1;">Generate unlimited SEPA, NACHA, Peppol, DATEV, BACS, ABA &amp; CPA-005 batches right in your browser.</span>' +
             '</div>' +
             '<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">' +
-              '<a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html" style="padding:6px 11px;border-radius:7px;border:1px solid rgba(56,189,248,0.55);color:#7dd3fc;text-decoration:none;font-weight:700;font-size:0.78rem;">&#127379; Free 2-Row Converter</a>' +
+              '<a href="./free-csv-to-sepa-nacha-bacs-aba-cpa005-json-mapper.html" style="padding:6px 11px;border-radius:7px;border:1px solid rgba(56,189,248,0.55);color:#7dd3fc;text-decoration:none;font-weight:700;font-size:0.78rem;">&#127379; Free 2-Row Live Test</a>' +
+              '<button type="button" id="fopStripConcierge" style="padding:6px 10px;border-radius:7px;border:1px solid rgba(52,211,153,0.55);background:rgba(16,185,129,0.12);color:#6ee7b7;font-weight:700;font-size:0.77rem;cursor:pointer;">&#128736;&#65039; Rejected File? Free Diagnosis</button>' +
               '<button type="button" id="fopStripBuy9" style="padding:6px 12px;border-radius:7px;border:none;background:linear-gradient(135deg,#f59e0b,#eab308);color:#111827;font-weight:800;font-size:0.79rem;cursor:pointer;">&#9889; 24h Unlimited ($9)</button>' +
               '<button type="button" id="fopStripBuy29" style="padding:6px 11px;border-radius:7px;border:1px solid #fbbf24;background:transparent;color:#fde68a;font-weight:700;font-size:0.78rem;cursor:pointer;">&#128640; 30d Pro + API ($29)</button>' +
               '<button type="button" id="fopStripPayPal" style="display:none;padding:6px 10px;border-radius:7px;border:1px solid #60a5fa;background:transparent;color:#93c5fd;font-weight:700;font-size:0.76rem;cursor:pointer;">PayPal</button>' +
@@ -762,9 +777,11 @@
         const b29 = document.getElementById('fopStripBuy29');
         const bPP = document.getElementById('fopStripPayPal');
         const bCfo = document.getElementById('fopStripCfo');
+        const bConc = document.getElementById('fopStripConcierge');
         const badgeEl = document.getElementById('fopStripBadge');
         const subEl = document.getElementById('fopStripSub');
 
+        bConc?.addEventListener('click', () => window.openFinOpsConciergeFix());
         b9?.addEventListener('click', () => window.startFinOpsCheckout('batch24h', { btn: b9 }));
         b29?.addEventListener('click', () => window.startFinOpsCheckout('pro30d', { btn: b29 }));
         bPP?.addEventListener('click', () => window.startFinOpsCheckout('batch24h', { btn: bPP, provider: 'paypal' }));
