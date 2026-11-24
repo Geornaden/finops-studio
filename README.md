@@ -10,6 +10,7 @@
 [![Corporate BAI2 Bank Statement Parser MCP on mcprush](https://mcprush.com/badge/corporate-bai2-bank-statement-parser-to-json-mcp/score.svg)](https://mcprush.com/to/corporate-bai2-bank-statement-parser-to-json-mcp?ref=badge)
 [![German DATEV Buchungsstapel CSV Generator MCP on mcprush](https://mcprush.com/badge/german-datev-buchungsstapel-extf-csv-generato-mcp/score.svg)](https://mcprush.com/to/german-datev-buchungsstapel-extf-csv-generato-mcp?ref=badge)
 [![Geornaden/finops-studio MCP server](https://glama.ai/mcp/servers/Geornaden/finops-studio/badges/score.svg)](https://glama.ai/mcp/servers/Geornaden/finops-studio)
+[![FinOps Studio MCP connector](https://glama.ai/mcp/connectors/io.github.Geornaden/finops-free-bank-validator-mcp/badges/score.svg)](https://glama.ai/mcp/connectors/io.github.Geornaden/finops-free-bank-validator-mcp)
 
 **Zero-hallucination banking, payroll, cash-management, and tax e-invoicing file engines** for CFOs, accounting firms, ERP integrators (**NetSuite, SAP, Odoo, QuickBooks, Xero, Dynamics 365**), workflow builders (**n8n, Make.com, Zapier**), and **AI Agents (MCP)**.
 
